@@ -17,6 +17,17 @@
 #endif
 
 //
+// fix MSVC borked SSE macros
+//
+#if defined(_MSC_VER)
+
+#if defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP == 2)
+#define __SSE2__
+#endif
+
+#endif
+
+//
 // include all supported SIMD types
 //
 #if defined(__AVX__)

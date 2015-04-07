@@ -24,54 +24,6 @@ namespace simd {
     const struct sign_bit_t {} SIGN_BIT;
 
     //
-    // wrapper around the bit mask type for a specific SIMD type
-    //
-    template <typename T>
-    struct mask {
-        // these types must be present in a SIMD type
-        using mm_t = typename T::mm_t;
-        using fp_t = typename T::fp_t;
-        using bitmask_t = typename T::bitmask_t;
-
-        // type-related sanity checks
-        static_assert(sizeof(fp_t) == sizeof(bitmask_t), "size of bitmask_t must match the size of fp_t");
-        static_assert(std::is_integral<bitmask_t>::value, "bitmask_t must be an integral type");
-        static_assert(std::is_unsigned<bitmask_t>::value, "bitmask_t must be an unsigned type");
-        static_assert(sizeof(mm_t) % sizeof(bitmask_t) == 0, "size of mm_t must be a multiple of the size of bitmask_t");
-
-        // useful bit masks
-        static const bitmask_t ZERO_BIT_MASK = 0;
-        static const bitmask_t ALL_BITS_MASK = ~ZERO_BIT_MASK;
-        static const bitmask_t ABS_BIT_MASK = ALL_BITS_MASK >> 1;
-        static const bitmask_t SIGN_BIT_MASK = ~ABS_BIT_MASK;
-
-        // data
-        union {
-            float f;
-            bitmask_t b;
-        };
-
-        // constructors
-        INL explicit mask() {}
-        INL explicit mask(bitmask_t r) : b(r) {}
-        INL explicit mask(zero_t r) : b(ZERO_BIT_MASK) {}
-        INL explicit mask(all_bits_t r) : b(ALL_BITS_MASK) {}
-        INL explicit mask(abs_mask_t r) : b(ABS_BIT_MASK) {}
-        INL explicit mask(sign_bit_t r) : b(SIGN_BIT_MASK) {}
-
-        // bitmask_t -- fp_t conversion
-        INL static bitmask_t tob(fp_t l) { mask m; m.f = l; return m.b; }
-        INL static fp_t tof(bitmask_t l) { mask m; m.b = l; return m.f; }
-
-        // bitwise operations with fp_t
-        INL static fp_t andf(fp_t l, fp_t r) { return tof(tob(l) & tob(r)); }
-        INL static fp_t orf(fp_t l, fp_t r) { return tof(tob(l) | tob(r)); }
-        INL static fp_t xorf(fp_t l, fp_t r) { return tof(tob(l) ^ tob(r)); }
-        INL static fp_t notf(fp_t l) { return tof(~tob(l)); }
-        INL static fp_t andnotf(fp_t l, fp_t r) { return tof(tob(l) & ~tob(r)); }
-    };
-
-    //
     // SIMD type base class (with derived class as T, CRTP-style)
     //
     template <typename _mm_t, typename _fp_t, typename _bitmask_t, typename T>

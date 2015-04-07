@@ -3,10 +3,10 @@
 
 namespace simd {
 
-	typedef unsigned int uint;
+    typedef unsigned int uint;
 
-	template <typename T>
-	using ptr = T*;
+    template <typename T>
+    using ptr = T*;
 
 }
 

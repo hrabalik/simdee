@@ -9,58 +9,40 @@
 #include "common.hpp"
 #include <emmintrin.h>
 
-#if defined(__SSE3__)
-#include <pmmintrin.h>
-#endif
-#if defined(__SSSE3__)
-#include <tmmintrin.h>
-#endif
-#if defined (__SSE4_1__)
-#include <smmintrin.h>
-#endif
-#if defined (__SSE4_2__)
-#include <nmmintrin.h>
-#endif
+//#if defined(__SSE3__)
+//#include <pmmintrin.h>
+//#endif
+//#if defined(__SSSE3__)
+//#include <tmmintrin.h>
+//#endif
+//#if defined (__SSE4_1__)
+//#include <smmintrin.h>
+//#endif
+//#if defined (__SSE4_2__)
+//#include <nmmintrin.h>
+//#endif
 
 #define INL SIMDIFY_FORCE_INLINE
 
 namespace simd {
 
     // SIMD with SSE
-    struct sse {
-        using mm_t = __m128;
-        using float_t = float;
-        using bitmask_t = uint;
-        using mask_t = mask<sse>;
-        static const auto W = sizeof(mm_t) / sizeof(float_t);
-        using array_t = std::array<float_t, W>;
-        using iterator = array_t::iterator;
-        union { mm_t mm; array_t f; };
-        using const_iterator = array_t::const_iterator;
+    struct sse : simd_base<__m128, float, uint32_t, sse> {
         INL sse() {}
-        INL sse(mm_t r) : mm(r) {}
-        INL sse(const sse& r) : mm(r.mm) {}
-        INL explicit sse(float_t r) : mm(_mm_set_ps1(r)) {}
-        INL explicit sse(zero_t) : mm(_mm_setzero_ps()) {}
-        INL explicit sse(all_bits_t) : sse(mask_t(ALL_BITS)) {}
-        INL explicit sse(abs_mask_t) : sse(mask_t(ABS_MASK)) {}
-        INL explicit sse(sign_bit_t) : sse(mask_t(SIGN_BIT)) {}
-        INL explicit sse(mask_t r) : mm(_mm_castsi128_ps(_mm_set1_epi32(r.b))) {}
-        INL sse(std::initializer_list<float_t> r) { std::copy(r.begin(), r.end(), f.begin()); }
-        INL sse& operator=(const sse& r) { mm = r.mm; return *this; }
-        INL iterator begin() { return f.begin(); }
-        INL iterator end() { return f.end(); }
-        INL const_iterator cbegin() const { return f.cbegin(); }
-        INL const_iterator cend() const { return f.cend(); }
-        INL float_t front() const { return _mm_cvtss_f32(mm); }
-        INL float_t back() const { return f.back(); }
+        INL sse(mm_t r) : simd_base(r) {}
+        INL explicit sse(fp_t r) : simd_base(_mm_set_ps1(r)) {}
+        INL explicit sse(zero_t) : simd_base(_mm_setzero_ps()) {}
+        INL explicit sse(mask_t r) : sse(r.f) {}
+
+        INL fp_t front() const { return _mm_cvtss_f32(mm); }
+        INL fp_t back() const { return f.back(); }
     };
 
     // bitwise not with lazy evaluation
     template <>
     struct bitwise_not<sse> {
         sse neg;
-        INL bitwise_not(const sse& r) : neg(r) {}
+        INL explicit bitwise_not(const sse& r) : neg(r) {}
         INL operator const sse() const { return _mm_andnot_ps(sse(ZERO).mm, neg.mm); }
     };
 

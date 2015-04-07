@@ -72,7 +72,7 @@ using simd_t = sse;
 #elif defined(SIMDIFY_FLT)
 using simd_t = flt;
 #else
-#warn "Simdify could not determine a suitable SIMD type as simd_t."
+#error "Simdify could not determine a suitable SIMD type as simd_t."
 #endif
 }
 

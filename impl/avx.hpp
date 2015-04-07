@@ -14,40 +14,22 @@
 namespace simd {
 
     // SIMD with AVX
-    struct avx {
-        using mm_t = __m256;
-        using float_t = float;
-        using bitmask_t = uint;
-        using mask_t = mask<avx>;
-        static const auto W = sizeof(mm_t) / sizeof(float_t);
-        using array_t = std::array<float_t, W>;
-        using iterator = array_t::iterator;
-        using const_iterator = array_t::const_iterator;
-        union { mm_t mm; array_t f; };
+    struct avx : simd_base<__m256, float, uint32_t, avx> {
         INL avx() {}
-        INL avx(mm_t r) : mm(r) {}
-        INL avx(const avx& r) : mm(r.mm) {}
-        INL explicit avx(const float_t& r) : mm(_mm256_broadcast_ss(&r)) {}
-        INL explicit avx(zero_t) : mm(_mm256_setzero_ps()) {}
-        INL explicit avx(all_bits_t) : avx(mask_t(ALL_BITS)) {}
-        INL explicit avx(abs_mask_t) : avx(mask_t(ABS_MASK)) {}
-        INL explicit avx(sign_bit_t) : avx(mask_t(SIGN_BIT)) {}
-        INL explicit avx(mask_t r) : mm(_mm256_castsi256_ps(_mm256_set1_epi32(r.b))) {}
-        INL avx(std::initializer_list<float_t> r) { std::copy(r.begin(), r.end(), f.begin()); }
-        INL avx& operator=(const avx& r) { mm = r.mm; return *this; }
-        INL iterator begin() { return f.begin(); }
-        INL iterator end() { return f.end(); }
-        INL const_iterator cbegin() const { return f.cbegin(); }
-        INL const_iterator cend() const { return f.cend(); }
-        INL float_t front() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
-        INL float_t back() const { return f.back(); }
+        INL avx(mm_t r) : simd_base(r) {}
+        INL explicit avx(const fp_t& r) : simd_base(_mm256_broadcast_ss(&r)) {}
+        INL explicit avx(zero_t) : simd_base(_mm256_setzero_ps()) {}
+        INL explicit avx(mask_t r) : avx(r.f) {}
+
+        INL fp_t front() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
+        INL fp_t back() const { return f.back(); }
     };
 
     // bitwise not with lazy evaluation
     template <>
     struct bitwise_not<avx> {
         avx neg;
-        INL bitwise_not(const avx& r) : neg(r) {}
+        INL explicit bitwise_not(const avx& r) : neg(r) {}
         INL operator const avx() const { return _mm256_andnot_ps(avx(ZERO).mm, neg.mm); }
     };
 

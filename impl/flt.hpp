@@ -7,33 +7,16 @@
 
 namespace simd {
 
-    // SIMD off -- glorified float
-    struct flt {
-        using mm_t = float;
-        using float_t = float;
-        using bitmask_t = uint;
-        using mask_t = mask<flt>;
-        static const auto W = sizeof(mm_t) / sizeof(float_t);
-        using array_t = std::array<float_t, W>;
-        using iterator = array_t::iterator;
-        using const_iterator = array_t::const_iterator;
-        union { mm_t mm; array_t f; };
+    // SIMD emulation with a glorified float
+    struct flt : simd_base<float, float, uint32_t, flt> {
         INL flt() {}
-        INL flt(mm_t r) : mm(r) {}
-        INL flt(const flt& r) { mm = r.mm; }
-        INL explicit flt(zero_t) : mm(0) {}
-        INL explicit flt(all_bits_t) : flt(mask_t(ALL_BITS)) {}
-        INL explicit flt(abs_mask_t) : flt(mask_t(ABS_MASK)) {}
-        INL explicit flt(sign_bit_t) : flt(mask_t(SIGN_BIT)) {}
-        INL explicit flt(mask_t r) : mm(r.f) {}
-        INL flt(std::initializer_list<float_t> r) { std::copy(r.begin(), r.end(), f.begin()); }
-        INL flt& operator=(const flt& r) { mm = r.mm; return *this; }
-        INL iterator begin() { return f.begin(); }
-        INL iterator end() { return f.end(); }
-        INL const_iterator cbegin() const { return f.cbegin(); }
-        INL const_iterator cend() const { return f.cend(); }
-        INL float_t front() const { return mm; }
-        INL float_t back() const { return mm; }
+        INL flt(mm_t r) : simd_base(r) {}
+        INL flt(const flt& r) : simd_base(r.mm) {}
+        INL explicit flt(zero_t) : simd_base(0) {}
+        INL explicit flt(mask_t r) : flt(r.f) {}
+
+        INL fp_t front() const { return mm; }
+        INL fp_t back() const { return mm; }
     };
 
     INL const flt operator&(const flt& l, const flt& r) { return flt::mask_t::andf(l.mm, r.mm); }

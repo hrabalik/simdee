@@ -1,9 +1,13 @@
 #ifndef SIMDIFY_UTIL_INLINE
 #define SIMDIFY_UTIL_INLINE
 
-#if defined(__GNUC__)
+#if defined(__clang__)
 
-#define SIMDIFY_FORCE_INLINE __attribute__((always_inline)) inline
+#define SIMDIFY_FORCE_INLINE __inline__ __attribute__((always_inline, nodebug))
+
+#elif defined(__GNUC__)
+
+#define SIMDIFY_FORCE_INLINE __inline__ __attribute__((always_inline))
 
 #elif defined(_MSC_VER)
 

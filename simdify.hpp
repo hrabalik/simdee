@@ -56,7 +56,7 @@
 
 //
 // set some (successfully loaded) SIMD type as simd_t
-// use SIMDIFY_P
+// use SIMDIFY_PREFER_* to use a specific type
 //
 namespace simd {
 #if defined(SIMDIFY_PREFER_AVX) && defined(SIMDIFY_AVX)

@@ -10,6 +10,7 @@
 #include <initializer_list>
 #include <algorithm>
 #include <array>
+#include <utility>
 
 #define INL SIMDIFY_FORCE_INLINE
 
@@ -22,6 +23,12 @@ namespace simd {
     const struct all_bits_t {} ALL_BITS;
     const struct abs_mask_t {} ABS_MASK;
     const struct sign_bit_t {} SIGN_BIT;
+
+    //
+    // forward declarations
+    //
+    template <typename T>
+    struct horizontal_impl;
 
     //
     // SIMD type base class (with derived class as T, CRTP-style)
@@ -47,6 +54,7 @@ namespace simd {
         using const_reverse_iterator = typename array_t::const_reverse_iterator;
         using unary_op_t = ptr<const T(const T& in)>;
         using binary_op_t = ptr<const T(const T& l, const T& r)>;
+        using horizontal = horizontal_impl<T>;
 
         // a wrapper to disambiguate construction with bitmask_t and fp_t
         struct mask_t {
@@ -89,9 +97,6 @@ namespace simd {
         INL simd_base() {}
         INL simd_base(mm_t r) : mm(r) {}
 
-        // assignment
-        //INL simd_base& operator=(const simd_base& r) { mm = r.mm; return *this; }
-
         // iteration
         INL iterator begin() { return f.begin(); }
         INL iterator end() { return f.end(); }
@@ -131,38 +136,91 @@ namespace simd {
     INL const T operator&(const bitwise_not<T>& l, const bitwise_not<T>& r) { return andnot(l, r.neg); }
 
     template <typename T>
+    INL const T apply_mask(const T& in, const T& mask, zero_t zero_neutral_value) {
+        return cond(mask, in, T(ZERO));
+    }
+    template <typename T>
     INL const T apply_mask(const T& in, const T& mask, typename T::fp_t neutral_value) {
         return cond(mask, in, T(neutral_value));
     }
     template <typename T>
-    INL const T apply_mask(const T& in, const T& mask, zero_t zero_neutral_value) {
-        return cond(mask, in, T(ZERO));
+    INL const T apply_mask(const T& in, const T& mask, typename T::mask_t neutral_mask) {
+        return cond(mask, in, T(neutral_mask));
+    }
+    template <typename T>
+    INL const T apply_mask(const T& in, const T& mask, const T& neutral_value_vector) {
+        return cond(mask, in, neutral_value_vector);
     }
 
     //
-    // horizontal operations
+    // provides access to min, max, operator+, operator* before they have been declared
     //
     template <typename T>
-    struct horizontal;
+    struct operators {
+        static INL const T min_(const T& l, const T& r) { return min(l, r); }
+        static INL const T max_(const T& l, const T& r) { return max(l, r); }
+        static INL const T add_(const T& l, const T& r) { return l + r; }
+        static INL const T mul_(const T& l, const T& r) { return l * r; }
+    };
 
+    //
+    // base class for horizontal<T>
+    //
     template <typename T>
-    struct horizontal_base {
+    struct horizontal_impl_base {
         using unary_op_t = ptr<const T(const T& in)>;
         using binary_op_t = ptr<const T(const T& l, const T& r)>;
         using fp_t = typename T::fp_t;
         using reduce_find_t = std::pair<fp_t, uint>;
+        using ops = operators<T>;
 
         template <binary_op_t F>
-        static INL fp_t reduce(const T& in) { return reduce_wide<F>(in).front(); }
+        static INL fp_t reduce(const T& in) { return reduce_vector<F>(in).front(); }
 
         template <binary_op_t F>
-        static INL const T reduce_wide(const T& in) { return horizontal<T>::template reduce_wide<F>(in); }
+        static INL const T reduce_vector(const T& in) { return horizontal_impl<T>::template reduce_vector<F>(in); }
 
         template <binary_op_t F>
-        static INL std::pair<fp_t, uint> reduce_find(const T& in) {
-            auto in_reduced = reduce_wide<F>(in);
-            auto selected = horizontal<T>::find(in == in_reduced);
+        static INL reduce_find_t reduce_find(const T& in) {
+            auto in_reduced = reduce_vector<F>(in);
+            auto selected = horizontal_impl<T>::find(in == in_reduced);
             return std::make_pair(in_reduced.front(), selected);
+        }
+
+        template <binary_op_t F, typename N>
+        static INL fp_t reduce_with_mask(const T& in, const T& mask, N&& neutral_value) {
+            return reduce<F>(apply_mask(in, mask, std::forward<N>(neutral_value)));
+        }
+
+        template <binary_op_t F, typename N>
+        static INL reduce_find_t reduce_find_with_mask(const T& in, const T& mask, N&& neutral_value) {
+            return reduce_find<F>(apply_mask(in, mask, std::forward<N>(neutral_value)));
+        }
+
+        static INL fp_t min(const T& in) { return reduce<ops::min_>(in); }
+        static INL fp_t max(const T& in) { return reduce<ops::max_>(in); }
+        static INL fp_t sum(const T& in) { return reduce<ops::add_>(in); }
+        static INL fp_t product(const T& in) { return reduce<ops::mul_>(in); }
+        static INL reduce_find_t min_find(const T& in) { return reduce_find<ops::min_>(in); }
+        static INL reduce_find_t max_find(const T& in) { return reduce_find<ops::max_>(in); }
+
+        static INL fp_t min_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::min_>(in, mask, std::numeric_limits<fp_t>::max());
+        }
+        static INL fp_t max_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<fp_t>::min());
+        }
+        static INL fp_t sum_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::add_>(in, mask, ZERO);
+        }
+        static INL fp_t product_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::add_>(in, mask, fp_t(1));
+        }
+        static INL reduce_find_t min_find_with_mask(const T& in, const T& mask) {
+            return reduce_find_with_mask<ops::min_>(in, mask, std::numeric_limits<fp_t>::max());
+        }
+        static INL reduce_find_t max_find_with_mask(const T& in, const T& mask) {
+            return reduce_find_with_mask<ops::max_>(in, mask, std::numeric_limits<fp_t>::min());
         }
     };
 

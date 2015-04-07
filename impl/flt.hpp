@@ -40,14 +40,13 @@ namespace simd {
 
     // horizontal operations
     template <>
-    struct horizontal<flt> : horizontal_base<flt> {
+    struct horizontal_impl<flt> : horizontal_impl_base<flt>{
+        static INL uint find(const flt& in) { return 0; }
+        static INL bool any(const flt& in) { return in.mm != 0; }
+        static INL bool all(const flt& in) { return in.mm != 0; }
+
         template <binary_op_t F>
-        static INL const flt reduce_wide(const flt& in) {
-            return in;
-        }
-        static INL uint find(const flt& in) {
-            return 0;
-        }
+        static INL const flt reduce_vector(const flt& in) { return in; }
     };
 
 }

@@ -54,15 +54,16 @@ namespace simd {
 
     // horizontal operations
     template <>
-    struct horizontal<avx> : horizontal_base<avx> {
+    struct horizontal_impl<avx> : horizontal_impl_base<avx> {
+        static INL uint find(const avx& in) { return ls1b(uint(_mm256_movemask_ps(in.mm))); }
+        static INL bool any(const avx& in) { return _mm256_movemask_ps(in.mm) != 0; }
+        static INL bool all(const avx& in) { return _mm256_movemask_ps(in.mm) == 0xFF; }
+
         template <binary_op_t F>
-        static INL const avx reduce_wide(const avx& in) {
+        static INL const avx reduce_vector(const avx& in) {
             avx tmp = F(in, _mm256_permute_ps(in.mm, _MM_SHUFFLE(2, 3, 0, 1)));
             tmp = F(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));
             return F(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));
-        }
-        static INL uint find(const avx& in) {
-            return ls1b(uint(_mm256_movemask_ps(in.mm)));
         }
     };
 

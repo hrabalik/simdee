@@ -67,14 +67,15 @@ namespace simd {
 
     // horizontal operations
     template <>
-    struct horizontal<sse> : horizontal_base<sse> {
+    struct horizontal_impl<sse> : horizontal_impl_base<sse>{
+        static INL uint find(const sse& in) { return ls1b(uint(_mm_movemask_ps(in.mm))); }
+        static INL bool any(const sse& in) { return _mm_movemask_ps(in.mm) != 0; }
+        static INL bool all(const sse& in) { return _mm_movemask_ps(in.mm) == 0xF; }
+
         template <binary_op_t F>
-        static INL const sse reduce_wide(const sse& in) {
+        static INL const sse reduce_vector(const sse& in) {
             sse tmp = F(in, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(in.mm), _MM_SHUFFLE(2, 3, 0, 1))));
             return F(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm), _MM_SHUFFLE(1, 0, 3, 2))));
-        }
-        static INL uint find(const sse& in) {
-            return ls1b(uint(_mm_movemask_ps(in.mm)));
         }
     };
 

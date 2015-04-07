@@ -8,8 +8,8 @@
 #error "Simdify requires C++."
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1800
-#error "Simdify requires Visual Studio 2013."
+#if defined(_MSC_VER) && _MSC_VER < 1600
+#error "Simdify requires Visual Studio 2010."
 #endif
 
 #if !defined(_MSC_VER) && __cplusplus < 201103L && !defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -17,36 +17,48 @@
 #endif
 
 //
-// fix MSVC borked SSE macros
+// fix MSVC borked SSE macros (ICC has got them right though)
 //
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
 
-#if defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP == 2)
+#if defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 1)
+#define __SSE__
+#endif
+
+#if defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2)
 #define __SSE2__
 #endif
 
-#endif
+#if defined(__AVX__)
+#define __SSE3__
+#define __SSSE3__
+#define __SSE4_1__
+#define __SSE4_2__
+#endif // __AVX__
+
+#endif // _MSC_VER
 
 //
 // include all supported SIMD types
+// use the SIMDIFY_NEED_* macros to force the include
 //
-#if defined(__AVX__)
+#if defined(__AVX__) || defined(SIMDIFY_NEED_AVX)
 #include "impl/avx.hpp"
 #endif
 
-#if defined(__SSE2__)
+#if defined(__SSE2__) || defined(SIMDIFY_NEED_SSE)
 #include "impl/sse.hpp"
 #endif
 
-#if 1
+#if 1 || defined(SIMDIFY_NEED_FLT)
 #include "impl/flt.hpp"
 #endif
 
+//
+// set some (successfully loaded) SIMD type as simd_t
+// use SIMDIFY_P
+//
 namespace simd {
-
-//
-// set the preferred SIMD type as simd_t
-//
 #if defined(SIMDIFY_PREFER_AVX) && defined(SIMDIFY_AVX)
 using simd_t = avx;
 #elif defined(SIMDIFY_PREFER_SSE) && defined(SIMDIFY_SSE)
@@ -62,7 +74,6 @@ using simd_t = flt;
 #else
 #warn "Simdify could not determine a suitable SIMD type as simd_t."
 #endif
-
 }
 
 #endif // SIMDIFY

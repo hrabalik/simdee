@@ -3,7 +3,7 @@
 
 // ensure AVX is on
 #ifndef __AVX__
-#error "AVX intrinsics are required to include avx.hpp. Please check your build options."
+#error "The macro '__AVX__' is not set. AVX intrinsics are required to use the AVX SIMD type. Please check your build options."
 #endif
 
 #include "common.hpp"

@@ -1,13 +1,26 @@
 #ifndef SIMDIFY_SSE
 #define SIMDIFY_SSE
 
-// ensure SSE is on
+// ensure SSE2 is on
 #ifndef __SSE2__
-#error "SSE2 intrinsics are required to include sse.hpp. Please check your build options."
+#error "The macro '__SSE2__' is not set. SSE2 intrinsics are required to use the SSE SIMD type. Please check your build options."
 #endif
 
 #include "common.hpp"
 #include <emmintrin.h>
+
+#if defined(__SSE3__)
+#include <pmmintrin.h>
+#endif
+#if defined(__SSSE3__)
+#include <tmmintrin.h>
+#endif
+#if defined (__SSE4_1__)
+#include <smmintrin.h>
+#endif
+#if defined (__SSE4_2__)
+#include <nmmintrin.h>
+#endif
 
 #define INL SIMDIFY_FORCE_INLINE
 

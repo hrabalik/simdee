@@ -3,12 +3,10 @@
 
 #include "simdify.hpp"
 #include "util/malloc.hpp"
+#include "util/integral.hpp"
 #include <vector>
 
 namespace simd {
-
-    template <typename T>
-    inline T ceildiv(T a, T b) { return (a + b - 1) / b; }
 
     //
     // Extension of std::vector enabling .at<float>(...), etc.
@@ -72,9 +70,9 @@ namespace simd {
 
         template <typename S = T> size_type size() const { return base_cast<S>()->size(); }
         template <typename S = T> size_type capacity() const { return base_cast<S>()->capacity(); }
-        template <typename S = T> void reserve(size_type i) { base_t::reserve(ceildiv(i, sizeof(T) / sizeof(S))); }
-        template <typename S = T> void resize(size_type i) { base_t::resize(ceildiv(i, sizeof(T) / sizeof(S))); }
-        template <typename S = T> void resize(size_type i, const value_type& v) { base_t::resize(ceildiv(i, sizeof(T) / sizeof(S)), v); }
+        template <typename S = T> void reserve(size_type i) { base_t::reserve(div_ceil<sizeof(T) / sizeof(S)>(i)); }
+        template <typename S = T> void resize(size_type i) { base_t::resize(div_ceil<sizeof(T) / sizeof(S)>(i)); }
+        template <typename S = T> void resize(size_type i, const value_type& v) { base_t::resize(div_ceil<sizeof(T) / sizeof(S)>(i), v); }
     };
 
     using vector = basic_vector<simd_t>;

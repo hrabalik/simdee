@@ -51,6 +51,7 @@ namespace simd {
         // useful constants and types
         static const auto W = sizeof(mm_t) / sizeof(fp_t);
         using array_t = std::array<fp_t, W>;
+        using mask_array_t = std::array<bitmask_t, W>;
         using iterator = typename array_t::iterator;
         using reverse_iterator = typename array_t::reverse_iterator;
         using const_iterator = typename array_t::const_iterator;
@@ -94,7 +95,7 @@ namespace simd {
         };
 
         // data
-        union { mm_t mm; array_t f; };
+        union { mm_t mm; array_t f; mask_array_t i; };
 
         // constructor
         INL simd_base() {}

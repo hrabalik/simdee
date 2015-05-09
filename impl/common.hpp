@@ -30,6 +30,9 @@ namespace simd {
     template <typename T>
     struct horizontal_impl;
 
+    template <typename T>
+    struct allocator;
+
     //
     // SIMD type base class (with derived class as T, CRTP-style)
     //

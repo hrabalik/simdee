@@ -80,4 +80,4 @@ namespace simd {
     using vector = basic_vector<simd_t>;
 };
 
-#endif
+#endif // SIMDIFY_VECTOR

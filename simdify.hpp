@@ -60,20 +60,27 @@
 //
 namespace simd {
 #if defined(SIMDIFY_PREFER_AVX) && defined(SIMDIFY_AVX)
-using simd_t = avx;
+    using simd_t = avx;
 #elif defined(SIMDIFY_PREFER_SSE) && defined(SIMDIFY_SSE)
-using simd_t = sse;
+    using simd_t = sse;
 #elif defined(SIMDIFY_PREFER_FLT) && defined(SIMDIFY_FLT)
-using simd_t = flt;
+    using simd_t = flt;
 #elif defined(SIMDIFY_AVX)
-using simd_t = avx;
+    using simd_t = avx;
 #elif defined(SIMDIFY_SSE)
-using simd_t = sse;
+    using simd_t = sse;
 #elif defined(SIMDIFY_FLT)
-using simd_t = flt;
+    using simd_t = flt;
 #else
 #error "Simdify could not determine a suitable SIMD type as simd_t."
 #endif
+
+    //
+    // convenience shorthands
+    //
+    using T = simd_t;
+    const auto W = simd_t::W;
+
 }
 
 #endif // SIMDIFY

@@ -100,16 +100,6 @@ namespace simd {
         // constructor
         INL simd_base() {}
         INL simd_base(mm_t r) : mm(r) {}
-
-        // iteration
-        INL iterator begin() { return f.begin(); }
-        INL iterator end() { return f.end(); }
-        INL reverse_iterator rbegin() { return f.rbegin(); }
-        INL reverse_iterator rend() { return f.rend(); }
-        INL const_iterator cbegin() const { return f.cbegin(); }
-        INL const_iterator cend() const { return f.cend(); }
-        INL const_reverse_iterator crbegin() const { return f.crbegin(); }
-        INL const_reverse_iterator crend() const { return f.crend(); }
     };
 
     //

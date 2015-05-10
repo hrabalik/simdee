@@ -31,9 +31,6 @@ namespace simd {
             x = T(other.x); y = T(other.y); z = T(other.z);
             return *this;
         }
-
-        INL const T min() const { return min(x, min(y, z)); }
-        INL const T max() const { return max(x, max(y, z)); }
     };
 
     template <typename T>

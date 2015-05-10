@@ -14,6 +14,8 @@ namespace simd {
         using fp_t = typename T::fp_t;
         using bitmask_t = typename T::bitmask_t;
 
+        T x, y, z;
+
         INL basic_vec3() = default;
         INL basic_vec3(const basic_vec3& other) = default;
         INL basic_vec3& operator=(const basic_vec3& other) = default;
@@ -30,7 +32,8 @@ namespace simd {
             return *this;
         }
 
-        T x, y, z;
+        INL const T min() const { return min(x, min(y, z)); }
+        INL const T max() const { return max(x, max(y, z)); }
     };
 
     template <typename T>

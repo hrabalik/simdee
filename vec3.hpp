@@ -14,21 +14,34 @@ namespace simd {
         using fp_t = typename T::fp_t;
         using bitmask_t = typename T::bitmask_t;
 
-        basic_vec3() = default;
-        basic_vec3(const basic_vec3& other) = default;
-        basic_vec3& operator=(const basic_vec3& other) = default;
+        INL basic_vec3() = default;
+        INL basic_vec3(const basic_vec3& other) = default;
+        INL basic_vec3& operator=(const basic_vec3& other) = default;
+        
+        INL basic_vec3(const T& tx, const T& ty, const T& tz) :
+            x(tx), y(ty), z(tz) {}
 
         template <typename S>
-        basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
+        INL basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
 
         template <typename S>
-        basic_vec3& operator=(const S& other) {
+        INL basic_vec3& operator=(const S& other) {
             x = T(other.x); y = T(other.y); z = T(other.z);
             return *this;
         }
 
         T x, y, z;
     };
+
+    template <typename T>
+    INL const basic_vec3<T> cross(const basic_vec3<T>& l, const basic_vec3<T>& r) {
+        return{ l.y*r.z - l.z*r.y, l.z*r.x - l.x*r.z, l.x*r.y - l.y*r.x };
+    }
+
+    template <typename T>
+    INL const T dot(const basic_vec3<T>& l, const basic_vec3<T>& r) {
+        return l.x*r.x + l.y*r.y + l.z*r.z;
+    }
 
     using vec3 = basic_vec3<simd_t>;
 }

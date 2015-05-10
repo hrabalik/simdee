@@ -43,6 +43,39 @@ namespace simd {
         return l.x*r.x + l.y*r.y + l.z*r.z;
     }
 
+    // bitwise not with lazy evaluation
+    template <typename T>
+    struct bitwise_not<basic_vec3<T>> {
+        using tp = basic_vec3<T>;
+        tp neg;
+        INL explicit bitwise_not(const tp& r) : neg(r) {}
+        INL operator const tp() const { return{ ~neg.x, ~neg.y, ~neg.z }; }
+    };
+
+    template <typename T>
+    INL const basic_vec3<T> operator&(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x & r.x, l.y & r.y, l.z & r.z }; }
+    INL const basic_vec3<T> operator|(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x | r.x, l.y | r.y, l.z | r.z }; }
+    INL const basic_vec3<T> operator^(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x ^ r.x, l.y ^ r.y, l.z ^ r.z }; }
+    INL const bitwise_not<basic_vec3<T>> operator~(const basic_vec3<T>& l) { return bitwise_not<basic_vec3<T>>(l); }
+    INL const basic_vec3<T> operator<(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x < r.x, l.y < r.y, l.z < r.z }; }
+    INL const basic_vec3<T> operator>(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x > r.x, l.y > r.y, l.z > r.z }; }
+    INL const basic_vec3<T> operator<=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x <= r.x, l.y <= r.y, l.z <= r.z }; }
+    INL const basic_vec3<T> operator>=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x >= r.x, l.y >= r.y, l.z >= r.z }; }
+    INL const basic_vec3<T> operator==(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x == r.x, l.y == r.y, l.z == r.z }; }
+    INL const basic_vec3<T> operator!=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x != r.x, l.y != r.y, l.z != r.z }; }
+    INL const basic_vec3<T> operator+(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x + r.x, l.y + r.y, l.z + r.z }; }
+    INL const basic_vec3<T> operator-(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x - r.x, l.y - r.y, l.z - r.z }; }
+    INL const basic_vec3<T> operator*(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x * r.x, l.y * r.y, l.z * r.z }; }
+    INL const basic_vec3<T> operator/(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x / r.x, l.y / r.y, l.z / r.z }; }
+
+    INL const basic_vec3<T> min(const basic_vec3<T>& l, const basic_vec3<T>& r) {
+        return{ min(l.x, r.x), min(l.y, r.y), min(l.z, r.z) };
+    }
+
+    INL const basic_vec3<T> max(const basic_vec3<T>& l, const basic_vec3<T>& r) {
+        return{ max(l.x, r.x), max(l.y, r.y), max(l.z, r.z) };
+    }
+
     using vec3 = basic_vec3<simd_t>;
 }
 

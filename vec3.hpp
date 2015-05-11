@@ -31,6 +31,20 @@ namespace simd {
             x = T(other.x); y = T(other.y); z = T(other.z);
             return *this;
         }
+
+        // the value received by subscript behaves as a triple of floats x, y, z
+        struct view {
+            fp_t& x; fp_t& y; fp_t& z;
+
+            INL view(basic_vec3& v, std::size_t i) : x(v.x.f[i]), y(v.y.f[i]), z(v.z.f[i]) {}
+
+            template <typename S>
+            INL view& operator=(const S& other) {
+                x = other.x; y = other.y; z = other.z;
+            }
+        };
+
+        INL view operator[](std::size_t i) { return view(*this, i); }
     };
 
     template <typename T>

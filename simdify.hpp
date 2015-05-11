@@ -76,9 +76,8 @@ namespace simd {
 #endif
 
     //
-    // convenience shorthands
+    // convenience shorthand
     //
-    using T = simd_t;
     const auto W = simd_t::W;
 
 }

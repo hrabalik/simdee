@@ -19,12 +19,14 @@ namespace simd {
         INL basic_vec3() = default;
         INL basic_vec3(const basic_vec3& other) = default;
         INL basic_vec3& operator=(const basic_vec3& other) = default;
+
+        INL explicit basic_vec3(const T& t) : x(t), y(t), z(t) {}
         
         INL basic_vec3(const T& tx, const T& ty, const T& tz) :
             x(tx), y(ty), z(tz) {}
 
         template <typename S>
-        INL basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
+        INL explicit basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
 
         template <typename S>
         INL basic_vec3& operator=(const S& other) {
@@ -41,10 +43,17 @@ namespace simd {
             template <typename S>
             INL view& operator=(const S& other) {
                 x = other.x; y = other.y; z = other.z;
+                return *this;
+            }
+
+            template <typename S>
+            INL explicit operator S() const {
+                return S(x, y, z);
             }
         };
 
         INL view operator[](std::size_t i) { return view(*this, i); }
+        INL const view operator[](std::size_t i) const { return view(*this, i); }
     };
 
     template <typename T>

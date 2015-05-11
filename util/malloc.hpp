@@ -60,12 +60,12 @@ namespace simd {
         T* allocate(std::size_t count) const SIMDIFY_NOEXCEPT {
             T* res;
             std::size_t ceil = ((count + Align - 1) / Align) * Align;
-            aligned_malloc(res, ceil, Align);
+            simd::aligned_malloc(res, ceil, Align);
             return res;
         }
 
         void deallocate(T* ptr, std::size_t) const SIMDIFY_NOEXCEPT {
-            aligned_free(ptr);
+            simd::aligned_free(ptr);
         }
 
         // destroy is a no-op if possible

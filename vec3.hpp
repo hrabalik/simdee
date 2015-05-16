@@ -19,12 +19,14 @@ namespace simd {
         INL basic_vec3() = default;
         INL basic_vec3(const basic_vec3& other) = default;
         INL basic_vec3& operator=(const basic_vec3& other) = default;
+
+        INL explicit basic_vec3(const T& t) : x(t), y(t), z(t) {}
         
         INL basic_vec3(const T& tx, const T& ty, const T& tz) :
             x(tx), y(ty), z(tz) {}
 
         template <typename S>
-        INL basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
+        INL explicit basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
 
         template <typename S>
         INL basic_vec3& operator=(const S& other) {
@@ -41,10 +43,17 @@ namespace simd {
             template <typename S>
             INL view& operator=(const S& other) {
                 x = other.x; y = other.y; z = other.z;
+                return *this;
+            }
+
+            template <typename S>
+            INL explicit operator S() const {
+                return S(x, y, z);
             }
         };
 
         INL view operator[](std::size_t i) { return view(*this, i); }
+        INL const view operator[](std::size_t i) const { return view(*this, i); }
     };
 
     template <typename T>
@@ -66,26 +75,27 @@ namespace simd {
         INL operator const tp() const { return{ ~neg.x, ~neg.y, ~neg.z }; }
     };
 
+    template <typename T> INL const basic_vec3<T> operator&(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x & r.x, l.y & r.y, l.z & r.z }; }
+    template <typename T> INL const basic_vec3<T> operator|(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x | r.x, l.y | r.y, l.z | r.z }; }
+    template <typename T> INL const basic_vec3<T> operator^(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x ^ r.x, l.y ^ r.y, l.z ^ r.z }; }
+    template <typename T> INL const bitwise_not<basic_vec3<T>> operator~(const basic_vec3<T>& l) { return bitwise_not<basic_vec3<T>>(l); }
+    template <typename T> INL const basic_vec3<T> operator<(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x < r.x, l.y < r.y, l.z < r.z }; }
+    template <typename T> INL const basic_vec3<T> operator>(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x > r.x, l.y > r.y, l.z > r.z }; }
+    template <typename T> INL const basic_vec3<T> operator<=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x <= r.x, l.y <= r.y, l.z <= r.z }; }
+    template <typename T> INL const basic_vec3<T> operator>=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x >= r.x, l.y >= r.y, l.z >= r.z }; }
+    template <typename T> INL const basic_vec3<T> operator==(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x == r.x, l.y == r.y, l.z == r.z }; }
+    template <typename T> INL const basic_vec3<T> operator!=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x != r.x, l.y != r.y, l.z != r.z }; }
+    template <typename T> INL const basic_vec3<T> operator+(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x + r.x, l.y + r.y, l.z + r.z }; }
+    template <typename T> INL const basic_vec3<T> operator-(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x - r.x, l.y - r.y, l.z - r.z }; }
+    template <typename T> INL const basic_vec3<T> operator*(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x * r.x, l.y * r.y, l.z * r.z }; }
+    template <typename T> INL const basic_vec3<T> operator/(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x / r.x, l.y / r.y, l.z / r.z }; }
+    
     template <typename T>
-    INL const basic_vec3<T> operator&(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x & r.x, l.y & r.y, l.z & r.z }; }
-    INL const basic_vec3<T> operator|(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x | r.x, l.y | r.y, l.z | r.z }; }
-    INL const basic_vec3<T> operator^(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x ^ r.x, l.y ^ r.y, l.z ^ r.z }; }
-    INL const bitwise_not<basic_vec3<T>> operator~(const basic_vec3<T>& l) { return bitwise_not<basic_vec3<T>>(l); }
-    INL const basic_vec3<T> operator<(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x < r.x, l.y < r.y, l.z < r.z }; }
-    INL const basic_vec3<T> operator>(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x > r.x, l.y > r.y, l.z > r.z }; }
-    INL const basic_vec3<T> operator<=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x <= r.x, l.y <= r.y, l.z <= r.z }; }
-    INL const basic_vec3<T> operator>=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x >= r.x, l.y >= r.y, l.z >= r.z }; }
-    INL const basic_vec3<T> operator==(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x == r.x, l.y == r.y, l.z == r.z }; }
-    INL const basic_vec3<T> operator!=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x != r.x, l.y != r.y, l.z != r.z }; }
-    INL const basic_vec3<T> operator+(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x + r.x, l.y + r.y, l.z + r.z }; }
-    INL const basic_vec3<T> operator-(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x - r.x, l.y - r.y, l.z - r.z }; }
-    INL const basic_vec3<T> operator*(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x * r.x, l.y * r.y, l.z * r.z }; }
-    INL const basic_vec3<T> operator/(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x / r.x, l.y / r.y, l.z / r.z }; }
-
     INL const basic_vec3<T> min(const basic_vec3<T>& l, const basic_vec3<T>& r) {
         return{ min(l.x, r.x), min(l.y, r.y), min(l.z, r.z) };
     }
 
+    template <typename T>
     INL const basic_vec3<T> max(const basic_vec3<T>& l, const basic_vec3<T>& r) {
         return{ max(l.x, r.x), max(l.y, r.y), max(l.z, r.z) };
     }

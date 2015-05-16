@@ -5,6 +5,7 @@
 #include "util/malloc.hpp"
 #include "util/integral.hpp"
 #include <vector>
+#include <type_traits>
 
 namespace simd {
 

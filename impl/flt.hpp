@@ -41,9 +41,28 @@ namespace simd {
     // horizontal operations
     template <>
     struct horizontal_impl<flt> : horizontal_impl_base<flt>{
-        static INL uint find(const flt& in) { return 0; }
-        static INL bool any(const flt& in) { return in.mm != 0; }
-        static INL bool all(const flt& in) { return in.mm != 0; }
+        struct find_result_iterator : std::iterator<std::input_iterator_tag, uint> {
+            uint mask;
+
+            INL find_result_iterator(uint mask) : mask(mask) {}
+            INL uint operator*() const { return 0; }
+            INL uint operator->() const { return 0; }
+            INL find_result_iterator& operator++() { mask = 0; return *this; }
+            INL find_result_iterator operator++(int) { find_result_iterator r{ mask }; mask = 0; return r; }
+            INL bool operator!=(const find_result_iterator& rhs) const { return mask != rhs.mask; }
+        };
+
+        struct find_result {
+            uint field;
+
+            SIMDIFY_FORCE_INLINE find_result(uint field) : field(field) {}
+            SIMDIFY_FORCE_INLINE find_result_iterator begin() const { return field; }
+            SIMDIFY_FORCE_INLINE find_result_iterator end() const { return 0; }
+        };
+
+        static INL find_result find(const flt& in) { return in.i[0] != 0; }
+        static INL bool any(const flt& in) { return in.i[0] != 0; }
+        static INL bool all(const flt& in) { return in.i[0] != 0; }
 
         template <binary_op_t F>
         static INL const flt reduce_vector(const flt& in) { return in; }

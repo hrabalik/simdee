@@ -54,8 +54,8 @@ namespace simd {
 
     // horizontal operations
     template <>
-    struct horizontal_impl<avx> : horizontal_impl_base<avx> {
-        static INL uint find(const avx& in) { return ls1b(uint(_mm256_movemask_ps(in.mm))); }
+    struct horizontal_impl<avx> : horizontal_impl_base<avx>{
+        static INL bit_field find(const avx& in) { return uint(_mm256_movemask_ps(in.mm)); }
         static INL bool any(const avx& in) { return _mm256_movemask_ps(in.mm) != 0; }
         static INL bool all(const avx& in) { return _mm256_movemask_ps(in.mm) == 0xFF; }
 

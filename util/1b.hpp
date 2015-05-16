@@ -2,6 +2,7 @@
 #define SIMDIFY_UTIL_1B
 
 #include "inline.hpp"
+#include <iterator>
 
 #if defined(__GNUC__) // GCC, Clang
 
@@ -43,5 +44,31 @@ namespace simd {
 #error "util_1b.h: incompatible compiler"
 
 #endif
+
+namespace simd {
+
+    // provides indices of set (1) bits, ordered from least significat to most significant 
+    struct bit_iterator : std::iterator<std::input_iterator_tag, uint> {
+        uint mask;
+
+        static const uint END = 0;
+
+        SIMDIFY_FORCE_INLINE bit_iterator(uint mask) : mask(mask) {}
+        SIMDIFY_FORCE_INLINE uint operator*() const { return ls1b(mask); }
+        SIMDIFY_FORCE_INLINE uint operator->() const { return ls1b(mask); }
+        SIMDIFY_FORCE_INLINE bit_iterator& operator++() { mask = mask & (mask - 1); return *this; }
+        SIMDIFY_FORCE_INLINE bit_iterator operator++(int) { bit_iterator r = mask; operator++(); return r; }
+        SIMDIFY_FORCE_INLINE bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }
+    };
+
+    struct bit_field {
+        uint field;
+
+        SIMDIFY_FORCE_INLINE bit_field(uint field) : field(field) {}
+        SIMDIFY_FORCE_INLINE bit_iterator begin() const { return field; }
+        SIMDIFY_FORCE_INLINE bit_iterator end() const { return 0; }
+    };
+
+}
 
 #endif // SIMDIFY_UTIL_1B

@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <array>
 #include <utility>
+#include <iterator>
 
 #define INL SIMDIFY_FORCE_INLINE
 

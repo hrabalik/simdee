@@ -47,11 +47,9 @@ namespace simd {
 
 namespace simd {
 
-    // provides indices of set (1) bits, ordered from least significat to most significant 
+    // provides indices of set (1) bits, ordered from least significant to most significant 
     struct bit_iterator : std::iterator<std::input_iterator_tag, uint> {
         uint mask;
-
-        static const uint END = 0;
 
         SIMDIFY_FORCE_INLINE bit_iterator(uint mask) : mask(mask) {}
         SIMDIFY_FORCE_INLINE uint operator*() const { return ls1b(mask); }

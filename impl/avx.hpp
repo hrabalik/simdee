@@ -30,7 +30,7 @@ namespace simd {
     struct bitwise_not<avx> {
         avx neg;
         INL explicit bitwise_not(const avx& r) : neg(r) {}
-        INL operator const avx() const { return _mm256_andnot_ps(avx(ZERO).mm, neg.mm); }
+        INL operator const avx() const { return _mm256_andnot_ps(neg.mm, avx(ALL_BITS).mm); }
     };
 
     INL const avx operator&(const avx& l, const avx& r) { return _mm256_and_ps(l.mm, r.mm); }

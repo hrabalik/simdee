@@ -43,7 +43,7 @@ namespace simd {
     struct bitwise_not<sse> {
         sse neg;
         INL explicit bitwise_not(const sse& r) : neg(r) {}
-        INL operator const sse() const { return _mm_andnot_ps(sse(ZERO).mm, neg.mm); }
+        INL operator const sse() const { return _mm_andnot_ps(neg.mm, sse(ALL_BITS).mm); }
     };
 
     INL const sse operator&(const sse& l, const sse& r) { return _mm_and_ps(l.mm, r.mm); }

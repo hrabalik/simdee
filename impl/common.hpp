@@ -124,11 +124,17 @@ namespace simd {
     template <typename T> INL const T signum(const T& in) { return cond(in > T(0), T(1), T(-1)); }
 
     template<typename T>
-    INL const T operator&(const T& l, const bitwise_not<T>& r) { return andnot(l, r.neg); }
+    INL const T operator~(const bitwise_not<T>& l) { return l.neg; }
     template<typename T>
-    INL const T operator&(const bitwise_not<T>& r, const T& l) { return andnot(l, r.neg); }
+    INL const T operator&(const bitwise_not<T>& l, const T& r) { return andnot(l.neg, r); }
     template<typename T>
-    INL const T operator&(const bitwise_not<T>& l, const bitwise_not<T>& r) { return andnot(l, r.neg); }
+    INL const T operator&(const T& l, const bitwise_not<T>& r) { return andnot(r.neg, l); }
+    template<typename T>
+    INL const bitwise_not<T> operator&(const bitwise_not<T>& l, const bitwise_not<T>& r) { return bitwise_not<T>(l.neg | r.neg); }
+    template<typename T>
+    INL const bitwise_not<T> operator|(const bitwise_not<T>& l, const bitwise_not<T>& r) { return bitwise_not<T>(l.neg & r.neg); }
+    template<typename T>
+    INL const T operator^(const bitwise_not<T>& l, const bitwise_not<T>& r) { return l.neg ^ r.neg; }
 
     template <typename T>
     INL const T apply_mask(const T& in, const T& mask, zero_t zero_neutral_value) {

@@ -14,6 +14,7 @@ namespace simd {
     public:
         // base class
         using base_t = std::array<T, SZ>;
+        using size_type = typename std::array<T, SZ>::size_type;
 
         // fake base class type that aliases this class (unless S == T, then the actual base class type is returned)
         template <typename S>

@@ -10,15 +10,15 @@ namespace simd {
     // least significant "1" bit index; result undefined if in == 0
     SIMDIFY_FORCE_INLINE int ls1b(unsigned int in) { return __builtin_ctz(in); }
     // most significant "1" bit index; result undefined if in == 0
-    SIMDIFY_FORCE_INLINE int ms1b(unsigned int in) { return (8*sizeof(unsigned int) - 1) - __builtin_clz(in); }
+    SIMDIFY_FORCE_INLINE int ms1b(unsigned int in) { return (8*int(sizeof(unsigned int)) - 1) - __builtin_clz(in); }
     // least significant "1" bit index; result undefined if in == 0
     SIMDIFY_FORCE_INLINE int ls1b(unsigned long in) { return __builtin_ctzl(in); }
     // most significant "1" bit index; result undefined if in == 0
-    SIMDIFY_FORCE_INLINE int ms1b(unsigned long in) { return (8*sizeof(unsigned long) - 1) - __builtin_clzl(in); }
+    SIMDIFY_FORCE_INLINE int ms1b(unsigned long in) { return (8*int(sizeof(unsigned long)) - 1) - __builtin_clzl(in); }
     // least significant "1" bit index; result undefined if in == 0
     SIMDIFY_FORCE_INLINE int ls1b(unsigned long long in) { return __builtin_ctzll(in); }
     // most significant "1" bit index; result undefined if in == 0
-    SIMDIFY_FORCE_INLINE int ms1b(unsigned long long in) { return (8*sizeof(unsigned long long) - 1) - __builtin_clzll(in); }
+    SIMDIFY_FORCE_INLINE int ms1b(unsigned long long in) { return (8*int(sizeof(unsigned long long)) - 1) - __builtin_clzll(in); }
 }
 
 #elif defined(_MSC_VER) // Visual Studio
@@ -47,13 +47,13 @@ namespace simd {
 
 namespace simd {
 
-    // provides indices of set (1) bits, ordered from least significant to most significant 
+    // provides indices of set (1) bits, ordered from least significant to most significant
     struct bit_iterator : std::iterator<std::input_iterator_tag, uint> {
         uint mask;
 
-        SIMDIFY_FORCE_INLINE bit_iterator(uint mask) : mask(mask) {}
-        SIMDIFY_FORCE_INLINE uint operator*() const { return ls1b(mask); }
-        SIMDIFY_FORCE_INLINE uint operator->() const { return ls1b(mask); }
+        SIMDIFY_FORCE_INLINE bit_iterator(uint mask_) : mask(mask_) {}
+        SIMDIFY_FORCE_INLINE uint operator*() const { return uint(ls1b(mask)); }
+        SIMDIFY_FORCE_INLINE uint operator->() const { return uint(ls1b(mask)); }
         SIMDIFY_FORCE_INLINE bit_iterator& operator++() { mask = mask & (mask - 1); return *this; }
         SIMDIFY_FORCE_INLINE bit_iterator operator++(int) { bit_iterator r = mask; operator++(); return r; }
         SIMDIFY_FORCE_INLINE bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }
@@ -62,7 +62,7 @@ namespace simd {
     struct bit_field {
         uint field;
 
-        SIMDIFY_FORCE_INLINE bit_field(uint field) : field(field) {}
+        SIMDIFY_FORCE_INLINE bit_field(uint field_) : field(field_) {}
         SIMDIFY_FORCE_INLINE bit_iterator begin() const { return field; }
         SIMDIFY_FORCE_INLINE bit_iterator end() const { return 0; }
     };

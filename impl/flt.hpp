@@ -44,7 +44,7 @@ namespace simd {
         struct find_result_iterator : std::iterator<std::input_iterator_tag, uint> {
             uint mask;
 
-            INL find_result_iterator(uint mask) : mask(mask) {}
+            INL find_result_iterator(uint mask_) : mask(mask_) {}
             INL uint operator*() const { return 0; }
             INL uint operator->() const { return 0; }
             INL find_result_iterator& operator++() { mask = 0; return *this; }
@@ -55,7 +55,7 @@ namespace simd {
         struct find_result {
             uint field;
 
-            SIMDIFY_FORCE_INLINE find_result(uint field) : field(field) {}
+            SIMDIFY_FORCE_INLINE find_result(uint field_) : field(field_) {}
             SIMDIFY_FORCE_INLINE find_result_iterator begin() const { return field; }
             SIMDIFY_FORCE_INLINE find_result_iterator end() const { return 0; }
         };

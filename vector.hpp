@@ -13,10 +13,12 @@ namespace simd {
     // Extension of std::vector enabling .at<float>(...), etc.
     //
     template <typename T>
-    class basic_vector : public std::vector<T, aligned_allocator<T, sizeof T>> {
+    class basic_vector : public std::vector<T, aligned_allocator<T, sizeof(T)>> {
     public:
         // base class
-        using base_t = std::vector<T, aligned_allocator<T, sizeof T>>;
+        using base_t = std::vector<T, aligned_allocator<T, sizeof(T)>>;
+        using size_type = typename base_t::size_type;
+        using value_type = typename base_t::value_type;
 
         // fake base class type that is an alias of the actual base class with an allocator that throws when used
         // (or the actual base class type, if S == T)

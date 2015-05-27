@@ -15,15 +15,15 @@ namespace simd {
         using mm_t = flt::mm_t;
         using fp_t = flt::fp_t;
         using bitmask_t = flt::bitmask_t;
-        
+
         union {
             struct { flt x, y, z, extra; };
             struct { sse mm; };
         };
 
         INL basic_vec3() = default;
-        INL basic_vec3(const basic_vec3& other) = default;
-        INL basic_vec3& operator=(const basic_vec3& other) = default;
+        INL basic_vec3(const basic_vec3& other) : mm(other.mm) {}
+        INL basic_vec3& operator=(const basic_vec3& other) { mm = other.mm; return *this; }
 
         INL explicit basic_vec3(const flt& t) : x(t), y(t), z(t) {}
         INL explicit basic_vec3(fp_t t) : x(t), y(t), z(t) {}
@@ -53,7 +53,7 @@ namespace simd {
     struct bitwise_not<vec3f> {
         vec3f neg;
         INL explicit bitwise_not(const vec3f& r) : neg(r) {}
-        INL operator const vec3f() const { return vec3f(sse(~neg.mm)); }
+        INL explicit operator const vec3f() const { return vec3f(sse(~neg.mm)); }
     };
 
     INL const vec3f operator&(const vec3f& l, const vec3f& r) { return vec3f(l.mm & r.mm); }

@@ -20,10 +20,10 @@ namespace simd {
     //
     // types for overload selection/disambiguation
     //
-    const struct zero_t {} ZERO;
-    const struct all_bits_t {} ALL_BITS;
-    const struct abs_mask_t {} ABS_MASK;
-    const struct sign_bit_t {} SIGN_BIT;
+    struct zero_t {}; extern zero_t ZERO;
+    struct all_bits_t {}; extern all_bits_t ALL_BITS;
+    struct abs_mask_t {}; extern abs_mask_t ABS_MASK;
+    struct sign_bit_t {}; extern sign_bit_t SIGN_BIT;
 
     //
     // forward declarations
@@ -78,10 +78,10 @@ namespace simd {
             // constructors
             INL explicit mask_t() {}
             INL explicit mask_t(bitmask_t r) : b(r) {}
-            INL mask_t(zero_t r) : b(ZERO_BIT_MASK) {}
-            INL mask_t(all_bits_t r) : b(ALL_BITS_MASK) {}
-            INL mask_t(abs_mask_t r) : b(ABS_BIT_MASK) {}
-            INL mask_t(sign_bit_t r) : b(SIGN_BIT_MASK) {}
+            INL mask_t(zero_t) : b(ZERO_BIT_MASK) {}
+            INL mask_t(all_bits_t) : b(ALL_BITS_MASK) {}
+            INL mask_t(abs_mask_t) : b(ABS_BIT_MASK) {}
+            INL mask_t(sign_bit_t) : b(SIGN_BIT_MASK) {}
 
             // bitmask_t -- fp_t conversion
             INL static bitmask_t tob(fp_t l) { mask_t m; m.f = l; return m.b; }
@@ -137,7 +137,7 @@ namespace simd {
     INL const T operator^(const bitwise_not<T>& l, const bitwise_not<T>& r) { return l.neg ^ r.neg; }
 
     template <typename T>
-    INL const T apply_mask(const T& in, const T& mask, zero_t zero_neutral_value) {
+    INL const T apply_mask(const T& in, const T& mask, zero_t) {
         return cond(mask, in, T(ZERO));
     }
     template <typename T>

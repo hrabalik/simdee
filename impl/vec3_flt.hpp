@@ -17,20 +17,20 @@ namespace simd {
         using bitmask_t = flt::bitmask_t;
 
         union {
-            struct { flt x, y, z, extra; };
-            struct { sse mm; };
+            struct { fp_t x, y, z, extra; };
+            sse mm;
         };
 
         INL basic_vec3() = default;
         INL basic_vec3(const basic_vec3& other) : mm(other.mm) {}
         INL basic_vec3& operator=(const basic_vec3& other) { mm = other.mm; return *this; }
 
-        INL explicit basic_vec3(const flt& t) : x(t), y(t), z(t) {}
+        INL explicit basic_vec3(const flt& t) : x(t.mm), y(t.mm), z(t.mm) {}
         INL explicit basic_vec3(fp_t t) : x(t), y(t), z(t) {}
         INL explicit basic_vec3(const sse& w) : mm(w) {}
 
         INL basic_vec3(const flt& tx, const flt& ty, const flt& tz) :
-            x(tx), y(ty), z(tz) {}
+            x(tx.mm), y(ty.mm), z(tz.mm) {}
         INL basic_vec3(fp_t tx, fp_t ty, fp_t tz) :
             x(tx), y(ty), z(tz) {}
 
@@ -39,7 +39,7 @@ namespace simd {
 
         template <typename S>
         INL basic_vec3& operator=(const S& other) {
-            x = flt(other.x); y = flt(other.y); z = flt(other.z);
+            x = other.x; y = other.y; z = other.z;
             return *this;
         }
 

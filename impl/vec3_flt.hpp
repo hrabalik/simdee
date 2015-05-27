@@ -40,6 +40,9 @@ namespace simd {
             return *this;
         }
 
+        INL basic_vec3& operator[](std::size_t) { return *this; }
+        INL const basic_vec3& operator[](std::size_t) const { return *this; }
+
         INL sse& as_sse() { return reinterpret_cast<sse&>(x); }
         INL const sse& as_sse() const { return reinterpret_cast<const sse&>(x); }
     };

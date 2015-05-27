@@ -18,7 +18,7 @@ namespace simd {
 
         union {
             struct { fp_t x, y, z, extra; };
-            sse mm;
+            sse::mm_t mm;
         };
 
         INL basic_vec3() = default;
@@ -27,7 +27,7 @@ namespace simd {
 
         INL explicit basic_vec3(const flt& t) : x(t.mm), y(t.mm), z(t.mm) {}
         INL explicit basic_vec3(fp_t t) : x(t), y(t), z(t) {}
-        INL explicit basic_vec3(const sse& w) : mm(w) {}
+        INL explicit basic_vec3(const sse& w) : mm(w.mm) {}
 
         INL basic_vec3(const flt& tx, const flt& ty, const flt& tz) :
             x(tx.mm), y(ty.mm), z(tz.mm) {}

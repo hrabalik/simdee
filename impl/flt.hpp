@@ -23,12 +23,12 @@ namespace simd {
     INL const flt operator|(const flt& l, const flt& r) { return flt::mask_t::orf(l.mm, r.mm); }
     INL const flt operator^(const flt& l, const flt& r) { return flt::mask_t::xorf(l.mm, r.mm); }
     INL const flt operator~(const flt& l) { return flt::mask_t::notf(l.mm); }
-    INL const flt operator<(const flt& l, const flt& r) { return l.mm < r.mm ? flt(ALL_BITS) : flt(ZERO); }
-    INL const flt operator>(const flt& l, const flt& r) { return l.mm > r.mm ? flt(ALL_BITS) : flt(ZERO); }
-    INL const flt operator<=(const flt& l, const flt& r) { return l.mm <= r.mm ? flt(ALL_BITS) : flt(ZERO); }
-    INL const flt operator>=(const flt& l, const flt& r) { return l.mm >= r.mm ? flt(ALL_BITS) : flt(ZERO); }
-    INL const flt operator==(const flt& l, const flt& r) { return l.mm == r.mm ? flt(ALL_BITS) : flt(ZERO); }
-    INL const flt operator!=(const flt& l, const flt& r) { return l.mm != r.mm ? flt(ALL_BITS) : flt(ZERO); }
+    INL const flt operator<(const flt& l, const flt& r) { return l.mm < r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
+    INL const flt operator>(const flt& l, const flt& r) { return l.mm > r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
+    INL const flt operator<=(const flt& l, const flt& r) { return l.mm <= r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
+    INL const flt operator>=(const flt& l, const flt& r) { return l.mm >= r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
+    INL const flt operator==(const flt& l, const flt& r) { return l.mm == r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
+    INL const flt operator!=(const flt& l, const flt& r) { return l.mm != r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
     INL const flt operator+(const flt& l, const flt& r) { return l.mm + r.mm; }
     INL const flt operator-(const flt& l, const flt& r) { return l.mm - r.mm; }
     INL const flt operator*(const flt& l, const flt& r) { return l.mm * r.mm; }

@@ -20,10 +20,10 @@ namespace simd {
     //
     // types for overload selection/disambiguation
     //
-    struct zero_t {}; extern zero_t ZERO;
-    struct all_bits_t {}; extern all_bits_t ALL_BITS;
-    struct abs_mask_t {}; extern abs_mask_t ABS_MASK;
-    struct sign_bit_t {}; extern sign_bit_t SIGN_BIT;
+    struct zero_t {};
+    struct all_bits_t {};
+    struct abs_mask_t {};
+    struct sign_bit_t {};
 
     //
     // forward declarations
@@ -138,7 +138,7 @@ namespace simd {
 
     template <typename T>
     INL const T apply_mask(const T& in, const T& mask, zero_t) {
-        return cond(mask, in, T(ZERO));
+        return cond(mask, in, T(zero_t{}));
     }
     template <typename T>
     INL const T apply_mask(const T& in, const T& mask, typename T::fp_t neutral_value) {
@@ -212,7 +212,7 @@ namespace simd {
             return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<fp_t>::min());
         }
         static INL fp_t sum_with_mask(const T& in, const T& mask) {
-            return reduce_with_mask<ops::add_>(in, mask, ZERO);
+            return reduce_with_mask<ops::add_>(in, mask, zero_t{});
         }
         static INL fp_t product_with_mask(const T& in, const T& mask) {
             return reduce_with_mask<ops::add_>(in, mask, fp_t(1));

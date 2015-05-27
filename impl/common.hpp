@@ -119,9 +119,9 @@ namespace simd {
     template <typename T> INL T& operator -=(T& l, const T& r) { l = l - r; return l; }
     template <typename T> INL T& operator *=(T& l, const T& r) { l = l * r; return l; }
     template <typename T> INL T& operator /=(T& l, const T& r) { l = l / r; return l; }
-    template <typename T> INL const T abs(const T& in) { return in & T(ABS_MASK); }
-    template <typename T> INL const T signbit(const T& in) { return in & T(SIGN_BIT); }
-    template <typename T> INL const T signum(const T& in) { return cond(in > T(0), T(1), T(-1)); }
+    template <typename T> INL const T abs(const T& in) { return in & T(abs_mask_t{}); }
+    template <typename T> INL const T signbit(const T& in) { return in & T(sign_bit_t{}); }
+    template <typename T> INL const T signum(const T& in) { return cond(in > T(zero_t{}), T(1), T(-1)); }
 
     template<typename T>
     INL const T operator~(const bitwise_not<T>& l) { return l.neg; }

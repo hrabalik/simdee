@@ -16,22 +16,18 @@ namespace simd {
         using fp_t = flt::fp_t;
         using bitmask_t = flt::bitmask_t;
 
-        union {
-            struct { fp_t x, y, z, extra; };
-            sse::mm_t mm;
-        };
+        flt x, y, z, extra;
 
         INL basic_vec3() = default;
-        INL basic_vec3(const basic_vec3& other) : mm(other.mm) {}
-        INL basic_vec3& operator=(const basic_vec3& other) { mm = other.mm; return *this; }
+        INL basic_vec3(const basic_vec3& other) { as_sse() = other.as_sse(); }
+        INL basic_vec3& operator=(const basic_vec3& other) { as_sse() = other.as_sse(); return *this; }
 
-        INL explicit basic_vec3(const flt& t) : x(t.mm), y(t.mm), z(t.mm) {}
+        INL explicit basic_vec3(const flt& t) : x(t), y(t), z(t) {}
         INL explicit basic_vec3(fp_t t) : x(t), y(t), z(t) {}
-        INL explicit basic_vec3(const sse& w) : mm(w.mm) {}
-        INL explicit basic_vec3(sse::mm_t& w) : mm(w) {}
+        INL explicit basic_vec3(const sse& w) {}
 
         INL basic_vec3(const flt& tx, const flt& ty, const flt& tz) :
-            x(tx.mm), y(ty.mm), z(tz.mm) {}
+            x(tx), y(ty), z(tz) {}
         INL basic_vec3(fp_t tx, fp_t ty, fp_t tz) :
             x(tx), y(ty), z(tz) {}
 
@@ -44,8 +40,8 @@ namespace simd {
             return *this;
         }
 
-        INL basic_vec3& operator[](std::size_t) { return *this; }
-        INL const basic_vec3& operator[](std::size_t) const { return *this; }
+        INL sse& as_sse() { return reinterpret_cast<sse&>(x); }
+        INL const sse& as_sse() const { return reinterpret_cast<const sse&>(x); }
     };
 
     using vec3f = basic_vec3<flt>;
@@ -54,27 +50,27 @@ namespace simd {
     struct bitwise_not<vec3f> {
         vec3f neg;
         INL explicit bitwise_not(const vec3f& r) : neg(r) {}
-        INL explicit operator const vec3f() const { return vec3f(sse(~neg.mm)); }
+        INL explicit operator const vec3f() const { return vec3f(sse(~neg.as_sse())); }
     };
 
-    INL const vec3f operator&(const vec3f& l, const vec3f& r) { return vec3f(l.mm & r.mm); }
-    INL const vec3f operator|(const vec3f& l, const vec3f& r) { return vec3f(l.mm | r.mm); }
-    INL const vec3f operator^(const vec3f& l, const vec3f& r) { return vec3f(l.mm ^ r.mm); }
+    INL const vec3f operator&(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() & r.as_sse()); }
+    INL const vec3f operator|(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() | r.as_sse()); }
+    INL const vec3f operator^(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() ^ r.as_sse()); }
     INL const bitwise_not<vec3f> operator~(const vec3f& l) { return bitwise_not<vec3f>(l); }
-    INL const vec3f operator<(const vec3f& l, const vec3f& r) { return vec3f(l.mm < r.mm); }
-    INL const vec3f operator>(const vec3f& l, const vec3f& r) { return vec3f(l.mm > r.mm); }
-    INL const vec3f operator<=(const vec3f& l, const vec3f& r) { return vec3f(l.mm <= r.mm); }
-    INL const vec3f operator>=(const vec3f& l, const vec3f& r) { return vec3f(l.mm >= r.mm); }
-    INL const vec3f operator==(const vec3f& l, const vec3f& r) { return vec3f(l.mm == r.mm); }
-    INL const vec3f operator!=(const vec3f& l, const vec3f& r) { return vec3f(l.mm != r.mm); }
-    INL const vec3f operator+(const vec3f& l, const vec3f& r) { return vec3f(l.mm + r.mm); }
-    INL const vec3f operator-(const vec3f& l, const vec3f& r) { return vec3f(l.mm - r.mm); }
-    INL const vec3f operator*(const vec3f& l, const vec3f& r) { return vec3f(l.mm * r.mm); }
-    INL const vec3f operator/(const vec3f& l, const vec3f& r) { return vec3f(l.mm / r.mm); }
-    INL const vec3f andnot(const vec3f& l, const vec3f& r) { return vec3f(andnot(l.mm, r.mm)); }
-    INL const vec3f min(const vec3f& l, const vec3f& r) { return vec3f(min(l.mm, r.mm)); }
-    INL const vec3f max(const vec3f& l, const vec3f& r) { return vec3f(max(l.mm, r.mm)); }
-    INL const vec3f cond(const vec3f& p, const vec3f& t, const vec3f& f) { return vec3f(cond(p.mm, t.mm, f.mm)); }
+    INL const vec3f operator<(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() < r.as_sse()); }
+    INL const vec3f operator>(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() > r.as_sse()); }
+    INL const vec3f operator<=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() <= r.as_sse()); }
+    INL const vec3f operator>=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() >= r.as_sse()); }
+    INL const vec3f operator==(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() == r.as_sse()); }
+    INL const vec3f operator!=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() != r.as_sse()); }
+    INL const vec3f operator+(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() + r.as_sse()); }
+    INL const vec3f operator-(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() - r.as_sse()); }
+    INL const vec3f operator*(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() * r.as_sse()); }
+    INL const vec3f operator/(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() / r.as_sse()); }
+    INL const vec3f andnot(const vec3f& l, const vec3f& r) { return vec3f(andnot(l.as_sse(), r.as_sse())); }
+    INL const vec3f min(const vec3f& l, const vec3f& r) { return vec3f(min(l.as_sse(), r.as_sse())); }
+    INL const vec3f max(const vec3f& l, const vec3f& r) { return vec3f(max(l.as_sse(), r.as_sse())); }
+    INL const vec3f cond(const vec3f& p, const vec3f& t, const vec3f& f) { return vec3f(cond(p.as_sse(), t.as_sse(), f.as_sse())); }
 }
 
 #undef INL

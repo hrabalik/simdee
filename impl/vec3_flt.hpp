@@ -6,8 +6,6 @@
 
 #ifdef SIMDIFY_SSE
 
-#define INL SIMDIFY_FORCE_INLINE
-
 namespace simd {
 
     template <>
@@ -18,33 +16,33 @@ namespace simd {
 
         flt x, y, z, extra;
 
-        INL basic_vec3() = default;
-        INL basic_vec3(const basic_vec3& other) { as_sse() = other.as_sse(); }
-        INL basic_vec3& operator=(const basic_vec3& other) { as_sse() = other.as_sse(); return *this; }
+        SIMDIFY_FORCE_INLINE basic_vec3() = default;
+        SIMDIFY_FORCE_INLINE basic_vec3(const basic_vec3& other) { as_sse() = other.as_sse(); }
+        SIMDIFY_FORCE_INLINE basic_vec3& operator=(const basic_vec3& other) { as_sse() = other.as_sse(); return *this; }
 
-        INL explicit basic_vec3(const flt& t) : x(t), y(t), z(t) {}
-        INL explicit basic_vec3(fp_t t) : x(t), y(t), z(t) {}
-        INL explicit basic_vec3(const sse& w) {}
+        SIMDIFY_FORCE_INLINE explicit basic_vec3(const flt& t) : x(t), y(t), z(t) {}
+        SIMDIFY_FORCE_INLINE explicit basic_vec3(fp_t t) : x(t), y(t), z(t) {}
+        SIMDIFY_FORCE_INLINE explicit basic_vec3(const sse& w) {}
 
-        INL basic_vec3(const flt& tx, const flt& ty, const flt& tz) :
+        SIMDIFY_FORCE_INLINE basic_vec3(const flt& tx, const flt& ty, const flt& tz) :
             x(tx), y(ty), z(tz) {}
-        INL basic_vec3(fp_t tx, fp_t ty, fp_t tz) :
+        SIMDIFY_FORCE_INLINE basic_vec3(fp_t tx, fp_t ty, fp_t tz) :
             x(tx), y(ty), z(tz) {}
 
         template <typename S>
-        INL explicit basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
+        SIMDIFY_FORCE_INLINE explicit basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
 
         template <typename S>
-        INL basic_vec3& operator=(const S& other) {
+        SIMDIFY_FORCE_INLINE basic_vec3& operator=(const S& other) {
             x = other.x; y = other.y; z = other.z;
             return *this;
         }
 
-        INL basic_vec3& operator[](std::size_t) { return *this; }
-        INL const basic_vec3& operator[](std::size_t) const { return *this; }
+        SIMDIFY_FORCE_INLINE basic_vec3& operator[](std::size_t) { return *this; }
+        SIMDIFY_FORCE_INLINE const basic_vec3& operator[](std::size_t) const { return *this; }
 
-        INL sse& as_sse() { return reinterpret_cast<sse&>(x); }
-        INL const sse& as_sse() const { return reinterpret_cast<const sse&>(x); }
+        SIMDIFY_FORCE_INLINE sse& as_sse() { return reinterpret_cast<sse&>(x); }
+        SIMDIFY_FORCE_INLINE const sse& as_sse() const { return reinterpret_cast<const sse&>(x); }
     };
 
     using vec3f = basic_vec3<flt>;
@@ -52,31 +50,29 @@ namespace simd {
     template <>
     struct bitwise_not<vec3f> {
         vec3f neg;
-        INL explicit bitwise_not(const vec3f& r) : neg(r) {}
-        INL explicit operator const vec3f() const { return vec3f(sse(~neg.as_sse())); }
+        SIMDIFY_FORCE_INLINE explicit bitwise_not(const vec3f& r) : neg(r) {}
+        SIMDIFY_FORCE_INLINE explicit operator const vec3f() const { return vec3f(sse(~neg.as_sse())); }
     };
 
-    INL const vec3f operator&(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() & r.as_sse()); }
-    INL const vec3f operator|(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() | r.as_sse()); }
-    INL const vec3f operator^(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() ^ r.as_sse()); }
-    INL const bitwise_not<vec3f> operator~(const vec3f& l) { return bitwise_not<vec3f>(l); }
-    INL const vec3f operator<(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() < r.as_sse()); }
-    INL const vec3f operator>(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() > r.as_sse()); }
-    INL const vec3f operator<=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() <= r.as_sse()); }
-    INL const vec3f operator>=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() >= r.as_sse()); }
-    INL const vec3f operator==(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() == r.as_sse()); }
-    INL const vec3f operator!=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() != r.as_sse()); }
-    INL const vec3f operator+(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() + r.as_sse()); }
-    INL const vec3f operator-(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() - r.as_sse()); }
-    INL const vec3f operator*(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() * r.as_sse()); }
-    INL const vec3f operator/(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() / r.as_sse()); }
-    INL const vec3f andnot(const vec3f& l, const vec3f& r) { return vec3f(andnot(l.as_sse(), r.as_sse())); }
-    INL const vec3f min(const vec3f& l, const vec3f& r) { return vec3f(min(l.as_sse(), r.as_sse())); }
-    INL const vec3f max(const vec3f& l, const vec3f& r) { return vec3f(max(l.as_sse(), r.as_sse())); }
-    INL const vec3f cond(const vec3f& p, const vec3f& t, const vec3f& f) { return vec3f(cond(p.as_sse(), t.as_sse(), f.as_sse())); }
+    SIMDIFY_FORCE_INLINE const vec3f operator&(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() & r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator|(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() | r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator^(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() ^ r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const bitwise_not<vec3f> operator~(const vec3f& l) { return bitwise_not<vec3f>(l); }
+    SIMDIFY_FORCE_INLINE const vec3f operator<(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() < r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator>(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() > r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator<=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() <= r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator>=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() >= r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator==(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() == r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator!=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() != r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator+(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() + r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator-(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() - r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator*(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() * r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f operator/(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() / r.as_sse()); }
+    SIMDIFY_FORCE_INLINE const vec3f andnot(const vec3f& l, const vec3f& r) { return vec3f(andnot(l.as_sse(), r.as_sse())); }
+    SIMDIFY_FORCE_INLINE const vec3f min(const vec3f& l, const vec3f& r) { return vec3f(min(l.as_sse(), r.as_sse())); }
+    SIMDIFY_FORCE_INLINE const vec3f max(const vec3f& l, const vec3f& r) { return vec3f(max(l.as_sse(), r.as_sse())); }
+    SIMDIFY_FORCE_INLINE const vec3f cond(const vec3f& p, const vec3f& t, const vec3f& f) { return vec3f(cond(p.as_sse(), t.as_sse(), f.as_sse())); }
 }
-
-#undef INL
 
 #endif // SIMDIFY_SSE
 

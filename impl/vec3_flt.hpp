@@ -10,6 +10,7 @@ namespace simd {
 
     template <>
     struct basic_vec3<flt> {
+        using simd_t = flt;
         using mm_t = flt::mm_t;
         using fp_t = flt::fp_t;
         using bitmask_t = flt::bitmask_t;

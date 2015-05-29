@@ -8,6 +8,7 @@ namespace simd {
 
     template <typename T>
     struct basic_vec3 {
+        using simd_t = T;
         using mm_t = typename T::mm_t;
         using fp_t = typename T::fp_t;
         using bitmask_t = typename T::bitmask_t;

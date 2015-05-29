@@ -6,34 +6,38 @@
 
 namespace simd {
 
+    //
+    // An array of three-dimensional vectors of type T::fp_t with T::W elements
+    //
     template <typename T>
     struct basic_vec3 {
+        // typedefs and constants
         using simd_t = T;
         using mm_t = typename T::mm_t;
         using fp_t = typename T::fp_t;
         using bitmask_t = typename T::bitmask_t;
+        static const auto W = T::W;
 
-        T x, y, z;
-
+        // constructors
         SIMDIFY_FORCE_INLINE basic_vec3() = default;
         SIMDIFY_FORCE_INLINE basic_vec3(const basic_vec3& other) = default;
-        SIMDIFY_FORCE_INLINE basic_vec3& operator=(const basic_vec3& other) = default;
-
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const T& t) : x(t), y(t), z(t) {}
-
         SIMDIFY_FORCE_INLINE basic_vec3(const T& tx, const T& ty, const T& tz) :
             x(tx), y(ty), z(tz) {}
 
+        // operator=
+        SIMDIFY_FORCE_INLINE basic_vec3& operator=(const basic_vec3& other) = default;
+
+        // generalized constructor and operator= for any RHS that has fields x, y, z
         template <typename S>
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
-
         template <typename S>
         SIMDIFY_FORCE_INLINE basic_vec3& operator=(const S& other) {
             x = T(other.x); y = T(other.y); z = T(other.z);
             return *this;
         }
 
-        // the value received by subscript behaves as a triple of floats x, y, z
+        // the value received by operator[] -- a triple x, y, z of references to fp_t
         struct view {
             fp_t& x; fp_t& y; fp_t& z;
 
@@ -51,8 +55,12 @@ namespace simd {
             }
         };
 
+        // operator[](n) yields the n-th element, represented by a triple x, y, z of references to fp_t
         SIMDIFY_FORCE_INLINE view operator[](std::size_t i) { return view(*this, i); }
         SIMDIFY_FORCE_INLINE const view operator[](std::size_t i) const { return view(*this, i); }
+
+        // data
+        T x, y, z;
     };
 
     template <typename T>

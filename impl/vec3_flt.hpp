@@ -8,42 +8,51 @@
 
 namespace simd {
 
+    //
+    // A specialization of basic_vec3 with a single element, a. k. a. vec3f
+    //
     template <>
     struct basic_vec3<flt> {
+        // typedefs and constants
         using simd_t = flt;
         using mm_t = flt::mm_t;
         using fp_t = flt::fp_t;
         using bitmask_t = flt::bitmask_t;
+        static const auto W = flt::W;
 
-        flt x, y, z, extra;
-
+        // constructors
         SIMDIFY_FORCE_INLINE basic_vec3() = default;
         SIMDIFY_FORCE_INLINE basic_vec3(const basic_vec3& other) { as_sse() = other.as_sse(); }
-        SIMDIFY_FORCE_INLINE basic_vec3& operator=(const basic_vec3& other) { as_sse() = other.as_sse(); return *this; }
-
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const flt& t) : x(t), y(t), z(t) {}
         SIMDIFY_FORCE_INLINE explicit basic_vec3(fp_t t) : x(t), y(t), z(t) {}
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const sse& w) {}
-
         SIMDIFY_FORCE_INLINE basic_vec3(const flt& tx, const flt& ty, const flt& tz) :
             x(tx), y(ty), z(tz) {}
         SIMDIFY_FORCE_INLINE basic_vec3(fp_t tx, fp_t ty, fp_t tz) :
             x(tx), y(ty), z(tz) {}
 
+        // operator=
+        SIMDIFY_FORCE_INLINE basic_vec3& operator=(const basic_vec3& other) { as_sse() = other.as_sse(); return *this; }
+
+        // generalized constructor and operator= for any RHS that has fields x, y, z
         template <typename S>
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
-
         template <typename S>
         SIMDIFY_FORCE_INLINE basic_vec3& operator=(const S& other) {
             x = other.x; y = other.y; z = other.z;
             return *this;
         }
 
+        // operator[] has no effect for vec3f, 0 is its only valid input, returning the vec3f itself
         SIMDIFY_FORCE_INLINE basic_vec3& operator[](std::size_t) { return *this; }
         SIMDIFY_FORCE_INLINE const basic_vec3& operator[](std::size_t) const { return *this; }
 
+        // cast self to sse - specific to vec3f
         SIMDIFY_FORCE_INLINE sse& as_sse() { return reinterpret_cast<sse&>(x); }
         SIMDIFY_FORCE_INLINE const sse& as_sse() const { return reinterpret_cast<const sse&>(x); }
+
+        // data
+        flt x, y, z, extra;
     };
 
     using vec3f = basic_vec3<flt>;

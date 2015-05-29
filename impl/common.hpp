@@ -61,12 +61,6 @@ namespace simd {
 
         // a wrapper to disambiguate construction with bitmask_t and fp_t
         struct mask_t {
-            // data
-            union {
-                float f;
-                bitmask_t b;
-            };
-
             // useful bit masks
             static const bitmask_t ZERO_BIT_MASK = 0;
             static const bitmask_t ALL_BITS_MASK = ~ZERO_BIT_MASK;
@@ -91,6 +85,12 @@ namespace simd {
             SIMDIFY_FORCE_INLINE static fp_t xorf(fp_t l, fp_t r) { return tof(tob(l) ^ tob(r)); }
             SIMDIFY_FORCE_INLINE static fp_t notf(fp_t l) { return tof(~tob(l)); }
             SIMDIFY_FORCE_INLINE static fp_t andnotf(fp_t l, fp_t r) { return tof(tob(l) & ~tob(r)); }
+
+            // data
+            union {
+                float f;
+                bitmask_t b;
+            };
         };
 
         // data

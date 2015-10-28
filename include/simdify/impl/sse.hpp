@@ -25,15 +25,16 @@
 namespace simd {
 
     // SIMD with SSE
-    struct sse : simd_base<__m128, float, uint32_t, sse> {
+    struct sse : simd_base<__m128, float, uint32_t, int32_t, sse> {
         SIMDIFY_FORCE_INLINE sse() {}
         SIMDIFY_FORCE_INLINE sse(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE explicit sse(fp_t r) : simd_base(_mm_set_ps1(r)) {}
         SIMDIFY_FORCE_INLINE explicit sse(zero_t) : simd_base(_mm_setzero_ps()) {}
-        SIMDIFY_FORCE_INLINE explicit sse(mask_t r) : sse(r.f) {}
+        SIMDIFY_FORCE_INLINE explicit sse(const F& r) : simd_base(_mm_set_ps1(r.f)) {}
+        SIMDIFY_FORCE_INLINE explicit sse(const U& r) : simd_base(_mm_set_ps1(conversions::castf(r.u))) {}
+        SIMDIFY_FORCE_INLINE explicit sse(const I& r) : simd_base(_mm_set_ps1(conversions::castf(r.i))) {}
 
-        SIMDIFY_FORCE_INLINE fp_t front() const { return _mm_cvtss_f32(mm); }
-        SIMDIFY_FORCE_INLINE fp_t back() const { return f.back(); }
+        SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(mm); }
+        SIMDIFY_FORCE_INLINE f_t back() const { return f.back(); }
     };
 
     // bitwise not with lazy evaluation

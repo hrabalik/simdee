@@ -40,67 +40,115 @@ namespace simd {
     template <typename T>
     struct allocator;
 
+    template <typename f_t>
+    struct floating_point_wrapper;
+
+    template <typename u_t>
+    struct unsigned_wrapper;
+
+    template <typename i_t>
+    struct signed_wrapper;
+
+    template<typename f_t, typename u_t, typename i_t>
+    struct conversions_impl;
+
     //
     // SIMD type base class (with derived class as T, CRTP-style)
     //
-    template <typename _mm_t, typename _fp_t, typename _bitmask_t, typename T>
+    template <typename mm_t_, typename f_t_, typename u_t_, typename i_t_, typename T>
     struct simd_base {
-        using mm_t = _mm_t;
-        using fp_t = _fp_t;
-        using bitmask_t = _bitmask_t;
+        using mm_t = mm_t_;
+        using f_t = f_t_;
+        using u_t = u_t_;
+        using i_t = i_t_;
 
-        // useful constants and types
-        static const auto W = sizeof(mm_t) / sizeof(fp_t);
-        using array_t = std::array<fp_t, W>;
-        using mask_array_t = std::array<bitmask_t, W>;
-        using iterator = typename array_t::iterator;
-        using reverse_iterator = typename array_t::reverse_iterator;
-        using const_iterator = typename array_t::const_iterator;
-        using const_reverse_iterator = typename array_t::const_reverse_iterator;
-        using unary_op_t = ptr<const T(const T& in)>;
-        using binary_op_t = ptr<const T(const T& l, const T& r)>;
+        static const auto W = sizeof(mm_t) / sizeof(f_t);
+        using F = floating_point_wrapper<f_t>;
+        using U = unsigned_wrapper<u_t>;
+        using I = signed_wrapper<i_t>;
+        using array_f = std::array<f_t, W>;
+        using array_u = std::array<u_t, W>;
+        using array_i = std::array<i_t, W>;
         using horizontal = horizontal_impl<T>;
-
-        // a wrapper to disambiguate construction with bitmask_t and fp_t
-        struct mask_t {
-            // useful bit masks
-            static const bitmask_t ZERO_BIT_MASK = 0;
-            static const bitmask_t ALL_BITS_MASK = ~ZERO_BIT_MASK;
-            static const bitmask_t ABS_BIT_MASK = ALL_BITS_MASK >> 1;
-            static const bitmask_t SIGN_BIT_MASK = ~ABS_BIT_MASK;
-
-            // constructors
-            SIMDIFY_FORCE_INLINE explicit mask_t() {}
-            SIMDIFY_FORCE_INLINE explicit mask_t(bitmask_t r) : b(r) {}
-            SIMDIFY_FORCE_INLINE mask_t(zero_t) : b(ZERO_BIT_MASK) {}
-            SIMDIFY_FORCE_INLINE mask_t(all_bits_t) : b(ALL_BITS_MASK) {}
-            SIMDIFY_FORCE_INLINE mask_t(abs_mask_t) : b(ABS_BIT_MASK) {}
-            SIMDIFY_FORCE_INLINE mask_t(sign_bit_t) : b(SIGN_BIT_MASK) {}
-
-            // bitmask_t -- fp_t conversion
-            SIMDIFY_FORCE_INLINE static bitmask_t tob(fp_t l) { mask_t m; m.f = l; return m.b; }
-            SIMDIFY_FORCE_INLINE static fp_t tof(bitmask_t l) { mask_t m; m.b = l; return m.f; }
-
-            // bitwise operations with fp_t
-            SIMDIFY_FORCE_INLINE static fp_t andf(fp_t l, fp_t r) { return tof(tob(l) & tob(r)); }
-            SIMDIFY_FORCE_INLINE static fp_t orf(fp_t l, fp_t r) { return tof(tob(l) | tob(r)); }
-            SIMDIFY_FORCE_INLINE static fp_t xorf(fp_t l, fp_t r) { return tof(tob(l) ^ tob(r)); }
-            SIMDIFY_FORCE_INLINE static fp_t notf(fp_t l) { return tof(~tob(l)); }
-            SIMDIFY_FORCE_INLINE static fp_t andnotf(fp_t l, fp_t r) { return tof(tob(l) & ~tob(r)); }
-
-            // data
-            union {
-                float f;
-                bitmask_t b;
-            };
-        };
+        using conversions = conversions_impl<f_t, u_t, i_t>;
 
         // data
-        union { mm_t mm; array_t f; mask_array_t i; };
+        union { mm_t mm; array_f f; array_u u; /*array_i i;*/ };
 
         // constructor
         SIMDIFY_FORCE_INLINE simd_base() {}
         SIMDIFY_FORCE_INLINE simd_base(mm_t r) : mm(r) {}
+    };
+
+    // conversions and bit-wise operations with floating-point types
+    template<typename f_t, typename u_t, typename i_t>
+    struct conversions_impl {
+        static_assert(std::is_unsigned<u_t>::value, "u_t must be unsigned");
+        static_assert(std::is_integral<u_t>::value, "u_t must be integral");
+        static_assert(std::is_signed<i_t>::value, "i_t must be signed");
+        static_assert(std::is_integral<i_t>::value, "i_t must be integral");
+        static_assert(sizeof(f_t) == sizeof(u_t), "u_t must be the same size as f_t");
+        static_assert(sizeof(f_t) == sizeof(i_t), "i_t must be the same size as f_t");
+
+        union union_t { f_t f; u_t u; i_t i; };
+
+        // u_t -- f_t -- i_t conversion
+        SIMDIFY_FORCE_INLINE static u_t tou(f_t l) { union_t m; m.f = l; return m.u; }
+        SIMDIFY_FORCE_INLINE static i_t toi(f_t l) { union_t m; m.f = l; return m.i; }
+        SIMDIFY_FORCE_INLINE static f_t tof(u_t l) { union_t m; m.u = l; return m.f; }
+        SIMDIFY_FORCE_INLINE static f_t tof(i_t l) { union_t m; m.i = l; return m.f; }
+        SIMDIFY_FORCE_INLINE static const f_t& castf(const u_t& l) { return reinterpret_cast<const f_t&>(l); }
+        SIMDIFY_FORCE_INLINE static const f_t& castf(const i_t& l) { return reinterpret_cast<const f_t&>(l); }
+
+        // bitwise operations with f_t
+        SIMDIFY_FORCE_INLINE static f_t band(f_t l, f_t r) { return tof(tou(l) & tou(r)); }
+        SIMDIFY_FORCE_INLINE static f_t bor(f_t l, f_t r) { return tof(tou(l) | tou(r)); }
+        SIMDIFY_FORCE_INLINE static f_t bxor(f_t l, f_t r) { return tof(tou(l) ^ tou(r)); }
+        SIMDIFY_FORCE_INLINE static f_t bnot(f_t l) { return tof(~tou(l)); }
+        SIMDIFY_FORCE_INLINE static f_t bandnot(f_t l, f_t r) { return tof(tou(l) & ~tou(r)); }
+    };
+
+    // a wrapper to disambiguate construction with u_t
+    template<typename u_t>
+    struct unsigned_wrapper {
+        static_assert(std::is_unsigned<u_t>::value, "unsigned_wrapper is for unsigned types only");
+        static_assert(std::is_integral<u_t>::value, "unsigned_wrapper is for integral types only");
+
+        // useful bit masks
+        static const u_t ZERO_BIT_MASK = 0;
+        static const u_t ALL_BITS_MASK = ~ZERO_BIT_MASK;
+        static const u_t ABS_BIT_MASK = ALL_BITS_MASK >> 1;
+        static const u_t SIGN_BIT_MASK = ~ABS_BIT_MASK;
+
+        // constructors
+        SIMDIFY_FORCE_INLINE explicit unsigned_wrapper(u_t r) : u(r) {}
+        SIMDIFY_FORCE_INLINE unsigned_wrapper(zero_t) : u(ZERO_BIT_MASK) {}
+        SIMDIFY_FORCE_INLINE unsigned_wrapper(all_bits_t) : u(ALL_BITS_MASK) {}
+        SIMDIFY_FORCE_INLINE unsigned_wrapper(abs_mask_t) : u(ABS_BIT_MASK) {}
+        SIMDIFY_FORCE_INLINE unsigned_wrapper(sign_bit_t) : u(SIGN_BIT_MASK) {}
+
+        // data
+        u_t u;
+    };
+
+    // a wrapper to disambiguate construction with i_t
+    template<typename i_t>
+    struct signed_wrapper {
+        static_assert(std::is_signed<i_t>::value, "signed_wrapper is for signed types only");
+        static_assert(std::is_integral<i_t>::value, "signed_wrapper is for integral types only");
+        SIMDIFY_FORCE_INLINE explicit signed_wrapper(i_t r) : i(r) {}
+
+        // data
+        i_t i;
+    };
+
+    // a wrapper to disambiguate construction with f_t
+    template<typename f_t>
+    struct floating_point_wrapper {
+        SIMDIFY_FORCE_INLINE explicit floating_point_wrapper(f_t r) : f(r) {}
+
+        // data
+        f_t f;
     };
 
     //
@@ -141,12 +189,16 @@ namespace simd {
         return cond(mask, in, T(zero_t{}));
     }
     template <typename T>
-    SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, typename T::fp_t neutral_value) {
+    SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, typename T::F neutral_value) {
         return cond(mask, in, T(neutral_value));
     }
     template <typename T>
-    SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, typename T::mask_t neutral_mask) {
-        return cond(mask, in, T(neutral_mask));
+    SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, typename T::U neutral_value) {
+        return cond(mask, in, T(neutral_value));
+    }
+    template <typename T>
+    SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, typename T::I neutral_value) {
+        return cond(mask, in, T(neutral_value));
     }
     template <typename T>
     SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, const T& neutral_value_vector) {
@@ -171,12 +223,12 @@ namespace simd {
     struct horizontal_impl_base {
         using unary_op_t = ptr<const T(const T& in)>;
         using binary_op_t = ptr<const T(const T& l, const T& r)>;
-        using fp_t = typename T::fp_t;
-        using reduce_find_t = std::pair<fp_t, uint>;
+        using f_t = typename T::f_t;
+        using reduce_find_t = std::pair<f_t, uint>;
         using ops = operators<T>;
 
         template <binary_op_t F>
-        static SIMDIFY_FORCE_INLINE fp_t reduce(const T& in) { return reduce_vector<F>(in).front(); }
+        static SIMDIFY_FORCE_INLINE f_t reduce(const T& in) { return reduce_vector<F>(in).front(); }
 
         template <binary_op_t F>
         static SIMDIFY_FORCE_INLINE const T reduce_vector(const T& in) { return horizontal_impl<T>::template reduce_vector<F>(in); }
@@ -189,7 +241,7 @@ namespace simd {
         }
 
         template <binary_op_t F, typename N>
-        static SIMDIFY_FORCE_INLINE fp_t reduce_with_mask(const T& in, const T& mask, N&& neutral_value) {
+        static SIMDIFY_FORCE_INLINE f_t reduce_with_mask(const T& in, const T& mask, N&& neutral_value) {
             return reduce<F>(apply_mask(in, mask, std::forward<N>(neutral_value)));
         }
 
@@ -198,30 +250,30 @@ namespace simd {
             return reduce_find<F>(apply_mask(in, mask, std::forward<N>(neutral_value)));
         }
 
-        static SIMDIFY_FORCE_INLINE fp_t min(const T& in) { return reduce<ops::min_>(in); }
-        static SIMDIFY_FORCE_INLINE fp_t max(const T& in) { return reduce<ops::max_>(in); }
-        static SIMDIFY_FORCE_INLINE fp_t sum(const T& in) { return reduce<ops::add_>(in); }
-        static SIMDIFY_FORCE_INLINE fp_t product(const T& in) { return reduce<ops::mul_>(in); }
+        static SIMDIFY_FORCE_INLINE f_t min(const T& in) { return reduce<ops::min_>(in); }
+        static SIMDIFY_FORCE_INLINE f_t max(const T& in) { return reduce<ops::max_>(in); }
+        static SIMDIFY_FORCE_INLINE f_t sum(const T& in) { return reduce<ops::add_>(in); }
+        static SIMDIFY_FORCE_INLINE f_t product(const T& in) { return reduce<ops::mul_>(in); }
         static SIMDIFY_FORCE_INLINE reduce_find_t min_find(const T& in) { return reduce_find<ops::min_>(in); }
         static SIMDIFY_FORCE_INLINE reduce_find_t max_find(const T& in) { return reduce_find<ops::max_>(in); }
 
-        static SIMDIFY_FORCE_INLINE fp_t min_with_mask(const T& in, const T& mask) {
-            return reduce_with_mask<ops::min_>(in, mask, std::numeric_limits<fp_t>::max());
+        static SIMDIFY_FORCE_INLINE f_t min_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::min_>(in, mask, std::numeric_limits<f_t>::max());
         }
-        static SIMDIFY_FORCE_INLINE fp_t max_with_mask(const T& in, const T& mask) {
-            return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<fp_t>::min());
+        static SIMDIFY_FORCE_INLINE f_t max_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<f_t>::min());
         }
-        static SIMDIFY_FORCE_INLINE fp_t sum_with_mask(const T& in, const T& mask) {
+        static SIMDIFY_FORCE_INLINE f_t sum_with_mask(const T& in, const T& mask) {
             return reduce_with_mask<ops::add_>(in, mask, zero_t{});
         }
-        static SIMDIFY_FORCE_INLINE fp_t product_with_mask(const T& in, const T& mask) {
-            return reduce_with_mask<ops::add_>(in, mask, fp_t(1));
+        static SIMDIFY_FORCE_INLINE f_t product_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::add_>(in, mask, f_t(1));
         }
         static SIMDIFY_FORCE_INLINE reduce_find_t min_find_with_mask(const T& in, const T& mask) {
-            return reduce_find_with_mask<ops::min_>(in, mask, std::numeric_limits<fp_t>::max());
+            return reduce_find_with_mask<ops::min_>(in, mask, std::numeric_limits<f_t>::max());
         }
         static SIMDIFY_FORCE_INLINE reduce_find_t max_find_with_mask(const T& in, const T& mask) {
-            return reduce_find_with_mask<ops::max_>(in, mask, std::numeric_limits<fp_t>::min());
+            return reduce_find_with_mask<ops::max_>(in, mask, std::numeric_limits<f_t>::min());
         }
     };
 

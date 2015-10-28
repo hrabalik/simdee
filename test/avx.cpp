@@ -7,7 +7,7 @@
 #include <simdify/simdify.hpp>
 
 using T = simd::avx;
-using buf_t = std::array<T::fp_t, T::W>;
+using buf_t = std::array<T::f_t, T::W>;
 
 alignas(T) const buf_t bufA = {
     -0.27787193f, +0.70154146f, -2.05181630f, -0.35385000f,
@@ -26,15 +26,18 @@ TEST_CASE("AVX", "[simd][x86][avx]") {
     SECTION("basic guarantees") {
         REQUIRE(T::W == 8);
         REQUIRE((std::is_same<T::mm_t, __m256>::value));
-        REQUIRE((std::is_same<T::fp_t, float>::value));
-        REQUIRE((std::is_same<T::bitmask_t, uint32_t>::value));
-        REQUIRE((std::is_same<T::array_t, buf_t>::value));
+        REQUIRE((std::is_same<T::f_t, float>::value));
+        REQUIRE((std::is_same<T::u_t, uint32_t>::value));
+        REQUIRE((std::is_same<T::i_t, int32_t>::value));
+        REQUIRE((std::is_same<T::array_f, std::array<T::f_t, T::W>>::value));
+        REQUIRE((std::is_same<T::array_u, std::array<T::u_t, T::W>>::value));
+        REQUIRE((std::is_same<T::array_i, std::array<T::i_t, T::W>>::value));
         REQUIRE(sizeof(T) == sizeof(T::mm_t));
         REQUIRE(alignof(T) == alignof(T::mm_t));
-        REQUIRE(sizeof(T::fp_t) * T::W == sizeof(T));
-        REQUIRE(sizeof(T::fp_t) == sizeof(T::bitmask_t));
-        REQUIRE(std::is_integral<T::bitmask_t>::value);
-        REQUIRE(std::is_unsigned<T::bitmask_t>::value);
+        REQUIRE(sizeof(T::f_t) * T::W == sizeof(T));
+        REQUIRE(sizeof(T::f_t) == sizeof(T::u_t));
+        REQUIRE(std::is_integral<T::u_t>::value);
+        REQUIRE(std::is_unsigned<T::u_t>::value);
     }
     SECTION("construction") {
         SECTION("default") {
@@ -54,17 +57,23 @@ TEST_CASE("AVX", "[simd][x86][avx]") {
             T t2(simd::ALL_BITS);
             T t3(simd::ABS_MASK);
             T t4(simd::SIGN_BIT);
-            T t5(T::mask_t(0xdeadbeef));
-            for (auto val : t1.i) REQUIRE(val == 0x00000000);
-            for (auto val : t2.i) REQUIRE(val == 0xffffffff);
-            for (auto val : t3.i) REQUIRE(val == 0x7fffffff);
-            for (auto val : t4.i) REQUIRE(val == 0x80000000);
-            for (auto val : t5.i) REQUIRE(val == 0xdeadbeef);
+            
+            for (auto val : t1.u) REQUIRE(val == 0x00000000);
+            for (auto val : t2.u) REQUIRE(val == 0xffffffff);
+            for (auto val : t3.u) REQUIRE(val == 0x7fffffff);
+            for (auto val : t4.u) REQUIRE(val == 0x80000000);
+        }
+        SECTION("from wrappers") {
+            T tf(T::F(1.2345678f));
+            T tu(T::U(0xdeadbeef));
+            T ti(T::I(1234567890));
+            for (auto val : tf.f) REQUIRE(val == 1.2345678f);
+            for (auto val : tu.u) REQUIRE(val == 0xdeadbeef);
+            //for (auto val : ti.i) REQUIRE(val == 1234567890);
         }
     }
     SECTION("operations") {
         SECTION("arithmetic") {
-        
         }
     }
 }

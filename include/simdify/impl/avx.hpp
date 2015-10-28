@@ -12,15 +12,16 @@
 namespace simd {
 
     // SIMD with AVX
-    struct avx : simd_base<__m256, float, uint32_t, avx> {
+    struct avx : simd_base<__m256, float, uint32_t, int32_t, avx> {
         SIMDIFY_FORCE_INLINE avx() {}
         SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE explicit avx(const fp_t& r) : simd_base(_mm256_broadcast_ss(&r)) {}
         SIMDIFY_FORCE_INLINE explicit avx(zero_t) : simd_base(_mm256_setzero_ps()) {}
-        SIMDIFY_FORCE_INLINE explicit avx(mask_t r) : avx(r.f) {}
+        SIMDIFY_FORCE_INLINE explicit avx(const F& r) : simd_base(_mm256_broadcast_ss(&r.f)) {}
+        SIMDIFY_FORCE_INLINE explicit avx(const U& r) : simd_base(_mm256_broadcast_ss(&conversions::castf(r.u))) {}
+        SIMDIFY_FORCE_INLINE explicit avx(const I& r) : simd_base(_mm256_broadcast_ss(&conversions::castf(r.i))) {}
 
-        SIMDIFY_FORCE_INLINE fp_t front() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
-        SIMDIFY_FORCE_INLINE fp_t back() const { return f.back(); }
+        SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
+        SIMDIFY_FORCE_INLINE f_t back() const { return f.back(); }
     };
 
     // bitwise not with lazy evaluation

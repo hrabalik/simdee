@@ -23,6 +23,14 @@ namespace simd {
     struct abs_mask_t {};
     struct sign_bit_t {};
 
+    // defined in each compilation unit
+    namespace {
+        zero_t ZERO;
+        all_bits_t ALL_BITS;
+        abs_mask_t ABS_MASK;
+        sign_bit_t SIGN_BIT;
+    }
+
     //
     // forward declarations
     //

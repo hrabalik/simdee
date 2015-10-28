@@ -32,6 +32,9 @@ TEST_CASE("AVX", "[simd][x86][avx]") {
         REQUIRE(sizeof(T) == sizeof(T::mm_t));
         REQUIRE(alignof(T) == alignof(T::mm_t));
         REQUIRE(sizeof(T::fp_t) * T::W == sizeof(T));
+        REQUIRE(sizeof(T::fp_t) == sizeof(T::bitmask_t));
+        REQUIRE(std::is_integral<T::bitmask_t>::value);
+        REQUIRE(std::is_unsigned<T::bitmask_t>::value);
     }
     SECTION("construction") {
         SECTION("default") {
@@ -48,19 +51,19 @@ TEST_CASE("AVX", "[simd][x86][avx]") {
         //}
         SECTION("from zero_t") {
             T t(simd::ZERO);
-            for (auto val : t.i) REQUIRE(val == 0);
+            for (auto val : t.i) REQUIRE(val == 0x00000000);
         }
         SECTION("from all_bits_t") {
             T t(simd::ALL_BITS);
-            for (auto val : t.i) REQUIRE(val == ~T::bitmask_t(0));
+            for (auto val : t.i) REQUIRE(val == 0xffffffff);
         }
         SECTION("from abs_mask_t") {
             T t(simd::ABS_MASK);
-            for (auto val : t.i) REQUIRE(val == (~T::bitmask_t(0)) >> 1);
+            for (auto val : t.i) REQUIRE(val == 0x7fffffff);
         }
         SECTION("from sign_bit_t") {
             T t(simd::SIGN_BIT);
-            for (auto val : t.f) REQUIRE(val == -0.f);
+            for (auto val : t.i) REQUIRE(val == 0x80000000);
         }
     }
     SECTION("operations") {

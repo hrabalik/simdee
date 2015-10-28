@@ -49,12 +49,6 @@ namespace simd {
         using fp_t = _fp_t;
         using bitmask_t = _bitmask_t;
 
-        // type-related sanity checks
-        static_assert(sizeof(mm_t) % sizeof(fp_t) == 0, "size of mm_t must be a multiple of the size of fp_t");
-        static_assert(sizeof(fp_t) == sizeof(bitmask_t), "size of bitmask_t must match the size of fp_t");
-        static_assert(std::is_integral<bitmask_t>::value, "bitmask_t must be an integral type");
-        static_assert(std::is_unsigned<bitmask_t>::value, "bitmask_t must be an unsigned type");
-
         // useful constants and types
         static const auto W = sizeof(mm_t) / sizeof(fp_t);
         using array_t = std::array<fp_t, W>;

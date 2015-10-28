@@ -73,7 +73,7 @@ namespace simd {
         using conversions = conversions_impl<f_t, u_t, i_t>;
 
         // data
-        union { mm_t mm; array_f f; array_u u; /*array_i i;*/ };
+        union { mm_t mm; array_f f; array_u u; array_i i; };
 
         // constructor
         SIMDIFY_FORCE_INLINE simd_base() {}

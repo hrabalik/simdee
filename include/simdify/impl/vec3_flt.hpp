@@ -16,19 +16,20 @@ namespace simd {
         // typedefs and constants
         using simd_t = flt;
         using mm_t = flt::mm_t;
-        using fp_t = flt::fp_t;
-        using bitmask_t = flt::bitmask_t;
+        using f_t = flt::f_t;
+        using u_t = flt::u_t;
+        using i_t = flt::i_t;
         static const auto W = flt::W;
 
         // constructors
         SIMDIFY_FORCE_INLINE basic_vec3() = default;
         SIMDIFY_FORCE_INLINE basic_vec3(const basic_vec3& other) { as_sse() = other.as_sse(); }
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const flt& t) : x(t), y(t), z(t) {}
-        SIMDIFY_FORCE_INLINE explicit basic_vec3(fp_t t) : x(t), y(t), z(t) {}
+        SIMDIFY_FORCE_INLINE explicit basic_vec3(f_t t) : x(t), y(t), z(t) {}
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const sse& w) {}
         SIMDIFY_FORCE_INLINE basic_vec3(const flt& tx, const flt& ty, const flt& tz) :
             x(tx), y(ty), z(tz) {}
-        SIMDIFY_FORCE_INLINE basic_vec3(fp_t tx, fp_t ty, fp_t tz) :
+        SIMDIFY_FORCE_INLINE basic_vec3(f_t tx, f_t ty, f_t tz) :
             x(tx), y(ty), z(tz) {}
 
         // operator=

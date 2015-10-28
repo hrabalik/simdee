@@ -7,15 +7,16 @@
 namespace simd {
 
     //
-    // An array of three-dimensional vectors of type T::fp_t with T::W elements
+    // An array of three-dimensional vectors of type T::f_t with T::W elements
     //
     template <typename T>
     struct basic_vec3 {
         // typedefs and constants
         using simd_t = T;
         using mm_t = typename T::mm_t;
-        using fp_t = typename T::fp_t;
-        using bitmask_t = typename T::bitmask_t;
+        using f_t = typename T::f_t;
+        using u_t = typename T::u_t;
+        using i_t = typename T::i_t;
         static const auto W = T::W;
 
         // constructors
@@ -30,16 +31,16 @@ namespace simd {
 
         // generalized constructor and operator= for any RHS that has fields x, y, z
         template <typename S>
-        SIMDIFY_FORCE_INLINE explicit basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
+        SIMDIFY_FORCE_INLINE explicit basic_vec3(const S& other) : x(T::F(other.x)), y(T::F(other.y)), z(T::F(other.z)) {}
         template <typename S>
         SIMDIFY_FORCE_INLINE basic_vec3& operator=(const S& other) {
-            x = T(other.x); y = T(other.y); z = T(other.z);
+            x = T(T::F(other.x)); y = T(T::F(other.y)); z = T(T::F(other.z));
             return *this;
         }
 
-        // the value received by operator[] -- a triple x, y, z of references to fp_t
+        // the value received by operator[] -- a triple x, y, z of references to f_t
         struct view {
-            fp_t& x; fp_t& y; fp_t& z;
+            f_t& x; f_t& y; f_t& z;
 
             SIMDIFY_FORCE_INLINE view(basic_vec3& v, std::size_t i) : x(v.x.f[i]), y(v.y.f[i]), z(v.z.f[i]) {}
 
@@ -55,7 +56,7 @@ namespace simd {
             }
         };
 
-        // operator[](n) yields the n-th element, represented by a triple x, y, z of references to fp_t
+        // operator[](n) yields the n-th element, represented by a triple x, y, z of references to f_t
         SIMDIFY_FORCE_INLINE view operator[](std::size_t i) { return view(*this, i); }
         SIMDIFY_FORCE_INLINE const view operator[](std::size_t i) const { return view(*this, i); }
 

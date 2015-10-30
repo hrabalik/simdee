@@ -28,6 +28,7 @@ namespace simd {
     struct sse : simd_base<__m128, float, uint32_t, int32_t, sse> {
         SIMDIFY_FORCE_INLINE sse() {}
         SIMDIFY_FORCE_INLINE sse(mm_t r) : simd_base(r) {}
+        SIMDIFY_FORCE_INLINE sse(const f_t* r) : simd_base(_mm_load_ps(r)) {}
         SIMDIFY_FORCE_INLINE explicit sse(zero_t) : simd_base(_mm_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE explicit sse(const F& r) : simd_base(_mm_set_ps1(r.f)) {}
         SIMDIFY_FORCE_INLINE explicit sse(const U& r) : simd_base(_mm_set_ps1(conversions::castf(r.u))) {}

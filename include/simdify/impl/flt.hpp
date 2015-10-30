@@ -9,6 +9,7 @@ namespace simd {
     struct flt : simd_base<float, float, uint32_t, int32_t, flt> {
         SIMDIFY_FORCE_INLINE flt() {}
         SIMDIFY_FORCE_INLINE flt(mm_t r) : simd_base(r) {}
+        SIMDIFY_FORCE_INLINE flt(const f_t* r) : simd_base(*r) {}
         SIMDIFY_FORCE_INLINE explicit flt(zero_t) : simd_base(0) {}
         SIMDIFY_FORCE_INLINE explicit flt(const F& r) : simd_base(r.f) {}
         SIMDIFY_FORCE_INLINE explicit flt(const U& r) : simd_base(conversions::castf(r.u)) {}

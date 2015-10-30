@@ -14,9 +14,12 @@ namespace simd {
         SIMDIFY_FORCE_INLINE explicit flt(const F& r) : simd_base(r.f) {}
         SIMDIFY_FORCE_INLINE explicit flt(const U& r) : simd_base(conversions::castf(r.u)) {}
         SIMDIFY_FORCE_INLINE explicit flt(const I& r) : simd_base(conversions::castf(r.i)) {}
-
         SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = *r; }
+        SIMDIFY_FORCE_INLINE void load(const u_t* r) { mm = conversions::castf(*r); }
+        SIMDIFY_FORCE_INLINE void load(const i_t* r) { mm = conversions::castf(*r); }
         SIMDIFY_FORCE_INLINE void store(f_t* r) { *r = mm; }
+        SIMDIFY_FORCE_INLINE void store(u_t* r) { conversions::castf(*r) = mm; }
+        SIMDIFY_FORCE_INLINE void store(i_t* r) { conversions::castf(*r) = mm; }
         SIMDIFY_FORCE_INLINE f_t front() const { return mm; }
         SIMDIFY_FORCE_INLINE f_t back() const { return mm; }
     };

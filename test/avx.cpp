@@ -7,19 +7,16 @@
 #include <simdify/simdify.hpp>
 
 using T = simd::avx;
-using buf_f = std::array<T::f_t, T::W>;
-using buf_u = std::array<T::u_t, T::W>;
-using buf_i = std::array<T::i_t, T::W>;
 
-alignas(T) const buf_f bufA = {
+alignas(T) const T::array_f bufA = {
     -0.27787193f, +0.70154146f, -2.05181630f, -0.35385000f,
     -0.82358653f, -1.57705702f, +0.50797465f, +0.28198406f,
 };
-alignas(T) const buf_f bufB = {
+alignas(T) const T::array_f bufB = {
     -0.23645458f, +2.02369089f, -2.25835397f, +2.22944568f,
     +0.33756370f, +1.00006082f, -1.66416447f, -0.59003456f,
 };
-alignas(T) const buf_f bufC = {
+alignas(T) const T::array_f bufC = {
     +0.42862268f, -1.03598478f, +1.87786546f, +0.94070440f,
     +0.78734578f, -0.87587426f, +0.31994913f, -0.55829428f,
 };
@@ -42,9 +39,9 @@ TEST_CASE("AVX basic guarantees", "[simd_t][x86][avx]") {
 }
 
 TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
-    alignas(T)buf_f res_f;
-    buf_u& res_u = reinterpret_cast<buf_u&>(res_f);
-    buf_i& res_i = reinterpret_cast<buf_i&>(res_f);
+    alignas(T)T::array_f res_f;
+    alignas(T)T::array_u res_u;
+    alignas(T)T::array_i res_i;
 
     SECTION("default") {
         T t;
@@ -65,18 +62,18 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T t3(simd::ABS_MASK);
         T t4(simd::SIGN_BIT);
 
-        t1.store(res_f.data()); for (auto val : res_u) REQUIRE(val == 0x00000000);
-        t2.store(res_f.data()); for (auto val : res_u) REQUIRE(val == 0xffffffff);
-        t3.store(res_f.data()); for (auto val : res_u) REQUIRE(val == 0x7fffffff);
-        t4.store(res_f.data()); for (auto val : res_u) REQUIRE(val == 0x80000000);
+        t1.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0x00000000);
+        t2.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0xffffffff);
+        t3.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0x7fffffff);
+        t4.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0x80000000);
     }
     SECTION("from wrappers") {
         T tf(T::F(1.2345678f));
         T tu(T::U(0xdeadbeef));
-        T ti(T::I(1234567890));
+        T ti(T::I(-123456789));
         tf.store(res_f.data()); for (auto val : res_f) REQUIRE(val == 1.2345678f);
-        tu.store(res_f.data()); for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
-        ti.store(res_f.data()); for (auto val : res_i) REQUIRE(val == 1234567890);
+        tu.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
+        ti.store(res_i.data()); for (auto val : res_i) REQUIRE(val == -123456789);
     }
 }
 

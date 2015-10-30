@@ -93,12 +93,12 @@ namespace simd {
         union union_t { f_t f; u_t u; i_t i; };
 
         // u_t -- f_t -- i_t conversion
-        SIMDIFY_FORCE_INLINE static u_t tou(f_t l) { union_t m; m.f = l; return m.u; }
-        SIMDIFY_FORCE_INLINE static i_t toi(f_t l) { union_t m; m.f = l; return m.i; }
-        SIMDIFY_FORCE_INLINE static f_t tof(u_t l) { union_t m; m.u = l; return m.f; }
-        SIMDIFY_FORCE_INLINE static f_t tof(i_t l) { union_t m; m.i = l; return m.f; }
-        SIMDIFY_FORCE_INLINE static const f_t& castf(const u_t& l) { return reinterpret_cast<const f_t&>(l); }
-        SIMDIFY_FORCE_INLINE static const f_t& castf(const i_t& l) { return reinterpret_cast<const f_t&>(l); }
+        SIMDIFY_FORCE_INLINE static u_t tou(f_t r) { union_t m; m.f = r; return m.u; }
+        SIMDIFY_FORCE_INLINE static f_t tof(u_t r) { union_t m; m.u = r; return m.f; }
+        SIMDIFY_FORCE_INLINE static f_t& castf(u_t& r) { return reinterpret_cast<f_t&>(r); }
+        SIMDIFY_FORCE_INLINE static f_t& castf(i_t& r) { return reinterpret_cast<f_t&>(r); }
+        SIMDIFY_FORCE_INLINE static const f_t& castf(const u_t& r) { return reinterpret_cast<const f_t&>(r); }
+        SIMDIFY_FORCE_INLINE static const f_t& castf(const i_t& r) { return reinterpret_cast<const f_t&>(r); }
 
         // bitwise operations with f_t
         SIMDIFY_FORCE_INLINE static f_t band(f_t l, f_t r) { return tof(tou(l) & tou(r)); }

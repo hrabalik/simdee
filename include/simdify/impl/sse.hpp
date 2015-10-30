@@ -28,12 +28,13 @@ namespace simd {
     struct sse : simd_base<__m128, float, uint32_t, int32_t, sse> {
         SIMDIFY_FORCE_INLINE sse() {}
         SIMDIFY_FORCE_INLINE sse(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE sse(const f_t* r) : simd_base(_mm_load_ps(r)) {}
         SIMDIFY_FORCE_INLINE explicit sse(zero_t) : simd_base(_mm_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE explicit sse(const F& r) : simd_base(_mm_set_ps1(r.f)) {}
         SIMDIFY_FORCE_INLINE explicit sse(const U& r) : simd_base(_mm_set_ps1(conversions::castf(r.u))) {}
         SIMDIFY_FORCE_INLINE explicit sse(const I& r) : simd_base(_mm_set_ps1(conversions::castf(r.i))) {}
 
+        SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = _mm_load_ps(r); }
+        SIMDIFY_FORCE_INLINE void store(f_t* r) { _mm_store_ps(r, mm); }
         SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(mm); }
         SIMDIFY_FORCE_INLINE f_t back() const { return f.back(); }
     };
@@ -67,7 +68,7 @@ namespace simd {
 
     // horizontal operations
     template <>
-    struct horizontal_impl<sse> : horizontal_impl_base<sse>{
+    struct horizontal_impl<sse> : horizontal_impl_base<sse> {
         static SIMDIFY_FORCE_INLINE bit_field find(const sse& in) { return  uint(_mm_movemask_ps(in.mm)); }
         static SIMDIFY_FORCE_INLINE bool any(const sse& in) { return _mm_movemask_ps(in.mm) != 0; }
         static SIMDIFY_FORCE_INLINE bool all(const sse& in) { return _mm_movemask_ps(in.mm) == 0xF; }

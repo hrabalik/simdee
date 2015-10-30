@@ -15,6 +15,8 @@ namespace simd {
         SIMDIFY_FORCE_INLINE explicit flt(const U& r) : simd_base(conversions::castf(r.u)) {}
         SIMDIFY_FORCE_INLINE explicit flt(const I& r) : simd_base(conversions::castf(r.i)) {}
 
+        SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = *r; }
+        SIMDIFY_FORCE_INLINE void store(f_t* r) { *r = mm; }
         SIMDIFY_FORCE_INLINE f_t front() const { return mm; }
         SIMDIFY_FORCE_INLINE f_t back() const { return mm; }
     };
@@ -40,7 +42,7 @@ namespace simd {
 
     // horizontal operations
     template <>
-    struct horizontal_impl<flt> : horizontal_impl_base<flt>{
+    struct horizontal_impl<flt> : horizontal_impl_base<flt> {
         struct find_result_iterator : std::iterator<std::input_iterator_tag, uint> {
             uint mask;
 

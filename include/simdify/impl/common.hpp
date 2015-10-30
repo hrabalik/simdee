@@ -4,6 +4,7 @@
 #include "../util/inline.hpp"
 #include "../util/type.hpp"
 #include "../util/1b.hpp"
+#include "../util/integral.hpp"
 #include <cmath>
 #include <cstdint>
 #include <type_traits>
@@ -53,14 +54,14 @@ namespace simd {
     struct conversions_impl;
 
     //
-    // SIMD type base class (with derived class as T, CRTP-style)
+    // SIMD type base class (with derived class as Crtp, CRTP-style)
     //
-    template <typename mm_t_, typename f_t_, typename u_t_, typename i_t_, typename T>
+    template <typename Mm_t_, typename F_t_, typename Crtp>
     struct simd_base {
-        using mm_t = mm_t_;
-        using f_t = f_t_;
-        using u_t = u_t_;
-        using i_t = i_t_;
+        using mm_t = Mm_t_;
+        using f_t = F_t_;
+        using u_t = select_uint_t<sizeof(f_t)>;
+        using i_t = select_int_t<sizeof(f_t)>;
 
         static const auto W = sizeof(mm_t) / sizeof(f_t);
         using F = floating_point_wrapper<f_t>;
@@ -69,7 +70,7 @@ namespace simd {
         using array_f = std::array<f_t, W>;
         using array_u = std::array<u_t, W>;
         using array_i = std::array<i_t, W>;
-        using horizontal = horizontal_impl<T>;
+        using horizontal = horizontal_impl<Crtp>;
         using conversions = conversions_impl<f_t, u_t, i_t>;
 
         // data

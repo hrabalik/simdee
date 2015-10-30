@@ -12,7 +12,7 @@
 namespace simd {
 
     // SIMD with AVX
-    struct avx : simd_base<__m256, float, uint32_t, int32_t, avx> {
+    struct avx : simd_base<__m256, float, avx> {
         SIMDIFY_FORCE_INLINE avx() {}
         SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE explicit avx(zero_t) : simd_base(_mm256_setzero_ps()) {}

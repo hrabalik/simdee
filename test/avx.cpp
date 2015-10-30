@@ -69,7 +69,7 @@ TEST_CASE("AVX", "[simd][x86][avx]") {
             T ti(T::I(1234567890));
             for (auto val : tf.f) REQUIRE(val == 1.2345678f);
             for (auto val : tu.u) REQUIRE(val == 0xdeadbeef);
-            //for (auto val : ti.i) REQUIRE(val == 1234567890);
+            for (auto val : ti.i) REQUIRE(val == 1234567890);
         }
     }
     SECTION("operations") {

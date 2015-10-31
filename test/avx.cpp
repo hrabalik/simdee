@@ -20,6 +20,8 @@ alignas(T) const T::array_f bufC = {
     +0.42862268f, -1.03598478f, +1.87786546f, +0.94070440f,
     +0.78734578f, -0.87587426f, +0.31994913f, -0.55829428f,
 };
+alignas(T) const T::array_f bufZ = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
 
 TEST_CASE("AVX basic guarantees", "[simd_t][x86][avx]") {
     REQUIRE(T::W == 8);
@@ -39,17 +41,28 @@ TEST_CASE("AVX basic guarantees", "[simd_t][x86][avx]") {
 }
 
 TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
-    alignas(T)T::array_f res_f;
-    alignas(T)T::array_u res_u;
-    alignas(T)T::array_i res_i;
+    alignas(T)T::array_f res_f = bufZ;
 
     SECTION("default") {
         T t;
     }
+    SECTION("from f_t") {
+        T::f_t f = 1.2345678f;
+        T t(f);
+        simd::aligned(res_f.data()) = t;
+        for (auto val : res_f) REQUIRE(val == 1.2345678f);
+    }
+    SECTION("from f_t must be implicit") {
+        auto implicit_test = [&res_f](const T& t) {
+            simd::aligned(res_f.data()) = t;
+        };
+        implicit_test(1.2345678f);
+        for (auto val : res_f) REQUIRE(val == 1.2345678f);
+    }
     SECTION("from mm") {
         T::mm_t mm = _mm256_load_ps(bufA.data());
         T t(mm);
-        t.store(res_f.data()); REQUIRE(res_f == bufA);
+        simd::aligned(res_f.data()) = t; REQUIRE(res_f == bufA);
     }
     SECTION("from a pointer") {
         T t(simd::aligned(bufB.data()));
@@ -60,7 +73,7 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T t2(simd::ALL_BITS);
         T t3(simd::ABS_MASK);
         T t4(simd::SIGN_BIT);
-
+        alignas(T)T::array_u res_u;
         simd::aligned(res_u.data()) = t1; for (auto val : res_u) REQUIRE(val == 0x00000000);
         simd::aligned(res_u.data()) = t2; for (auto val : res_u) REQUIRE(val == 0xffffffff);
         simd::aligned(res_u.data()) = t3; for (auto val : res_u) REQUIRE(val == 0x7fffffff);
@@ -70,6 +83,8 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T tf(T::F(1.2345678f));
         T tu(T::U(0xdeadbeef));
         T ti(T::I(-123456789));
+        alignas(T)T::array_u res_u;
+        alignas(T)T::array_i res_i;
         simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(val == 1.2345678f);
         simd::aligned(res_u.data()) = tu; for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
         simd::aligned(res_i.data()) = ti; for (auto val : res_i) REQUIRE(val == -123456789);

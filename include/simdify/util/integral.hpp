@@ -8,15 +8,15 @@
 namespace simd {
 
     template <std::size_t Size>
-    struct select_int;
+    struct select_sint;
     template <>
-    struct select_int<1> { using type = int8_t; };
+    struct select_sint<1> { using type = int8_t; };
     template <>
-    struct select_int<2> { using type = int16_t; };
+    struct select_sint<2> { using type = int16_t; };
     template <>
-    struct select_int<4> { using type = int32_t; };
+    struct select_sint<4> { using type = int32_t; };
     template <>
-    struct select_int<8> { using type = int64_t; };
+    struct select_sint<8> { using type = int64_t; };
 
     template <std::size_t Size>
     struct select_uint;
@@ -30,7 +30,7 @@ namespace simd {
     struct select_uint<8> { using type = uint64_t; };
 
     template <std::size_t Size>
-    using select_int_t = typename select_int<Size>::type;
+    using select_sint_t = typename select_sint<Size>::type;
     template <std::size_t Size>
     using select_uint_t = typename select_uint<Size>::type;
 

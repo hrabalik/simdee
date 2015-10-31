@@ -61,7 +61,7 @@ namespace simd {
         using mm_t = Mm_t_;
         using f_t = F_t_;
         using u_t = select_uint_t<sizeof(f_t)>;
-        using i_t = select_int_t<sizeof(f_t)>;
+        using i_t = select_sint_t<sizeof(f_t)>;
 
         static const auto W = sizeof(mm_t) / sizeof(f_t);
         using F = floating_point_wrapper<f_t>;

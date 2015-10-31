@@ -5,6 +5,7 @@
 #include "../util/type.hpp"
 #include "../util/1b.hpp"
 #include "../util/integral.hpp"
+#include "expr.hpp"
 #include <cmath>
 #include <cstdint>
 #include <type_traits>

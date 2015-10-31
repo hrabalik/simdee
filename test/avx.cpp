@@ -51,10 +51,9 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T t(mm);
         t.store(res_f.data()); REQUIRE(res_f == bufA);
     }
-    SECTION("from aligned pointer") {
-        T t;
-        t.load(bufA.data());
-        t.store(res_f.data()); REQUIRE(res_f == bufA);
+    SECTION("from a pointer") {
+        T t(simd::aligned(bufB.data()));
+        simd::aligned(res_f.data()) = t; REQUIRE(res_f == bufB);
     }
     SECTION("from special values") {
         T t1(simd::ZERO);
@@ -62,19 +61,23 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T t3(simd::ABS_MASK);
         T t4(simd::SIGN_BIT);
 
-        t1.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0x00000000);
-        t2.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0xffffffff);
-        t3.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0x7fffffff);
-        t4.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0x80000000);
+        simd::aligned(res_u.data()) = t1; for (auto val : res_u) REQUIRE(val == 0x00000000);
+        simd::aligned(res_u.data()) = t2; for (auto val : res_u) REQUIRE(val == 0xffffffff);
+        simd::aligned(res_u.data()) = t3; for (auto val : res_u) REQUIRE(val == 0x7fffffff);
+        simd::aligned(res_u.data()) = t4; for (auto val : res_u) REQUIRE(val == 0x80000000);
     }
     SECTION("from wrappers") {
         T tf(T::F(1.2345678f));
         T tu(T::U(0xdeadbeef));
         T ti(T::I(-123456789));
-        tf.store(res_f.data()); for (auto val : res_f) REQUIRE(val == 1.2345678f);
-        tu.store(res_u.data()); for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
-        ti.store(res_i.data()); for (auto val : res_i) REQUIRE(val == -123456789);
+        simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(val == 1.2345678f);
+        simd::aligned(res_u.data()) = tu; for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
+        simd::aligned(res_i.data()) = ti; for (auto val : res_i) REQUIRE(val == -123456789);
     }
+}
+
+TEST_CASE("AVX assignment", "[simd_t][x86][avx]") {
+
 }
 
 TEST_CASE("AVX arithmetic", "[simd_t][x86][avx]") {

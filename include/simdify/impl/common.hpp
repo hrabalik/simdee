@@ -2,7 +2,6 @@
 #define SIMDIFY_COMMON
 
 #include "../util/inline.hpp"
-#include "../util/type.hpp"
 #include "../util/1b.hpp"
 #include "../util/integral.hpp"
 #include "expr.hpp"

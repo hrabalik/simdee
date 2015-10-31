@@ -1,7 +1,6 @@
 #ifndef SIMDIFY_UTIL_INTEGRAL
 #define SIMDIFY_UTIL_INTEGRAL
 
-#include "type.hpp"
 #include "inline.hpp"
 #include <cstdint>
 #include <type_traits>

@@ -15,6 +15,7 @@ namespace simd {
     struct avx : simd_base<__m256, float, avx> {
         SIMDIFY_FORCE_INLINE avx() {}
         SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
+        SIMDIFY_FORCE_INLINE avx(f_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
         SIMDIFY_FORCE_INLINE explicit avx(zero_t) : simd_base(_mm256_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE explicit avx(const F& r) : simd_base(_mm256_broadcast_ss(&r.f)) {}
         SIMDIFY_FORCE_INLINE explicit avx(const U& r) : simd_base(_mm256_broadcast_ss(&conversions::castf(r.u))) {}

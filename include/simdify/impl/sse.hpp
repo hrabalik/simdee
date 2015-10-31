@@ -73,7 +73,7 @@ namespace simd {
     // horizontal operations
     template <>
     struct horizontal_impl<sse> : horizontal_impl_base<sse> {
-        static SIMDIFY_FORCE_INLINE bit_field find(const sse& in) { return  uint(_mm_movemask_ps(in.mm)); }
+        static SIMDIFY_FORCE_INLINE bit_field find(const sse& in) { return  bit_field(bit_t(_mm_movemask_ps(in.mm))); }
         static SIMDIFY_FORCE_INLINE bool any(const sse& in) { return _mm_movemask_ps(in.mm) != 0; }
         static SIMDIFY_FORCE_INLINE bool all(const sse& in) { return _mm_movemask_ps(in.mm) == 0xF; }
 

@@ -60,7 +60,7 @@ namespace simd {
     // horizontal operations
     template <>
     struct horizontal_impl<avx> : horizontal_impl_base<avx> {
-        static SIMDIFY_FORCE_INLINE bit_field find(const avx& in) { return uint(_mm256_movemask_ps(in.mm)); }
+        static SIMDIFY_FORCE_INLINE bit_field find(const avx& in) { return bit_field(bit_t(_mm256_movemask_ps(in.mm))); }
         static SIMDIFY_FORCE_INLINE bool any(const avx& in) { return _mm256_movemask_ps(in.mm) != 0; }
         static SIMDIFY_FORCE_INLINE bool all(const avx& in) { return _mm256_movemask_ps(in.mm) == 0xFF; }
 

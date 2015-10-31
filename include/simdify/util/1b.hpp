@@ -46,23 +46,25 @@ namespace simd {
 #endif
 
 namespace simd {
+    
+    using bit_t = unsigned;
 
     // provides indices of set (1) bits, ordered from least significant to most significant
-    struct bit_iterator : std::iterator<std::input_iterator_tag, uint> {
-        uint mask;
+    struct bit_iterator : std::iterator<std::input_iterator_tag, bit_t> {
+        bit_t mask;
 
-        SIMDIFY_FORCE_INLINE bit_iterator(uint mask_) : mask(mask_) {}
-        SIMDIFY_FORCE_INLINE uint operator*() const { return uint(ls1b(mask)); }
-        SIMDIFY_FORCE_INLINE uint operator->() const { return uint(ls1b(mask)); }
+        SIMDIFY_FORCE_INLINE bit_iterator(bit_t mask_) : mask(mask_) {}
+        SIMDIFY_FORCE_INLINE bit_t operator*() const { return bit_t(ls1b(mask)); }
+        SIMDIFY_FORCE_INLINE bit_t operator->() const { return bit_t(ls1b(mask)); }
         SIMDIFY_FORCE_INLINE bit_iterator& operator++() { mask = mask & (mask - 1); return *this; }
         SIMDIFY_FORCE_INLINE bit_iterator operator++(int) { bit_iterator r = mask; operator++(); return r; }
         SIMDIFY_FORCE_INLINE bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }
     };
 
     struct bit_field {
-        uint field;
+        bit_t field;
 
-        SIMDIFY_FORCE_INLINE bit_field(uint field_) : field(field_) {}
+        SIMDIFY_FORCE_INLINE bit_field(bit_t field_) : field(field_) {}
         SIMDIFY_FORCE_INLINE bit_iterator begin() const { return field; }
         SIMDIFY_FORCE_INLINE bit_iterator end() const { return 0; }
     };

@@ -47,21 +47,21 @@ namespace simd {
     // horizontal operations
     template <>
     struct horizontal_impl<flt> : horizontal_impl_base<flt> {
-        struct find_result_iterator : std::iterator<std::input_iterator_tag, uint> {
-            uint mask;
+        struct find_result_iterator : std::iterator<std::input_iterator_tag, bit_t> {
+            bit_t mask;
 
-            SIMDIFY_FORCE_INLINE find_result_iterator(uint mask_) : mask(mask_) {}
-            SIMDIFY_FORCE_INLINE uint operator*() const { return 0; }
-            SIMDIFY_FORCE_INLINE uint operator->() const { return 0; }
+            SIMDIFY_FORCE_INLINE find_result_iterator(bit_t mask_) : mask(mask_) {}
+            SIMDIFY_FORCE_INLINE bit_t operator*() const { return 0; }
+            SIMDIFY_FORCE_INLINE bit_t operator->() const { return 0; }
             SIMDIFY_FORCE_INLINE find_result_iterator& operator++() { mask = 0; return *this; }
             SIMDIFY_FORCE_INLINE find_result_iterator operator++(int) { find_result_iterator r{ mask }; mask = 0; return r; }
             SIMDIFY_FORCE_INLINE bool operator!=(const find_result_iterator& rhs) const { return mask != rhs.mask; }
         };
 
         struct find_result {
-            uint field;
+            bit_t field;
 
-            SIMDIFY_FORCE_INLINE find_result(uint field_) : field(field_) {}
+            SIMDIFY_FORCE_INLINE find_result(bit_t field_) : field(field_) {}
             SIMDIFY_FORCE_INLINE find_result_iterator begin() const { return field; }
             SIMDIFY_FORCE_INLINE find_result_iterator end() const { return 0; }
         };

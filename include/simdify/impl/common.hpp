@@ -223,10 +223,10 @@ namespace simd {
     //
     template <typename T>
     struct horizontal_impl_base {
-        using unary_op_t = ptr<const T(const T& in)>;
-        using binary_op_t = ptr<const T(const T& l, const T& r)>;
+        using unary_op_t = const T(*)(const T& in);
+        using binary_op_t = const T(*)(const T& l, const T& r);
         using f_t = typename T::f_t;
-        using reduce_find_t = std::pair<f_t, uint>;
+        using reduce_find_t = std::pair<f_t, bit_t>;
         using ops = operators<T>;
 
         template <binary_op_t F>

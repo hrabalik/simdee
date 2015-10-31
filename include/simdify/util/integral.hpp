@@ -8,7 +8,7 @@
 
 namespace simd {
 
-    template <uint Size>
+    template <std::size_t Size>
     struct select_int;
     template <>
     struct select_int<1> { using type = int8_t; };
@@ -19,7 +19,7 @@ namespace simd {
     template <>
     struct select_int<8> { using type = int64_t; };
 
-    template <uint Size>
+    template <std::size_t Size>
     struct select_uint;
     template <>
     struct select_uint<1> { using type = uint8_t; };
@@ -30,38 +30,38 @@ namespace simd {
     template <>
     struct select_uint<8> { using type = uint64_t; };
 
-    template <uint Size>
+    template <std::size_t Size>
     using select_int_t = typename select_int<Size>::type;
-    template <uint Size>
+    template <std::size_t Size>
     using select_uint_t = typename select_uint<Size>::type;
 
-    template <uint x>
+    template <std::size_t x>
     struct is_power_of_2 : std::integral_constant < bool, x && (x & (x - 1)) == 0 > {};
 
-    template <uint b>
-    SIMDIFY_FORCE_INLINE uint div_floor(uint a) { return a / b; }
+    template <std::size_t b>
+    SIMDIFY_FORCE_INLINE std::size_t div_floor(std::size_t a) { return a / b; }
 
-    template <uint b>
-    SIMDIFY_FORCE_INLINE uint div_ceil(uint a) { return (a + (b - 1)) / b; }
+    template <std::size_t b>
+    SIMDIFY_FORCE_INLINE std::size_t div_ceil(std::size_t a) { return (a + (b - 1)) / b; }
 
-    template <uint b>
-    SIMDIFY_FORCE_INLINE uint div_floor_shift(uint a) {
+    template <std::size_t b>
+    SIMDIFY_FORCE_INLINE std::size_t div_floor_shift(std::size_t a) {
         if (is_power_of_2<b>::value)
             return a & ~(b - 1);
         else
             return (a / b) * b;
     }
 
-    template <uint b>
-    SIMDIFY_FORCE_INLINE uint div_ceil_shift(uint a) {
+    template <std::size_t b>
+    SIMDIFY_FORCE_INLINE std::size_t div_ceil_shift(std::size_t a) {
         if (is_power_of_2<b>::value)
             return (a + (b - 1)) & ~(b - 1);
         else
             return ((a + (b - 1)) / b) * b;
     }
 
-    template <uint b>
-    SIMDIFY_FORCE_INLINE uint mod(uint a) {
+    template <std::size_t b>
+    SIMDIFY_FORCE_INLINE std::size_t mod(std::size_t a) {
         if (is_power_of_2<b>::value)
             return a & (b - 1);
         else

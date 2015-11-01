@@ -47,42 +47,6 @@ namespace simd {
         };
 
         template <typename T>
-        struct uint {
-            SIMDIFY_FORCE_INLINE explicit uint(T&& r) : ref(std::forward<T>(r)) {}
-
-            SIMDIFY_FORCE_INLINE explicit operator float() {
-                using u_t = simd::select_uint_t<sizeof(float)>;
-                return reinterpret_cast<const float&>(static_cast<u_t>(ref));
-            }
-
-            SIMDIFY_FORCE_INLINE explicit operator double() {
-                using u_t = simd::select_uint_t<sizeof(double)>;
-                return reinterpret_cast<const double&>(static_cast<u_t>(ref));
-            }
-
-            // data
-            T&& ref;
-        };
-
-        template <typename T>
-        struct sint {
-            SIMDIFY_FORCE_INLINE explicit sint(T&& r) : ref(std::forward<T>(r)) {}
-
-            SIMDIFY_FORCE_INLINE explicit operator float() {
-                using u_t = simd::select_sint_t<sizeof(float)>;
-                return reinterpret_cast<const float&>(static_cast<u_t>(ref));
-            }
-
-            SIMDIFY_FORCE_INLINE explicit operator double() {
-                using u_t = simd::select_sint_t<sizeof(double)>;
-                return reinterpret_cast<const double&>(static_cast<u_t>(ref));
-            }
-
-            // data
-            T&& ref;
-        };
-
-        template <typename T>
         struct utof {
             SIMDIFY_FORCE_INLINE explicit utof(T&& r) : ref(std::forward<T>(r)) {}
 
@@ -149,18 +113,6 @@ namespace simd {
     SIMDIFY_FORCE_INLINE expr::aligned<T> aligned(T* const& r) { return expr::aligned<T>(r); }
     template <typename T>
     SIMDIFY_FORCE_INLINE expr::unaligned<T> unaligned(T* const& r) { return expr::unaligned<T>(r); }
-    template <typename T>
-    SIMDIFY_FORCE_INLINE expr::uint<T&&> uint(T&& r) { return expr::uint<T&&>(std::forward<T>(r)); }
-    template <typename T>
-    SIMDIFY_FORCE_INLINE float uintf(T&& r) { return float(expr::uint<T&&>(std::forward<T>(r))); }
-    template <typename T>
-    SIMDIFY_FORCE_INLINE double uintd(T&& r) { return double(expr::uint<T&&>(std::forward<T>(r))); }
-    template <typename T>
-    SIMDIFY_FORCE_INLINE expr::sint<T&&> sint(T&& r) { return expr::sint<T&&>(std::forward<T>(r)); }
-    template <typename T>
-    SIMDIFY_FORCE_INLINE float sintf(T&& r) { return float(expr::sint<T&&>(std::forward<T>(r))); }
-    template <typename T>
-    SIMDIFY_FORCE_INLINE double sintd(T&& r) { return double(expr::sint<T&&>(std::forward<T>(r))); }
     template <typename T>
     SIMDIFY_FORCE_INLINE expr::utof<T&&> utof(T&& r) { return expr::utof<T&&>(std::forward<T>(r)); }
     template <typename T>

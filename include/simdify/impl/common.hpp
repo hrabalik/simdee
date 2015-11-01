@@ -47,10 +47,10 @@ namespace simd {
     template <typename u_t>
     struct unsigned_wrapper;
 
-    template <typename i_t>
+    template <typename s_t>
     struct signed_wrapper;
 
-    template<typename f_t, typename u_t, typename i_t>
+    template<typename f_t, typename u_t, typename s_t>
     struct conversions_impl;
 
     //
@@ -61,20 +61,20 @@ namespace simd {
         using mm_t = Mm_t_;
         using f_t = F_t_;
         using u_t = select_uint_t<sizeof(f_t)>;
-        using i_t = select_sint_t<sizeof(f_t)>;
+        using s_t = select_sint_t<sizeof(f_t)>;
 
         static const auto W = sizeof(mm_t) / sizeof(f_t);
         using F = floating_point_wrapper<f_t>;
         using U = unsigned_wrapper<u_t>;
-        using I = signed_wrapper<i_t>;
+        using S = signed_wrapper<s_t>;
         using array_f = std::array<f_t, W>;
         using array_u = std::array<u_t, W>;
-        using array_i = std::array<i_t, W>;
+        using array_s = std::array<s_t, W>;
         using horizontal = horizontal_impl<Crtp>;
-        using conversions = conversions_impl<f_t, u_t, i_t>;
+        using conversions = conversions_impl<f_t, u_t, s_t>;
 
         // data
-        union { mm_t mm; array_f f; array_u u; array_i i; };
+        union { mm_t mm; array_f f; array_u u; array_s i; };
 
         // constructor
         SIMDIFY_FORCE_INLINE simd_base() {}
@@ -82,24 +82,24 @@ namespace simd {
     };
 
     // conversions and bit-wise operations with floating-point types
-    template<typename f_t, typename u_t, typename i_t>
+    template<typename f_t, typename u_t, typename s_t>
     struct conversions_impl {
         static_assert(std::is_unsigned<u_t>::value, "u_t must be unsigned");
         static_assert(std::is_integral<u_t>::value, "u_t must be integral");
-        static_assert(std::is_signed<i_t>::value, "i_t must be signed");
-        static_assert(std::is_integral<i_t>::value, "i_t must be integral");
+        static_assert(std::is_signed<s_t>::value, "s_t must be signed");
+        static_assert(std::is_integral<s_t>::value, "s_t must be integral");
         static_assert(sizeof(f_t) == sizeof(u_t), "u_t must be the same size as f_t");
-        static_assert(sizeof(f_t) == sizeof(i_t), "i_t must be the same size as f_t");
+        static_assert(sizeof(f_t) == sizeof(s_t), "s_t must be the same size as f_t");
 
-        union union_t { f_t f; u_t u; i_t i; };
+        union union_t { f_t f; u_t u; s_t i; };
 
-        // u_t -- f_t -- i_t conversion
+        // u_t -- f_t -- s_t conversion
         SIMDIFY_FORCE_INLINE static u_t tou(f_t r) { union_t m; m.f = r; return m.u; }
         SIMDIFY_FORCE_INLINE static f_t tof(u_t r) { union_t m; m.u = r; return m.f; }
         SIMDIFY_FORCE_INLINE static f_t& castf(u_t& r) { return reinterpret_cast<f_t&>(r); }
-        SIMDIFY_FORCE_INLINE static f_t& castf(i_t& r) { return reinterpret_cast<f_t&>(r); }
+        SIMDIFY_FORCE_INLINE static f_t& castf(s_t& r) { return reinterpret_cast<f_t&>(r); }
         SIMDIFY_FORCE_INLINE static const f_t& castf(const u_t& r) { return reinterpret_cast<const f_t&>(r); }
-        SIMDIFY_FORCE_INLINE static const f_t& castf(const i_t& r) { return reinterpret_cast<const f_t&>(r); }
+        SIMDIFY_FORCE_INLINE static const f_t& castf(const s_t& r) { return reinterpret_cast<const f_t&>(r); }
 
         // bitwise operations with f_t
         SIMDIFY_FORCE_INLINE static f_t band(f_t l, f_t r) { return tof(tou(l) & tou(r)); }
@@ -132,15 +132,15 @@ namespace simd {
         u_t u;
     };
 
-    // a wrapper to disambiguate construction with i_t
-    template<typename i_t>
+    // a wrapper to disambiguate construction with s_t
+    template<typename s_t>
     struct signed_wrapper {
-        static_assert(std::is_signed<i_t>::value, "signed_wrapper is for signed types only");
-        static_assert(std::is_integral<i_t>::value, "signed_wrapper is for integral types only");
-        SIMDIFY_FORCE_INLINE explicit signed_wrapper(i_t r) : i(r) {}
+        static_assert(std::is_signed<s_t>::value, "signed_wrapper is for signed types only");
+        static_assert(std::is_integral<s_t>::value, "signed_wrapper is for integral types only");
+        SIMDIFY_FORCE_INLINE explicit signed_wrapper(s_t r) : i(r) {}
 
         // data
-        i_t i;
+        s_t i;
     };
 
     // a wrapper to disambiguate construction with f_t

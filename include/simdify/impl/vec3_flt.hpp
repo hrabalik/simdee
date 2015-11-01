@@ -18,7 +18,7 @@ namespace simd {
         using mm_t = flt::mm_t;
         using f_t = flt::f_t;
         using u_t = flt::u_t;
-        using i_t = flt::i_t;
+        using s_t = flt::s_t;
         static const auto W = flt::W;
 
         // constructors

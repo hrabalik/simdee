@@ -16,7 +16,7 @@ namespace simd {
         using mm_t = typename T::mm_t;
         using f_t = typename T::f_t;
         using u_t = typename T::u_t;
-        using i_t = typename T::i_t;
+        using s_t = typename T::s_t;
         static const auto W = T::W;
 
         // constructors

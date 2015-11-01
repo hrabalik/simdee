@@ -28,10 +28,10 @@ TEST_CASE("AVX basic guarantees", "[simd_t][x86][avx]") {
     REQUIRE((std::is_same<T::mm_t, __m256>::value));
     REQUIRE((std::is_same<T::f_t, float>::value));
     REQUIRE((std::is_same<T::u_t, uint32_t>::value));
-    REQUIRE((std::is_same<T::i_t, int32_t>::value));
+    REQUIRE((std::is_same<T::s_t, int32_t>::value));
     REQUIRE((std::is_same<T::array_f, std::array<T::f_t, T::W>>::value));
     REQUIRE((std::is_same<T::array_u, std::array<T::u_t, T::W>>::value));
-    REQUIRE((std::is_same<T::array_i, std::array<T::i_t, T::W>>::value));
+    REQUIRE((std::is_same<T::array_s, std::array<T::s_t, T::W>>::value));
     REQUIRE(sizeof(T) == sizeof(T::mm_t));
     REQUIRE(alignof(T) == alignof(T::mm_t));
     REQUIRE(sizeof(T::f_t) * T::W == sizeof(T));
@@ -82,9 +82,9 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
     SECTION("from wrappers") {
         T tf(T::F(1.2345678f));
         T tu(T::U(0xdeadbeef));
-        T ti(T::I(-123456789));
+        T ti(T::S(-123456789));
         alignas(T)T::array_u res_u;
-        alignas(T)T::array_i res_i;
+        alignas(T)T::array_s res_i;
         simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(val == 1.2345678f);
         simd::aligned(res_u.data()) = tu; for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
         simd::aligned(res_i.data()) = ti; for (auto val : res_i) REQUIRE(val == -123456789);

@@ -29,6 +29,8 @@ namespace simd {
         SIMDIFY_FORCE_INLINE explicit avx(const expr::aligned<T>& r) : simd_base(_mm256_load_ps(r.get_load<f_t>())) {}
         template <typename T>
         SIMDIFY_FORCE_INLINE explicit avx(const expr::unaligned<T>& r) : simd_base(_mm256_loadu_ps(r.get_load<f_t>())) {}
+        template <typename T>
+        SIMDIFY_FORCE_INLINE explicit avx(const expr::tof<T>& r) : avx(r.to<f_t>()) {}
     };
 
     // bitwise not with lazy evaluation

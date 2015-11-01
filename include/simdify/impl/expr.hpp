@@ -46,12 +46,22 @@ namespace simd {
             T* const& ptr;
         };
 
+        template <typename Crtp>
+        struct tof {
+            SIMDIFY_FORCE_INLINE const Crtp& self() const { return static_cast<const Crtp&>(*this); }
+
+            template <typename F_t>
+            SIMDIFY_FORCE_INLINE F_t to() const {
+                return self().to<F_t>();
+            }
+        };
+
         template <typename T>
-        struct utof {
+        struct utof : tof<utof<T>> {
             SIMDIFY_FORCE_INLINE explicit utof(T&& r) : ref(std::forward<T>(r)) {}
 
             template <typename F_t>
-            F_t to() {
+            SIMDIFY_FORCE_INLINE F_t to() const {
                 static_assert(std::is_floating_point<F_t>::value, "utof::to used to convert to a non-floating point type");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
                 return reinterpret_cast<const F_t&>(static_cast<u_t>(ref));
@@ -62,11 +72,11 @@ namespace simd {
         };
 
         template <typename T>
-        struct stof {
+        struct stof : tof<stof<T>> {
             SIMDIFY_FORCE_INLINE explicit stof(T&& r) : ref(std::forward<T>(r)) {}
 
             template <typename F_t>
-            F_t to() {
+            SIMDIFY_FORCE_INLINE F_t to() const {
                 static_assert(std::is_floating_point<F_t>::value, "stof::to() used to convert to a non-floating point type");
                 using s_t = simd::select_sint_t<sizeof(F_t)>;
                 return reinterpret_cast<const F_t&>(static_cast<s_t>(ref));

@@ -64,7 +64,7 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T t(mm);
         simd::aligned(res_f.data()) = t; REQUIRE(res_f == bufA);
     }
-    SECTION("from a pointer") {
+    SECTION("from an aligned memory location") {
         T t(simd::aligned(bufB.data()));
         simd::aligned(res_f.data()) = t; REQUIRE(res_f == bufB);
     }
@@ -88,6 +88,12 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(val == 1.2345678f);
         simd::aligned(res_u.data()) = tu; for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
         simd::aligned(res_i.data()) = ti; for (auto val : res_i) REQUIRE(val == -123456789);
+    }
+    SECTION("from tof") {
+        T tu(simd::utof(0xdeadbeef));
+        T ts(simd::stof(-123456789));
+        simd::aligned(res_f.data()) = tu; for (auto val : res_f) REQUIRE(simd::tou(val) == 0xdeadbeef);
+        simd::aligned(res_f.data()) = ts; for (auto val : res_f) REQUIRE(simd::tos(val) == -123456789);
     }
 }
 

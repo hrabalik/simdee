@@ -89,11 +89,19 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         simd::aligned(res_u.data()) = tu; for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
         simd::aligned(res_i.data()) = ti; for (auto val : res_i) REQUIRE(val == -123456789);
     }
-    SECTION("from tof") {
-        T tu(simd::utof(0xdeadbeef));
-        T ts(simd::stof(-123456789));
-        simd::aligned(res_f.data()) = tu; for (auto val : res_f) REQUIRE(simd::tou(val) == 0xdeadbeef);
-        simd::aligned(res_f.data()) = ts; for (auto val : res_f) REQUIRE(simd::tos(val) == -123456789);
+    SECTION("from utof, stof, zero_t, etc. (simd::tof family)") {
+        T ta(simd::utof(0xdeadbeef));
+        T tb(simd::stof(-123456789));
+        T tc(simd::zero());
+        T td(simd::all_bits());
+        T te(simd::sign_bit());
+        T tf(simd::abs_mask());
+        simd::aligned(res_f.data()) = ta; for (auto val : res_f) REQUIRE(simd::tou(val) == 0xdeadbeef);
+        simd::aligned(res_f.data()) = tb; for (auto val : res_f) REQUIRE(simd::tos(val) == -123456789);
+        simd::aligned(res_f.data()) = tc; for (auto val : res_f) REQUIRE(simd::tou(val) == 0x00000000);
+        simd::aligned(res_f.data()) = td; for (auto val : res_f) REQUIRE(simd::tou(val) == 0xffffffff);
+        simd::aligned(res_f.data()) = te; for (auto val : res_f) REQUIRE(simd::tou(val) == 0x80000000);
+        simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(simd::tos(val) == 0x7fffffff);
     }
 }
 

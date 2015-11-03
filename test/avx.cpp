@@ -68,16 +68,6 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T t(simd::aligned(bufB.data()));
         simd::aligned(res_f.data()) = t; REQUIRE(res_f == bufB);
     }
-    SECTION("from wrappers") {
-        T tf(T::F(1.2345678f));
-        T tu(T::U(0xdeadbeef));
-        T ti(T::S(-123456789));
-        alignas(T)T::array_u res_u;
-        alignas(T)T::array_s res_i;
-        simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(val == 1.2345678f);
-        simd::aligned(res_u.data()) = tu; for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
-        simd::aligned(res_i.data()) = ti; for (auto val : res_i) REQUIRE(val == -123456789);
-    }
     SECTION("from utof, stof, zero, etc. (simd::tof family)") {
         T ta(simd::utof(0xdeadbeef));
         T tb(simd::stof(-123456789));

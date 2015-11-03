@@ -17,9 +17,6 @@ namespace simd {
         SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE avx(f_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
         SIMDIFY_FORCE_INLINE avx(const expr::zero&) : simd_base(_mm256_setzero_ps()) {}
-        SIMDIFY_FORCE_INLINE explicit avx(const F& r) : simd_base(_mm256_broadcast_ss(&r.f)) {}
-        SIMDIFY_FORCE_INLINE explicit avx(const U& r) : simd_base(_mm256_broadcast_ss(&conversions::castf(r.u))) {}
-        SIMDIFY_FORCE_INLINE explicit avx(const S& r) : simd_base(_mm256_broadcast_ss(&conversions::castf(r.i))) {}
         SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = _mm256_load_ps(r); }
         SIMDIFY_FORCE_INLINE void store(f_t* r) const { _mm256_store_ps(r, mm); }
         SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }

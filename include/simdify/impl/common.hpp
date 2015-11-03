@@ -48,9 +48,6 @@ namespace simd {
         using s_t = select_sint_t<sizeof(f_t)>;
 
         static const auto W = sizeof(mm_t) / sizeof(f_t);
-        using F = floating_point_wrapper<f_t>;
-        using U = unsigned_wrapper<u_t>;
-        using S = signed_wrapper<s_t>;
         using array_f = std::array<f_t, W>;
         using array_u = std::array<u_t, W>;
         using array_s = std::array<s_t, W>;
@@ -91,45 +88,6 @@ namespace simd {
         SIMDIFY_FORCE_INLINE static f_t bxor(f_t l, f_t r) { return tof(tou(l) ^ tou(r)); }
         SIMDIFY_FORCE_INLINE static f_t bnot(f_t l) { return tof(~tou(l)); }
         SIMDIFY_FORCE_INLINE static f_t bandnot(f_t l, f_t r) { return tof(tou(l) & ~tou(r)); }
-    };
-
-    // a wrapper to disambiguate construction with u_t
-    template<typename u_t>
-    struct unsigned_wrapper {
-        static_assert(std::is_unsigned<u_t>::value, "unsigned_wrapper is for unsigned types only");
-        static_assert(std::is_integral<u_t>::value, "unsigned_wrapper is for integral types only");
-
-        // useful bit masks
-        static const u_t ZERO_BIT_MASK = 0;
-        static const u_t ALL_BITS_MASK = ~ZERO_BIT_MASK;
-        static const u_t ABS_BIT_MASK = ALL_BITS_MASK >> 1;
-        static const u_t SIGN_BIT_MASK = ~ABS_BIT_MASK;
-
-        // constructors
-        SIMDIFY_FORCE_INLINE explicit unsigned_wrapper(u_t r) : u(r) {}
-
-        // data
-        u_t u;
-    };
-
-    // a wrapper to disambiguate construction with s_t
-    template<typename s_t>
-    struct signed_wrapper {
-        static_assert(std::is_signed<s_t>::value, "signed_wrapper is for signed types only");
-        static_assert(std::is_integral<s_t>::value, "signed_wrapper is for integral types only");
-        SIMDIFY_FORCE_INLINE explicit signed_wrapper(s_t r) : i(r) {}
-
-        // data
-        s_t i;
-    };
-
-    // a wrapper to disambiguate construction with f_t
-    template<typename f_t>
-    struct floating_point_wrapper {
-        SIMDIFY_FORCE_INLINE explicit floating_point_wrapper(f_t r) : f(r) {}
-
-        // data
-        f_t f;
     };
 
     //

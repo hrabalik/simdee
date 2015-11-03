@@ -10,6 +10,7 @@ namespace simd {
         SIMDIFY_FORCE_INLINE flt() {}
         SIMDIFY_FORCE_INLINE flt(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE explicit flt(zero_t) : simd_base(0) {}
+        SIMDIFY_FORCE_INLINE flt(const expr::zero&) : simd_base(0) {}
         SIMDIFY_FORCE_INLINE explicit flt(const F& r) : simd_base(r.f) {}
         SIMDIFY_FORCE_INLINE explicit flt(const U& r) : simd_base(conversions::castf(r.u)) {}
         SIMDIFY_FORCE_INLINE explicit flt(const S& r) : simd_base(conversions::castf(r.i)) {}
@@ -23,7 +24,7 @@ namespace simd {
         template <typename T>
         SIMDIFY_FORCE_INLINE explicit flt(const expr::unaligned<T>& r) : simd_base(*r.get_load<f_t>()) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE explicit flt(const expr::tof<T>& r) : flt(r.to<f_t>()) {}
+        SIMDIFY_FORCE_INLINE flt(const expr::tof<T>& r) : flt(r.to<f_t>()) {}
     };
 
     SIMDIFY_FORCE_INLINE const flt operator&(const flt& l, const flt& r) { return flt::conversions::band(l.mm, r.mm); }

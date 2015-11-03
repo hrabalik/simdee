@@ -30,6 +30,7 @@ namespace simd {
         SIMDIFY_FORCE_INLINE sse(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE sse(f_t r) : simd_base(_mm_set_ps1(r)) {}
         SIMDIFY_FORCE_INLINE explicit sse(zero_t) : simd_base(_mm_setzero_ps()) {}
+        SIMDIFY_FORCE_INLINE sse(const expr::zero&) : simd_base(_mm_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE explicit sse(const F& r) : simd_base(_mm_set_ps1(r.f)) {}
         SIMDIFY_FORCE_INLINE explicit sse(const U& r) : simd_base(_mm_set_ps1(conversions::castf(r.u))) {}
         SIMDIFY_FORCE_INLINE explicit sse(const S& r) : simd_base(_mm_set_ps1(conversions::castf(r.i))) {}
@@ -43,7 +44,7 @@ namespace simd {
         template <typename T>
         SIMDIFY_FORCE_INLINE explicit sse(const expr::unaligned<T>& r) : simd_base(_mm_loadu_ps(r.get_load<f_t>())) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE explicit sse(const expr::tof<T>& r) : sse(r.to<f_t>()) {}
+        SIMDIFY_FORCE_INLINE sse(const expr::tof<T>& r) : sse(r.to<f_t>()) {}
     };
 
     // bitwise not with lazy evaluation

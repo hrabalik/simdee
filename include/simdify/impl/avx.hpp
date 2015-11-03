@@ -17,6 +17,7 @@ namespace simd {
         SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE avx(f_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
         SIMDIFY_FORCE_INLINE explicit avx(zero_t) : simd_base(_mm256_setzero_ps()) {}
+        SIMDIFY_FORCE_INLINE avx(const expr::zero&) : simd_base(_mm256_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE explicit avx(const F& r) : simd_base(_mm256_broadcast_ss(&r.f)) {}
         SIMDIFY_FORCE_INLINE explicit avx(const U& r) : simd_base(_mm256_broadcast_ss(&conversions::castf(r.u))) {}
         SIMDIFY_FORCE_INLINE explicit avx(const S& r) : simd_base(_mm256_broadcast_ss(&conversions::castf(r.i))) {}
@@ -30,7 +31,7 @@ namespace simd {
         template <typename T>
         SIMDIFY_FORCE_INLINE explicit avx(const expr::unaligned<T>& r) : simd_base(_mm256_loadu_ps(r.get_load<f_t>())) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE explicit avx(const expr::tof<T>& r) : avx(r.to<f_t>()) {}
+        SIMDIFY_FORCE_INLINE avx(const expr::tof<T>& r) : avx(r.to<f_t>()) {}
     };
 
     // bitwise not with lazy evaluation

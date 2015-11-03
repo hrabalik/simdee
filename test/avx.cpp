@@ -101,7 +101,7 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         simd::aligned(res_f.data()) = tc; for (auto val : res_f) REQUIRE(simd::tou(val) == 0x00000000);
         simd::aligned(res_f.data()) = td; for (auto val : res_f) REQUIRE(simd::tou(val) == 0xffffffff);
         simd::aligned(res_f.data()) = te; for (auto val : res_f) REQUIRE(simd::tou(val) == 0x80000000);
-        simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(simd::tos(val) == 0x7fffffff);
+        simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(simd::tou(val) == 0x7fffffff);
     }
 }
 

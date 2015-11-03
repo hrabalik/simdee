@@ -36,9 +36,9 @@ namespace simd {
         SIMDIFY_FORCE_INLINE f_t back() const { return f.back(); }
 
         template <typename T>
-        SIMDIFY_FORCE_INLINE explicit sse(const expr::aligned<T>& r) : simd_base(_mm_load_ps(r.get_load<f_t>())) {}
+        SIMDIFY_FORCE_INLINE sse(const expr::aligned<T>& r) : simd_base(_mm_load_ps(r.get_load<f_t>())) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE explicit sse(const expr::unaligned<T>& r) : simd_base(_mm_loadu_ps(r.get_load<f_t>())) {}
+        SIMDIFY_FORCE_INLINE sse(const expr::unaligned<T>& r) : simd_base(_mm_loadu_ps(r.get_load<f_t>())) {}
         template <typename T>
         SIMDIFY_FORCE_INLINE sse(const expr::tof<T>& r) : sse(r.to<f_t>()) {}
     };

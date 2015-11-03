@@ -40,33 +40,28 @@ TEST_CASE("AVX basic guarantees", "[simd_t][x86][avx]") {
     REQUIRE(std::is_unsigned<T::u_t>::value);
 }
 
-TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
-    alignas(T)T::array_f res_f = bufZ;
+TEST_CASE("AVX explicit construction", "[simd_t][x86][avx]") {
+    alignas(T)T::array_f r = bufZ;
+    auto tor = [&r](const T& t) {
+        simd::aligned(r.data()) = t;
+    };
 
     SECTION("default") {
         T t;
     }
     SECTION("from f_t") {
-        T::f_t f = 1.2345678f;
-        T t(f);
-        simd::aligned(res_f.data()) = t;
-        for (auto val : res_f) REQUIRE(val == 1.2345678f);
+        T t(1.2345678f);
+        tor(t); for (auto val : r) REQUIRE(val == 1.2345678f);
     }
-    SECTION("from f_t must be implicit") {
-        auto implicit_test = [&res_f](const T& t) {
-            simd::aligned(res_f.data()) = t;
-        };
-        implicit_test(1.2345678f);
-        for (auto val : res_f) REQUIRE(val == 1.2345678f);
+    SECTION("from mm_t") {
+        T t(_mm256_load_ps(bufA.data()));
+        tor(t); REQUIRE(r == bufA);
     }
-    SECTION("from mm") {
-        T::mm_t mm = _mm256_load_ps(bufA.data());
-        T t(mm);
-        simd::aligned(res_f.data()) = t; REQUIRE(res_f == bufA);
-    }
-    SECTION("from an aligned memory location") {
-        T t(simd::aligned(bufB.data()));
-        simd::aligned(res_f.data()) = t; REQUIRE(res_f == bufB);
+    SECTION("from aligned, unaligned pointer") {
+        T tb(simd::aligned(bufB.data()));
+        T tc(simd::unaligned(bufC.data()));
+        tor(tb); REQUIRE(r == bufB);
+        tor(tc); REQUIRE(r == bufC);
     }
     SECTION("from utof, stof, zero, etc. (simd::tof family)") {
         T ta(simd::utof(0xdeadbeef));
@@ -75,17 +70,87 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T td(simd::all_bits());
         T te(simd::sign_bit());
         T tf(simd::abs_mask());
-        simd::aligned(res_f.data()) = ta; for (auto val : res_f) REQUIRE(simd::tou(val) == 0xdeadbeef);
-        simd::aligned(res_f.data()) = tb; for (auto val : res_f) REQUIRE(simd::tos(val) == -123456789);
-        simd::aligned(res_f.data()) = tc; for (auto val : res_f) REQUIRE(simd::tou(val) == 0x00000000);
-        simd::aligned(res_f.data()) = td; for (auto val : res_f) REQUIRE(simd::tou(val) == 0xffffffff);
-        simd::aligned(res_f.data()) = te; for (auto val : res_f) REQUIRE(simd::tou(val) == 0x80000000);
-        simd::aligned(res_f.data()) = tf; for (auto val : res_f) REQUIRE(simd::tou(val) == 0x7fffffff);
+        tor(ta); for (auto val : r) REQUIRE(simd::tou(val) == 0xdeadbeef);
+        tor(tb); for (auto val : r) REQUIRE(simd::tos(val) == -123456789);
+        tor(tc); for (auto val : r) REQUIRE(simd::tou(val) == 0x00000000);
+        tor(td); for (auto val : r) REQUIRE(simd::tou(val) == 0xffffffff);
+        tor(te); for (auto val : r) REQUIRE(simd::tou(val) == 0x80000000);
+        tor(tf); for (auto val : r) REQUIRE(simd::tou(val) == 0x7fffffff);
+    }
+}
+
+
+TEST_CASE("AVX implicit construction", "[simd_t][x86][avx]") {
+    alignas(T)T::array_f r = bufZ;
+    auto implicit_test = [&r](const T& t) {
+        simd::aligned(r.data()) = t;
+    };
+
+    SECTION("from f_t") {
+        implicit_test(1.2345678f);
+        for (auto val : r) REQUIRE(val == 1.2345678f);
+    }
+    SECTION("from mm_t") {
+        implicit_test(_mm256_load_ps(bufA.data()));
+        REQUIRE(r == bufA);
+    }
+    SECTION("from aligned, unaligned pointer") {
+        implicit_test(simd::aligned(bufB.data()));
+        REQUIRE(r == bufB);
+        implicit_test(simd::unaligned(bufC.data()));
+        REQUIRE(r == bufC);
+    }
+    SECTION("from utof, stof, zero, etc. (simd::tof family)") {
+        implicit_test(simd::utof(0xdeadbeef));
+        for (auto val : r) REQUIRE(simd::tou(val) == 0xdeadbeef);
+        implicit_test(simd::stof(-123456789));
+        for (auto val : r) REQUIRE(simd::tos(val) == -123456789);
+        implicit_test(simd::zero());
+        for (auto val : r) REQUIRE(simd::tou(val) == 0x00000000);
+        implicit_test(simd::all_bits());
+        for (auto val : r) REQUIRE(simd::tou(val) == 0xffffffff);
+        implicit_test(simd::sign_bit());
+        for (auto val : r) REQUIRE(simd::tou(val) == 0x80000000);
+        implicit_test(simd::abs_mask());
+        for (auto val : r) REQUIRE(simd::tou(val) == 0x7fffffff);
     }
 }
 
 TEST_CASE("AVX assignment", "[simd_t][x86][avx]") {
+    alignas(T)T::array_f r = bufZ;
+    T t;
+    auto tor = [&r, &t]() {
+        simd::aligned(r.data()) = t;
+    };
 
+    SECTION("from f_t") {
+        t = 1.2345678f;
+        tor(); for (auto val : r) REQUIRE(val == 1.2345678f);
+    }
+    SECTION("from mm_t") {
+        t = _mm256_load_ps(bufA.data());
+        tor(); REQUIRE(r == bufA);
+    }
+    SECTION("from aligned, unaligned pointer") {
+        t = simd::aligned(bufB.data());
+        tor(); REQUIRE(r == bufB);
+        t = simd::unaligned(bufC.data());
+        tor(); REQUIRE(r == bufC);
+    }
+    SECTION("from utof, stof, zero, etc. (simd::tof family)") {
+        t = simd::utof(0xdeadbeef);
+        tor(); for (auto val : r) REQUIRE(simd::tou(val) == 0xdeadbeef);
+        t = simd::stof(-123456789);
+        tor(); for (auto val : r) REQUIRE(simd::tos(val) == -123456789);
+        t = simd::zero();
+        tor(); for (auto val : r) REQUIRE(simd::tou(val) == 0x00000000);
+        t = simd::all_bits();
+        tor(); for (auto val : r) REQUIRE(simd::tou(val) == 0xffffffff);
+        t = simd::sign_bit();
+        tor(); for (auto val : r) REQUIRE(simd::tou(val) == 0x80000000);
+        t = simd::abs_mask();
+        tor(); for (auto val : r) REQUIRE(simd::tou(val) == 0x7fffffff);
+    }
 }
 
 TEST_CASE("AVX arithmetic", "[simd_t][x86][avx]") {

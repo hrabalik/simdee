@@ -23,10 +23,10 @@ namespace simd {
         SIMDIFY_FORCE_INLINE flt(const expr::tof<T>& r) : flt(r.to<f_t>()) {}
     };
 
-    SIMDIFY_FORCE_INLINE const flt operator&(const flt& l, const flt& r) { return flt::conversions::band(l.mm, r.mm); }
-    SIMDIFY_FORCE_INLINE const flt operator|(const flt& l, const flt& r) { return flt::conversions::bor(l.mm, r.mm); }
-    SIMDIFY_FORCE_INLINE const flt operator^(const flt& l, const flt& r) { return flt::conversions::bxor(l.mm, r.mm); }
-    SIMDIFY_FORCE_INLINE const flt operator~(const flt& l) { return flt::conversions::bnot(l.mm); }
+    SIMDIFY_FORCE_INLINE const flt operator&(const flt& l, const flt& r) { return utof(tou(l.mm) & tou(r.mm)); }
+    SIMDIFY_FORCE_INLINE const flt operator|(const flt& l, const flt& r) { return utof(tou(l.mm) | tou(r.mm)); }
+    SIMDIFY_FORCE_INLINE const flt operator^(const flt& l, const flt& r) { return utof(tou(l.mm) ^ tou(r.mm)); }
+    SIMDIFY_FORCE_INLINE const flt operator~(const flt& l) { return utof(~tou(l.mm)); }
     SIMDIFY_FORCE_INLINE const flt operator<(const flt& l, const flt& r) { return l.mm < r.mm ? flt(all_bits()) : flt(zero()); }
     SIMDIFY_FORCE_INLINE const flt operator>(const flt& l, const flt& r) { return l.mm > r.mm ? flt(all_bits()) : flt(zero()); }
     SIMDIFY_FORCE_INLINE const flt operator<=(const flt& l, const flt& r) { return l.mm <= r.mm ? flt(all_bits()) : flt(zero()); }
@@ -37,7 +37,7 @@ namespace simd {
     SIMDIFY_FORCE_INLINE const flt operator-(const flt& l, const flt& r) { return l.mm - r.mm; }
     SIMDIFY_FORCE_INLINE const flt operator*(const flt& l, const flt& r) { return l.mm * r.mm; }
     SIMDIFY_FORCE_INLINE const flt operator/(const flt& l, const flt& r) { return l.mm / r.mm; }
-    SIMDIFY_FORCE_INLINE const flt andnot(const flt& l, const flt& r) { return flt::conversions::bandnot(l.mm, r.mm); }
+    SIMDIFY_FORCE_INLINE const flt andnot(const flt& l, const flt& r) { return utof(tou(l.mm) & ~tou(r.mm)); }
     SIMDIFY_FORCE_INLINE const flt min(const flt& l, const flt& r) { return std::min(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const flt max(const flt& l, const flt& r) { return std::max(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const flt cond(const flt& pred, const flt& if_true, const flt& if_false) { return pred.mm != 0 ? if_true : if_false; }

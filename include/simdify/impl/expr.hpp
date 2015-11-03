@@ -62,9 +62,9 @@ namespace simd {
 
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "utof() must only be used to produce floating-point types");
+                static_assert(std::is_floating_point<F_t>::value, "utof() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
-                return reinterpret_cast<const F_t&>(static_cast<const u_t&>(ref));
+                return reinterpret_cast<const F_t&>(static_cast<const u_t&>(u_t{ ref }));
             }
 
             // data
@@ -77,9 +77,9 @@ namespace simd {
 
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "stof() must only be used to produce floating-point types");
+                static_assert(std::is_floating_point<F_t>::value, "stof() must only be used to produce floating-point values");
                 using s_t = simd::select_sint_t<sizeof(F_t)>;
-                return reinterpret_cast<const F_t&>(static_cast<const s_t&>(ref));
+                return reinterpret_cast<const F_t&>(static_cast<const s_t&>(s_t{ ref }));
             }
 
             // data
@@ -89,7 +89,7 @@ namespace simd {
         struct zero : tof<zero> {
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "zero() must only be used to produce floating-point types");
+                static_assert(std::is_floating_point<F_t>::value, "zero() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
                 return reinterpret_cast<const F_t&>(static_cast<const u_t&>(0));
             }
@@ -98,7 +98,7 @@ namespace simd {
         struct all_bits : tof<all_bits> {
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "all_bits() must only be used to produce floating-point types");
+                static_assert(std::is_floating_point<F_t>::value, "all_bits() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
                 return reinterpret_cast<const F_t&>(static_cast<const u_t&>(~u_t(0)));
             }
@@ -108,7 +108,7 @@ namespace simd {
         struct sign_bit : tof<sign_bit> {
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "sign_bit() must only be used to produce floating-point types");
+                static_assert(std::is_floating_point<F_t>::value, "sign_bit() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
                 return reinterpret_cast<const F_t&>(static_cast<const u_t&>(~(~u_t(0) >> 1)));
             }
@@ -117,7 +117,7 @@ namespace simd {
         struct abs_mask : tof<abs_mask> {
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "abs_mask() must only be used to produce floating-point types");
+                static_assert(std::is_floating_point<F_t>::value, "abs_mask() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
                 return reinterpret_cast<const F_t&>(static_cast<const u_t&>(~u_t(0) >> 1));
             }

@@ -68,17 +68,6 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         T t(simd::aligned(bufB.data()));
         simd::aligned(res_f.data()) = t; REQUIRE(res_f == bufB);
     }
-    SECTION("from special values") {
-        T t1(simd::ZERO);
-        T t2(simd::ALL_BITS);
-        T t3(simd::ABS_MASK);
-        T t4(simd::SIGN_BIT);
-        alignas(T)T::array_u res_u;
-        simd::aligned(res_u.data()) = t1; for (auto val : res_u) REQUIRE(val == 0x00000000);
-        simd::aligned(res_u.data()) = t2; for (auto val : res_u) REQUIRE(val == 0xffffffff);
-        simd::aligned(res_u.data()) = t3; for (auto val : res_u) REQUIRE(val == 0x7fffffff);
-        simd::aligned(res_u.data()) = t4; for (auto val : res_u) REQUIRE(val == 0x80000000);
-    }
     SECTION("from wrappers") {
         T tf(T::F(1.2345678f));
         T tu(T::U(0xdeadbeef));
@@ -89,7 +78,7 @@ TEST_CASE("AVX construction", "[simd_t][x86][avx]") {
         simd::aligned(res_u.data()) = tu; for (auto val : res_u) REQUIRE(val == 0xdeadbeef);
         simd::aligned(res_i.data()) = ti; for (auto val : res_i) REQUIRE(val == -123456789);
     }
-    SECTION("from utof, stof, zero_t, etc. (simd::tof family)") {
+    SECTION("from utof, stof, zero, etc. (simd::tof family)") {
         T ta(simd::utof(0xdeadbeef));
         T tb(simd::stof(-123456789));
         T tc(simd::zero());

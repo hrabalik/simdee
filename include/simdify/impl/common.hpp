@@ -17,22 +17,6 @@
 namespace simd {
 
     //
-    // types for overload selection/disambiguation
-    //
-    struct zero_t {};
-    struct all_bits_t {};
-    struct abs_mask_t {};
-    struct sign_bit_t {};
-
-    // defined in each compilation unit
-    namespace {
-        zero_t ZERO;
-        all_bits_t ALL_BITS;
-        abs_mask_t ABS_MASK;
-        sign_bit_t SIGN_BIT;
-    }
-
-    //
     // forward declarations
     //
     template <typename T>
@@ -123,10 +107,6 @@ namespace simd {
 
         // constructors
         SIMDIFY_FORCE_INLINE explicit unsigned_wrapper(u_t r) : u(r) {}
-        SIMDIFY_FORCE_INLINE unsigned_wrapper(zero_t) : u(ZERO_BIT_MASK) {}
-        SIMDIFY_FORCE_INLINE unsigned_wrapper(all_bits_t) : u(ALL_BITS_MASK) {}
-        SIMDIFY_FORCE_INLINE unsigned_wrapper(abs_mask_t) : u(ABS_BIT_MASK) {}
-        SIMDIFY_FORCE_INLINE unsigned_wrapper(sign_bit_t) : u(SIGN_BIT_MASK) {}
 
         // data
         u_t u;
@@ -168,9 +148,9 @@ namespace simd {
     template <typename T> SIMDIFY_FORCE_INLINE T& operator -=(T& l, const T& r) { l = l - r; return l; }
     template <typename T> SIMDIFY_FORCE_INLINE T& operator *=(T& l, const T& r) { l = l * r; return l; }
     template <typename T> SIMDIFY_FORCE_INLINE T& operator /=(T& l, const T& r) { l = l / r; return l; }
-    template <typename T> SIMDIFY_FORCE_INLINE const T abs(const T& in) { return in & T(abs_mask_t{}); }
-    template <typename T> SIMDIFY_FORCE_INLINE const T signbit(const T& in) { return in & T(sign_bit_t{}); }
-    template <typename T> SIMDIFY_FORCE_INLINE const T signum(const T& in) { return cond(in > T(zero_t{}), T(1), T(-1)); }
+    template <typename T> SIMDIFY_FORCE_INLINE const T abs(const T& in) { return in & abs_mask(); }
+    template <typename T> SIMDIFY_FORCE_INLINE const T signbit(const T& in) { return in & sign_bit(); }
+    template <typename T> SIMDIFY_FORCE_INLINE const T signum(const T& in) { return cond(in > zero(), 1, -1); }
 
     template<typename T>
     SIMDIFY_FORCE_INLINE const T operator~(const bitwise_not<T>& l) { return l.neg; }
@@ -186,8 +166,8 @@ namespace simd {
     SIMDIFY_FORCE_INLINE const T operator^(const bitwise_not<T>& l, const bitwise_not<T>& r) { return l.neg ^ r.neg; }
 
     template <typename T>
-    SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, zero_t) {
-        return cond(mask, in, T(zero_t{}));
+    SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, const expr::zero&) {
+        return cond(mask, in, zero());
     }
     template <typename T>
     SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, typename T::F neutral_value) {
@@ -265,7 +245,7 @@ namespace simd {
             return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<f_t>::min());
         }
         static SIMDIFY_FORCE_INLINE f_t sum_with_mask(const T& in, const T& mask) {
-            return reduce_with_mask<ops::add_>(in, mask, zero_t{});
+            return reduce_with_mask<ops::add_>(in, mask, zero());
         }
         static SIMDIFY_FORCE_INLINE f_t product_with_mask(const T& in, const T& mask) {
             return reduce_with_mask<ops::add_>(in, mask, f_t(1));

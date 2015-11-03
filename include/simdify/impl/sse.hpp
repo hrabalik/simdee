@@ -29,7 +29,6 @@ namespace simd {
         SIMDIFY_FORCE_INLINE sse() {}
         SIMDIFY_FORCE_INLINE sse(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE sse(f_t r) : simd_base(_mm_set_ps1(r)) {}
-        SIMDIFY_FORCE_INLINE explicit sse(zero_t) : simd_base(_mm_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE sse(const expr::zero&) : simd_base(_mm_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE explicit sse(const F& r) : simd_base(_mm_set_ps1(r.f)) {}
         SIMDIFY_FORCE_INLINE explicit sse(const U& r) : simd_base(_mm_set_ps1(conversions::castf(r.u))) {}
@@ -52,7 +51,7 @@ namespace simd {
     struct bitwise_not<sse> {
         sse neg;
         SIMDIFY_FORCE_INLINE explicit bitwise_not(const sse& r) : neg(r) {}
-        SIMDIFY_FORCE_INLINE explicit operator const sse() const { return _mm_andnot_ps(neg.mm, sse(all_bits_t{}).mm); }
+        SIMDIFY_FORCE_INLINE explicit operator const sse() const { return _mm_andnot_ps(neg.mm, sse(all_bits()).mm); }
     };
 
     SIMDIFY_FORCE_INLINE const sse operator&(const sse& l, const sse& r) { return _mm_and_ps(l.mm, r.mm); }

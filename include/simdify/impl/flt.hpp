@@ -9,7 +9,6 @@ namespace simd {
     struct flt : simd_base<float, float, flt> {
         SIMDIFY_FORCE_INLINE flt() {}
         SIMDIFY_FORCE_INLINE flt(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE explicit flt(zero_t) : simd_base(0) {}
         SIMDIFY_FORCE_INLINE flt(const expr::zero&) : simd_base(0) {}
         SIMDIFY_FORCE_INLINE explicit flt(const F& r) : simd_base(r.f) {}
         SIMDIFY_FORCE_INLINE explicit flt(const U& r) : simd_base(conversions::castf(r.u)) {}
@@ -31,12 +30,12 @@ namespace simd {
     SIMDIFY_FORCE_INLINE const flt operator|(const flt& l, const flt& r) { return flt::conversions::bor(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const flt operator^(const flt& l, const flt& r) { return flt::conversions::bxor(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const flt operator~(const flt& l) { return flt::conversions::bnot(l.mm); }
-    SIMDIFY_FORCE_INLINE const flt operator<(const flt& l, const flt& r) { return l.mm < r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
-    SIMDIFY_FORCE_INLINE const flt operator>(const flt& l, const flt& r) { return l.mm > r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
-    SIMDIFY_FORCE_INLINE const flt operator<=(const flt& l, const flt& r) { return l.mm <= r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
-    SIMDIFY_FORCE_INLINE const flt operator>=(const flt& l, const flt& r) { return l.mm >= r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
-    SIMDIFY_FORCE_INLINE const flt operator==(const flt& l, const flt& r) { return l.mm == r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
-    SIMDIFY_FORCE_INLINE const flt operator!=(const flt& l, const flt& r) { return l.mm != r.mm ? flt(all_bits_t{}) : flt(zero_t{}); }
+    SIMDIFY_FORCE_INLINE const flt operator<(const flt& l, const flt& r) { return l.mm < r.mm ? flt(all_bits()) : flt(zero()); }
+    SIMDIFY_FORCE_INLINE const flt operator>(const flt& l, const flt& r) { return l.mm > r.mm ? flt(all_bits()) : flt(zero()); }
+    SIMDIFY_FORCE_INLINE const flt operator<=(const flt& l, const flt& r) { return l.mm <= r.mm ? flt(all_bits()) : flt(zero()); }
+    SIMDIFY_FORCE_INLINE const flt operator>=(const flt& l, const flt& r) { return l.mm >= r.mm ? flt(all_bits()) : flt(zero()); }
+    SIMDIFY_FORCE_INLINE const flt operator==(const flt& l, const flt& r) { return l.mm == r.mm ? flt(all_bits()) : flt(zero()); }
+    SIMDIFY_FORCE_INLINE const flt operator!=(const flt& l, const flt& r) { return l.mm != r.mm ? flt(all_bits()) : flt(zero()); }
     SIMDIFY_FORCE_INLINE const flt operator+(const flt& l, const flt& r) { return l.mm + r.mm; }
     SIMDIFY_FORCE_INLINE const flt operator-(const flt& l, const flt& r) { return l.mm - r.mm; }
     SIMDIFY_FORCE_INLINE const flt operator*(const flt& l, const flt& r) { return l.mm * r.mm; }

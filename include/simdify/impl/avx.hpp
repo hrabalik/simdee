@@ -16,7 +16,6 @@ namespace simd {
         SIMDIFY_FORCE_INLINE avx() {}
         SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE avx(f_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
-        SIMDIFY_FORCE_INLINE explicit avx(zero_t) : simd_base(_mm256_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE avx(const expr::zero&) : simd_base(_mm256_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE explicit avx(const F& r) : simd_base(_mm256_broadcast_ss(&r.f)) {}
         SIMDIFY_FORCE_INLINE explicit avx(const U& r) : simd_base(_mm256_broadcast_ss(&conversions::castf(r.u))) {}
@@ -39,7 +38,7 @@ namespace simd {
     struct bitwise_not<avx> {
         avx neg;
         SIMDIFY_FORCE_INLINE explicit bitwise_not(const avx& r) : neg(r) {}
-        SIMDIFY_FORCE_INLINE explicit operator const avx() const { return _mm256_andnot_ps(neg.mm, avx(all_bits_t{}).mm); }
+        SIMDIFY_FORCE_INLINE explicit operator const avx() const { return _mm256_andnot_ps(neg.mm, avx(all_bits()).mm); }
     };
 
     SIMDIFY_FORCE_INLINE const avx operator&(const avx& l, const avx& r) { return _mm256_and_ps(l.mm, r.mm); }

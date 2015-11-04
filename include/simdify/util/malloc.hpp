@@ -47,6 +47,10 @@ namespace simd {
     struct aligned_allocator {
         using value_type = T;
 
+        aligned_allocator() = default;
+        template <typename S>
+        aligned_allocator(const aligned_allocator<S, Align>&) {}
+
         T* allocate(std::size_t count) const SIMDIFY_NOEXCEPT {
             return simd::aligned_malloc<T, Align>(count);
         }

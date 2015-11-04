@@ -44,6 +44,11 @@ namespace simd {
 
             SIMDIFY_FORCE_INLINE view(basic_vec3& v, std::size_t i) : x(v.x.f[i]), y(v.y.f[i]), z(v.z.f[i]) {}
 
+            SIMDIFY_FORCE_INLINE view& operator=(const view& other) {
+                x = other.x; y = other.y; z = other.z;
+                return *this;
+            }
+
             template <typename S>
             SIMDIFY_FORCE_INLINE view& operator=(const S& other) {
                 x = other.x; y = other.y; z = other.z;

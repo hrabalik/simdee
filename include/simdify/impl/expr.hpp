@@ -8,7 +8,7 @@ namespace simd {
     namespace expr {
         template <typename From, typename To>
         struct dirty_caster {
-            SIMDIFY_FORCE_INLINE constexpr dirty_caster(const From& from) : val_from { from } {}
+            SIMDIFY_FORCE_INLINE constexpr dirty_caster(const From& from) : val_from{ from } {}
             SIMDIFY_FORCE_INLINE constexpr dirty_caster(From&& from) : val_from{ from } {}
 
             SIMDIFY_FORCE_INLINE constexpr To get() const { return val_to; }

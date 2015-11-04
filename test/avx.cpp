@@ -8,19 +8,19 @@
 
 using T = simd::avx;
 
-alignas(T) const T::array_f bufA = {
+alignas(T) const T::array_f bufA = { {
     -0.27787193f, +0.70154146f, -2.05181630f, -0.35385000f,
     -0.82358653f, -1.57705702f, +0.50797465f, +0.28198406f,
-};
-alignas(T) const T::array_f bufB = {
+} };
+alignas(T) const T::array_f bufB = { {
     -0.23645458f, +2.02369089f, -2.25835397f, +2.22944568f,
     +0.33756370f, +1.00006082f, -1.66416447f, -0.59003456f,
-};
-alignas(T) const T::array_f bufC = {
+} };
+alignas(T) const T::array_f bufC = { {
     +0.42862268f, -1.03598478f, +1.87786546f, +0.94070440f,
     +0.78734578f, -0.87587426f, +0.31994913f, -0.55829428f,
-};
-alignas(T) const T::array_f bufZ = { 0, 0, 0, 0, 0, 0, 0, 0 };
+} };
+alignas(T) const T::array_f bufZ = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
 
 TEST_CASE("AVX basic guarantees", "[simd_t][x86][avx]") {

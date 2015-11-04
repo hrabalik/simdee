@@ -6,6 +6,20 @@
 
 namespace simd {
     namespace expr {
+        template <typename From, typename To>
+        struct dirty_caster {
+            SIMDIFY_FORCE_INLINE constexpr dirty_caster(const From& from) : val_from { from } {}
+            SIMDIFY_FORCE_INLINE constexpr dirty_caster(From&& from) : val_from{ from } {}
+
+            SIMDIFY_FORCE_INLINE constexpr To get() const { return val_to; }
+
+            // data
+            union {
+                From val_from;
+                To val_to;
+            };
+        };
+
         template <typename T>
         struct aligned {
             SIMDIFY_FORCE_INLINE constexpr explicit aligned(T* const& r) : ptr(r) {}
@@ -52,7 +66,7 @@ namespace simd {
 
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                return self().to<F_t>();
+                return self().template to<F_t>();
             }
         };
 
@@ -64,7 +78,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
                 static_assert(std::is_floating_point<F_t>::value, "utof() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
-                return reinterpret_cast<const F_t&>(static_cast<const u_t&>(u_t{ ref }));
+                return dirty_caster<u_t, F_t>(u_t{ ref }).get();
             }
 
             // data
@@ -79,7 +93,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
                 static_assert(std::is_floating_point<F_t>::value, "stof() must only be used to produce floating-point values");
                 using s_t = simd::select_sint_t<sizeof(F_t)>;
-                return reinterpret_cast<const F_t&>(static_cast<const s_t&>(s_t{ ref }));
+                return dirty_caster<s_t, F_t>(s_t{ ref }).get();
             }
 
             // data
@@ -91,7 +105,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
                 static_assert(std::is_floating_point<F_t>::value, "zero() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
-                return reinterpret_cast<const F_t&>(static_cast<const u_t&>(0));
+                return dirty_caster<u_t, F_t>(0).get();
             }
         };
 
@@ -100,7 +114,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
                 static_assert(std::is_floating_point<F_t>::value, "all_bits() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
-                return reinterpret_cast<const F_t&>(static_cast<const u_t&>(~u_t(0)));
+                return dirty_caster<u_t, F_t>(~u_t(0)).get();
             }
         };
 
@@ -110,7 +124,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
                 static_assert(std::is_floating_point<F_t>::value, "sign_bit() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
-                return reinterpret_cast<const F_t&>(static_cast<const u_t&>(~(~u_t(0) >> 1)));
+                return dirty_caster<u_t, F_t>(~(~u_t(0) >> 1)).get();
             }
         };
 
@@ -119,7 +133,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
                 static_assert(std::is_floating_point<F_t>::value, "abs_mask() must only be used to produce floating-point values");
                 using u_t = simd::select_uint_t<sizeof(F_t)>;
-                return reinterpret_cast<const F_t&>(static_cast<const u_t&>(~u_t(0) >> 1));
+                return dirty_caster<u_t, F_t>(~u_t(0) >> 1).get();
             }
         };
 
@@ -132,7 +146,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
 
             SIMDIFY_FORCE_INLINE constexpr operator u_t() const {
-                return reinterpret_cast<const u_t&>(ref);
+                return dirty_caster<f_t, u_t>(ref).get();
             }
 
             // data
@@ -148,7 +162,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
 
             SIMDIFY_FORCE_INLINE constexpr operator s_t() const {
-                return reinterpret_cast<const s_t&>(ref);
+                return dirty_caster<f_t, s_t>(ref).get();
             }
 
             // data

@@ -16,11 +16,11 @@ namespace simd {
         SIMDIFY_FORCE_INLINE f_t back() const { return mm; }
 
         template <typename T>
-        SIMDIFY_FORCE_INLINE flt(const expr::aligned<T>& r) : simd_base(*r.get_load<f_t>()) {}
+        SIMDIFY_FORCE_INLINE flt(const expr::aligned<T>& r) : simd_base(*r.template get_load<f_t>()) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE flt(const expr::unaligned<T>& r) : simd_base(*r.get_load<f_t>()) {}
+        SIMDIFY_FORCE_INLINE flt(const expr::unaligned<T>& r) : simd_base(*r.template get_load<f_t>()) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE flt(const expr::tof<T>& r) : flt(r.to<f_t>()) {}
+        SIMDIFY_FORCE_INLINE flt(const expr::tof<T>& r) : flt(r.template to<f_t>()) {}
     };
 
     SIMDIFY_FORCE_INLINE const flt operator&(const flt& l, const flt& r) { return utof(tou(l.mm) & tou(r.mm)); }

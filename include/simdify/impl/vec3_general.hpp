@@ -31,10 +31,10 @@ namespace simd {
 
         // generalized constructor and operator= for any RHS that has fields x, y, z
         template <typename S>
-        SIMDIFY_FORCE_INLINE explicit basic_vec3(const S& other) : x(T::F(other.x)), y(T::F(other.y)), z(T::F(other.z)) {}
+        SIMDIFY_FORCE_INLINE explicit basic_vec3(const S& other) : x(other.x), y(other.y), z(other.z) {}
         template <typename S>
         SIMDIFY_FORCE_INLINE basic_vec3& operator=(const S& other) {
-            x = T(T::F(other.x)); y = T(T::F(other.y)); z = T(T::F(other.z));
+            x = T(other.x); y = T(other.y); z = T(other.z);
             return *this;
         }
 

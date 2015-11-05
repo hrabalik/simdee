@@ -19,7 +19,7 @@ namespace simd {
         using f_t = flt::f_t;
         using u_t = flt::u_t;
         using s_t = flt::s_t;
-        static const auto W = flt::W;
+        static constexpr auto W = flt::W;
 
         // constructors
         SIMDIFY_FORCE_INLINE basic_vec3() = default;

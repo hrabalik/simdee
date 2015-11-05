@@ -17,7 +17,7 @@ namespace simd {
         using f_t = typename T::f_t;
         using u_t = typename T::u_t;
         using s_t = typename T::s_t;
-        static const auto W = T::W;
+        static constexpr auto W = T::W;
 
         // constructors
         SIMDIFY_FORCE_INLINE basic_vec3() = default;

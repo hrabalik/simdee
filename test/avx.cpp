@@ -1,10 +1,9 @@
-#include "catch.hpp"
-
-#include <array>
-#include <type_traits>
-
 #define SIMDIFY_NEED_AVX
 #include <simdify/simdify.hpp>
+
+#include "catch.hpp"
+#include <array>
+#include <type_traits>
 
 using T = simd::avx;
 

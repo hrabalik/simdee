@@ -5,14 +5,7 @@
 #include "../util/1b.hpp"
 #include "../util/integral.hpp"
 #include "expr.hpp"
-#include <cmath>
-#include <cstdint>
-#include <type_traits>
-#include <initializer_list>
-#include <algorithm>
 #include <array>
-#include <utility>
-#include <iterator>
 
 namespace simd {
 
@@ -21,18 +14,6 @@ namespace simd {
     //
     template <typename T>
     struct horizontal_impl;
-
-    template <typename T>
-    struct allocator;
-
-    template <typename f_t>
-    struct floating_point_wrapper;
-
-    template <typename u_t>
-    struct unsigned_wrapper;
-
-    template <typename s_t>
-    struct signed_wrapper;
 
     //
     // SIMD type base class (with derived class as Crtp, CRTP-style)
@@ -44,7 +25,7 @@ namespace simd {
         using u_t = select_uint_t<sizeof(f_t)>;
         using s_t = select_sint_t<sizeof(f_t)>;
 
-        enum : std::size_t { W = sizeof(mm_t) / sizeof(f_t) };
+        static constexpr std::size_t W = sizeof(mm_t) / sizeof(f_t);
         using array_f = std::array<f_t, W>;
         using array_u = std::array<u_t, W>;
         using array_s = std::array<s_t, W>;

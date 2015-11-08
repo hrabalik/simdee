@@ -26,6 +26,7 @@ namespace simd {
 
     // SIMD with SSE
     struct sse : simd_base<__m128, float, sse> {
+        SIMDIFY_FORCE_INLINE ~sse() = default;
         SIMDIFY_FORCE_INLINE sse() = default;
         SIMDIFY_FORCE_INLINE sse(const sse&) = default;
         SIMDIFY_FORCE_INLINE sse(sse&&) = default;

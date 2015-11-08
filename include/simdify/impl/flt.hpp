@@ -7,6 +7,7 @@ namespace simd {
 
     // SIMD emulation with a glorified float
     struct flt : simd_base<float, float, flt> {
+        SIMDIFY_FORCE_INLINE ~flt() = default;
         SIMDIFY_FORCE_INLINE flt() = default;
         SIMDIFY_FORCE_INLINE flt(const flt&) = default;
         SIMDIFY_FORCE_INLINE flt(flt&&) = default;

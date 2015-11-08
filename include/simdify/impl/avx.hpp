@@ -13,6 +13,7 @@ namespace simd {
 
     // SIMD with AVX
     struct avx : simd_base<__m256, float, avx> {
+        SIMDIFY_FORCE_INLINE ~avx() = default;
         SIMDIFY_FORCE_INLINE avx() = default;
         SIMDIFY_FORCE_INLINE avx(const avx&) = default;
         SIMDIFY_FORCE_INLINE avx(avx&&) = default;

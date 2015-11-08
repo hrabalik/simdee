@@ -4,19 +4,21 @@
 #include "catch.hpp"
 #include <array>
 #include <type_traits>
+#include <algorithm>
+#include <functional>
 
 using T = simd::avx;
 
 alignas(T) const T::array_f bufA = { {
-    -0.27787193f, +0.70154146f, -2.05181630f, -0.35385000f,
-    -0.82358653f, -1.57705702f, +0.50797465f, +0.28198406f,
+    -0.27787193f, +0.70154146f, -2.05181630f, +2.22944568f,
+    -0.82358653f, -1.57705702f, +0.50797465f, -0.59003456f,
 } };
 alignas(T) const T::array_f bufB = { {
     -0.23645458f, +2.02369089f, -2.25835397f, +2.22944568f,
-    +0.33756370f, +1.00006082f, -1.66416447f, -0.59003456f,
+    +0.33756370f, -0.87587426f, -1.66416447f, -0.59003456f,
 } };
 alignas(T) const T::array_f bufC = { {
-    +0.42862268f, -1.03598478f, +1.87786546f, +0.94070440f,
+    +0.42862268f, +2.02369089f, +1.87786546f, +0.94070440f,
     +0.78734578f, -0.87587426f, +0.31994913f, -0.55829428f,
 } };
 alignas(T) const T::array_f bufN = { {
@@ -163,13 +165,135 @@ TEST_CASE("AVX assignment", "[simd_t][x86][avx]") {
 }
 
 TEST_CASE("AVX arithmetic", "[simd_t][x86][avx]") {
+    alignas(T)T::array_f r;
+    alignas(T)T::array_f e;
+    T a = simd::aligned(bufA.data());
+    T b = simd::aligned(bufB.data());
+    auto tor = [&r](const T& t) {
+        simd::aligned(r.data()) = t;
+    };
 
+    SECTION("unary plus") {
+        std::transform(begin(bufA), end(bufA), begin(e), [](T::f_t a) { return +a; });
+        tor(+a);
+        REQUIRE(r == e);
+    }
+    SECTION("unary minus") {
+        std::transform(begin(bufA), end(bufA), begin(e), std::negate<T::f_t>());
+        tor(-a);
+        REQUIRE(r == e);
+    }
+    SECTION("plus") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), std::plus<T::f_t>());
+        tor(a + b);
+        REQUIRE(r == e);
+    }
+    SECTION("minus") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), std::minus<T::f_t>());
+        tor(a - b);
+        REQUIRE(r == e);
+    }
+    SECTION("multiplies") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), std::multiplies<T::f_t>());
+        tor(a * b);
+        REQUIRE(r == e);
+    }
+    SECTION("divides") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), std::divides<T::f_t>());
+        tor(a / b);
+        REQUIRE(r == e);
+    }
 }
 
-TEST_CASE("AVX logical", "[simd_t][x86][avx]") {
+TEST_CASE("AVX comparison", "[simd_t][x86][avx]") {
+    auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
+    alignas(T)T::array_u r;
+    alignas(T)T::array_u e;
+    T a = simd::aligned(bufA.data());
+    T b = simd::aligned(bufB.data());
+    auto tor = [&r](const T& t) {
+        simd::aligned(r.data()) = t;
+    };
 
+    SECTION("equal to") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [&if_](T::f_t a, T::f_t b) {
+            return if_(a == b);
+        });
+        tor(a == b);
+        REQUIRE(r == e);
+    }
+    SECTION("not equal to") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [&if_](T::f_t a, T::f_t b) {
+            return if_(a != b);
+        });
+        tor(a != b);
+        REQUIRE(r == e);
+    }
+    SECTION("greater") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [&if_](T::f_t a, T::f_t b) {
+            return if_(a > b);
+        });
+        tor(a > b);
+        REQUIRE(r == e);
+    }
+    SECTION("less") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [&if_](T::f_t a, T::f_t b) {
+            return if_(a < b);
+        });
+        tor(a < b);
+        REQUIRE(r == e);
+    }
+    SECTION("greater equal") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [&if_](T::f_t a, T::f_t b) {
+            return if_(a >= b);
+        });
+        tor(a >= b);
+        REQUIRE(r == e);
+    }
+    SECTION("less equal") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [&if_](T::f_t a, T::f_t b) {
+            return if_(a <= b);
+        });
+        tor(a <= b);
+        REQUIRE(r == e);
+    }
 }
 
 TEST_CASE("AVX bitwise", "[simd_t][x86][avx]") {
+    alignas(T)T::array_u r;
+    alignas(T)T::array_u e;
+    T a = simd::aligned(bufA.data());
+    T b = simd::aligned(bufB.data());
+    auto tor = [&r](const T& t) {
+        simd::aligned(r.data()) = t;
+    };
 
+    SECTION("bit and") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [](T::f_t a, T::f_t b) {
+            return simd::tou(a) & simd::tou(b);
+        });
+        tor(a & b);
+        REQUIRE(r == e);
+    }
+    SECTION("bit or") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [](T::f_t a, T::f_t b) {
+            return simd::tou(a) | simd::tou(b);
+        });
+        tor(a | b);
+        REQUIRE(r == e);
+    }
+    SECTION("bit xor") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [](T::f_t a, T::f_t b) {
+            return simd::tou(a) ^ simd::tou(b);
+        });
+        tor(a ^ b);
+        REQUIRE(r == e);
+    }
+    //SECTION("bit not") {
+    //    std::transform(begin(bufA), end(bufA), begin(e), [](T::f_t a) {
+    //        return ~simd::tou(a);
+    //    });
+    //    tor(~a);
+    //    REQUIRE(r == e);
+    //}
 }

@@ -65,6 +65,7 @@ namespace simd {
     SIMDIFY_FORCE_INLINE const sse operator-(const sse& l, const sse& r) { return _mm_sub_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const sse operator*(const sse& l, const sse& r) { return _mm_mul_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const sse operator/(const sse& l, const sse& r) { return _mm_div_ps(l.mm, r.mm); }
+    SIMDIFY_FORCE_INLINE const sse operator-(const sse& in) { return in ^ sign_bit(); }
     SIMDIFY_FORCE_INLINE const sse andnot(const sse& l, const sse& r) { return _mm_andnot_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const sse min(const sse& l, const sse& r) { return _mm_min_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const sse max(const sse& l, const sse& r) { return _mm_max_ps(l.mm, r.mm); }

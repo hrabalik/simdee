@@ -33,10 +33,8 @@ TEST_CASE("expr::tos", "[expr]") {
 TEST_CASE("expr::fval", "[expr]") {
     float f = simd::fval(-1.23456789f).to<float>();
     double d = simd::fval(-1.23456789).to<double>();
-    float z = simd::fval(0).to<float>();
     REQUIRE(f == -1.23456789f);
     REQUIRE(d == -1.23456789);
-    REQUIRE(z == 0);
 }
 
 TEST_CASE("expr::utof", "[expr]") {

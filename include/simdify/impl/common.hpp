@@ -48,6 +48,7 @@ namespace simd {
     //
     // meta operations - apply to all SIMD types
     //
+    template <typename T> SIMDIFY_FORCE_INLINE const T operator+(const T& in) { return in; }
     template <typename T> SIMDIFY_FORCE_INLINE T& operator &=(T& l, const T& r) { l = l & r; return l; }
     template <typename T> SIMDIFY_FORCE_INLINE T& operator |=(T& l, const T& r) { l = l | r; return l; }
     template <typename T> SIMDIFY_FORCE_INLINE T& operator ^=(T& l, const T& r) { l = l ^ r; return l; }

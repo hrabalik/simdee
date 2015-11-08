@@ -52,6 +52,7 @@ namespace simd {
     SIMDIFY_FORCE_INLINE const avx operator-(const avx& l, const avx& r) { return _mm256_sub_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const avx operator*(const avx& l, const avx& r) { return _mm256_mul_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const avx operator/(const avx& l, const avx& r) { return _mm256_div_ps(l.mm, r.mm); }
+    SIMDIFY_FORCE_INLINE const avx operator-(const avx& in) { return in ^ sign_bit(); }
     SIMDIFY_FORCE_INLINE const avx andnot(const avx& l, const avx& r) { return _mm256_andnot_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const avx min(const avx& l, const avx& r) { return _mm256_min_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const avx max(const avx& l, const avx& r) { return _mm256_max_ps(l.mm, r.mm); }

@@ -37,6 +37,7 @@ namespace simd {
     SIMDIFY_FORCE_INLINE const flt operator-(const flt& l, const flt& r) { return l.mm - r.mm; }
     SIMDIFY_FORCE_INLINE const flt operator*(const flt& l, const flt& r) { return l.mm * r.mm; }
     SIMDIFY_FORCE_INLINE const flt operator/(const flt& l, const flt& r) { return l.mm / r.mm; }
+    SIMDIFY_FORCE_INLINE const flt operator-(const flt& in) { return -in.mm; }
     SIMDIFY_FORCE_INLINE const flt andnot(const flt& l, const flt& r) { return utof(tou(l.mm) & ~tou(r.mm)); }
     SIMDIFY_FORCE_INLINE const flt min(const flt& l, const flt& r) { return std::min(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const flt max(const flt& l, const flt& r) { return std::max(l.mm, r.mm); }

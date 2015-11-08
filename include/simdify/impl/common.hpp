@@ -43,7 +43,10 @@ namespace simd {
     // helper class for lazy evaluation of bitwise not
     //
     template <typename T>
-    struct bitwise_not;
+    struct bitwise_not {
+        const T& neg;
+        SIMDIFY_FORCE_INLINE explicit constexpr bitwise_not(const T& r) : neg(r) {}
+    };
 
     //
     // meta operations - apply to all SIMD types

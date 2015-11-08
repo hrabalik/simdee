@@ -297,11 +297,11 @@ TEST_CASE("AVX bitwise", "[simd_t][x86][avx]") {
         tor(a ^ b);
         REQUIRE(r == e);
     }
-    //SECTION("bit not") {
-    //    std::transform(begin(bufA), end(bufA), begin(e), [](T::f_t a) {
-    //        return ~simd::tou(a);
-    //    });
-    //    tor(~a);
-    //    REQUIRE(r == e);
-    //}
+    SECTION("bit not") {
+        std::transform(begin(bufA), end(bufA), begin(e), [](T::f_t a) {
+            return ~simd::tou(a);
+        });
+        tor(~a);
+        REQUIRE(r == e);
+    }
 }

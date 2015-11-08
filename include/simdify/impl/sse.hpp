@@ -23,7 +23,7 @@
 //#endif
 
 namespace simd {
-
+    
     // SIMD with SSE
     struct sse : simd_base<__m128, float, sse> {
         SIMDIFY_FORCE_INLINE ~sse() = default;
@@ -36,6 +36,7 @@ namespace simd {
         SIMDIFY_FORCE_INLINE sse(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE sse(f_t r) : simd_base(_mm_set_ps1(r)) {}
         SIMDIFY_FORCE_INLINE sse(const expr::zero&) : simd_base(_mm_setzero_ps()) {}
+        SIMDIFY_FORCE_INLINE sse(const bitwise_not<sse>& r) : simd_base(_mm_andnot_ps(r.neg.mm, sse(all_bits()).mm)) {}
         SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = _mm_load_ps(r); }
         SIMDIFY_FORCE_INLINE void store(f_t* r) const { _mm_store_ps(r, mm); }
         SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(mm); }
@@ -47,14 +48,6 @@ namespace simd {
         SIMDIFY_FORCE_INLINE sse(const expr::unaligned<T>& r) : simd_base(_mm_loadu_ps(r.template get_load<f_t>())) {}
         template <typename T>
         SIMDIFY_FORCE_INLINE sse(const expr::tof<T>& r) : sse(r.template to<f_t>()) {}
-    };
-
-    // bitwise not with lazy evaluation
-    template <>
-    struct bitwise_not<sse> {
-        sse neg;
-        SIMDIFY_FORCE_INLINE explicit bitwise_not(const sse& r) : neg(r) {}
-        SIMDIFY_FORCE_INLINE explicit operator const sse() const { return _mm_andnot_ps(neg.mm, sse(all_bits()).mm); }
     };
 
     SIMDIFY_FORCE_INLINE const sse operator&(const sse& l, const sse& r) { return _mm_and_ps(l.mm, r.mm); }

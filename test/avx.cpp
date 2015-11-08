@@ -60,6 +60,10 @@ TEST_CASE("AVX explicit construction", "[simd_t][x86][avx]") {
     SECTION("default") {
         T t;
     }
+    SECTION("copy") {
+        T t;
+        T t2(t);
+    }
     SECTION("from f_t") {
         T t(1.2345678f);
         tor(t); for (auto val : r) REQUIRE(val == 1.2345678f);
@@ -134,6 +138,10 @@ TEST_CASE("AVX assignment", "[simd_t][x86][avx]") {
         simd::aligned(r.data()) = t;
     };
 
+    SECTION("copy") {
+        T t2;
+        t2 = t;
+    }
     SECTION("from f_t") {
         t = 1.2345678f;
         tor(); for (auto val : r) REQUIRE(val == 1.2345678f);

@@ -3,6 +3,7 @@
 
 #include "../util/inline.hpp"
 #include <type_traits>
+#include <limits>
 
 namespace simd {
     namespace expr {
@@ -76,8 +77,22 @@ namespace simd {
 
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
+                static_assert(std::is_floating_point<F_t>::value, "tof::to<F_t>():: F_t must be a floating point type");
                 return self().template to<F_t>();
             }
+        };
+
+        template <typename T>
+        struct fval : tof<fval<T>> {
+            SIMDIFY_FORCE_INLINE constexpr explicit fval(T&& r) : ref(std::forward<T>(r)) {}
+
+            template <typename F_t>
+            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
+                return ref;
+            }
+
+            // data
+            T&& ref;
         };
 
         template <typename T>
@@ -86,8 +101,7 @@ namespace simd {
 
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "utof() must only be used to produce floating-point values");
-                using u_t = simd::select_uint_t<sizeof(F_t)>;
+                using u_t = select_uint_t<sizeof(F_t)>;
                 return dirty_cast<u_t, F_t>(std::forward<T>(ref));
             }
 
@@ -101,8 +115,7 @@ namespace simd {
 
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "stof() must only be used to produce floating-point values");
-                using s_t = simd::select_sint_t<sizeof(F_t)>;
+                using s_t = select_sint_t<sizeof(F_t)>;
                 return dirty_cast<s_t, F_t>(std::forward<T>(ref));
             }
 
@@ -113,8 +126,7 @@ namespace simd {
         struct zero : tof<zero> {
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "zero() must only be used to produce floating-point values");
-                using u_t = simd::select_uint_t<sizeof(F_t)>;
+                using u_t = select_uint_t<sizeof(F_t)>;
                 return dirty_cast<u_t, F_t>(0);
             }
         };
@@ -122,8 +134,7 @@ namespace simd {
         struct all_bits : tof<all_bits> {
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "all_bits() must only be used to produce floating-point values");
-                using u_t = simd::select_uint_t<sizeof(F_t)>;
+                using u_t = select_uint_t<sizeof(F_t)>;
                 return dirty_cast<u_t, F_t>(~u_t(0));
             }
         };
@@ -132,8 +143,7 @@ namespace simd {
         struct sign_bit : tof<sign_bit> {
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "sign_bit() must only be used to produce floating-point values");
-                using u_t = simd::select_uint_t<sizeof(F_t)>;
+                using u_t = select_uint_t<sizeof(F_t)>;
                 return dirty_cast<u_t, F_t>(~(~u_t(0) >> 1));
             }
         };
@@ -141,17 +151,37 @@ namespace simd {
         struct abs_mask : tof<abs_mask> {
             template <typename F_t>
             SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "abs_mask() must only be used to produce floating-point values");
-                using u_t = simd::select_uint_t<sizeof(F_t)>;
+                using u_t = select_uint_t<sizeof(F_t)>;
                 return dirty_cast<u_t, F_t>(~u_t(0) >> 1);
+            }
+        };
+
+        struct inf : tof<inf> {
+            template <typename F_t>
+            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
+                return std::numeric_limits<F_t>::infinity();
+            }
+        };
+
+        struct ninf : tof<ninf> {
+            template <typename F_t>
+            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
+                return -std::numeric_limits<F_t>::infinity();
+            }
+        };
+
+        struct nan : tof<nan> {
+            template <typename F_t>
+            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
+                return std::numeric_limits<F_t>::quiet_NaN();
             }
         };
 
         template <typename T>
         struct tou {
             using f_t = typename std::decay<T>::type;
-            using u_t = simd::select_uint_t<sizeof(f_t)>;
-            static_assert(std::is_floating_point<f_t>::value, "tou() must be used to convert a floating-point value");
+            using u_t = select_uint_t<sizeof(f_t)>;
+            static_assert(std::is_floating_point<f_t>::value, "tou() must be used to convert from a floating-point value");
 
             SIMDIFY_FORCE_INLINE constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
 
@@ -166,8 +196,8 @@ namespace simd {
         template <typename T>
         struct tos {
             using f_t = typename std::decay<T>::type;
-            using s_t = simd::select_sint_t<sizeof(f_t)>;
-            static_assert(std::is_floating_point<f_t>::value, "tos() must be used to convert a floating-point value");
+            using s_t = select_sint_t<sizeof(f_t)>;
+            static_assert(std::is_floating_point<f_t>::value, "tos() must be used to convert from a floating-point value");
 
             SIMDIFY_FORCE_INLINE constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
 
@@ -185,6 +215,8 @@ namespace simd {
     template <typename T>
     SIMDIFY_FORCE_INLINE constexpr expr::unaligned<T> unaligned(T* const& r) { return expr::unaligned<T>(r); }
     template <typename T>
+    SIMDIFY_FORCE_INLINE constexpr expr::fval<T&&> fval(T&& r) { return expr::fval<T&&>(std::forward<T>(r)); }
+    template <typename T>
     SIMDIFY_FORCE_INLINE constexpr expr::utof<T&&> utof(T&& r) { return expr::utof<T&&>(std::forward<T>(r)); }
     template <typename T>
     SIMDIFY_FORCE_INLINE constexpr expr::stof<T&&> stof(T&& r) { return expr::stof<T&&>(std::forward<T>(r)); }
@@ -197,6 +229,9 @@ namespace simd {
     SIMDIFY_FORCE_INLINE constexpr expr::all_bits all_bits() { return expr::all_bits{}; }
     SIMDIFY_FORCE_INLINE constexpr expr::sign_bit sign_bit() { return expr::sign_bit{}; }
     SIMDIFY_FORCE_INLINE constexpr expr::abs_mask abs_mask() { return expr::abs_mask{}; }
+    SIMDIFY_FORCE_INLINE constexpr expr::inf inf() { return expr::inf{}; }
+    SIMDIFY_FORCE_INLINE constexpr expr::ninf ninf() { return expr::ninf{}; }
+    SIMDIFY_FORCE_INLINE constexpr expr::nan nan() { return expr::nan{}; }
 }
 
 #endif // SIMDIFY_EXPR

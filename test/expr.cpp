@@ -30,6 +30,15 @@ TEST_CASE("expr::tos", "[expr]") {
     }
 }
 
+TEST_CASE("expr::fval", "[expr]") {
+    float f = simd::fval(-1.23456789f).to<float>();
+    double d = simd::fval(-1.23456789).to<double>();
+    float z = simd::fval(0).to<float>();
+    REQUIRE(f == -1.23456789f);
+    REQUIRE(d == -1.23456789);
+    REQUIRE(z == 0);
+}
+
 TEST_CASE("expr::utof", "[expr]") {
     SECTION("float") {
         float f = 0;
@@ -70,4 +79,53 @@ TEST_CASE("expr::stof", "[expr]") {
         d = simd::stof(std::numeric_limits<int64_t>::max()).to<double>();
         REQUIRE(simd::tos(d) == std::numeric_limits<int64_t>::max());
     }
+}
+
+TEST_CASE("expr::zero", "[expr]") {
+    float f = simd::zero().to<float>();
+    double d = simd::zero().to<double>();
+    REQUIRE(f == 0);
+    REQUIRE(d == 0);
+}
+
+TEST_CASE("expr::all_bits", "[expr]") {
+    float f = simd::all_bits().to<float>();
+    double d = simd::all_bits().to<double>();
+    REQUIRE(simd::tou(f) == 0xffffffffU);
+    REQUIRE(simd::tou(d) == 0xffffffffffffffffULL);
+}
+
+TEST_CASE("expr::sign_bit", "[expr]") {
+    float f = simd::sign_bit().to<float>();
+    double d = simd::sign_bit().to<double>();
+    REQUIRE(simd::tou(f) == 0x80000000U);
+    REQUIRE(simd::tou(d) == 0x8000000000000000ULL);
+}
+
+TEST_CASE("expr::abs_mask", "[expr]") {
+    float f = simd::abs_mask().to<float>();
+    double d = simd::abs_mask().to<double>();
+    REQUIRE(simd::tou(f) == 0x7fffffffU);
+    REQUIRE(simd::tou(d) == 0x7fffffffffffffffULL);
+}
+
+TEST_CASE("expr::inf", "[expr]") {
+    float f = simd::inf().to<float>();
+    double d = simd::inf().to<double>();
+    REQUIRE(f == std::numeric_limits<float>::infinity());
+    REQUIRE(d == std::numeric_limits<double>::infinity());
+}
+
+TEST_CASE("expr::ninf", "[expr]") {
+    float f = simd::ninf().to<float>();
+    double d = simd::ninf().to<double>();
+    REQUIRE(f == -std::numeric_limits<float>::infinity());
+    REQUIRE(d == -std::numeric_limits<double>::infinity());
+}
+
+TEST_CASE("expr::nan", "[expr]") {
+    float f = simd::nan().to<float>();
+    double d = simd::nan().to<double>();
+    REQUIRE(std::isnan(f));
+    REQUIRE(std::isnan(d));
 }

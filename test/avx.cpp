@@ -19,6 +19,16 @@ alignas(T) const T::array_f bufC = { {
     +0.42862268f, -1.03598478f, +1.87786546f, +0.94070440f,
     +0.78734578f, -0.87587426f, +0.31994913f, -0.55829428f,
 } };
+alignas(T) const T::array_f bufN = { {
+    std::numeric_limits<T::f_t>::infinity(),
+    -std::numeric_limits<T::f_t>::infinity(),
+    std::numeric_limits<T::f_t>::quiet_NaN(),
+    std::numeric_limits<T::f_t>::max(),
+    std::numeric_limits<T::f_t>::lowest(),
+    std::numeric_limits<T::f_t>::min(),
+    std::numeric_limits<T::f_t>::epsilon(),
+    std::numeric_limits<T::f_t>::denorm_min(),
+} };
 alignas(T) const T::array_f bufZ = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
 

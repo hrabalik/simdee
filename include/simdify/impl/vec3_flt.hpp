@@ -3,6 +3,7 @@
 
 #include "../vec3.hpp"
 #include "../util/inline.hpp"
+#include "expr.hpp"
 
 #ifdef SIMDIFY_SSE
 
@@ -27,6 +28,7 @@ namespace simd {
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const flt& t) : x(t), y(t), z(t) {}
         SIMDIFY_FORCE_INLINE explicit basic_vec3(f_t t) : x(t), y(t), z(t) {}
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const sse& w) {}
+        SIMDIFY_FORCE_INLINE explicit basic_vec3(const expr::bit_not<basic_vec3>& r) { as_sse() = sse(~r.neg.as_sse()); }
         SIMDIFY_FORCE_INLINE basic_vec3(const flt& tx, const flt& ty, const flt& tz) :
             x(tx), y(ty), z(tz) {}
         SIMDIFY_FORCE_INLINE basic_vec3(f_t tx, f_t ty, f_t tz) :
@@ -58,17 +60,10 @@ namespace simd {
 
     using vec3f = basic_vec3<flt>;
 
-    template <>
-    struct bitwise_not<vec3f> {
-        vec3f neg;
-        SIMDIFY_FORCE_INLINE explicit bitwise_not(const vec3f& r) : neg(r) {}
-        SIMDIFY_FORCE_INLINE explicit operator const vec3f() const { return vec3f(sse(~neg.as_sse())); }
-    };
-
     SIMDIFY_FORCE_INLINE const vec3f operator&(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() & r.as_sse()); }
     SIMDIFY_FORCE_INLINE const vec3f operator|(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() | r.as_sse()); }
     SIMDIFY_FORCE_INLINE const vec3f operator^(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() ^ r.as_sse()); }
-    SIMDIFY_FORCE_INLINE const bitwise_not<vec3f> operator~(const vec3f& l) { return bitwise_not<vec3f>(l); }
+    SIMDIFY_FORCE_INLINE const expr::bit_not<vec3f> operator~(const vec3f& l) { return expr::bit_not<vec3f>(l); }
     SIMDIFY_FORCE_INLINE const vec3f operator<(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() < r.as_sse()); }
     SIMDIFY_FORCE_INLINE const vec3f operator>(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() > r.as_sse()); }
     SIMDIFY_FORCE_INLINE const vec3f operator<=(const vec3f& l, const vec3f& r) { return vec3f(l.as_sse() <= r.as_sse()); }

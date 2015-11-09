@@ -3,6 +3,7 @@
 
 #include "../vec3.hpp"
 #include "../util/inline.hpp"
+#include "expr.hpp"
 
 namespace simd {
 
@@ -25,6 +26,7 @@ namespace simd {
         SIMDIFY_FORCE_INLINE explicit basic_vec3(const T& t) : x(t), y(t), z(t) {}
         SIMDIFY_FORCE_INLINE basic_vec3(const T& tx, const T& ty, const T& tz) :
             x(tx), y(ty), z(tz) {}
+        SIMDIFY_FORCE_INLINE basic_vec3(const expr::bit_not<basic_vec3<T>>& r) : x(~r.neg.x), y(~r.neg.y), z(~r.neg.z) {}
 
         // operator=
         SIMDIFY_FORCE_INLINE basic_vec3& operator=(const basic_vec3& other) = default;
@@ -79,19 +81,10 @@ namespace simd {
         return l.x*r.x + l.y*r.y + l.z*r.z;
     }
 
-    // bitwise not with lazy evaluation
-    template <typename T>
-    struct bitwise_not<basic_vec3<T>> {
-        using tp = basic_vec3<T>;
-        tp neg;
-        SIMDIFY_FORCE_INLINE explicit bitwise_not(const tp& r) : neg(r) {}
-        SIMDIFY_FORCE_INLINE explicit operator const tp() const { return{ ~neg.x, ~neg.y, ~neg.z }; }
-    };
-
     template <typename T> SIMDIFY_FORCE_INLINE const basic_vec3<T> operator&(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x & r.x, l.y & r.y, l.z & r.z }; }
     template <typename T> SIMDIFY_FORCE_INLINE const basic_vec3<T> operator|(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x | r.x, l.y | r.y, l.z | r.z }; }
     template <typename T> SIMDIFY_FORCE_INLINE const basic_vec3<T> operator^(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x ^ r.x, l.y ^ r.y, l.z ^ r.z }; }
-    template <typename T> SIMDIFY_FORCE_INLINE const bitwise_not<basic_vec3<T>> operator~(const basic_vec3<T>& l) { return bitwise_not<basic_vec3<T>>(l); }
+    template <typename T> SIMDIFY_FORCE_INLINE const expr::bit_not<basic_vec3<T>> operator~(const basic_vec3<T>& l) { return expr::bit_not<basic_vec3<T>>(l); }
     template <typename T> SIMDIFY_FORCE_INLINE const basic_vec3<T> operator<(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x < r.x, l.y < r.y, l.z < r.z }; }
     template <typename T> SIMDIFY_FORCE_INLINE const basic_vec3<T> operator>(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x > r.x, l.y > r.y, l.z > r.z }; }
     template <typename T> SIMDIFY_FORCE_INLINE const basic_vec3<T> operator<=(const basic_vec3<T>& l, const basic_vec3<T>& r) { return{ l.x <= r.x, l.y <= r.y, l.z <= r.z }; }

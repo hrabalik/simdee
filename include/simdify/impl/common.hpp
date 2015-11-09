@@ -40,15 +40,6 @@ namespace simd {
     };
 
     //
-    // helper class for lazy evaluation of bitwise not
-    //
-    template <typename T>
-    struct bitwise_not {
-        const T& neg;
-        SIMDIFY_FORCE_INLINE explicit constexpr bitwise_not(const T& r) : neg(r) {}
-    };
-
-    //
     // meta operations - apply to all SIMD types
     //
     template <typename T> SIMDIFY_FORCE_INLINE const T operator+(const T& in) { return in; }
@@ -62,19 +53,6 @@ namespace simd {
     template <typename T> SIMDIFY_FORCE_INLINE const T abs(const T& in) { return in & abs_mask(); }
     template <typename T> SIMDIFY_FORCE_INLINE const T signbit(const T& in) { return in & sign_bit(); }
     template <typename T> SIMDIFY_FORCE_INLINE const T signum(const T& in) { return cond(in > zero(), 1, -1); }
-
-    template<typename T>
-    SIMDIFY_FORCE_INLINE const T operator~(const bitwise_not<T>& l) { return l.neg; }
-    template<typename T>
-    SIMDIFY_FORCE_INLINE const T operator&(const bitwise_not<T>& l, const T& r) { return andnot(l.neg, r); }
-    template<typename T>
-    SIMDIFY_FORCE_INLINE const T operator&(const T& l, const bitwise_not<T>& r) { return andnot(r.neg, l); }
-    template<typename T>
-    SIMDIFY_FORCE_INLINE const bitwise_not<T> operator&(const bitwise_not<T>& l, const bitwise_not<T>& r) { return bitwise_not<T>(l.neg | r.neg); }
-    template<typename T>
-    SIMDIFY_FORCE_INLINE const bitwise_not<T> operator|(const bitwise_not<T>& l, const bitwise_not<T>& r) { return bitwise_not<T>(l.neg & r.neg); }
-    template<typename T>
-    SIMDIFY_FORCE_INLINE const T operator^(const bitwise_not<T>& l, const bitwise_not<T>& r) { return l.neg ^ r.neg; }
 
     template <typename T>
     SIMDIFY_FORCE_INLINE const T apply_mask(const T& in, const T& mask, const expr::zero&) {

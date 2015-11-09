@@ -7,6 +7,39 @@
 
 namespace simd {
     namespace expr {
+        template <typename T>
+        struct bit_not {
+            SIMDIFY_FORCE_INLINE constexpr explicit bit_not(const T& r) : neg(r) {}
+
+            // data
+            const T neg;
+        };
+
+        template<typename T>
+        SIMDIFY_FORCE_INLINE constexpr const T operator~(const bit_not<T>& l) {
+            return l.neg;
+        }
+        template<typename T>
+        SIMDIFY_FORCE_INLINE const T operator&(const bit_not<T>& l, const T& r) {
+            return andnot(l.neg, r);
+        }
+        template<typename T>
+        SIMDIFY_FORCE_INLINE const T operator&(const T& l, const bit_not<T>& r) {
+            return andnot(r.neg, l);
+        }
+        template<typename T>
+        SIMDIFY_FORCE_INLINE const bit_not<T> operator&(const bit_not<T>& l, const bit_not<T>& r) {
+            return bit_not<T>(l.neg | r.neg);
+        }
+        template<typename T>
+        SIMDIFY_FORCE_INLINE const bit_not<T> operator|(const bit_not<T>& l, const bit_not<T>& r) {
+            return bit_not<T>(l.neg & r.neg);
+        }
+        template<typename T>
+        SIMDIFY_FORCE_INLINE const T operator^(const bit_not<T>& l, const bit_not<T>& r) {
+            return l.neg ^ r.neg;
+        }
+
         template <typename From, typename To>
         constexpr To&& dirty_cast(From&& from) {
             static_assert(std::is_trivial<From>::value, "dirty_cast(): the casted-from type isn't trivial");

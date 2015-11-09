@@ -23,7 +23,7 @@ namespace simd {
         SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE avx(f_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
         SIMDIFY_FORCE_INLINE avx(const expr::zero&) : simd_base(_mm256_setzero_ps()) {}
-        SIMDIFY_FORCE_INLINE avx(const bitwise_not<avx>& r) : simd_base(_mm256_andnot_ps(r.neg.mm, avx(all_bits()).mm)) {}
+        SIMDIFY_FORCE_INLINE avx(const expr::bit_not<avx>& r) : simd_base(_mm256_andnot_ps(r.neg.mm, avx(all_bits()).mm)) {}
         SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = _mm256_load_ps(r); }
         SIMDIFY_FORCE_INLINE void store(f_t* r) const { _mm256_store_ps(r, mm); }
         SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
@@ -40,7 +40,7 @@ namespace simd {
     SIMDIFY_FORCE_INLINE const avx operator&(const avx& l, const avx& r) { return _mm256_and_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const avx operator|(const avx& l, const avx& r) { return _mm256_or_ps(l.mm, r.mm); }
     SIMDIFY_FORCE_INLINE const avx operator^(const avx& l, const avx& r) { return _mm256_xor_ps(l.mm, r.mm); }
-    SIMDIFY_FORCE_INLINE const bitwise_not<avx> operator~(const avx& l) { return bitwise_not<avx>(l); }
+    SIMDIFY_FORCE_INLINE const expr::bit_not<avx> operator~(const avx& l) { return expr::bit_not<avx>(l); }
     SIMDIFY_FORCE_INLINE const avx operator<(const avx& l, const avx& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_LT_OQ); }
     SIMDIFY_FORCE_INLINE const avx operator>(const avx& l, const avx& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_GT_OQ); }
     SIMDIFY_FORCE_INLINE const avx operator<=(const avx& l, const avx& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_LE_OQ); }

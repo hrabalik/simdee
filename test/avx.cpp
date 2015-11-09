@@ -304,4 +304,13 @@ TEST_CASE("AVX bitwise", "[simd_t][x86][avx]") {
         tor(~a);
         REQUIRE(r == e);
     }
+    SECTION("complex expr") {
+        std::transform(begin(bufA), end(bufA), begin(bufB), begin(e), [](T::f_t af, T::f_t bf) {
+            auto a = simd::tou(af);
+            auto b = simd::tou(bf);
+            return ~((~a & ~b) | (~a ^ ~b));
+        });
+        tor(~((~a & ~b) | (~a ^ ~b)));
+        REQUIRE(r == e);
+    }
 }

@@ -2,6 +2,7 @@
 #define SIMDIFY_NAMED_ARRAY
 
 #include "../containers.hpp"
+#include "../util/inline.hpp"
 #include <array>
 #include <type_traits>
 
@@ -48,13 +49,68 @@ namespace simd {
     template <typename T, id... Ids>
     struct named_array : detail::id_pack<T, Ids...> {
         using std_array_t = std::array<T, sizeof...(Ids)>;
-        static_assert(std::is_trivial<T>::value, "named_array: element type not trivial");
-        static_assert(sizeof(detail::id_pack<T, Ids...>) == sizeof(std_array_t), "named_array: bad size");
+        using iterator = typename std_array_t::iterator;
+        using const_iterator = typename std_array_t::const_iterator;
+        using reverse_iterator = typename std_array_t::reverse_iterator;
+        using const_reverse_iterator = typename std_array_t::const_reverse_iterator;
 
-        std_array_t& as_std_array() { return reinterpret_cast<std_array_t&>(*this); }
-        const std_array_t& as_std_array() const { return reinterpret_cast<const std_array_t&>(*this); }
+        SIMDIFY_FORCE_INLINE constexpr named_array() = default;
+        SIMDIFY_FORCE_INLINE constexpr named_array(const named_array&) = default;
+        SIMDIFY_FORCE_INLINE constexpr named_array(named_array&&) = default;
+
+        SIMDIFY_FORCE_INLINE std_array_t& as_std_array() & { return reinterpret_cast<std_array_t&>(*this); }
+        SIMDIFY_FORCE_INLINE constexpr const std_array_t& as_std_array() const& { return reinterpret_cast<const std_array_t&>(*this); }
+        SIMDIFY_FORCE_INLINE std_array_t&& as_std_array() && { return reinterpret_cast<std_array_t && (*this); }
+        SIMDIFY_FORCE_INLINE constexpr const std_array_t&& as_std_array() const&& { return reinterpret_cast<const std_array_t&&>(*this); }
+        SIMDIFY_FORCE_INLINE T& at(std::size_t i) { return as_std_array().at(i); }
+        SIMDIFY_FORCE_INLINE constexpr const T& at(std::size_t i) const { return as_std_array().at(i); }
+        SIMDIFY_FORCE_INLINE T& operator[](std::size_t i) { return as_std_array()[i]; }
+        SIMDIFY_FORCE_INLINE constexpr const T& operator[](std::size_t i) const { return as_std_array()[i]; }
+        SIMDIFY_FORCE_INLINE constexpr const bool empty() const { return sizeof...(Ids) != 0; }
+        SIMDIFY_FORCE_INLINE constexpr const std::size_t size() const { return sizeof...(Ids); }
+        SIMDIFY_FORCE_INLINE void fill(const T& val) { as_std_array().fill(val); }
+        SIMDIFY_FORCE_INLINE void swap(named_array& rhs) { as_std_array().swap(rhs.as_std_array()); }
+
+        SIMDIFY_FORCE_INLINE iterator begin() { return as_std_array().begin(); }
+        SIMDIFY_FORCE_INLINE iterator end() { return as_str_array().end(); }
+        SIMDIFY_FORCE_INLINE constexpr const_iterator begin() const { return as_std_array().begin(); }
+        SIMDIFY_FORCE_INLINE constexpr const_iterator end() const { return as_std_array().end(); }
+        SIMDIFY_FORCE_INLINE constexpr const_iterator cbegin() const { return as_std_array().cbegin(); }
+        SIMDIFY_FORCE_INLINE constexpr const_iterator cend() const { return as_std_array().cend(); }
+        SIMDIFY_FORCE_INLINE reverse_iterator rbegin() { return as_std_array().rbegin(); }
+        SIMDIFY_FORCE_INLINE reverse_iterator rend() { return as_str_array().rend(); }
+        SIMDIFY_FORCE_INLINE constexpr const_reverse_iterator rbegin() const { return as_std_array().rbegin(); }
+        SIMDIFY_FORCE_INLINE constexpr const_reverse_iterator rend() const { return as_std_array().rend(); }
+        SIMDIFY_FORCE_INLINE constexpr const_reverse_iterator crbegin() const { return as_std_array().crbegin(); }
+        SIMDIFY_FORCE_INLINE constexpr const_reverse_iterator crend() const { return as_std_array().crend(); }
     };
-    
+
+    template <typename T, id... Ids>
+    bool operator==(const named_array<T, Ids...>& lhs, const named_array<T, Ids...>& rhs) {
+        return lhs.as_std_array() == rhs.as_std_array();
+    }
+    template <typename T, id... Ids>
+    bool operator!=(const named_array<T, Ids...>& lhs, const named_array<T, Ids...>& rhs) {
+        return lhs.as_std_array() != rhs.as_std_array();
+    }
+}
+
+namespace std {
+    template <size_t I, typename T, simd::id... Ids>
+    SIMDIFY_FORCE_INLINE constexpr T& get(simd::named_array<T, Ids...>& a) { return get<I>(a.as_std_array()); }
+    template <size_t I, typename T, simd::id... Ids>
+    SIMDIFY_FORCE_INLINE constexpr T&& get(simd::named_array<T, Ids...>&& a) { return get<I>(a.as_std_array()); }
+    template <size_t I, typename T, simd::id... Ids>
+    SIMDIFY_FORCE_INLINE constexpr const T& get(const simd::named_array<T, Ids...>& a) { return get<I>(a.as_std_array()); }
+    template <size_t I, typename T, simd::id... Ids>
+    SIMDIFY_FORCE_INLINE constexpr const T&& get(const simd::named_array<T, Ids...>&& a) { return get<I>(a.as_std_array()); }
+
+    template <typename T, simd::id... Ids>
+    void swap(simd::named_array<T, Ids...>& lhs, simd::named_array<T, Ids...>& rhs) { lhs.swap(rhs); }
+    template <typename T, simd::id... Ids>
+    struct tuple_size<simd::named_array<T, Ids...>> : integral_constant<std::size_t, sizeof...(Ids)> {};
+    template <std::size_t I, typename T, simd::id... Ids>
+    struct tuple_element<I, simd::named_array<T, Ids...>> { using type = T; };
 }
 
 #endif // SIMDIFY_NAMED_ARRAY

@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_ID
-#define SIMDIFY_ID
+#ifndef SIMDIFY_NAMED_ARRAY
+#define SIMDIFY_NAMED_ARRAY
 
 #include "../containers.hpp"
 #include <array>
@@ -57,4 +57,4 @@ namespace simd {
     
 }
 
-#endif // SIMDIFY_ID
+#endif // SIMDIFY_NAMED_ARRAY

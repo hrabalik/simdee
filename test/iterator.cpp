@@ -8,6 +8,12 @@ TEST_CASE("named_array", "[containers][iterator]") {
     pos.y = 34;
     pos.z = 45;
 
+    SECTION("find_id") {
+        REQUIRE((simd::detail::find_nth_id<0, simd::id::x, simd::id::y, simd::id::z>::value) == simd::id::x);
+        REQUIRE((simd::detail::find_nth_id<1, simd::id::x, simd::id::y, simd::id::z>::value) == simd::id::y);
+        REQUIRE((simd::detail::find_nth_id<2, simd::id::x, simd::id::y, simd::id::z>::value) == simd::id::z);
+        REQUIRE((simd::detail::find_last_id<simd::id::x, simd::id::y, simd::id::z>::value) == simd::id::z);
+    }
     SECTION("sizeof()") {
         REQUIRE(sizeof(simd::named_array<char, simd::id::x>) == 1);
         REQUIRE(sizeof(simd::named_array<char, simd::id::a, simd::id::b>) == 2);

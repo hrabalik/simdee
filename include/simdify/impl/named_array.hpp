@@ -12,6 +12,16 @@ namespace simd {
     };
 
     namespace detail {
+        template <std::size_t N, id... Ids>
+        struct find_nth_id;
+        template <std::size_t N, id FirstId, id... Ids>
+        struct find_nth_id<N, FirstId, Ids...> : find_nth_id<N - 1, Ids...> {};
+        template <id FirstId, id... Ids>
+        struct find_nth_id<0, FirstId, Ids...> { static constexpr id value = FirstId; };
+
+        template <id... Ids>
+        struct find_last_id : find_nth_id<sizeof...(Ids)-1, Ids...> {};
+
         template <typename T, id... Ids>
         struct id_pack;
 

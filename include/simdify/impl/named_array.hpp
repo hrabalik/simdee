@@ -123,6 +123,18 @@ namespace simd {
     bool operator!=(const named_array<T, Ids...>& lhs, const named_array<T, Ids...>& rhs) {
         return lhs.as_std_array() != rhs.as_std_array();
     }
+
+    namespace detail {
+        template <std::size_t I, typename T, id... Ids>
+        SIMDIFY_FORCE_INLINE T& get(named_array<T, Ids...>& pack) {
+            return get<I>(static_cast<id_pack<T, Ids...>&>(pack));
+        }
+
+        template <std::size_t I, typename T, id... Ids>
+        SIMDIFY_FORCE_INLINE const T& get(const named_array<T, Ids...>& pack) {
+            return get<I>(static_cast<const id_pack<T, Ids...>&>(pack));
+        }
+    }
 }
 
 namespace std {

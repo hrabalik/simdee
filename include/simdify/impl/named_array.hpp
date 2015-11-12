@@ -90,7 +90,7 @@ namespace simd {
 
         SIMDIFY_FORCE_INLINE std_array_t& as_std_array() & { return reinterpret_cast<std_array_t&>(*this); }
         SIMDIFY_FORCE_INLINE constexpr const std_array_t& as_std_array() const& { return reinterpret_cast<const std_array_t&>(*this); }
-        SIMDIFY_FORCE_INLINE std_array_t&& as_std_array() && { return reinterpret_cast<std_array_t && (*this); }
+        SIMDIFY_FORCE_INLINE std_array_t&& as_std_array() && { return reinterpret_cast<std_array_t &&>(*this); }
         SIMDIFY_FORCE_INLINE constexpr const std_array_t&& as_std_array() const&& { return reinterpret_cast<const std_array_t&&>(*this); }
         SIMDIFY_FORCE_INLINE T& at(std::size_t i) { return as_std_array().at(i); }
         SIMDIFY_FORCE_INLINE constexpr const T& at(std::size_t i) const { return as_std_array().at(i); }
@@ -102,13 +102,13 @@ namespace simd {
         SIMDIFY_FORCE_INLINE void swap(named_array& rhs) { as_std_array().swap(rhs.as_std_array()); }
 
         SIMDIFY_FORCE_INLINE iterator begin() { return as_std_array().begin(); }
-        SIMDIFY_FORCE_INLINE iterator end() { return as_str_array().end(); }
+        SIMDIFY_FORCE_INLINE iterator end() { return as_std_array().end(); }
         SIMDIFY_FORCE_INLINE constexpr const_iterator begin() const { return as_std_array().begin(); }
         SIMDIFY_FORCE_INLINE constexpr const_iterator end() const { return as_std_array().end(); }
         SIMDIFY_FORCE_INLINE constexpr const_iterator cbegin() const { return as_std_array().cbegin(); }
         SIMDIFY_FORCE_INLINE constexpr const_iterator cend() const { return as_std_array().cend(); }
         SIMDIFY_FORCE_INLINE reverse_iterator rbegin() { return as_std_array().rbegin(); }
-        SIMDIFY_FORCE_INLINE reverse_iterator rend() { return as_str_array().rend(); }
+        SIMDIFY_FORCE_INLINE reverse_iterator rend() { return as_std_array().rend(); }
         SIMDIFY_FORCE_INLINE constexpr const_reverse_iterator rbegin() const { return as_std_array().rbegin(); }
         SIMDIFY_FORCE_INLINE constexpr const_reverse_iterator rend() const { return as_std_array().rend(); }
         SIMDIFY_FORCE_INLINE constexpr const_reverse_iterator crbegin() const { return as_std_array().crbegin(); }
@@ -138,9 +138,9 @@ namespace std {
     template <typename T, simd::id... Ids>
     void swap(simd::named_array<T, Ids...>& lhs, simd::named_array<T, Ids...>& rhs) { lhs.swap(rhs); }
     template <typename T, simd::id... Ids>
-    struct tuple_size<simd::named_array<T, Ids...>> : integral_constant<std::size_t, sizeof...(Ids)> {};
+    class tuple_size<simd::named_array<T, Ids...>> : integral_constant<std::size_t, sizeof...(Ids)> {};
     template <std::size_t I, typename T, simd::id... Ids>
-    struct tuple_element<I, simd::named_array<T, Ids...>> { using type = T; };
+    class tuple_element<I, simd::named_array<T, Ids...>> { using type = T; };
 }
 
 #endif // SIMDIFY_NAMED_ARRAY

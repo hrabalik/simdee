@@ -17,32 +17,22 @@ TEST_CASE("named_array", "[containers][iterator]") {
         REQUIRE(pos.y == 34);
         REQUIRE(pos.z == 45);
     }
-    SECTION("at() -- reverse order -- unintuitive") {
-        REQUIRE(pos.at(0) == pos.z);
-        REQUIRE(pos.at(1) == pos.y);
-        REQUIRE(pos.at(2) == pos.x);
-    }
-    SECTION("operator [] -- reverse order -- unintuitive") {
-        REQUIRE(pos[0] == pos.z);
-        REQUIRE(pos[1] == pos.y);
-        REQUIRE(pos[2] == pos.x);
-    }
     SECTION("get<>()") {
         REQUIRE(std::get<0>(pos) == pos.x);
         REQUIRE(std::get<1>(pos) == pos.y);
         REQUIRE(std::get<2>(pos) == pos.z);
     }
-    SECTION("swap()") {
-        decltype(pos) pos2;
-        pos2.x = 56;
-        pos2.y = 67;
-        pos2.z = 78;
-        std::swap(pos, pos2);
-        REQUIRE(pos.x == 56);
-        REQUIRE(pos.y == 67);
-        REQUIRE(pos.z == 78);
-        REQUIRE(pos2.x == 23);
-        REQUIRE(pos2.y == 34);
-        REQUIRE(pos2.z == 45);
-    }
+    //SECTION("swap()") {
+    //    decltype(pos) pos2;
+    //    pos2.x = 56;
+    //    pos2.y = 67;
+    //    pos2.z = 78;
+    //    std::swap(pos, pos2);
+    //    REQUIRE(pos.x == 56);
+    //    REQUIRE(pos.y == 67);
+    //    REQUIRE(pos.z == 78);
+    //    REQUIRE(pos2.x == 23);
+    //    REQUIRE(pos2.y == 34);
+    //    REQUIRE(pos2.z == 45);
+    //}
 }

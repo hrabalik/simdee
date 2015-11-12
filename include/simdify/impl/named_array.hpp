@@ -55,45 +55,40 @@ namespace simd {
         SIMDIFY_ID_PACK_DECLARATION(y);
         SIMDIFY_ID_PACK_DECLARATION(z);
 
-        template <std::size_t I, typename T, id FirstId, id... Ids, typename = typename std::enable_if<I != 0, void>::type>
-        SIMDIFY_FORCE_INLINE constexpr T& get(id_pack<T, FirstId, Ids...>& pack) {
-            return get<I - 1>(static_cast<id_pack<T, Ids...>&>(pack));
-        }
+        template <std::size_t I, typename T, typename Enable = void>
+        struct Get;
 
-        template <std::size_t I, typename T, id... Ids, typename = typename std::enable_if<I == 0, void>::type>
-        SIMDIFY_FORCE_INLINE constexpr T& get(id_pack<T, Ids...>& pack) {
-            return pack.get();
-        }
+        template <std::size_t I, typename T, id FirstId, id... Ids>
+        struct Get<I, id_pack<T, FirstId, Ids...>, typename std::enable_if<I != 0>::type> {
+            SIMDIFY_FORCE_INLINE static constexpr T& get(id_pack<T, FirstId, Ids...>& pack) {
+                return Get<I - 1, id_pack<T, Ids...>>::get(pack);
+            }
+            SIMDIFY_FORCE_INLINE static constexpr const T& get(const id_pack<T, FirstId, Ids...>& pack) {
+                return Get<I - 1, id_pack<T, Ids...>>::get(pack);
+            }
+            SIMDIFY_FORCE_INLINE static constexpr T&& get(id_pack<T, FirstId, Ids...>&& pack) {
+                return Get<I - 1, id_pack<T, Ids...>>::get(pack);
+            }
+            SIMDIFY_FORCE_INLINE static constexpr const T&& get(const id_pack<T, FirstId, Ids...>&& pack) {
+                return Get<I - 1, id_pack<T, Ids...>>::get(pack);
+            }
+        };
 
-        template <std::size_t I, typename T, id FirstId, id... Ids, typename = typename std::enable_if<I != 0, void>::type>
-        SIMDIFY_FORCE_INLINE constexpr const T& get(const id_pack<T, FirstId, Ids...>& pack) {
-            return get<I - 1>(static_cast<const id_pack<T, Ids...>&>(pack));
-        }
-
-        template <std::size_t I, typename T, id... Ids, typename = typename std::enable_if<I == 0, void>::type>
-        SIMDIFY_FORCE_INLINE constexpr const T& get(const id_pack<T, Ids...>& pack) {
-            return pack.get();
-        }
-
-        template <std::size_t I, typename T, id FirstId, id... Ids, typename = typename std::enable_if<I != 0, void>::type>
-        SIMDIFY_FORCE_INLINE constexpr T&& get(id_pack<T, FirstId, Ids...>&& pack) {
-            return get<I - 1>(static_cast<id_pack<T, Ids...>&&>(pack));
-        }
-
-        template <std::size_t I, typename T, id... Ids, typename = typename std::enable_if<I == 0, void>::type>
-        SIMDIFY_FORCE_INLINE constexpr T&& get(id_pack<T, Ids...>&& pack) {
-            return pack.get();
-        }
-
-        template <std::size_t I, typename T, id FirstId, id... Ids, typename = typename std::enable_if<I != 0, void>::type>
-        SIMDIFY_FORCE_INLINE constexpr const T&& get(const id_pack<T, FirstId, Ids...>&& pack) {
-            return get<I - 1>(static_cast<const id_pack<T, Ids...>&&>(pack));
-        }
-
-        template <std::size_t I, typename T, id... Ids, typename = typename std::enable_if<I == 0, void>::type>
-        SIMDIFY_FORCE_INLINE constexpr const T&& get(const id_pack<T, Ids...>&& pack) {
-            return pack.get();
-        }
+        template <typename T, id... Ids>
+        struct Get<0, id_pack<T, Ids...>> {
+            SIMDIFY_FORCE_INLINE static constexpr T& get(id_pack<T, Ids...>& pack) {
+                return pack.get();
+            }
+            SIMDIFY_FORCE_INLINE static constexpr const T& get(const id_pack<T, Ids...>& pack) {
+                return pack.get();
+            }
+            SIMDIFY_FORCE_INLINE static constexpr T&& get(id_pack<T, Ids...>&& pack) {
+                return pack.get();
+            }
+            SIMDIFY_FORCE_INLINE static constexpr const T&& get(const id_pack<T, Ids...>&& pack) {
+                return pack.get();
+            }
+        };
     }
 
     template <typename T, id... Ids>
@@ -105,19 +100,19 @@ namespace simd {
 namespace std {
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr T& get(simd::named_array<T, Ids...>& a) {
-        return simd::detail::get<I>(static_cast<simd::detail::id_pack<T, Ids...>&>(a));
+        return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr T&& get(simd::named_array<T, Ids...>&& a) {
-        return simd::detail::get<I>(static_cast<simd::detail::id_pack<T, Ids...>&&>(a));
+        return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr const T& get(const simd::named_array<T, Ids...>& a) {
-        return simd::detail::get<I>(static_cast<const simd::detail::id_pack<T, Ids...>&>(a));
+        return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr const T&& get(const simd::named_array<T, Ids...>&& a) {
-        return simd::detail::get<I>(static_cast<const simd::detail::id_pack<T, Ids...>&&>(a));
+        return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
     }
 
     //template <typename T, simd::id... Ids>

@@ -3,6 +3,7 @@
 
 #include "../containers.hpp"
 #include "../util/inline.hpp"
+#include "for_each.hpp"
 #include <array>
 #include <type_traits>
 
@@ -93,7 +94,24 @@ namespace simd {
 
     template <typename T, id... Ids>
     struct named_array : detail::id_pack<T, Ids...> {
-        //void swap(named_array& rhs) {}
+        enum : std::size_t { N = sizeof...(Ids) };
+
+        struct Swap {
+            SIMDIFY_FORCE_INLINE constexpr Swap(named_array& l, named_array& r) : rhs(r), lhs(l) {}
+            
+            template <std::size_t I>
+            SIMDIFY_FORCE_INLINE void perform() {
+                std::swap(std::get<I>(lhs), std::get<I>(rhs));
+            }
+
+            named_array& lhs;
+            named_array& rhs;
+        };
+
+        void swap(named_array& rhs) {
+            Swap s(*this, rhs);
+            detail::ForEach<N>::perform(s);
+        }
     };
 }
 
@@ -115,8 +133,8 @@ namespace std {
         return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
     }
 
-    //template <typename T, simd::id... Ids>
-    //void swap(simd::named_array<T, Ids...>& lhs, simd::named_array<T, Ids...>& rhs) { lhs.swap(rhs); }
+    template <typename T, simd::id... Ids>
+    void swap(simd::named_array<T, Ids...>& lhs, simd::named_array<T, Ids...>& rhs) { lhs.swap(rhs); }
     template <typename T, simd::id... Ids>
     class tuple_size<simd::named_array<T, Ids...>> : public integral_constant<std::size_t, sizeof...(Ids)> {};
     template <std::size_t I, typename T, simd::id... Ids>

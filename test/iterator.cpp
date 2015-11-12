@@ -22,17 +22,17 @@ TEST_CASE("named_array", "[containers][iterator]") {
         REQUIRE(std::get<1>(pos) == pos.y);
         REQUIRE(std::get<2>(pos) == pos.z);
     }
-    //SECTION("swap()") {
-    //    decltype(pos) pos2;
-    //    pos2.x = 56;
-    //    pos2.y = 67;
-    //    pos2.z = 78;
-    //    std::swap(pos, pos2);
-    //    REQUIRE(pos.x == 56);
-    //    REQUIRE(pos.y == 67);
-    //    REQUIRE(pos.z == 78);
-    //    REQUIRE(pos2.x == 23);
-    //    REQUIRE(pos2.y == 34);
-    //    REQUIRE(pos2.z == 45);
-    //}
+    SECTION("swap()") {
+        decltype(pos) pos2;
+        pos2.x = 56;
+        pos2.y = 67;
+        pos2.z = 78;
+        std::swap(pos, pos2);
+        REQUIRE(pos.x == 56);
+        REQUIRE(pos.y == 67);
+        REQUIRE(pos.z == 78);
+        REQUIRE(pos2.x == 23);
+        REQUIRE(pos2.y == 34);
+        REQUIRE(pos2.z == 45);
+    }
 }

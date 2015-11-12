@@ -12,11 +12,6 @@ TEST_CASE("named_array", "[containers][iterator]") {
         REQUIRE(sizeof(simd::named_array<char, simd::id::x>) == 1);
         REQUIRE(sizeof(simd::named_array<char, simd::id::a, simd::id::b>) == 2);
     }
-    SECTION("detail::get<>()") {
-        REQUIRE(simd::detail::get<0>(pos) == pos.x);
-        REQUIRE(simd::detail::get<1>(pos) == pos.y);
-        REQUIRE(simd::detail::get<2>(pos) == pos.z);
-    }
     SECTION("operator .") {
         REQUIRE(pos.x == 23);
         REQUIRE(pos.y == 34);
@@ -32,10 +27,10 @@ TEST_CASE("named_array", "[containers][iterator]") {
         REQUIRE(pos[1] == pos.y);
         REQUIRE(pos[2] == pos.x);
     }
-    SECTION("get<>() -- reverse order -- unintuitive") {
-        REQUIRE(std::get<0>(pos) == pos.z);
+    SECTION("get<>()") {
+        REQUIRE(std::get<0>(pos) == pos.x);
         REQUIRE(std::get<1>(pos) == pos.y);
-        REQUIRE(std::get<2>(pos) == pos.x);
+        REQUIRE(std::get<2>(pos) == pos.z);
     }
     SECTION("swap()") {
         decltype(pos) pos2;

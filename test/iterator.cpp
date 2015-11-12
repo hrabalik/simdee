@@ -18,6 +18,11 @@ TEST_CASE("named_array", "[containers][iterator]") {
         REQUIRE(sizeof(simd::named_array<char, simd::id::x>) == 1);
         REQUIRE(sizeof(simd::named_array<char, simd::id::a, simd::id::b>) == 2);
     }
+    SECTION("detail::get<>()") {
+        REQUIRE(simd::detail::get<0>(pos) == pos.x);
+        REQUIRE(simd::detail::get<1>(pos) == pos.y);
+        REQUIRE(simd::detail::get<2>(pos) == pos.z);
+    }
     SECTION("operator .") {
         REQUIRE(pos.x == 23);
         REQUIRE(pos.y == 34);

@@ -6,6 +6,16 @@
 #include <array>
 #include <type_traits>
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDIFY_ID_PACK_DECLARATION(IDENTIFIER)                                                   \
+template <typename T, id... Ids>                                                                  \
+struct id_pack<T, id::IDENTIFIER, Ids...> : id_pack<T, Ids...> {                                  \
+    T IDENTIFIER;                                                                                 \
+    SIMDIFY_FORCE_INLINE T& get() { return IDENTIFIER; }                                          \
+    SIMDIFY_FORCE_INLINE constexpr const T& get() const { return IDENTIFIER; }                    \
+};                                                                                                \
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 namespace simd {
     enum class id {
         a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
@@ -28,32 +38,32 @@ namespace simd {
         template <typename T>
         struct id_pack<T> {};
 
-        template <typename T, id... Ids> struct id_pack<T, id::a, Ids...> : id_pack<T, Ids...> { T a; SIMDIFY_FORCE_INLINE T& get() { return a; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return a; } };
-        template <typename T, id... Ids> struct id_pack<T, id::b, Ids...> : id_pack<T, Ids...> { T b; SIMDIFY_FORCE_INLINE T& get() { return b; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return b; } };
-        template <typename T, id... Ids> struct id_pack<T, id::c, Ids...> : id_pack<T, Ids...> { T c; SIMDIFY_FORCE_INLINE T& get() { return c; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return c; } };
-        template <typename T, id... Ids> struct id_pack<T, id::d, Ids...> : id_pack<T, Ids...> { T d; SIMDIFY_FORCE_INLINE T& get() { return d; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return d; } };
-        template <typename T, id... Ids> struct id_pack<T, id::e, Ids...> : id_pack<T, Ids...> { T e; SIMDIFY_FORCE_INLINE T& get() { return e; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return e; } };
-        template <typename T, id... Ids> struct id_pack<T, id::f, Ids...> : id_pack<T, Ids...> { T f; SIMDIFY_FORCE_INLINE T& get() { return f; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return f; } };
-        template <typename T, id... Ids> struct id_pack<T, id::g, Ids...> : id_pack<T, Ids...> { T g; SIMDIFY_FORCE_INLINE T& get() { return g; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return g; } };
-        template <typename T, id... Ids> struct id_pack<T, id::h, Ids...> : id_pack<T, Ids...> { T h; SIMDIFY_FORCE_INLINE T& get() { return h; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return h; } };
-        template <typename T, id... Ids> struct id_pack<T, id::i, Ids...> : id_pack<T, Ids...> { T i; SIMDIFY_FORCE_INLINE T& get() { return i; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return i; } };
-        template <typename T, id... Ids> struct id_pack<T, id::j, Ids...> : id_pack<T, Ids...> { T j; SIMDIFY_FORCE_INLINE T& get() { return j; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return j; } };
-        template <typename T, id... Ids> struct id_pack<T, id::k, Ids...> : id_pack<T, Ids...> { T k; SIMDIFY_FORCE_INLINE T& get() { return k; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return k; } };
-        template <typename T, id... Ids> struct id_pack<T, id::l, Ids...> : id_pack<T, Ids...> { T l; SIMDIFY_FORCE_INLINE T& get() { return l; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return l; } };
-        template <typename T, id... Ids> struct id_pack<T, id::m, Ids...> : id_pack<T, Ids...> { T m; SIMDIFY_FORCE_INLINE T& get() { return m; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return m; } };
-        template <typename T, id... Ids> struct id_pack<T, id::n, Ids...> : id_pack<T, Ids...> { T n; SIMDIFY_FORCE_INLINE T& get() { return n; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return n; } };
-        template <typename T, id... Ids> struct id_pack<T, id::o, Ids...> : id_pack<T, Ids...> { T o; SIMDIFY_FORCE_INLINE T& get() { return o; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return o; } };
-        template <typename T, id... Ids> struct id_pack<T, id::p, Ids...> : id_pack<T, Ids...> { T p; SIMDIFY_FORCE_INLINE T& get() { return p; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return p; } };
-        template <typename T, id... Ids> struct id_pack<T, id::q, Ids...> : id_pack<T, Ids...> { T q; SIMDIFY_FORCE_INLINE T& get() { return q; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return q; } };
-        template <typename T, id... Ids> struct id_pack<T, id::r, Ids...> : id_pack<T, Ids...> { T r; SIMDIFY_FORCE_INLINE T& get() { return r; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return r; } };
-        template <typename T, id... Ids> struct id_pack<T, id::s, Ids...> : id_pack<T, Ids...> { T s; SIMDIFY_FORCE_INLINE T& get() { return s; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return s; } };
-        template <typename T, id... Ids> struct id_pack<T, id::t, Ids...> : id_pack<T, Ids...> { T t; SIMDIFY_FORCE_INLINE T& get() { return t; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return t; } };
-        template <typename T, id... Ids> struct id_pack<T, id::u, Ids...> : id_pack<T, Ids...> { T u; SIMDIFY_FORCE_INLINE T& get() { return u; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return u; } };
-        template <typename T, id... Ids> struct id_pack<T, id::v, Ids...> : id_pack<T, Ids...> { T v; SIMDIFY_FORCE_INLINE T& get() { return v; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return v; } };
-        template <typename T, id... Ids> struct id_pack<T, id::w, Ids...> : id_pack<T, Ids...> { T w; SIMDIFY_FORCE_INLINE T& get() { return w; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return w; } };
-        template <typename T, id... Ids> struct id_pack<T, id::x, Ids...> : id_pack<T, Ids...> { T x; SIMDIFY_FORCE_INLINE T& get() { return x; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return x; } };
-        template <typename T, id... Ids> struct id_pack<T, id::y, Ids...> : id_pack<T, Ids...> { T y; SIMDIFY_FORCE_INLINE T& get() { return y; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return y; } };
-        template <typename T, id... Ids> struct id_pack<T, id::z, Ids...> : id_pack<T, Ids...> { T z; SIMDIFY_FORCE_INLINE T& get() { return z; } SIMDIFY_FORCE_INLINE constexpr const T& get() const { return z; } };
+        SIMDIFY_ID_PACK_DECLARATION(a);
+        SIMDIFY_ID_PACK_DECLARATION(b);
+        SIMDIFY_ID_PACK_DECLARATION(c);
+        SIMDIFY_ID_PACK_DECLARATION(d);
+        SIMDIFY_ID_PACK_DECLARATION(e);
+        SIMDIFY_ID_PACK_DECLARATION(f);
+        SIMDIFY_ID_PACK_DECLARATION(g);
+        SIMDIFY_ID_PACK_DECLARATION(h);
+        SIMDIFY_ID_PACK_DECLARATION(i);
+        SIMDIFY_ID_PACK_DECLARATION(j);
+        SIMDIFY_ID_PACK_DECLARATION(k);
+        SIMDIFY_ID_PACK_DECLARATION(l);
+        SIMDIFY_ID_PACK_DECLARATION(m);
+        SIMDIFY_ID_PACK_DECLARATION(n);
+        SIMDIFY_ID_PACK_DECLARATION(o);
+        SIMDIFY_ID_PACK_DECLARATION(p);
+        SIMDIFY_ID_PACK_DECLARATION(q);
+        SIMDIFY_ID_PACK_DECLARATION(r);
+        SIMDIFY_ID_PACK_DECLARATION(s);
+        SIMDIFY_ID_PACK_DECLARATION(t);
+        SIMDIFY_ID_PACK_DECLARATION(u);
+        SIMDIFY_ID_PACK_DECLARATION(v);
+        SIMDIFY_ID_PACK_DECLARATION(w);
+        SIMDIFY_ID_PACK_DECLARATION(x);
+        SIMDIFY_ID_PACK_DECLARATION(y);
+        SIMDIFY_ID_PACK_DECLARATION(z);
 
         template <std::size_t I, typename T, id FirstId, id... Ids, typename = typename std::enable_if<I != 0, void>::type>
         SIMDIFY_FORCE_INLINE T& get(id_pack<T, FirstId, Ids...>& pack) {
@@ -154,5 +164,7 @@ namespace std {
     template <std::size_t I, typename T, simd::id... Ids>
     class tuple_element<I, simd::named_array<T, Ids...>> { using type = T; };
 }
+
+#undef SIMDIFY_ID_PACK_DECLARATION
 
 #endif // SIMDIFY_NAMED_ARRAY

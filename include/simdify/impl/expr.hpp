@@ -66,42 +66,32 @@ namespace simd {
 
         template <typename T>
         struct aligned {
-            SIMDIFY_FORCE_INLINE constexpr explicit aligned(T* const& r) : ptr(r) {}
+            SIMDIFY_FORCE_INLINE constexpr explicit aligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDIFY_FORCE_INLINE void operator=(const Simd_t& r) {
+            SIMDIFY_FORCE_INLINE constexpr void operator=(const Simd_t& r) const {
                 static_assert(!std::is_const<T>::value, "Storing into a const pointer via aligned()");
                 using f_t = typename Simd_t::f_t;
                 r.store(reinterpret_cast<f_t*>(ptr));
             }
 
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr const F_t* get_load() const {
-                return reinterpret_cast<const F_t*>(ptr);
-            }
-
             // data
-            T* const& ptr;
+            T* ptr;
         };
 
         template <typename T>
         struct unaligned {
-            SIMDIFY_FORCE_INLINE constexpr explicit unaligned(T* const& r) : ptr(r) {}
+            SIMDIFY_FORCE_INLINE constexpr explicit unaligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDIFY_FORCE_INLINE void operator=(const Simd_t& r) {
+            SIMDIFY_FORCE_INLINE constexpr void operator=(const Simd_t& r) const {
                 static_assert(!std::is_const<T>::value, "Storing into a const pointer via unaligned()");
                 using f_t = typename Simd_t::f_t;
                 r.store(reinterpret_cast<f_t*>(ptr));
             }
 
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr const F_t* get_load() const {
-                return reinterpret_cast<const F_t*>(ptr);
-            }
-
             // data
-            T* const& ptr;
+            T* ptr;
         };
 
         template <typename Crtp>

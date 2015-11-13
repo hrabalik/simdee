@@ -30,9 +30,9 @@ namespace simd {
         SIMDIFY_FORCE_INLINE f_t back() const { return f.back(); }
 
         template <typename T>
-        SIMDIFY_FORCE_INLINE avx(const expr::aligned<T>& r) : simd_base(_mm256_load_ps(r.template get_load<f_t>())) {}
+        SIMDIFY_FORCE_INLINE avx(const expr::aligned<T>& r) : simd_base(_mm256_load_ps(r.ptr)) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE avx(const expr::unaligned<T>& r) : simd_base(_mm256_loadu_ps(r.template get_load<f_t>())) {}
+        SIMDIFY_FORCE_INLINE avx(const expr::unaligned<T>& r) : simd_base(_mm256_loadu_ps(r.ptr)) {}
         template <typename T>
         SIMDIFY_FORCE_INLINE avx(const expr::tof<T>& r) : avx(r.template to<f_t>()) {}
     };

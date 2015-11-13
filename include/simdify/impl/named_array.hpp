@@ -101,7 +101,8 @@ namespace simd {
             
             template <std::size_t I>
             SIMDIFY_FORCE_INLINE void perform() {
-                std::swap(std::get<I>(lhs), std::get<I>(rhs));
+                using std::swap;
+                swap(simd::get<I>(lhs), simd::get<I>(rhs));
             }
 
             named_array& lhs;
@@ -113,9 +114,7 @@ namespace simd {
             detail::ForEach<N>::perform(s);
         }
     };
-}
 
-namespace std {
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr T& get(simd::named_array<T, Ids...>& a) {
         return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
@@ -134,11 +133,7 @@ namespace std {
     }
 
     template <typename T, simd::id... Ids>
-    void swap(simd::named_array<T, Ids...>& lhs, simd::named_array<T, Ids...>& rhs) { lhs.swap(rhs); }
-    template <typename T, simd::id... Ids>
-    class tuple_size<simd::named_array<T, Ids...>> : public integral_constant<std::size_t, sizeof...(Ids)> {};
-    template <std::size_t I, typename T, simd::id... Ids>
-    class tuple_element<I, simd::named_array<T, Ids...>> { using type = T; };
+    SIMDIFY_FORCE_INLINE void swap(simd::named_array<T, Ids...>& lhs, simd::named_array<T, Ids...>& rhs) { lhs.swap(rhs); }
 }
 
 #undef SIMDIFY_ID_PACK_DECLARATION

@@ -2,13 +2,6 @@
 
 #include "catch.hpp"
 
-struct Fill {
-    template <std::size_t I>
-    int yield() {
-        return (I + 1) * 11;
-    }
-};
-
 TEST_CASE("named_array", "[containers][iterator]") {
     simd::named_array<int, simd::id::x, simd::id::y, simd::id::z> pos;
     pos.x = 23;
@@ -42,8 +35,8 @@ TEST_CASE("named_array", "[containers][iterator]") {
         REQUIRE(pos2.y == 34);
         REQUIRE(pos2.z == 45);
     }
-    SECTION("initialization with an object that provides yield<std::size_t>()") {
-        decltype(pos) pos2(Fill{});
+    SECTION("simple constructor") {
+        decltype(pos) pos2(11, 22, 33);
         REQUIRE(pos2.x == 11);
         REQUIRE(pos2.y == 22);
         REQUIRE(pos2.z == 33);

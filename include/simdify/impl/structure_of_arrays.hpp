@@ -5,6 +5,7 @@
 #include "../containers.hpp"
 #include "../util/inline.hpp"
 #include "../util/malloc.hpp"
+#include "../util/integral.hpp"
 #include "expr.hpp"
 #include "named_array.hpp"
 #include <array>
@@ -24,30 +25,20 @@ namespace simd {
         struct iterator {
             using buffer_t = named_array<expr::aligned<f_t>, Ids...>;
 
-            template <typename Func>
-            struct TransformItem {
-                iterator& m_it;
-                Func m_f;
+            template <std::size_t... I>
+            SIMDIFY_FORCE_INLINE iterator(structure_of_arrays& from, std::size_t idx, sequence<I...>) :
+                m_buf(simd::get<I>(from.m_data)[idx]...) {}
 
-                SIMDIFY_FORCE_INLINE constexpr TransformItem(iterator& it, Func&& f) :
-                    m_it(it), m_f(std::move(f)) {}
+            iterator(structure_of_arrays& from, std::size_t idx) :
+                iterator(from, idx, buffer_t::all_elements{}) {}
 
-                template <std::size_t I>
-                SIMDIFY_FORCE_INLINE constexpr void perform() const {
-                    m_f(simd::get<I>(m_it.m_buf).ptr);
-                }
-            };
-
-            iterator(structure_of_arrays& from, std::size_t index) {
-                detail::ForEach(N)::perform(TransformItem(*this, [&from, index](f_t*& ptr) {
-                    ptr = std::get<N>(from.m_data).data() + from;
-                }));
+            template <std::size_t... I>
+            SIMDIFY_FORCE_INLINE void incr_impl(sequence<I...>) {
+                detail::no_op(simd::get<I>(m_buf).ptr += W...);
             }
 
             iterator& operator++() {
-                detail::ForEach(N)::perform(TransformItem(*this, [](f_t*& ptr) {
-                    ptr += W;
-                }));
+                incr_impl(buffer_t::all_elements{});
                 return *this;
             }
 
@@ -60,8 +51,9 @@ namespace simd {
             buffer_t m_buf;
         };
 
-        //iterator begin();
-        //iterator end();
+        std::size_t size() { return std::get<0>(m_data).size(); }
+        iterator begin() { return iterator(*this, 0); }
+        iterator end() { return iterator(*this, div_ceil_shift<W>(size())); }
         //const_iterator begin() const;
         //const_iterator end() const;
         //const_iterator cbegin() const;

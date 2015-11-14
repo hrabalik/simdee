@@ -9,20 +9,22 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDIFY_ID_PACK_DECLARATION(IDENTIFIER)                                                   \
+                                                                                                  \
 template <typename T, id... Ids>                                                                  \
 struct id_pack<T, id::IDENTIFIER, Ids...> : id_pack<T, Ids...> {                                  \
     SIMDIFY_FORCE_INLINE constexpr id_pack() = default;                                           \
                                                                                                   \
-    template <typename Func, std::size_t N>                                                       \
-    SIMDIFY_FORCE_INLINE constexpr id_pack(id_pack_init<Func, N>& init) :                         \
-        id_pack<T, Ids...>(init),                                                                 \
-        IDENTIFIER(init.func.template yield<N - sizeof...(Ids) - 1>()) {}                         \
+    template <typename Arg1, typename... Args>                                                    \
+    SIMDIFY_FORCE_INLINE constexpr id_pack(Arg1&& arg1, Args&&... args) :                         \
+        id_pack<T, Ids...>(std::forward<Args>(args)...),                                          \
+        IDENTIFIER(std::forward<Arg1>(arg1)) {}                                                   \
                                                                                                   \
     SIMDIFY_FORCE_INLINE T& get() { return IDENTIFIER; }                                          \
     SIMDIFY_FORCE_INLINE constexpr const T& get() const { return IDENTIFIER; }                    \
                                                                                                   \
     T IDENTIFIER;                                                                                 \
 };                                                                                                \
+                                                                                                  \
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace simd {
@@ -31,11 +33,8 @@ namespace simd {
     };
 
     namespace detail {
-        template <typename Func, std::size_t N>
-        struct id_pack_init {
-            id_pack_init(Func& f) : func(f) {}
-            Func& func;
-        };
+        template <typename... Args>
+        SIMDIFY_FORCE_INLINE constexpr void no_op(Args&&...) {}
 
         template <typename T, id... Ids>
         struct id_pack;
@@ -43,9 +42,6 @@ namespace simd {
         template <typename T>
         struct id_pack<T> {
             SIMDIFY_FORCE_INLINE constexpr id_pack() = default;
-
-            template <typename Func, std::size_t N>
-            SIMDIFY_FORCE_INLINE constexpr id_pack(id_pack_init<Func, N>& init) {}
         };
 
         SIMDIFY_ID_PACK_DECLARATION(a);
@@ -118,28 +114,30 @@ namespace simd {
     template <typename T, id... Ids>
     struct named_array : detail::id_pack<T, Ids...> {
         enum : std::size_t { N = sizeof...(Ids) };
+        using all_elements = make_sequence_t<0, N>;
 
         SIMDIFY_FORCE_INLINE constexpr named_array() = default;
 
-        template <typename Func>
-        SIMDIFY_FORCE_INLINE constexpr named_array(Func& func) :
-            detail::id_pack<T, Ids...>(detail::id_pack_init<Func, N>(func)) {}
+        template <std::size_t I>
+        SIMDIFY_FORCE_INLINE int swap_impl(named_array& rhs) {
+            using std::swap;
+            swap(simd::get<I>(*this), simd::get<I>(rhs));
+            return 0;
+        }
 
-        struct Swap {
-            SIMDIFY_FORCE_INLINE constexpr Swap(named_array& l, named_array& r) : rhs(r), lhs(l) {}
-
-            template <std::size_t I>
-            SIMDIFY_FORCE_INLINE constexpr void perform() const {
-                using std::swap;
-                swap(simd::get<I>(lhs), simd::get<I>(rhs));
-            }
-
-            named_array& lhs;
-            named_array& rhs;
-        };
+        template <std::size_t... I>
+        SIMDIFY_FORCE_INLINE void swap_impl(named_array& rhs, sequence<I...>) {
+            detail::no_op(swap_impl<I>(rhs)...);
+        }
 
         void swap(named_array& rhs) {
-            detail::ForEach<N>::perform(Swap(*this, rhs));
+            swap_impl(rhs, all_elements{});
+        }
+
+        template <typename Arg1, typename... Args>
+        SIMDIFY_FORCE_INLINE constexpr named_array(Arg1&& arg1, Args&&... args) :
+            detail::id_pack<T, Ids...>(std::forward<Arg1>(arg1), std::forward<Args>(args)...) {
+            static_assert(1 + sizeof...(Args) == N, "named_array: incorrect number of parameters");
         }
     };
 

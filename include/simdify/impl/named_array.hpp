@@ -1,9 +1,8 @@
 #ifndef SIMDIFY_NAMED_ARRAY
 #define SIMDIFY_NAMED_ARRAY
 
-#include "../containers.hpp"
+#include "expr.hpp"
 #include "../util/inline.hpp"
-#include "for_each.hpp"
 #include <array>
 #include <type_traits>
 

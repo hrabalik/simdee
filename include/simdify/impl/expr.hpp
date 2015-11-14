@@ -2,6 +2,7 @@
 #define SIMDIFY_EXPR
 
 #include "../util/inline.hpp"
+#include "../util/integral.hpp"
 #include <type_traits>
 #include <limits>
 

@@ -1,17 +1,32 @@
-#include <simdify/containers.hpp>
+#include <simdify/impl/named_array.hpp>
 
 #include "catch.hpp"
+#include <tuple>
 
-TEST_CASE("named_array", "[containers][iterator]") {
-    simd::named_array<int, simd::id::x, simd::id::y, simd::id::z> pos;
-    pos.x = 23;
-    pos.y = 34;
-    pos.z = 45;
-
+TEST_CASE("named_array basic guarantees", "[containers][named_array]") {
     SECTION("sizeof()") {
         REQUIRE(sizeof(simd::named_array<char, simd::id::x>) == 1);
         REQUIRE(sizeof(simd::named_array<char, simd::id::a, simd::id::b>) == 2);
     }
+}
+
+using T = simd::named_array<int, simd::id::x, simd::id::y, simd::id::z>;
+
+TEST_CASE("named_array construction", "[containers][named_array]") {
+    SECTION("simple constructor") {
+        T pos(11, 22, 33);
+        REQUIRE(pos.x == 11);
+        REQUIRE(pos.y == 22);
+        REQUIRE(pos.z == 33);
+    }
+}
+
+TEST_CASE("named_array data manipulation", "[containers][named_array]") {
+    T pos;
+    pos.x = 23;
+    pos.y = 34;
+    pos.z = 45;
+
     SECTION("operator .") {
         REQUIRE(pos.x == 23);
         REQUIRE(pos.y == 34);
@@ -34,11 +49,5 @@ TEST_CASE("named_array", "[containers][iterator]") {
         REQUIRE(pos2.x == 23);
         REQUIRE(pos2.y == 34);
         REQUIRE(pos2.z == 45);
-    }
-    SECTION("simple constructor") {
-        decltype(pos) pos2(11, 22, 33);
-        REQUIRE(pos2.x == 11);
-        REQUIRE(pos2.y == 22);
-        REQUIRE(pos2.z == 33);
     }
 }

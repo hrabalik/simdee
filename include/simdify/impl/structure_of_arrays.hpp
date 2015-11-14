@@ -6,9 +6,11 @@
 #include "../util/integral.hpp"
 #include "expr.hpp"
 #include "named_array.hpp"
-#include <array>
-#include <vector>
 #include <tuple>
+#include <memory>
+#include <exception>
+#include <cstring>
+#include <iterator>
 
 namespace simd {
 
@@ -24,6 +26,8 @@ namespace simd {
         using f_t = typename simd_t::f_t;
         using mm_t = typename simd_t::mm_t;
 
+        static_assert(std::is_trivial<f_t>::value, "structure_of_arrays_impl: f_t not trivial");
+
         using value_type = named_array<f_t, Ids...>;
         using value_type_vector = named_array<mm_t, Ids...>;
         using reference = named_array<f_t&, Ids...>;
@@ -33,18 +37,20 @@ namespace simd {
 
         enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
 
-        template <typename Ref, std::size_t Step>
-        struct iterator_impl {
+        template <typename Ref>
+        struct iterator_impl : std::iterator<std::forward_iterator_tag, Ref> {
             iterator_impl(self_t& self, std::size_t idx) :
-                m_buf(std::forward_as_tuple(*(std::get<I>(self.m_data).data() + idx)...)) {}
+                m_buf(std::forward_as_tuple(*(self.m_data.get() + I*self.m_cap + idx)...)) {}
+
+            iterator_impl(const self_t& self, std::size_t idx) :
+                m_buf(std::forward_as_tuple(*(self.m_data.get() + I*self.m_cap + idx)...)) {}
 
             iterator_impl& operator++() {
-                detail::no_op(simd::get<I>(m_buf).ptr += Step...);
+                new (&m_buf) Ref(std::forward_as_tuple(*(&simd::get<I>(m_buf) + 1)...));
                 return *this;
             }
 
-            bool operator==(const iterator_impl& rhs) const { return m_buf.get().ptr == rhs.m_buf.get().ptr; }
-            bool operator!=(const iterator_impl& rhs) const { return m_buf.get().ptr != rhs.m_buf.get().ptr; }
+            bool operator!=(const iterator_impl& rhs) const { return &m_buf.get() != &rhs.m_buf.get(); }
             Ref& operator*() { return m_buf; }
             Ref* operator->() { return &m_buf; }
 
@@ -52,17 +58,19 @@ namespace simd {
             Ref m_buf;
         };
 
-        template <typename Ref, std::size_t Step>
-        struct iterator_vector_impl {
+        template <typename Ref>
+        struct iterator_vector_impl : std::iterator<std::forward_iterator_tag, Ref> {
             iterator_vector_impl(self_t& self, std::size_t idx) :
-                m_buf(std::forward_as_tuple(std::get<I>(self.m_data).data() + idx...)) {}
+                m_buf(std::forward_as_tuple(self.m_data.get() + I*self.m_cap + idx...)) {}
+
+            iterator_vector_impl(const self_t& self, std::size_t idx) :
+                m_buf(std::forward_as_tuple(self.m_data.get() + I*self.m_cap + idx...)) {}
 
             iterator_vector_impl& operator++() {
-                detail::no_op(simd::get<I>(m_buf).ptr += Step...);
+                detail::no_op(simd::get<I>(m_buf).ptr += W...);
                 return *this;
             }
 
-            bool operator==(const iterator_vector_impl& rhs) const { return m_buf.get().ptr == rhs.m_buf.get().ptr; }
             bool operator!=(const iterator_vector_impl& rhs) const { return m_buf.get().ptr != rhs.m_buf.get().ptr; }
             Ref& operator*() { return m_buf; }
             Ref* operator->() { return &m_buf; }
@@ -71,14 +79,10 @@ namespace simd {
             Ref m_buf;
         };
 
-        using iterator = iterator_impl<reference, 1>;
-        using iterator_vector = iterator_vector_impl<reference_vector, W>;
-        using const_iterator = iterator_impl<const_reference, 1>;
-        using const_iterator_vector = iterator_vector_impl<const_reference_vector, W>;
-
-        std::size_t size() { return m_data.get().size(); }
-        std::size_t size_head() { return div_floor_shift<W>(size()); }
-        std::size_t size_vector() { return div_ceil_shift<W>(size()); }
+        using iterator = iterator_impl<reference>;
+        using iterator_vector = iterator_vector_impl<reference_vector>;
+        using const_iterator = iterator_impl<const_reference>;
+        using const_iterator_vector = iterator_vector_impl<const_reference_vector>;
 
         iterator begin() { return iterator(*this, 0); }
         iterator end() { return iterator(*this, size()); }
@@ -106,14 +110,105 @@ namespace simd {
         const_iterator_vector cend_head() const { return const_iterator_vector(*this, size_head()); }
         const_iterator cbegin_tail() const { return const_iterator(*this, size_head()); }
         const_iterator cend_tail() const { return const_iterator(*this, size()); }
+
+        std::size_t capacity() const { return m_cap; }
+        std::size_t size() const { return m_sz; }
+        std::size_t size_head() const { return div_floor_shift<W>(m_sz); }
+        std::size_t size_vector() const { return div_ceil_shift<W>(m_sz); }
+        std::size_t size_tail() const { return size() - size_head(); }
+
+        void reserve(std::size_t count) {
+            if (count <= m_cap) return;
+
+            std::size_t new_cap = m_cap;
+            if (new_cap == 0) {
+                new_cap = div_ceil_shift<W>(count);
+            }
+            else do { new_cap *= 2; } while (new_cap < count);
+
+            decltype(m_data) new_data(aligned_malloc<f_t, alignof(mm_t)>(N * new_cap), aligned_deleter{});
+            if (!new_data) throw std::bad_alloc{};
+
+            if (m_sz != 0) {
+                detail::no_op(std::memcpy(new_data.get() + I*new_cap, m_data.get() + I*m_cap, sizeof(f_t)*m_sz)...);
+            }
+
+            std::swap(m_data, new_data);
+            m_cap = new_cap;
+        }
+
+        void fill(const value_type& val, std::size_t from = 0) {
+            f_t* first = m_data.get() + from;
+            f_t* last = first + m_sz;
+            for (int n = 0; n < N; ++n, first += m_cap, last += m_cap) {
+                f_t f = val[n];
+                for (f_t* curr = first; curr != last; ++curr) {
+                    *curr = f;
+                }
+            }
+        }
+
+        void resize(std::size_t count) {
+            reserve(count);
+            m_sz = count;
+        }
+
+        void resize(std::size_t count, const value_type& val) {
+            auto sz = m_sz;
+            resize(count);
+            if (count > sz) fill(val, sz);
+        }
+
+        void clear() { m_sz = 0; }
+
+        void push_back(const value_type& val) {
+            reserve(m_sz + 1);
+            f_t* base = m_data.get() + m_sz;
+            detail::no_op(*(base + I*m_cap) = simd::get<I>(val)...);
+            ++m_sz;
+        }
+
+        reference back() {
+            f_t* base = m_data.get() + m_sz;
+            return std::forward_as_tuple(*(base + I*m_cap)...);
+        }
+
+        const_reference back() const {
+            f_t* base = m_data.get() + m_sz;
+            return std::forward_as_tuple(*(base + I*m_cap)...);
+        }
+
+        void pop_back() {
+            if (m_sz == 0) throw std::runtime_error("structure_of_arrays: pop_back()");
+            --m_sz;
+        }
+
+        structure_of_arrays_impl() : m_data(nullptr, aligned_deleter{}), m_sz(0), m_cap(0) {}
+
+        structure_of_arrays_impl(std::size_t count) : structure_of_arrays_impl() {
+            reserve(div_ceil_shift<W>(count));
+            m_sz = count;
+        }
+
+        structure_of_arrays_impl(std::size_t count, const value_type& val)
+            : structure_of_arrays_impl(count) {
+            fill(val);
+        }
+
+        structure_of_arrays_impl(structure_of_arrays_impl&& rhs) :
+            m_data(std::move(rhs.m_data)), m_sz(rhs.m_sz), m_cap(rhs.m_cap) {
+            rhs.m_sz = 0; rhs.m_cap = 0;
+        }
+
+
     private:
-        std::array<std::vector<f_t, aligned_allocator<f_t, alignof(mm_t)>>, N> m_data;
+        std::unique_ptr<f_t, aligned_deleter> m_data;
+        std::size_t m_sz;
         std::size_t m_cap;
     };
 
     template <typename Simd_t, id... Ids>
-    struct structure_of_arrays :
-        structure_of_arrays_impl<Simd_t, id_sequence<Ids...>, make_sequence_t<0, sizeof...(Ids)>> {};
+    using structure_of_arrays = structure_of_arrays_impl<Simd_t, id_sequence<Ids...>, make_sequence_t<0, sizeof...(Ids)>>;
 }
 
 #endif // SIMDIFY_STRUCTURE_OF_ARRAYS

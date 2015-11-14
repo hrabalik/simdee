@@ -4,6 +4,7 @@
 #include "expr.hpp"
 #include "../util/inline.hpp"
 #include <tuple>
+#include <array>
 #include <type_traits>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,6 +142,15 @@ namespace simd {
             static_assert(sizeof...(Args) == sizeof...(Ids), "named_array: incorrect number of parameters");
         }
 
+        T& operator[](std::size_t i) {
+            auto& as_array = reinterpret_cast<std::array<T, N>&>(*this);
+            return as_array[(N - 1) - i];
+        }
+
+        const T& operator[](std::size_t i) const {
+            auto& as_array = reinterpret_cast<const std::array<const T, N>&>(*this);
+            return as_array[(N - 1) - i];
+        }
 
         template <std::size_t I>
         SIMDIFY_FORCE_INLINE int swap_impl(named_array& rhs) {

@@ -38,9 +38,17 @@ namespace simd {
     template <typename T>
     void aligned_free(T* aligned)
     {
+        if (aligned == nullptr) return;
         auto orig = reinterpret_cast<void**>(aligned)[-1]; // restore orig from right before the start of user data
         std::free(orig);
     }
+
+    struct aligned_deleter {
+        template <typename T>
+        void operator()(T* ptr) {
+            simd::aligned_free(ptr);
+        }
+    };
 
     // aligned allocator
     template <typename T, std::size_t Align>

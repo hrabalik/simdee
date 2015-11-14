@@ -27,10 +27,9 @@ namespace simd {
 
 namespace simd {
     // least significant "1" bit index; result undefined if in == 0
-    SIMDIFY_FORCE_INLINE unsigned long ls1b(unsigned long in) { unsigned long res; _BitScanForward(&res, in); return res; }
+    SIMDIFY_FORCE_INLINE unsigned long ls1b(unsigned __int32 in) { unsigned long res; _BitScanForward(&res, in); return res; }
     // most significant "1" bit index; result undefined if in == 0
-    SIMDIFY_FORCE_INLINE unsigned long ms1b(unsigned long in) { unsigned long res; _BitScanReverse(&res, in); return res; }
-}
+    SIMDIFY_FORCE_INLINE unsigned long ms1b(unsigned __int32 in) { unsigned long res; _BitScanReverse(&res, in); return res; }
 
 #if defined(_M_X64)
     // least significant "1" bit index; result undefined if in == 0
@@ -38,6 +37,7 @@ namespace simd {
     // most significant "1" bit index; result undefined if in == 0
     SIMDIFY_FORCE_INLINE unsigned long ms1b(unsigned __int64 in) { unsigned long res; _BitScanReverse64(&res, in); return res; }
 #endif
+}
 
 #else
 

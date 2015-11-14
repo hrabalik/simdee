@@ -39,6 +39,11 @@ TEST_CASE("named_array data manipulation", "[containers][named_array]") {
         REQUIRE(pos.y == 34);
         REQUIRE(pos.z == 45);
     }
+    SECTION("operator []") {
+        REQUIRE(pos[0] == pos.x);
+        REQUIRE(pos[1] == pos.y);
+        REQUIRE(pos[2] == pos.z);
+    }
     SECTION("get<>()") {
         REQUIRE(simd::get<0>(pos) == pos.x);
         REQUIRE(simd::get<1>(pos) == pos.y);

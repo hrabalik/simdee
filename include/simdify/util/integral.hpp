@@ -67,6 +67,32 @@ namespace simd {
             return a % b;
     }
 
+    template <std::size_t... I>
+    struct sequence {};
+
+    template <std::size_t I1, std::size_t I2, std::size_t... I>
+    struct make_sequence_impl : make_sequence_impl<I1, I2 - 1, I2, I...> {};
+
+    template <std::size_t I1, std::size_t... I>
+    struct make_sequence_impl<I1, I1, I...> { using type = sequence<I1, I...>; };
+
+    template <std::size_t I1, std::size_t I2, typename Enable = void>
+    struct make_sequence;
+
+    template <std::size_t I1, std::size_t I2>
+    struct make_sequence<I1, I2, typename std::enable_if<(I1 < I2)>::type> : make_sequence_impl<I1, I2 - 1> {};
+
+    template <std::size_t I1, std::size_t I2>
+    struct make_sequence<I1, I2, typename std::enable_if<(I1 == I2)>::type> { using type = sequence<>; };
+
+    template <std::size_t I1, std::size_t I2>
+    struct make_sequence<I1, I2, typename std::enable_if<(I1 > I2)>::type> {
+        static_assert(I1 <= I2, "invalid make_sequence: negative size");
+    };
+
+    template <std::size_t I1, std::size_t I2>
+    using make_sequence_t = typename make_sequence<I1, I2>::type;
+
 }
 
 #endif // SIMDIFY_UTIL_INTEGRAL

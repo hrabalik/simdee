@@ -3,7 +3,7 @@
 
 #include "expr.hpp"
 #include "../util/inline.hpp"
-#include <array>
+#include <tuple>
 #include <type_traits>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12,11 +12,15 @@
 template <typename T, id... Ids>                                                                  \
 struct id_pack<T, id::IDENTIFIER, Ids...> : id_pack<T, Ids...> {                                  \
     SIMDIFY_FORCE_INLINE constexpr id_pack() = default;                                           \
+    SIMDIFY_FORCE_INLINE constexpr id_pack(const id_pack&) = default;                             \
+    SIMDIFY_FORCE_INLINE constexpr id_pack(id_pack&&) = default;                                  \
+    SIMDIFY_FORCE_INLINE id_pack& operator=(const id_pack&) = default;                            \
+    SIMDIFY_FORCE_INLINE id_pack& operator=(id_pack&&) = default;                                 \
                                                                                                   \
-    template <typename Arg1, typename... Args>                                                    \
-    SIMDIFY_FORCE_INLINE constexpr id_pack(Arg1&& arg1, Args&&... args) :                         \
-        id_pack<T, Ids...>(std::forward<Args>(args)...),                                          \
-        IDENTIFIER(std::forward<Arg1>(arg1)) {}                                                   \
+    template <typename... Args>                                                                   \
+    SIMDIFY_FORCE_INLINE constexpr id_pack(const std::tuple<Args...>& t) :                        \
+        id_pack<T, Ids...>(t),                                                                    \
+        IDENTIFIER(std::get<sizeof...(Args) - sizeof...(Ids) - 1>(t)) {}                          \
                                                                                                   \
     SIMDIFY_FORCE_INLINE T& get() { return IDENTIFIER; }                                          \
     SIMDIFY_FORCE_INLINE constexpr const T& get() const { return IDENTIFIER; }                    \
@@ -44,6 +48,13 @@ namespace simd {
         template <typename T>
         struct id_pack<T> {
             SIMDIFY_FORCE_INLINE constexpr id_pack() = default;
+            SIMDIFY_FORCE_INLINE constexpr id_pack(const id_pack&) = default;
+            SIMDIFY_FORCE_INLINE constexpr id_pack(id_pack&&) = default;
+            SIMDIFY_FORCE_INLINE id_pack& operator=(const id_pack&) = default;
+            SIMDIFY_FORCE_INLINE id_pack& operator=(id_pack&&) = default;
+
+            template <typename... Args>
+            SIMDIFY_FORCE_INLINE constexpr id_pack(const std::tuple<Args...>&) {}
         };
 
         SIMDIFY_ID_PACK_DECLARATION(a);
@@ -118,7 +129,18 @@ namespace simd {
         enum : std::size_t { N = sizeof...(Ids) };
         using all_elements = make_sequence_t<0, N>;
 
-        SIMDIFY_FORCE_INLINE constexpr named_array() = default;
+        constexpr named_array() = default;
+        constexpr named_array(const named_array&) = default;
+        constexpr named_array(named_array&&) = default;
+        named_array& operator=(const named_array&) = default;
+        named_array& operator=(named_array&&) = default;
+
+        template <typename... Args>
+        SIMDIFY_FORCE_INLINE constexpr named_array(const std::tuple<Args...>& t) :
+            detail::id_pack<T, Ids...>(t) {
+            static_assert(sizeof...(Args) == sizeof...(Ids), "named_array: incorrect number of parameters");
+        }
+
 
         template <std::size_t I>
         SIMDIFY_FORCE_INLINE int swap_impl(named_array& rhs) {
@@ -134,12 +156,6 @@ namespace simd {
 
         void swap(named_array& rhs) {
             swap_impl(rhs, all_elements{});
-        }
-
-        template <typename Arg1, typename... Args>
-        SIMDIFY_FORCE_INLINE constexpr named_array(Arg1&& arg1, Args&&... args) :
-            detail::id_pack<T, Ids...>(std::forward<Arg1>(arg1), std::forward<Args>(args)...) {
-            static_assert(1 + sizeof...(Args) == N, "named_array: incorrect number of parameters");
         }
     };
 

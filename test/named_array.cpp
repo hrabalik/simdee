@@ -13,11 +13,18 @@ TEST_CASE("named_array basic guarantees", "[containers][named_array]") {
 using T = simd::named_array<int, simd::id::x, simd::id::y, simd::id::z>;
 
 TEST_CASE("named_array construction", "[containers][named_array]") {
-    SECTION("simple constructor") {
-        T pos(11, 22, 33);
+    T pos(std::forward_as_tuple(11, 22, 33));
+
+    SECTION("from tuple") {
         REQUIRE(pos.x == 11);
         REQUIRE(pos.y == 22);
         REQUIRE(pos.z == 33);
+    }
+    SECTION("copy") {
+        T pos2(pos);
+        REQUIRE(pos2.x == 11);
+        REQUIRE(pos2.y == 22);
+        REQUIRE(pos2.z == 33);
     }
 }
 

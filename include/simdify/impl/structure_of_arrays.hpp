@@ -12,67 +12,48 @@
 #include <vector>
 
 namespace simd {
-    template <typename Simd_t, id... Ids>
-    struct structure_of_arrays;
 
-    template <typename Mm_t, typename F_t, typename Simd_t, id...Ids>
-    struct structure_of_arrays<simd_base<Mm_t, F_t, Simd_t>, Ids...> {
+    template <typename Simd_t, typename Ids, typename Sequence>
+    struct structure_of_arrays_impl;
+
+    template <typename Simd_t, id... Ids, std::size_t... I>
+    struct structure_of_arrays_impl<Simd_t, id_sequence<Ids...>, sequence<I...>> {
+        static_assert(sizeof...(Ids) == sizeof...(I), "structure_of_arrays_impl: sequence size mismatch");
         using simd_t = Simd_t;
-        using f_t = F_t;
-        using mm_t = Mm_t;
+        using f_t = typename simd_t::f_t;
+        using mm_t = typename simd_t::mm_t;
         enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
 
         struct iterator {
-            using buffer_t = named_array<expr::aligned<f_t>, Ids...>;
+            using buf_t = named_array<expr::aligned<f_t>, Ids...>;
 
-            template <std::size_t... I>
-            SIMDIFY_FORCE_INLINE iterator(structure_of_arrays& from, std::size_t idx, sequence<I...>) :
-                m_buf(simd::get<I>(from.m_data)[idx]...) {}
-
-            iterator(structure_of_arrays& from, std::size_t idx) :
-                iterator(from, idx, buffer_t::all_elements{}) {}
-
-            template <std::size_t... I>
-            SIMDIFY_FORCE_INLINE void incr_impl(sequence<I...>) {
-                detail::no_op(simd::get<I>(m_buf).ptr += W...);
-            }
+            iterator(structure_of_arrays_impl& self, std::size_t idx) :
+                m_buf(std::get<I>(self.m_data).data() + idx...) {}
 
             iterator& operator++() {
-                incr_impl(buffer_t::all_elements{});
+                detail::no_op(simd::get<I>(m_buf).ptr += W...);
                 return *this;
             }
 
-            bool operator==(const iterator& rhs) { return simd::get<0>(m_buf).ptr == simd::get<0>(rhs.m_buf).ptr; }
-            bool operator!=(const iterator& rhs) { return simd::get<0>(m_buf).ptr != simd::get<0>(rhs.m_buf).ptr; }
-            buffer_t& operator*() const { return m_buf; }
-            buffer_t& operator->() const { return m_buf; }
+            bool operator==(const iterator& rhs) const { return simd::get<0>(m_buf).ptr == simd::get<0>(rhs.m_buf).ptr; }
+            bool operator!=(const iterator& rhs) const { return simd::get<0>(m_buf).ptr != simd::get<0>(rhs.m_buf).ptr; }
+            buf_t& operator*() { return m_buf; }
+            buf_t* operator->() { return &m_buf; }
 
         private:
-            buffer_t m_buf;
+            buf_t m_buf;
         };
 
         std::size_t size() { return std::get<0>(m_data).size(); }
         iterator begin() { return iterator(*this, 0); }
         iterator end() { return iterator(*this, div_ceil_shift<W>(size())); }
-        //const_iterator begin() const;
-        //const_iterator end() const;
-        //const_iterator cbegin() const;
-        //const_iterator cend() const;
-        //iterator bodybegin();
-        //iterator bodyend();
-        //const_iterator bodybegin() const;
-        //const_iterator bodyend() const;
-        //const_iterator bodycbegin() const;
-        //const_iterator bodycend() const;
-        //tail_iterator tailbegin();
-        //tail_iterator tailend();
-        //const_tail_iterator tailbegin() const;
-        //const_tail_iterator tailend() const;
-        //const_tail_iterator tailcbegin() const;
-        //const_tail_iterator tailcend() const;
     private:
         std::array<std::vector<f_t, aligned_allocator<f_t, alignof(mm_t)>>, N> m_data;
     };
+
+    template <typename Simd_t, id... Ids>
+    struct structure_of_arrays :
+        structure_of_arrays_impl<Simd_t, id_sequence<Ids...>, make_sequence_t<0, sizeof...(Ids)>> {};
 }
 
 #endif // SIMDIFY_STRUCTURE_OF_ARRAYS

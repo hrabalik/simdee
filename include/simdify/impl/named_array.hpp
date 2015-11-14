@@ -32,6 +32,9 @@ namespace simd {
         a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
     };
 
+    template <id... Ids>
+    struct id_sequence {};
+
     namespace detail {
         template <typename... Args>
         SIMDIFY_FORCE_INLINE constexpr void no_op(Args&&...) {}

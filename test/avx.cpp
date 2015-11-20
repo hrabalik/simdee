@@ -78,6 +78,12 @@ TEST_CASE("AVX explicit construction", "[simd_t][x86][avx]") {
         tor(tb); REQUIRE(r == bufB);
         tor(tc); REQUIRE(r == bufC);
     }
+    SECTION("from simd::storage") {
+        simd::storage<T> stor;
+        stor.m_data = bufA;
+        T t(stor);
+        tor(t); REQUIRE(r == bufA);
+    }
     SECTION("from utof, stof, zero, etc. (simd::tof family)") {
         T ta(simd::utof(0xdeadbeef));
         T tb(simd::stof(-123456789));
@@ -114,6 +120,12 @@ TEST_CASE("AVX implicit construction", "[simd_t][x86][avx]") {
         REQUIRE(r == bufB);
         implicit_test(simd::unaligned(bufC.data()));
         REQUIRE(r == bufC);
+    }
+    SECTION("from simd::storage") {
+        simd::storage<T> stor;
+        stor.m_data = bufA;
+        implicit_test(stor);
+        REQUIRE(r == bufA);
     }
     SECTION("from utof, stof, zero, etc. (simd::tof family)") {
         implicit_test(simd::utof(0xdeadbeef));
@@ -155,6 +167,19 @@ TEST_CASE("AVX assignment", "[simd_t][x86][avx]") {
         tor(); REQUIRE(r == bufB);
         t = simd::unaligned(bufC.data());
         tor(); REQUIRE(r == bufC);
+    }
+    SECTION("from simd::storage") {
+        simd::storage<T> stor;
+        stor.m_data = bufA;
+        t = stor;
+        tor(); REQUIRE(r == bufA);
+    }
+    SECTION("from an expression involving simd::storage") {
+        simd::storage<T> stor;
+        stor.m_data = bufA;
+        t =  1.234f * stor;
+        int i = 0;
+        tor(); for (auto val : r) REQUIRE(val == 1.234f * bufA[i++]);
     }
     SECTION("from utof, stof, zero, etc. (simd::tof family)") {
         t = simd::utof(0xdeadbeef);

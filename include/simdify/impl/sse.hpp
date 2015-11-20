@@ -37,6 +37,7 @@ namespace simd {
         SIMDIFY_FORCE_INLINE sse(f_t r) : simd_base(_mm_set_ps1(r)) {}
         SIMDIFY_FORCE_INLINE sse(const expr::zero&) : simd_base(_mm_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE sse(const expr::bit_not<sse>& r) : simd_base(_mm_andnot_ps(r.neg.mm, sse(all_bits()).mm)) {}
+        SIMDIFY_FORCE_INLINE sse(const storage<sse>& r) { mm = _mm_load_ps(r.data()); }
         SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = _mm_load_ps(r); }
         SIMDIFY_FORCE_INLINE void store(f_t* r) const { _mm_store_ps(r, mm); }
         SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(mm); }

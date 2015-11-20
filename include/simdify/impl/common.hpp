@@ -42,6 +42,34 @@ namespace simd {
     };
 
     //
+    // aligned memory chunk suitable for storing to and loading from
+    // for a specific SIMD type
+    //
+    template <typename Simd_t>
+    struct alignas(Simd_t) storage {
+        using f_t = typename Simd_t::f_t;
+
+        SIMDIFY_FORCE_INLINE constexpr storage() = default;
+        SIMDIFY_FORCE_INLINE constexpr storage(const storage&) = default;
+        SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
+        
+        SIMDIFY_FORCE_INLINE storage(const Simd_t& rhs) {
+            rhs.store(data());
+        }
+
+        SIMDIFY_FORCE_INLINE storage& operator=(const Simd_t& rhs) {
+            rhs.store(data());
+            return *this;
+        }
+
+        SIMDIFY_FORCE_INLINE f_t* data() { return m_data.data(); }
+        SIMDIFY_FORCE_INLINE const f_t* data() const { return m_data.data(); }
+
+        // data
+        std::array<f_t, Simd_t::W> m_data;
+    };
+
+    //
     // meta operations - apply to all SIMD types
     //
     template <typename T> SIMDIFY_FORCE_INLINE const T operator+(const T& in) { return in; }

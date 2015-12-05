@@ -5,6 +5,11 @@
 
 namespace simd {
 
+    // specialization of is_simd_type
+    struct flt;
+    template<>
+    struct is_simd_type<flt> : std::integral_constant<bool, true> {};
+
     // SIMD emulation with a glorified float
     struct flt : simd_base<float, float, flt> {
         SIMDIFY_FORCE_INLINE ~flt() = default;

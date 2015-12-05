@@ -23,6 +23,11 @@
 //#endif
 
 namespace simd {
+
+    // specialization of is_simd_type
+    struct sse;
+    template<>
+    struct is_simd_type<sse> : std::integral_constant<bool, true> {};
     
     // SIMD with SSE
     struct sse : simd_base<__m128, float, sse> {

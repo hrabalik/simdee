@@ -6,12 +6,15 @@
 #include "../util/integral.hpp"
 #include "expr.hpp"
 #include <array>
+#include <type_traits>
 
 namespace simd {
 
     //
     // forward declarations
     //
+    template <typename T>
+    struct is_simd_type : std::integral_constant<bool, false> {};
     template <typename T>
     struct horizontal_impl;
 
@@ -42,17 +45,22 @@ namespace simd {
     };
 
     //
-    // aligned memory chunk suitable for storing to and loading from
-    // for a specific SIMD type
+    // storage for SIMD or floating-point types
+    //
+    template <typename T, typename Enable = void>
+    struct storage;
+
+    //
+    // specialized storage for SIMD types
     //
     template <typename Simd_t>
-    struct alignas(Simd_t) storage {
+    struct alignas(Simd_t)storage<Simd_t, typename std::enable_if<is_simd_type<Simd_t>::value>::type> {
         using f_t = typename Simd_t::f_t;
 
         SIMDIFY_FORCE_INLINE constexpr storage() = default;
         SIMDIFY_FORCE_INLINE constexpr storage(const storage&) = default;
         SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
-        
+
         SIMDIFY_FORCE_INLINE storage(const Simd_t& rhs) {
             rhs.store(data());
         }
@@ -67,6 +75,88 @@ namespace simd {
 
         // data
         std::array<f_t, Simd_t::W> m_data;
+    };
+
+    //
+    // specialized storage for floating point types
+    //
+    template <typename Fp_t>
+    struct storage<Fp_t, typename std::enable_if<std::is_floating_point<Fp_t>::value>::type> {
+        SIMDIFY_FORCE_INLINE constexpr storage() = default;
+        SIMDIFY_FORCE_INLINE constexpr storage(const storage&) = default;
+        SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
+
+        SIMDIFY_FORCE_INLINE storage(const Fp_t& rhs) : m_data(rhs) {}
+
+        SIMDIFY_FORCE_INLINE storage& operator=(const Fp_t& rhs) {
+            m_data = rhs;
+            return *this;
+        }
+
+        SIMDIFY_FORCE_INLINE Fp_t* data() { return &m_data; }
+        SIMDIFY_FORCE_INLINE const Fp_t* data() const { return &m_data; }
+
+        // implicit conversion to Fp_t
+        SIMDIFY_FORCE_INLINE operator Fp_t() { return m_data; }
+        SIMDIFY_FORCE_INLINE operator const Fp_t() const { return m_data; }
+
+        // data
+        Fp_t m_data;
+    };
+
+    //
+    // reference to storage (proxy object)
+    //
+    template <typename T>
+    struct reference {
+        SIMDIFY_FORCE_INLINE constexpr reference() = default;
+        SIMDIFY_FORCE_INLINE constexpr reference(const reference&) = delete;
+
+        SIMDIFY_FORCE_INLINE reference& operator=(const reference& rhs) {
+            *m_data = *rhs.m_data;
+            return *this;
+        }
+        
+        SIMDIFY_FORCE_INLINE reference& operator=(const storage<T>& rhs) {
+            *m_data = rhs;
+            return *this;
+        }
+
+        SIMDIFY_FORCE_INLINE reference& operator=(const T& rhs) {
+            *m_data = rhs;
+            return *this;
+        }
+
+        SIMDIFY_FORCE_INLINE void reset(reference* ptr) { m_data = ptr->m_data; }
+        SIMDIFY_FORCE_INLINE void reset(storage<T>* ptr) { m_data = ptr; }
+        SIMDIFY_FORCE_INLINE void reset(T* ptr) { m_data = static_cast<storage<T>*>(ptr); }
+
+        // implicit conversion to const T
+        SIMDIFY_FORCE_INLINE operator const T() const { return T(*m_data); }
+        
+        // data
+        storage<T>* m_data;
+    };
+
+    //
+    // const reference to storage (proxy object)
+    //
+    template <typename T>
+    struct const_reference {
+        SIMDIFY_FORCE_INLINE constexpr const_reference() = default;
+        SIMDIFY_FORCE_INLINE constexpr const_reference(const const_reference&) = delete;
+
+        // no assignment operations
+
+        SIMDIFY_FORCE_INLINE void reset(const_reference* ptr) { m_data = ptr->m_data; }
+        SIMDIFY_FORCE_INLINE void reset(storage<T>* ptr) { m_data = ptr; }
+        SIMDIFY_FORCE_INLINE void reset(const T* ptr) { m_data = static_cast<const storage<T>*>(ptr); }
+
+        // implicit conversion to const T
+        SIMDIFY_FORCE_INLINE operator const T() const { return T(*m_data); }
+
+        // data
+        const storage<T>* m_data;
     };
 
     //

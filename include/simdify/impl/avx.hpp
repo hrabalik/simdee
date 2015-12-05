@@ -10,6 +10,11 @@
 #include <immintrin.h>
 
 namespace simd {
+
+    // specialization of is_simd_type
+    struct avx;
+    template<>
+    struct is_simd_type<avx> : std::integral_constant<bool, true> {};
     
     // SIMD with AVX
     struct avx : simd_base<__m256, float, avx> {

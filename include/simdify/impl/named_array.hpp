@@ -23,6 +23,13 @@ struct id_pack<T, id::IDENTIFIER, Ids...> : id_pack<T, Ids...> {                
         id_pack<T, Ids...>(t),                                                                    \
         IDENTIFIER(std::get<sizeof...(Args) - sizeof...(Ids) - 1>(t)) {}                          \
                                                                                                   \
+    template <typename... Args>                                                                   \
+    SIMDIFY_FORCE_INLINE id_pack& operator=(const std::tuple<Args...>& t) {                       \
+        id_pack<T, Ids...>::operator=(t);                                                         \
+        IDENTIFIER = std::get<sizeof...(Args) - sizeof...(Ids) - 1>(t);                           \
+        return *this;                                                                             \
+    }                                                                                             \
+                                                                                                  \
     SIMDIFY_FORCE_INLINE T& get() { return IDENTIFIER; }                                          \
     SIMDIFY_FORCE_INLINE constexpr const T& get() const { return IDENTIFIER; }                    \
                                                                                                   \
@@ -56,6 +63,9 @@ namespace simd {
 
             template <typename... Args>
             SIMDIFY_FORCE_INLINE constexpr id_pack(const std::tuple<Args...>&) {}
+
+            template <typename... Args>
+            SIMDIFY_FORCE_INLINE id_pack& operator=(const std::tuple<Args...>&) { return *this; }
         };
 
         SIMDIFY_ID_PACK_DECLARATION(a);
@@ -140,6 +150,13 @@ namespace simd {
         SIMDIFY_FORCE_INLINE constexpr named_array(const std::tuple<Args...>& t) :
             detail::id_pack<T, Ids...>(t) {
             static_assert(sizeof...(Args) == sizeof...(Ids), "named_array: incorrect number of parameters");
+        }
+
+        template <typename... Args>
+        SIMDIFY_FORCE_INLINE named_array& operator=(const std::tuple<Args...>& t) {
+            static_assert(sizeof...(Args) == sizeof...(Ids), "named_array operator=: incorrect number of parameters");
+            detail::id_pack<T, Ids...>::operator=(t);
+            return *this;
         }
 
         T& operator[](std::size_t i) {

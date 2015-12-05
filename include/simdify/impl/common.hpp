@@ -73,6 +73,9 @@ namespace simd {
         SIMDIFY_FORCE_INLINE f_t* data() { return m_data.data(); }
         SIMDIFY_FORCE_INLINE const f_t* data() const { return m_data.data(); }
 
+        // implicit conversion to Simd_t
+
+
         // data
         std::array<f_t, Simd_t::W> m_data;
     };
@@ -118,7 +121,7 @@ namespace simd {
             *m_data = *rhs.m_data;
             return *this;
         }
-        
+
         SIMDIFY_FORCE_INLINE reference& operator=(const storage<T>& rhs) {
             *m_data = rhs;
             return *this;
@@ -135,7 +138,7 @@ namespace simd {
 
         // implicit conversion to const T
         SIMDIFY_FORCE_INLINE operator const T() const { return T(*m_data); }
-        
+
         // data
         storage_t* m_data;
     };

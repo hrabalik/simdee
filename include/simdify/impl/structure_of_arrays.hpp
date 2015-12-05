@@ -37,57 +37,22 @@ namespace simd {
 
         enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
 
-        template <typename Ref>
-        struct iterator_impl : std::iterator<std::forward_iterator_tag, Ref> {
-            iterator_impl(const self_t& self, std::size_t idx) {
-                detail::no_op(simd::get<I>(m_ref).reset(self.m_data.get() + I*self.m_cap + idx)...);
-            }
+        structure_of_arrays_impl() : m_data(nullptr, aligned_deleter{}), m_sz(0), m_cap(0) {}
 
-            iterator_impl& operator++() {
-                detail::no_op(simd::get<I>(m_ref).ptr()++...);
-                return *this;
-            }
+        structure_of_arrays_impl(std::size_t count) : structure_of_arrays_impl() {
+            reserve(div_ceil_shift<W>(count));
+            m_sz = count;
+        }
 
-            bool operator==(const iterator_impl& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
-            bool operator!=(const iterator_impl& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
-            Ref& operator*() { return m_ref; }
-            Ref* operator->() { return &m_ref; }
+        structure_of_arrays_impl(std::size_t count, const value_type& val)
+            : structure_of_arrays_impl(count) {
+            fill(val);
+        }
 
-        private:
-            Ref m_ref;
-        };
-
-        using iterator = iterator_impl<reference>;
-        using iterator_vector = iterator_impl<reference_vector>;
-        using const_iterator = iterator_impl<const_reference>;
-        using const_iterator_vector = iterator_impl<const_reference_vector>;
-
-        iterator begin() { return iterator(*this, 0); }
-        iterator end() { return iterator(*this, size()); }
-        iterator_vector begin_vector() { return iterator_vector(*this, 0); }
-        iterator_vector end_vector() { return iterator_vector(*this, size_vector()); }
-        iterator_vector begin_head() { return iterator_vector(*this, 0); }
-        iterator_vector end_head() { return iterator_vector(*this, size_head()); }
-        iterator begin_tail() { return iterator(*this, size_head()); }
-        iterator end_tail() { return iterator(*this, size()); }
-
-        const_iterator begin() const { return cbegin(); }
-        const_iterator end() const { return cend(); }
-        const_iterator_vector begin_vector() const { return cbegin_vector(); }
-        const_iterator_vector end_vector() const { return cend_vector(); }
-        const_iterator_vector begin_head() const { return cbegin_head(); }
-        const_iterator_vector end_head() const { return cend_head(); }
-        const_iterator begin_tail() const { return cbegin_tail(); }
-        const_iterator end_tail() const { return cend_tail(); }
-
-        const_iterator cbegin() const { return const_iterator(*this, 0); }
-        const_iterator cend() const { return const_iterator(*this, size()); }
-        const_iterator_vector cbegin_vector() const { return const_iterator_vector(*this, 0); }
-        const_iterator_vector cend_vector() const { return const_iterator_vector(*this, size_vector()); }
-        const_iterator_vector cbegin_head() const { return const_iterator_vector(*this, 0); }
-        const_iterator_vector cend_head() const { return const_iterator_vector(*this, size_head()); }
-        const_iterator cbegin_tail() const { return const_iterator(*this, size_head()); }
-        const_iterator cend_tail() const { return const_iterator(*this, size()); }
+        structure_of_arrays_impl(structure_of_arrays_impl&& rhs) :
+            m_data(std::move(rhs.m_data)), m_sz(rhs.m_sz), m_cap(rhs.m_cap) {
+            rhs.m_sz = 0; rhs.m_cap = 0;
+        }
 
         std::size_t capacity() const { return m_cap; }
         std::size_t size() const { return m_sz; }
@@ -139,6 +104,40 @@ namespace simd {
 
         void clear() { m_sz = 0; }
 
+        reference operator[](std::size_t i) {
+            reference res;
+            auto base = m_data.get() + i;
+            detail::no_op(simd::get<I>(res).reset(base + I*m_cap)...);
+            return res;
+        }
+
+        const_reference operator[](std::size_t i) const {
+            const_reference res;
+            auto base = m_data.get() + i;
+            detail::no_op(simd::get<I>(res).reset(base + I*m_cap)...);
+            return res;
+        }
+
+        reference at(std::size_t i) {
+            if (i >= m_sz) throw std::runtime_error("structure_of_arrays: at()");
+            return operator[](i);
+        }
+
+        const_reference at(std::size_t i) const {
+            if (i >= m_sz) throw std::runtime_error("structure_of_arrays: at()");
+            return operator[](i);
+        }
+
+        reference back() {
+            if (m_sz == 0) throw std::runtime_error("structure_of_arrays: back()");
+            return operator[](m_sz - 1);
+        }
+
+        const_reference back() const {
+            if (m_sz == 0) throw std::runtime_error("structure_of_arrays: back()");
+            return operator[](m_sz - 1);
+        }
+
         void push_back(const value_type& val) {
             reserve(m_sz + 1);
             f_t* base = m_data.get() + m_sz;
@@ -146,38 +145,63 @@ namespace simd {
             ++m_sz;
         }
 
-        reference back() {
-            f_t* base = m_data.get() + m_sz;
-            return std::forward_as_tuple(*(base + I*m_cap)...);
-        }
-
-        const_reference back() const {
-            f_t* base = m_data.get() + m_sz;
-            return std::forward_as_tuple(*(base + I*m_cap)...);
-        }
-
         void pop_back() {
             if (m_sz == 0) throw std::runtime_error("structure_of_arrays: pop_back()");
             --m_sz;
         }
 
-        structure_of_arrays_impl() : m_data(nullptr, aligned_deleter{}), m_sz(0), m_cap(0) {}
+        template <typename Ref>
+        struct iterator_impl : std::iterator<std::forward_iterator_tag, Ref> {
+            iterator_impl(const self_t& self, std::size_t idx) {
+                auto base = self.m_data.get() + idx;
+                detail::no_op(simd::get<I>(m_ref).reset(base + I*self.m_cap)...);
+            }
 
-        structure_of_arrays_impl(std::size_t count) : structure_of_arrays_impl() {
-            reserve(div_ceil_shift<W>(count));
-            m_sz = count;
-        }
+            iterator_impl& operator++() {
+                detail::no_op(simd::get<I>(m_ref).ptr()++...);
+                return *this;
+            }
 
-        structure_of_arrays_impl(std::size_t count, const value_type& val)
-            : structure_of_arrays_impl(count) {
-            fill(val);
-        }
+            bool operator==(const iterator_impl& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
+            bool operator!=(const iterator_impl& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
+            Ref& operator*() { return m_ref; }
+            Ref* operator->() { return &m_ref; }
 
-        structure_of_arrays_impl(structure_of_arrays_impl&& rhs) :
-            m_data(std::move(rhs.m_data)), m_sz(rhs.m_sz), m_cap(rhs.m_cap) {
-            rhs.m_sz = 0; rhs.m_cap = 0;
-        }
+        private:
+            Ref m_ref;
+        };
 
+        using iterator = iterator_impl<reference>;
+        using iterator_vector = iterator_impl<reference_vector>;
+        using const_iterator = iterator_impl<const_reference>;
+        using const_iterator_vector = iterator_impl<const_reference_vector>;
+
+        iterator begin() { return iterator(*this, 0); }
+        iterator end() { return iterator(*this, size()); }
+        iterator_vector begin_vector() { return iterator_vector(*this, 0); }
+        iterator_vector end_vector() { return iterator_vector(*this, size_vector()); }
+        iterator_vector begin_head() { return iterator_vector(*this, 0); }
+        iterator_vector end_head() { return iterator_vector(*this, size_head()); }
+        iterator begin_tail() { return iterator(*this, size_head()); }
+        iterator end_tail() { return iterator(*this, size()); }
+
+        const_iterator begin() const { return cbegin(); }
+        const_iterator end() const { return cend(); }
+        const_iterator_vector begin_vector() const { return cbegin_vector(); }
+        const_iterator_vector end_vector() const { return cend_vector(); }
+        const_iterator_vector begin_head() const { return cbegin_head(); }
+        const_iterator_vector end_head() const { return cend_head(); }
+        const_iterator begin_tail() const { return cbegin_tail(); }
+        const_iterator end_tail() const { return cend_tail(); }
+
+        const_iterator cbegin() const { return const_iterator(*this, 0); }
+        const_iterator cend() const { return const_iterator(*this, size()); }
+        const_iterator_vector cbegin_vector() const { return const_iterator_vector(*this, 0); }
+        const_iterator_vector cend_vector() const { return const_iterator_vector(*this, size_vector()); }
+        const_iterator_vector cbegin_head() const { return const_iterator_vector(*this, 0); }
+        const_iterator_vector cend_head() const { return const_iterator_vector(*this, size_head()); }
+        const_iterator cbegin_tail() const { return const_iterator(*this, size_head()); }
+        const_iterator cend_tail() const { return const_iterator(*this, size()); }
 
     private:
         std::unique_ptr<f_t, aligned_deleter> m_data;

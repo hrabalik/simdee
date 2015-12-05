@@ -21,7 +21,6 @@ namespace simd {
 
         SIMDIFY_FORCE_INLINE flt(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE flt(const expr::zero&) : simd_base(0) {}
-        SIMDIFY_FORCE_INLINE flt(const storage<flt>& r) { mm = *r.data(); }
         SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = *r; }
         SIMDIFY_FORCE_INLINE void store(f_t* r) const { *r = mm; }
         SIMDIFY_FORCE_INLINE f_t front() const { return mm; }

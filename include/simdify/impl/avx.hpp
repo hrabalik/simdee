@@ -15,7 +15,7 @@ namespace simd {
     struct avx;
     template<>
     struct is_simd_type<avx> : std::integral_constant<bool, true> {};
-    
+
     // SIMD with AVX
     struct avx : simd_base<__m256, float, avx> {
         SIMDIFY_FORCE_INLINE ~avx() = default;
@@ -29,7 +29,6 @@ namespace simd {
         SIMDIFY_FORCE_INLINE avx(f_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
         SIMDIFY_FORCE_INLINE avx(const expr::zero&) : simd_base(_mm256_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE avx(const expr::bit_not<avx>& r) : simd_base(_mm256_andnot_ps(r.neg.mm, avx(all_bits()).mm)) {}
-        SIMDIFY_FORCE_INLINE avx(const storage<avx>& r) { mm = _mm256_load_ps(r.data()); }
         SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = _mm256_load_ps(r); }
         SIMDIFY_FORCE_INLINE void store(f_t* r) const { _mm256_store_ps(r, mm); }
         SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }

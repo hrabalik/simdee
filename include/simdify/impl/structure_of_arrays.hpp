@@ -30,61 +30,37 @@ namespace simd {
 
         using value_type = named_array<f_t, Ids...>;
         using value_type_vector = named_array<mm_t, Ids...>;
-        using reference = named_array<f_t&, Ids...>;
-        using reference_vector = named_array<expr::aligned<f_t>, Ids...>;
-        using const_reference = named_array<const f_t&, Ids...>;
-        using const_reference_vector = named_array<expr::aligned<const f_t>, Ids...>;
+        using reference = named_array<simd::reference<f_t>, Ids...>;
+        using reference_vector = named_array<simd::reference<Simd_t>, Ids...>;
+        using const_reference = named_array<simd::const_reference<f_t>, Ids...>;
+        using const_reference_vector = named_array<simd::const_reference<Simd_t>, Ids...>;
 
         enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
 
         template <typename Ref>
         struct iterator_impl : std::iterator<std::forward_iterator_tag, Ref> {
-            iterator_impl(self_t& self, std::size_t idx) :
-                m_buf(std::forward_as_tuple(*(self.m_data.get() + I*self.m_cap + idx)...)) {}
-
-            iterator_impl(const self_t& self, std::size_t idx) :
-                m_buf(std::forward_as_tuple(*(self.m_data.get() + I*self.m_cap + idx)...)) {}
+            iterator_impl(const self_t& self, std::size_t idx) {
+                detail::no_op(simd::get<I>(m_ref).reset(self.m_data.get() + I*self.m_cap + idx)...);
+            }
 
             iterator_impl& operator++() {
-                new (&m_buf) Ref(std::forward_as_tuple(*(&simd::get<I>(m_buf) + 1)...));
+                detail::no_op(simd::get<I>(m_ref).ptr()++...);
                 return *this;
             }
 
-            bool operator==(const iterator_impl& rhs) const { return &m_buf.get() == &rhs.m_buf.get(); }
-            bool operator!=(const iterator_impl& rhs) const { return &m_buf.get() != &rhs.m_buf.get(); }
-            Ref& operator*() { return m_buf; }
-            Ref* operator->() { return &m_buf; }
+            bool operator==(const iterator_impl& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
+            bool operator!=(const iterator_impl& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
+            Ref& operator*() { return m_ref; }
+            Ref* operator->() { return &m_ref; }
 
         private:
-            Ref m_buf;
-        };
-
-        template <typename Ref>
-        struct iterator_vector_impl : std::iterator<std::forward_iterator_tag, Ref> {
-            iterator_vector_impl(self_t& self, std::size_t idx) :
-                m_buf(std::forward_as_tuple(self.m_data.get() + I*self.m_cap + idx...)) {}
-
-            iterator_vector_impl(const self_t& self, std::size_t idx) :
-                m_buf(std::forward_as_tuple(self.m_data.get() + I*self.m_cap + idx...)) {}
-
-            iterator_vector_impl& operator++() {
-                detail::no_op(simd::get<I>(m_buf).ptr += W...);
-                return *this;
-            }
-
-            bool operator==(const iterator_vector_impl& rhs) const { return m_buf.get().ptr == rhs.m_buf.get().ptr; }
-            bool operator!=(const iterator_vector_impl& rhs) const { return m_buf.get().ptr != rhs.m_buf.get().ptr; }
-            Ref& operator*() { return m_buf; }
-            Ref* operator->() { return &m_buf; }
-
-        private:
-            Ref m_buf;
+            Ref m_ref;
         };
 
         using iterator = iterator_impl<reference>;
-        using iterator_vector = iterator_vector_impl<reference_vector>;
+        using iterator_vector = iterator_impl<reference_vector>;
         using const_iterator = iterator_impl<const_reference>;
-        using const_iterator_vector = iterator_vector_impl<const_reference_vector>;
+        using const_iterator_vector = iterator_impl<const_reference_vector>;
 
         iterator begin() { return iterator(*this, 0); }
         iterator end() { return iterator(*this, size()); }

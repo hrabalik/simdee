@@ -80,28 +80,28 @@ namespace simd {
     //
     // specialized storage for floating point types
     //
-    template <typename Fp_t>
-    struct storage<Fp_t, typename std::enable_if<std::is_floating_point<Fp_t>::value>::type> {
+    template <typename F_t>
+    struct storage<F_t, typename std::enable_if<std::is_floating_point<F_t>::value>::type> {
         SIMDIFY_FORCE_INLINE constexpr storage() = default;
         SIMDIFY_FORCE_INLINE constexpr storage(const storage&) = default;
         SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
 
-        SIMDIFY_FORCE_INLINE storage(const Fp_t& rhs) : m_data(rhs) {}
+        SIMDIFY_FORCE_INLINE storage(const F_t& rhs) : m_data(rhs) {}
 
-        SIMDIFY_FORCE_INLINE storage& operator=(const Fp_t& rhs) {
+        SIMDIFY_FORCE_INLINE storage& operator=(const F_t& rhs) {
             m_data = rhs;
             return *this;
         }
 
-        SIMDIFY_FORCE_INLINE Fp_t* data() { return &m_data; }
-        SIMDIFY_FORCE_INLINE const Fp_t* data() const { return &m_data; }
+        SIMDIFY_FORCE_INLINE F_t* data() { return &m_data; }
+        SIMDIFY_FORCE_INLINE const F_t* data() const { return &m_data; }
 
-        // implicit conversion to Fp_t
-        SIMDIFY_FORCE_INLINE operator Fp_t() { return m_data; }
-        SIMDIFY_FORCE_INLINE operator const Fp_t() const { return m_data; }
+        // implicit conversion to F_t
+        SIMDIFY_FORCE_INLINE operator F_t() { return m_data; }
+        SIMDIFY_FORCE_INLINE operator const F_t() const { return m_data; }
 
         // data
-        Fp_t m_data;
+        F_t m_data;
     };
 
     //
@@ -109,8 +109,10 @@ namespace simd {
     //
     template <typename T>
     struct reference {
+        using storage_t = storage<T>;
+
         SIMDIFY_FORCE_INLINE constexpr reference() = default;
-        SIMDIFY_FORCE_INLINE constexpr reference(const reference&) = delete;
+        SIMDIFY_FORCE_INLINE constexpr reference(const reference&) = default;
 
         SIMDIFY_FORCE_INLINE reference& operator=(const reference& rhs) {
             *m_data = *rhs.m_data;
@@ -127,15 +129,15 @@ namespace simd {
             return *this;
         }
 
-        SIMDIFY_FORCE_INLINE void reset(reference* ptr) { m_data = ptr->m_data; }
-        SIMDIFY_FORCE_INLINE void reset(storage<T>* ptr) { m_data = ptr; }
-        SIMDIFY_FORCE_INLINE void reset(T* ptr) { m_data = static_cast<storage<T>*>(ptr); }
+        SIMDIFY_FORCE_INLINE storage_t* reset(void* ptr) { m_data = static_cast<storage_t*>(ptr); return m_data; }
+        SIMDIFY_FORCE_INLINE storage_t*& ptr() { return m_data; }
+        SIMDIFY_FORCE_INLINE storage_t* ptr() const { return m_data; }
 
         // implicit conversion to const T
         SIMDIFY_FORCE_INLINE operator const T() const { return T(*m_data); }
         
         // data
-        storage<T>* m_data;
+        storage_t* m_data;
     };
 
     //
@@ -143,20 +145,22 @@ namespace simd {
     //
     template <typename T>
     struct const_reference {
+        using storage_t = const storage<T>;
+
         SIMDIFY_FORCE_INLINE constexpr const_reference() = default;
-        SIMDIFY_FORCE_INLINE constexpr const_reference(const const_reference&) = delete;
+        SIMDIFY_FORCE_INLINE constexpr const_reference(const const_reference&) = default;
 
         // no assignment operations
 
-        SIMDIFY_FORCE_INLINE void reset(const_reference* ptr) { m_data = ptr->m_data; }
-        SIMDIFY_FORCE_INLINE void reset(storage<T>* ptr) { m_data = ptr; }
-        SIMDIFY_FORCE_INLINE void reset(const T* ptr) { m_data = static_cast<const storage<T>*>(ptr); }
+        SIMDIFY_FORCE_INLINE storage_t* reset(void* ptr) { m_data = static_cast<storage_t*>(ptr); return m_data; }
+        SIMDIFY_FORCE_INLINE storage_t*& ptr() { return m_data; }
+        SIMDIFY_FORCE_INLINE storage_t* ptr() const { return m_data; }
 
         // implicit conversion to const T
         SIMDIFY_FORCE_INLINE operator const T() const { return T(*m_data); }
 
         // data
-        const storage<T>* m_data;
+        storage_t* m_data;
     };
 
     //

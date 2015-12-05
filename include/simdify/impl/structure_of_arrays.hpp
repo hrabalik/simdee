@@ -50,6 +50,7 @@ namespace simd {
                 return *this;
             }
 
+            bool operator==(const iterator_impl& rhs) const { return &m_buf.get() == &rhs.m_buf.get(); }
             bool operator!=(const iterator_impl& rhs) const { return &m_buf.get() != &rhs.m_buf.get(); }
             Ref& operator*() { return m_buf; }
             Ref* operator->() { return &m_buf; }
@@ -71,6 +72,7 @@ namespace simd {
                 return *this;
             }
 
+            bool operator==(const iterator_vector_impl& rhs) const { return m_buf.get().ptr == rhs.m_buf.get().ptr; }
             bool operator!=(const iterator_vector_impl& rhs) const { return m_buf.get().ptr != rhs.m_buf.get().ptr; }
             Ref& operator*() { return m_buf; }
             Ref* operator->() { return &m_buf; }

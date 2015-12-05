@@ -5,6 +5,7 @@
 #include "../util/integral.hpp"
 #include <type_traits>
 #include <limits>
+#include <utility>
 
 namespace simd {
     namespace expr {
@@ -70,7 +71,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr explicit aligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDIFY_FORCE_INLINE constexpr void operator=(const Simd_t& r) const {
+            SIMDIFY_FORCE_INLINE void operator=(const Simd_t& r) const {
                 static_assert(!std::is_const<T>::value, "Storing into a const pointer via aligned()");
                 using f_t = typename Simd_t::f_t;
                 r.store(reinterpret_cast<f_t*>(ptr));
@@ -85,7 +86,7 @@ namespace simd {
             SIMDIFY_FORCE_INLINE constexpr explicit unaligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDIFY_FORCE_INLINE constexpr void operator=(const Simd_t& r) const {
+            SIMDIFY_FORCE_INLINE void operator=(const Simd_t& r) const {
                 static_assert(!std::is_const<T>::value, "Storing into a const pointer via unaligned()");
                 using f_t = typename Simd_t::f_t;
                 r.store(reinterpret_cast<f_t*>(ptr));

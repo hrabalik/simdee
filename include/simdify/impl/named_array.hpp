@@ -41,7 +41,7 @@ namespace simd {
 
     namespace detail {
         template <typename... Args>
-        SIMDIFY_FORCE_INLINE constexpr void no_op(Args&&...) {}
+        SIMDIFY_FORCE_INLINE constexpr int no_op(Args&&...) { return 0; }
 
         template <typename T, id... Ids>
         struct id_pack;
@@ -151,22 +151,6 @@ namespace simd {
             auto& as_array = reinterpret_cast<const std::array<const T, N>&>(*this);
             return as_array[(N - 1) - i];
         }
-
-        template <std::size_t I>
-        SIMDIFY_FORCE_INLINE int swap_impl(named_array& rhs) {
-            using std::swap;
-            swap(simd::get<I>(*this), simd::get<I>(rhs));
-            return 0;
-        }
-
-        template <std::size_t... I>
-        SIMDIFY_FORCE_INLINE void swap_impl(named_array& rhs, sequence<I...>) {
-            detail::no_op(swap_impl<I>(rhs)...);
-        }
-
-        void swap(named_array& rhs) {
-            swap_impl(rhs, all_elements{});
-        }
     };
 
     template <size_t I, typename T, simd::id... Ids>
@@ -185,9 +169,6 @@ namespace simd {
     SIMDIFY_FORCE_INLINE constexpr const T&& get(const simd::named_array<T, Ids...>&& a) {
         return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
     }
-
-    template <typename T, simd::id... Ids>
-    SIMDIFY_FORCE_INLINE void swap(simd::named_array<T, Ids...>& lhs, simd::named_array<T, Ids...>& rhs) { lhs.swap(rhs); }
 }
 
 #undef SIMDIFY_ID_PACK_DECLARATION

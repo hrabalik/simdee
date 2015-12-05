@@ -54,7 +54,7 @@ TEST_CASE("named_array data manipulation", "[containers][named_array]") {
         pos2.x = 56;
         pos2.y = 67;
         pos2.z = 78;
-        swap(pos, pos2);
+        std::swap(pos, pos2);
         REQUIRE(pos.x == 56);
         REQUIRE(pos.y == 67);
         REQUIRE(pos.z == 78);

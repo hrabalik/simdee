@@ -90,21 +90,28 @@ namespace simd {
         SIMDIFY_CONTAINERS_COMMON_POP_BACK("structure_of_arrays");
 
         template <typename Ref>
-        struct reference_iterator : std::iterator<std::forward_iterator_tag, Ref> {
+        struct reference_iterator : std::iterator<std::random_access_iterator_tag, Ref> {
             reference_iterator(const self_t& self, std::size_t idx) {
                 auto base = self.m_data.get() + idx;
                 detail::no_op(simd::get<I>(m_ref).reset(base + I*self.m_cap)...);
             }
 
-            reference_iterator& operator++() {
-                detail::no_op(++simd::get<I>(m_ref).ptr()...);
+            reference_iterator& operator=(const reference_iterator& rhs) {
+                detail::no_op(simd::get<I>(m_ref).reset(simd::get<I>(rhs.m_ref).ptr())...);
                 return *this;
             }
 
+            reference_iterator& operator++() { detail::no_op(++simd::get<I>(m_ref).ptr()...); return *this; }
+            reference_iterator& operator--() { detail::no_op(--simd::get<I>(m_ref).ptr()...); return *this; }
+            reference_iterator& operator+=(std::ptrdiff_t add) { detail::no_op(simd::get<I>(m_ref).ptr() += add...); return *this; }
+            std::ptrdiff_t operator-(const reference_iterator& rhs) { return m_ref.get().ptr() - rhs.m_ref.get().ptr(); }
+            bool operator<(const reference_iterator& rhs) const { return m_ref.get().ptr() < rhs.m_ref.get().ptr(); }
+            bool operator<=(const reference_iterator& rhs) const { return m_ref.get().ptr() <= rhs.m_ref.get().ptr(); }
             bool operator==(const reference_iterator& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
-            bool operator!=(const reference_iterator& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
             Ref& operator*() { return m_ref; }
             Ref* operator->() { return &m_ref; }
+
+            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(reference_iterator);
 
         private:
             Ref m_ref;

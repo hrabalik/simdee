@@ -55,7 +55,7 @@ namespace simd {
             auto first = begin();
             auto last = end();
             first += from;
-            
+
             for (; first < last; ++first) {
                 detail::no_op(simd::get<I>(*first) = simd::get<I>(val)...);
             }
@@ -89,30 +89,40 @@ namespace simd {
         SIMDIFY_CONTAINERS_COMMON_POP_BACK("structure_of_arrays");
 
         template <typename Val>
-        struct value_iterator : std::iterator<std::forward_iterator_tag, Val> {
+        struct value_iterator : std::iterator<std::random_access_iterator_tag, Val> {
             value_iterator(const self_t& self, std::size_t idx) :
                 m_ptr(self.data_as_value_vector_type_ptr() + (idx / W)) {}
 
-            value_iterator& operator++() { ++m_ptr; return *this; }
+            value_iterator& operator=(const value_iterator& rhs) = default;
 
+            value_iterator& operator++() { ++m_ptr; return *this; }
+            value_iterator& operator--() { --m_ptr; return *this; }
+            value_iterator& operator+=(std::ptrdiff_t add) { m_ptr += add; return *this; }
+            std::ptrdiff_t operator-(const value_iterator& rhs) { return m_ptr - rhs.m_ptr; }
+            bool operator<(const value_iterator& rhs) const { return m_ptr < rhs.m_ptr; }
+            bool operator<=(const value_iterator& rhs) const { return m_ptr <= rhs.m_ptr; }
             bool operator==(const value_iterator& rhs) const { return m_ptr == rhs.m_ptr; }
-            bool operator!=(const value_iterator& rhs) const { return m_ptr != rhs.m_ptr; }
             Val& operator*() { return *m_ptr; }
             Val* operator->() { return m_ptr; }
+
+            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(value_iterator);
 
         private:
             Val* m_ptr;
         };
 
         template <typename Ref>
-        struct reference_iterator : std::iterator<std::forward_iterator_tag, Ref> {
-            reference_iterator(const reference_iterator&) = default;
-            reference_iterator& operator=(const reference_iterator&) = default;
-
+        struct reference_iterator : std::iterator<std::random_access_iterator_tag, Ref> {
             reference_iterator(const self_t& self, std::size_t idx) {
                 auto base = self.m_data.get() + (N*W)*div_floor<W>(idx) + mod<W>(idx);
                 detail::no_op(simd::get<I>(m_ref).reset(base + I*W)...);
                 pos = idx;
+            }
+
+            reference_iterator& operator=(const reference_iterator& rhs) {
+                detail::no_op(simd::get<I>(m_ref).reset(simd::get<I>(rhs.m_ref).ptr())...);
+                pos = rhs.pos;
+                return *this;
             }
 
             reference_iterator& operator++() {
@@ -151,39 +161,7 @@ namespace simd {
             Ref& operator*() { return m_ref; }
             Ref* operator->() { return &m_ref; }
 
-            ////
-
-            reference_iterator& operator-=(std::ptrdiff_t sub) {
-                return operator+=(-sub);
-            }
-
-            reference_iterator operator+(std::ptrdiff_t add) {
-                reference_iterator res(*this);
-                res += add;
-                return res;
-            }
-
-            friend reference_iterator operator+(std::ptrdiff_t add, const reference_iterator& rhs) {
-                return rhs + add;
-            }
-
-            reference_iterator operator++(int) {
-                reference_iterator res(*this);
-                operator++();
-                return res;
-            }
-
-            reference_iterator operator--(int) {
-                reference_iterator res(*this);
-                operator--();
-                return res;
-            }
-
-            bool operator>=(const reference_iterator& rhs) const { return !operator<(rhs); }
-            bool operator>(const reference_iterator& rhs) const { return !operator<=(rhs); }
-            bool operator!=(const reference_iterator& rhs) const { return !operator==(rhs); }
-
-            ////
+            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(reference_iterator);
 
         private:
             Ref m_ref;

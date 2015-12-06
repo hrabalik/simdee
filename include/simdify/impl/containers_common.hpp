@@ -132,4 +132,51 @@
                                                                                                          \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES( CLASS )                                           \
+                                                                                                         \
+    CLASS () = default;                                                                                  \
+                                                                                                         \
+    CLASS (const CLASS & rhs) {                                                                          \
+        operator=(rhs);                                                                                  \
+    }                                                                                                    \
+                                                                                                         \
+    CLASS & operator-=(std::ptrdiff_t sub) {                                                             \
+        return operator+=(-sub);                                                                         \
+    }                                                                                                    \
+                                                                                                         \
+    CLASS operator+(std::ptrdiff_t add) const {                                                          \
+        CLASS res(*this);                                                                                \
+        res += add;                                                                                      \
+        return res;                                                                                      \
+    }                                                                                                    \
+                                                                                                         \
+    CLASS operator-(std::ptrdiff_t sub) const {                                                          \
+        CLASS res(*this);                                                                                \
+        res -= sub;                                                                                      \
+        return res;                                                                                      \
+    }                                                                                                    \
+                                                                                                         \
+    friend CLASS operator+(std::ptrdiff_t add, const CLASS & rhs) {                                      \
+        return rhs + add;                                                                                \
+    }                                                                                                    \
+                                                                                                         \
+    CLASS operator++(int) {                                                                              \
+        CLASS res(*this);                                                                                \
+        operator++();                                                                                    \
+        return res;                                                                                      \
+    }                                                                                                    \
+                                                                                                         \
+    CLASS operator--(int) {                                                                              \
+        CLASS res(*this);                                                                                \
+        operator--();                                                                                    \
+        return res;                                                                                      \
+    }                                                                                                    \
+                                                                                                         \
+    bool operator>=(const CLASS & rhs) const { return !operator<(rhs); }                                 \
+    bool operator>(const CLASS & rhs) const { return !operator<=(rhs); }                                 \
+    bool operator!=(const CLASS & rhs) const { return !operator==(rhs); }                                \
+                                                                                                         \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #endif // SIMDIFY_CONTAINERS_COMMON

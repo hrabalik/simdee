@@ -195,4 +195,33 @@ TEST_CASE("structure_of_arrays iteration", "[containers][structure_of_arrays]") 
         ++begin;
         REQUIRE(begin == end);
     }
+
+    {
+        auto begin = t.begin();
+        auto end = t.end();
+
+        REQUIRE(end - begin == 6);
+        REQUIRE(begin <= end);
+        REQUIRE(begin < end);
+        REQUIRE(end > begin);
+        REQUIRE(end >= begin);
+        begin += 3;
+        REQUIRE(end - begin == 3);
+        REQUIRE(begin - end == -3);
+        REQUIRE((begin != end && begin->x == 4.f && begin->y == 5.f && begin->z == 6.f));
+        begin = begin + 3;
+        REQUIRE(end - begin == 0);
+        REQUIRE(begin - end == 0);
+        REQUIRE(begin == end);
+        REQUIRE(begin >= end);
+        REQUIRE(!(begin > end));
+        begin += -1;
+        REQUIRE((begin != end && begin->x == 6.f && begin->y == 7.f && begin->z == 8.f));
+        begin -= 2;
+        REQUIRE((begin != end && begin->x == 4.f && begin->y == 5.f && begin->z == 6.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 5.f && begin->y == 6.f && begin->z == 7.f));
+        --begin;
+        REQUIRE((begin != end && begin->x == 4.f && begin->y == 5.f && begin->z == 6.f));
+    }
 }

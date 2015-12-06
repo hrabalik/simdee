@@ -209,9 +209,7 @@ TEST_CASE("array_of_vectors iteration", "[containers][array_of_vectors]") {
         REQUIRE(end - begin == 3);
         REQUIRE(begin - end == -3);
         REQUIRE((begin != end && begin->x == 4.f && begin->y == 5.f && begin->z == 6.f));
-        begin += 2;
-        REQUIRE((begin != end && begin->x == 6.f && begin->y == 7.f && begin->z == 8.f));
-        begin += 1;
+        begin = begin + 3;
         REQUIRE(end - begin == 0);
         REQUIRE(begin - end == 0);
         REQUIRE(begin == end);

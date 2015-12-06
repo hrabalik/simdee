@@ -56,28 +56,38 @@ namespace simd {
     template <typename Simd_t>
     struct alignas(Simd_t)storage<Simd_t, typename std::enable_if<is_simd_type<Simd_t>::value>::type> {
         using f_t = typename Simd_t::f_t;
+        using data_t = std::array<f_t, Simd_t::W>;
 
         SIMDIFY_FORCE_INLINE constexpr storage() = default;
         SIMDIFY_FORCE_INLINE constexpr storage(const storage&) = default;
-        SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
+        SIMDIFY_FORCE_INLINE constexpr explicit storage(const data_t& rhs) : m_data(rhs) {}
 
-        SIMDIFY_FORCE_INLINE storage(const Simd_t& rhs) {
+        SIMDIFY_FORCE_INLINE explicit storage(const Simd_t& rhs) {
             rhs.store(data());
         }
+
+        SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
 
         SIMDIFY_FORCE_INLINE storage& operator=(const Simd_t& rhs) {
             rhs.store(data());
             return *this;
         }
 
+        SIMDIFY_FORCE_INLINE storage& operator=(const data_t& rhs) {
+            m_data = rhs;
+            return *this;
+        }
+
         SIMDIFY_FORCE_INLINE f_t* data() { return m_data.data(); }
         SIMDIFY_FORCE_INLINE const f_t* data() const { return m_data.data(); }
+        SIMDIFY_FORCE_INLINE f_t& operator[](std::size_t i) { return m_data[i]; }
+        SIMDIFY_FORCE_INLINE const f_t& operator[](std::size_t i) const { return m_data[i]; }
 
         // implicit conversion to Simd_t
         SIMDIFY_FORCE_INLINE operator Simd_t() const { Simd_t s; s.load(data()); return s; }
 
         // data
-        std::array<f_t, Simd_t::W> m_data;
+        data_t m_data;
     };
 
     //
@@ -87,9 +97,9 @@ namespace simd {
     struct storage<F_t, typename std::enable_if<std::is_floating_point<F_t>::value>::type> {
         SIMDIFY_FORCE_INLINE constexpr storage() = default;
         SIMDIFY_FORCE_INLINE constexpr storage(const storage&) = default;
-        SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
+        SIMDIFY_FORCE_INLINE explicit storage(const F_t& rhs) : m_data(rhs) {}
 
-        SIMDIFY_FORCE_INLINE storage(const F_t& rhs) : m_data(rhs) {}
+        SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
 
         SIMDIFY_FORCE_INLINE storage& operator=(const F_t& rhs) {
             m_data = rhs;

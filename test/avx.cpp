@@ -80,7 +80,7 @@ TEST_CASE("AVX explicit construction", "[simd_t][x86][avx]") {
     }
     SECTION("from simd::storage") {
         simd::storage<T> stor;
-        stor.m_data = bufA;
+        stor = bufA;
         T t(stor);
         tor(t); REQUIRE(r == bufA);
     }
@@ -123,7 +123,7 @@ TEST_CASE("AVX implicit construction", "[simd_t][x86][avx]") {
     }
     SECTION("from simd::storage") {
         simd::storage<T> stor;
-        stor.m_data = bufA;
+        stor = bufA;
         implicit_test(stor);
         REQUIRE(r == bufA);
     }
@@ -170,13 +170,13 @@ TEST_CASE("AVX assignment", "[simd_t][x86][avx]") {
     }
     SECTION("from simd::storage") {
         simd::storage<T> stor;
-        stor.m_data = bufA;
+        stor = bufA;
         t = stor;
         tor(); REQUIRE(r == bufA);
     }
     SECTION("from an expression involving simd::storage") {
         simd::storage<T> stor;
-        stor.m_data = bufA;
+        stor = bufA;
         t =  1.234f * stor;
         int i = 0;
         tor(); for (auto val : r) REQUIRE(val == 1.234f * bufA[i++]);

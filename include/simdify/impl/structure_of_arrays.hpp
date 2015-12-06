@@ -97,7 +97,7 @@ namespace simd {
             }
 
             iterator_impl& operator++() {
-                detail::no_op(simd::get<I>(m_ref).ptr()++...);
+                detail::no_op(++simd::get<I>(m_ref).ptr()...);
                 return *this;
             }
 

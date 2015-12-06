@@ -110,3 +110,89 @@ TEST_CASE("structure_of_arrays size management", "[containers][structure_of_arra
         REQUIRE(t.size() == 0);
     }
 }
+
+TEST_CASE("structure_of_arrays iteration", "[containers][structure_of_arrays]") {
+    T t;
+    t.push_back(std::make_tuple(1.f, 2.f, 3.f));
+    t.push_back(std::make_tuple(2.f, 3.f, 4.f));
+    t.push_back(std::make_tuple(3.f, 4.f, 5.f));
+    t.push_back(std::make_tuple(4.f, 5.f, 6.f));
+    t.push_back(std::make_tuple(5.f, 6.f, 7.f));
+    t.push_back(std::make_tuple(6.f, 7.f, 8.f));
+
+    {
+        auto begin = t.begin();
+        auto end = t.end();
+
+        REQUIRE((begin != end && begin->x == 1.f && begin->y == 2.f && begin->z == 3.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 2.f && begin->y == 3.f && begin->z == 4.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 3.f && begin->y == 4.f && begin->z == 5.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 4.f && begin->y == 5.f && begin->z == 6.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 5.f && begin->y == 6.f && begin->z == 7.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 6.f && begin->y == 7.f && begin->z == 8.f));
+        ++begin;
+        REQUIRE(begin == end);
+    }
+
+    {
+        auto begin = t.begin_vector();
+        auto end = t.end_vector();
+        simd::storage<simd::sse> stor;
+
+        REQUIRE(begin != end);
+        stor = begin->x;
+        REQUIRE((stor[0] == 1.f && stor[1] == 2.f && stor[2] == 3.f && stor[3] == 4.f));
+        stor = begin->y;
+        REQUIRE((stor[0] == 2.f && stor[1] == 3.f && stor[2] == 4.f && stor[3] == 5.f));
+        stor = begin->z;
+        REQUIRE((stor[0] == 3.f && stor[1] == 4.f && stor[2] == 5.f && stor[3] == 6.f));
+
+        ++begin;
+
+        REQUIRE(begin != end);
+        stor = begin->x;
+        REQUIRE((stor[0] == 5.f && stor[1] == 6.f));
+        stor = begin->y;
+        REQUIRE((stor[0] == 6.f && stor[1] == 7.f));
+        stor = begin->z;
+        REQUIRE((stor[0] == 7.f && stor[1] == 8.f));
+
+        ++begin;
+
+        REQUIRE(begin == end);
+    }
+
+    {
+        auto begin = t.begin_head();
+        auto end = t.end_head();
+        simd::storage<simd::sse> stor;
+
+        REQUIRE(begin != end);
+        stor = begin->x;
+        REQUIRE((stor[0] == 1.f && stor[1] == 2.f && stor[2] == 3.f && stor[3] == 4.f));
+        stor = begin->y;
+        REQUIRE((stor[0] == 2.f && stor[1] == 3.f && stor[2] == 4.f && stor[3] == 5.f));
+        stor = begin->z;
+        REQUIRE((stor[0] == 3.f && stor[1] == 4.f && stor[2] == 5.f && stor[3] == 6.f));
+
+        ++begin;
+
+        REQUIRE(begin == end);
+    }
+
+    {
+        auto begin = t.begin_tail();
+        auto end = t.end_tail();
+
+        REQUIRE((begin != end && begin->x == 5.f && begin->y == 6.f && begin->z == 7.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 6.f && begin->y == 7.f && begin->z == 8.f));
+        ++begin;
+        REQUIRE(begin == end);
+    }
+}

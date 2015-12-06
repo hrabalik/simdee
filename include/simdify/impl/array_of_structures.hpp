@@ -8,7 +8,6 @@ namespace simd {
     template <typename Simd_t, typename Ids, typename Sequence>
     struct array_of_structures_impl;
 
-
     template <typename Simd_t, id... Ids, std::size_t... I>
     struct array_of_structures_impl<Simd_t, id_sequence<Ids...>, sequence<I...>> {
         static_assert(sizeof...(Ids) == sizeof...(I), "array_of_structures_impl: sequence size mismatch");
@@ -23,7 +22,7 @@ namespace simd {
         enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
 
         using value_type = named_array<f_t, Ids...>;
-        using value_type_vector = named_array<mm_t, Ids...>;
+        using value_type_vector = named_array<simd_t, Ids...>;
         using reference = value_type&;
         using const_reference = const value_type&;
         using reference_vector = named_array<simd::reference<simd::aos_storage<Simd_t, N>>, Ids...>;
@@ -97,19 +96,19 @@ namespace simd {
         };
 
         template <typename Ref>
-        struct storage_iterator : std::iterator<std::forward_iterator_tag, Ref> {
-            storage_iterator(const self_t& self, std::size_t idx) {
+        struct reference_iterator : std::iterator<std::forward_iterator_tag, Ref> {
+            reference_iterator(const self_t& self, std::size_t idx) {
                 auto base = self.m_data.get() + N * idx;
                 detail::no_op(simd::get<I>(m_ref).reset(base + I)...);
             }
 
-            storage_iterator& operator++() {
+            reference_iterator& operator++() {
                 detail::no_op(++simd::get<I>(m_ref).ptr()...);
                 return *this;
             }
 
-            bool operator==(const storage_iterator& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
-            bool operator!=(const storage_iterator& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
+            bool operator==(const reference_iterator& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
+            bool operator!=(const reference_iterator& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
             Ref& operator*() { return m_ref; }
             Ref* operator->() { return &m_ref; }
 
@@ -119,10 +118,10 @@ namespace simd {
 
         using iterator = value_iterator<value_type>;
         using const_iterator = value_iterator<const value_type>;
-        using iterator_vector = storage_iterator<reference_vector>;
-        using const_iterator_vector = storage_iterator<const_reference_vector>;
+        using iterator_vector = reference_iterator<reference_vector>;
+        using const_iterator_vector = reference_iterator<const_reference_vector>;
 
-        SIMIDFY_CONTAINERS_COMMON_ITERATION;
+        SIMDIFY_CONTAINERS_COMMON_ITERATION;
 
     private:
         value_type* data_as_value_type_ptr() const {

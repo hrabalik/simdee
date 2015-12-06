@@ -57,7 +57,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMIDFY_CONTAINERS_COMMON_ITERATION                                                              \
+#define SIMDIFY_CONTAINERS_COMMON_ITERATION                                                              \
                                                                                                          \
     iterator begin() { return iterator(*this, 0); }                                                      \
     iterator end() { return iterator(*this, size()); }                                                   \

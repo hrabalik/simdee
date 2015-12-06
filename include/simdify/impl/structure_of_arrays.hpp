@@ -22,7 +22,7 @@ namespace simd {
         enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
 
         using value_type = named_array<f_t, Ids...>;
-        using value_type_vector = named_array<mm_t, Ids...>;
+        using value_type_vector = named_array<simd_t, Ids...>;
         using reference = named_array<simd::reference<simd::storage<f_t>>, Ids...>;
         using const_reference = named_array<simd::const_reference<simd::storage<f_t>>, Ids...>;
         using reference_vector = named_array<simd::reference<simd::storage<Simd_t>>, Ids...>;
@@ -90,19 +90,19 @@ namespace simd {
         SIMDIFY_CONTAINERS_COMMON_POP_BACK("structure_of_arrays");
 
         template <typename Ref>
-        struct storage_iterator : std::iterator<std::forward_iterator_tag, Ref> {
-            storage_iterator(const self_t& self, std::size_t idx) {
+        struct reference_iterator : std::iterator<std::forward_iterator_tag, Ref> {
+            reference_iterator(const self_t& self, std::size_t idx) {
                 auto base = self.m_data.get() + idx;
                 detail::no_op(simd::get<I>(m_ref).reset(base + I*self.m_cap)...);
             }
 
-            storage_iterator& operator++() {
+            reference_iterator& operator++() {
                 detail::no_op(++simd::get<I>(m_ref).ptr()...);
                 return *this;
             }
 
-            bool operator==(const storage_iterator& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
-            bool operator!=(const storage_iterator& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
+            bool operator==(const reference_iterator& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
+            bool operator!=(const reference_iterator& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
             Ref& operator*() { return m_ref; }
             Ref* operator->() { return &m_ref; }
 
@@ -110,12 +110,12 @@ namespace simd {
             Ref m_ref;
         };
 
-        using iterator = storage_iterator<reference>;
-        using const_iterator = storage_iterator<const_reference>;
-        using iterator_vector = storage_iterator<reference_vector>;
-        using const_iterator_vector = storage_iterator<const_reference_vector>;
+        using iterator = reference_iterator<reference>;
+        using const_iterator = reference_iterator<const_reference>;
+        using iterator_vector = reference_iterator<reference_vector>;
+        using const_iterator_vector = reference_iterator<const_reference_vector>;
 
-        SIMIDFY_CONTAINERS_COMMON_ITERATION;
+        SIMDIFY_CONTAINERS_COMMON_ITERATION;
 
     private:
         SIMDIFY_CONTAINERS_COMMON_DATA;

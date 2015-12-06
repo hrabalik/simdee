@@ -106,6 +106,9 @@ namespace simd {
 
         template <typename Ref>
         struct reference_iterator : std::iterator<std::forward_iterator_tag, Ref> {
+            reference_iterator(const reference_iterator&) = default;
+            reference_iterator& operator=(const reference_iterator&) = default;
+
             reference_iterator(const self_t& self, std::size_t idx) {
                 auto base = self.m_data.get() + (N*W)*div_floor<W>(idx) + mod<W>(idx);
                 detail::no_op(simd::get<I>(m_ref).reset(base + I*W)...);
@@ -127,24 +130,60 @@ namespace simd {
             }
 
             reference_iterator& operator+=(std::ptrdiff_t add) {
+                enum : std::ptrdiff_t { sigW = W, sigN = N };
                 auto tail = static_cast<std::ptrdiff_t>(mod<W>(pos));
-                tail = (add >= 0) ? tail : (tail - W + 1);
-                auto incr = add + ((tail + add) / W)*((N - 1)*W);
+                tail = (add >= 0) ? tail : (tail - sigW + 1);
+                auto ta = (tail + add) / sigW;
+                auto nw = ((sigN - 1)*sigW);
+                auto incr = add + ta*nw;
                 detail::no_op(simd::get<I>(m_ref).ptr() += incr...);
                 pos += add;
                 return *this;
             }
 
-            reference_iterator& operator-=(std::ptrdiff_t sub) {
-                return operator+=(-sub);
+            std::ptrdiff_t operator-(const reference_iterator& rhs) {
+                return static_cast<std::ptrdiff_t>(pos - rhs.pos);
             }
 
             bool operator<(const reference_iterator& rhs) const { return pos < rhs.pos; }
             bool operator<=(const reference_iterator& rhs) const { return pos <= rhs.pos; }
             bool operator==(const reference_iterator& rhs) const { return pos == rhs.pos; }
-            bool operator!=(const reference_iterator& rhs) const { return pos != rhs.pos; }
             Ref& operator*() { return m_ref; }
             Ref* operator->() { return &m_ref; }
+
+            ////
+
+            reference_iterator& operator-=(std::ptrdiff_t sub) {
+                return operator+=(-sub);
+            }
+
+            reference_iterator operator+(std::ptrdiff_t add) {
+                reference_iterator res(*this);
+                res += add;
+                return res;
+            }
+
+            friend reference_iterator operator+(std::ptrdiff_t add, const reference_iterator& rhs) {
+                return rhs + add;
+            }
+
+            reference_iterator operator++(int) {
+                reference_iterator res(*this);
+                operator++();
+                return res;
+            }
+
+            reference_iterator operator--(int) {
+                reference_iterator res(*this);
+                operator--();
+                return res;
+            }
+
+            bool operator>=(const reference_iterator& rhs) const { return !operator<(rhs); }
+            bool operator>(const reference_iterator& rhs) const { return !operator<=(rhs); }
+            bool operator!=(const reference_iterator& rhs) const { return !operator==(rhs); }
+
+            ////
 
         private:
             Ref m_ref;

@@ -1,4 +1,5 @@
-#include <simdify/containers.hpp>
+#include <simdify/simdify.hpp>
+#include <simdify/storage.hpp>
 
 #include "catch.hpp"
 

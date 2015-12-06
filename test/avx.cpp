@@ -85,6 +85,12 @@ TEST_CASE("AVX explicit construction", "[simd_t][x86][avx]") {
         T t(stor);
         tor(t); REQUIRE(r == bufA);
     }
+    SECTION("from simd::aos_storage") {
+        simd::aos_storage<T, 7> aos_stor;
+        for (int i = 0; i < T::W; ++i) aos_stor[i] = bufA[i];
+        T t(aos_stor);
+        tor(t); REQUIRE(r == bufA);
+    }
     SECTION("from utof, stof, zero, etc. (simd::tof family)") {
         T ta(simd::utof(0xdeadbeef));
         T tb(simd::stof(-123456789));
@@ -126,6 +132,12 @@ TEST_CASE("AVX implicit construction", "[simd_t][x86][avx]") {
         simd::storage<T> stor;
         stor = bufA;
         implicit_test(stor);
+        REQUIRE(r == bufA);
+    }
+    SECTION("from simd::aos_storage") {
+        simd::aos_storage<T, 7> aos_stor;
+        for (int i = 0; i < T::W; ++i) aos_stor[i] = bufA[i];
+        implicit_test(aos_stor);
         REQUIRE(r == bufA);
     }
     SECTION("from utof, stof, zero, etc. (simd::tof family)") {

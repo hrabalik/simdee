@@ -82,6 +82,55 @@ namespace simd {
     };
 
     //
+    // storage replacement for loading SIMD vectors from interleaved (AOS) data
+    //
+    template <typename Simd_t, std::size_t N>
+    struct aos_storage {
+        using stored_t = Simd_t;
+        enum : std::size_t { W = Simd_t::W };
+        using f_t = typename Simd_t::f_t;
+        using data_t = std::array<f_t, N * W>;
+
+        SIMDIFY_FORCE_INLINE constexpr aos_storage() = default;
+        
+        SIMDIFY_FORCE_INLINE constexpr aos_storage(const aos_storage& rhs) {
+            *this = rhs;
+        }
+
+        SIMDIFY_FORCE_INLINE explicit aos_storage(const Simd_t& rhs) {
+            rhs.interleaved_store(data(), N);
+        }
+
+        SIMDIFY_FORCE_INLINE aos_storage& operator=(const aos_storage& rhs) {
+            auto lp = data();
+            auto rp = rhs.data();
+            for (std::size_t i = 0; i < W; ++i, lp += N, rp += N) {
+                *lp = *rp;
+            }
+        }
+
+        SIMDIFY_FORCE_INLINE aos_storage& operator=(const Simd_t& rhs) {
+            rhs.interleaved_store(data(), N);
+            return *this;
+        }
+
+        SIMDIFY_FORCE_INLINE f_t* data() { return m_data.data(); }
+        SIMDIFY_FORCE_INLINE const f_t* data() const { return m_data.data(); }
+        SIMDIFY_FORCE_INLINE f_t& operator[](std::size_t i) { return m_data[i * N]; }
+        SIMDIFY_FORCE_INLINE const f_t& operator[](std::size_t i) const { return m_data[i * N]; }
+
+        // implicit conversion to Simd_t
+        SIMDIFY_FORCE_INLINE operator Simd_t() const {
+            Simd_t s;
+            s.interleaved_load(data(), N);
+            return s;
+        }
+
+        // data
+        data_t m_data;
+    };
+
+    //
     // reference to storage (proxy object)
     //
     template <typename Storage>

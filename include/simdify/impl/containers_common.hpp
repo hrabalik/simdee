@@ -5,6 +5,7 @@
 #include "../util/integral.hpp"
 #include "expr.hpp"
 #include "named_array.hpp"
+#include "storage.hpp"
 #include <memory>
 #include <exception>
 #include <cstring>

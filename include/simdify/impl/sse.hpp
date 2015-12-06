@@ -53,6 +53,22 @@ namespace simd {
         SIMDIFY_FORCE_INLINE sse(const expr::unaligned<T>& r) : simd_base(_mm_loadu_ps(r.ptr)) {}
         template <typename T>
         SIMDIFY_FORCE_INLINE sse(const expr::tof<T>& r) : sse(r.template to<f_t>()) {}
+
+        void interleaved_load(const f_t* r, std::size_t step) {
+            alignas(sse)f_t temp[W];
+            for (std::size_t i = 0; i < W; ++i, r += step) {
+                temp[i] = *r;
+            }
+            load(temp);
+        }
+
+        void interleaved_store(f_t* r, std::size_t step) {
+            alignas(sse)f_t temp[W];
+            store(temp);
+            for (std::size_t i = 0; i < W; ++i, r += step) {
+                *r = temp[i];
+            }
+        }
     };
 
     SIMDIFY_FORCE_INLINE const sse operator&(const sse& l, const sse& r) { return _mm_and_ps(l.mm, r.mm); }

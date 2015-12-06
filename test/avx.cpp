@@ -1,5 +1,6 @@
 #define SIMDIFY_NEED_AVX
 #include <simdify/simdify.hpp>
+#include <simdify/storage.hpp>
 
 #include "catch.hpp"
 #include <array>

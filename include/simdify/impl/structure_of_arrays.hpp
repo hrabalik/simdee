@@ -21,10 +21,10 @@ namespace simd {
 
         using value_type = named_array<f_t, Ids...>;
         using value_type_vector = named_array<mm_t, Ids...>;
-        using reference = named_array<simd::reference<f_t>, Ids...>;
-        using reference_vector = named_array<simd::reference<Simd_t>, Ids...>;
-        using const_reference = named_array<simd::const_reference<f_t>, Ids...>;
-        using const_reference_vector = named_array<simd::const_reference<Simd_t>, Ids...>;
+        using reference = named_array<simd::reference<simd::storage<f_t>>, Ids...>;
+        using reference_vector = named_array<simd::reference<simd::storage<Simd_t>>, Ids...>;
+        using const_reference = named_array<simd::const_reference<simd::storage<f_t>>, Ids...>;
+        using const_reference_vector = named_array<simd::const_reference<simd::storage<Simd_t>>, Ids...>;
 
         enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
 

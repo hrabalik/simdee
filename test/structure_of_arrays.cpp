@@ -48,6 +48,9 @@ TEST_CASE("structure_of_arrays size management", "[containers][structure_of_arra
     SECTION("resize, clear") {
         t.resize(13, std::make_tuple(11.f, 22.f, 33.f));
         REQUIRE(t.size() == 13);
+        REQUIRE(t.size_head() == 12);
+        REQUIRE(t.size_tail() == 1);
+        REQUIRE(t.size_vector() == 16);
         REQUIRE(t.capacity() >= 13);
 
         bool win = std::all_of(t.cbegin(), t.cend(), [](T::const_reference ref) {
@@ -55,8 +58,11 @@ TEST_CASE("structure_of_arrays size management", "[containers][structure_of_arra
         });
         REQUIRE(win);
 
-        t.resize(5);
-        REQUIRE(t.size() == 5);
+        t.resize(8);
+        REQUIRE(t.size() == 8);
+        REQUIRE(t.size_head() == 8);
+        REQUIRE(t.size_tail() == 0);
+        REQUIRE(t.size_vector() == 8);
         REQUIRE(t.capacity() >= 13);
 
         t.resize(26, std::make_tuple(11.f, 22.f, 33.f));

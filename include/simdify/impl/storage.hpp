@@ -92,9 +92,9 @@ namespace simd {
         using data_t = std::array<f_t, N * W>;
 
         SIMDIFY_FORCE_INLINE constexpr aos_storage() = default;
-        
-        SIMDIFY_FORCE_INLINE constexpr aos_storage(const aos_storage& rhs) {
-            *this = rhs;
+
+        SIMDIFY_FORCE_INLINE aos_storage(const aos_storage& rhs) {
+            operator=(rhs);
         }
 
         SIMDIFY_FORCE_INLINE explicit aos_storage(const Simd_t& rhs) {

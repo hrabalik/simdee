@@ -11,7 +11,7 @@
 #define SIMDIFY_ID_PACK_DECLARATION(IDENTIFIER)                                                   \
                                                                                                   \
 template <typename T, id... Ids>                                                                  \
-struct id_pack<T, id::IDENTIFIER, Ids...> : id_pack<T, Ids...> {                                  \
+struct id_pack<T, id_sequence<id::IDENTIFIER, Ids...>> : id_pack<T, id_sequence<Ids...>> {        \
     SIMDIFY_FORCE_INLINE constexpr id_pack() = default;                                           \
     SIMDIFY_FORCE_INLINE constexpr id_pack(const id_pack&) = default;                             \
     SIMDIFY_FORCE_INLINE constexpr id_pack(id_pack&&) = default;                                  \
@@ -20,12 +20,12 @@ struct id_pack<T, id::IDENTIFIER, Ids...> : id_pack<T, Ids...> {                
                                                                                                   \
     template <typename... Args>                                                                   \
     SIMDIFY_FORCE_INLINE constexpr id_pack(const std::tuple<Args...>& t) :                        \
-        id_pack<T, Ids...>(t),                                                                    \
+        id_pack<T, id_sequence<Ids...>>(t),                                                       \
         IDENTIFIER(std::get<sizeof...(Args) - sizeof...(Ids) - 1>(t)) {}                          \
                                                                                                   \
     template <typename... Args>                                                                   \
     SIMDIFY_FORCE_INLINE id_pack& operator=(const std::tuple<Args...>& t) {                       \
-        id_pack<T, Ids...>::operator=(t);                                                         \
+        id_pack<T, id_sequence<Ids...>>::operator=(t);                                            \
         IDENTIFIER = std::get<sizeof...(Args) - sizeof...(Ids) - 1>(t);                           \
         return *this;                                                                             \
     }                                                                                             \
@@ -50,11 +50,11 @@ namespace simd {
         template <typename... Args>
         SIMDIFY_FORCE_INLINE constexpr int no_op(Args&&...) { return 0; }
 
-        template <typename T, id... Ids>
+        template <typename T, typename IDSequence>
         struct id_pack;
 
         template <typename T>
-        struct id_pack<T> {
+        struct id_pack<T, id_sequence<>> {
             SIMDIFY_FORCE_INLINE constexpr id_pack() = default;
             SIMDIFY_FORCE_INLINE constexpr id_pack(const id_pack&) = default;
             SIMDIFY_FORCE_INLINE constexpr id_pack(id_pack&&) = default;
@@ -99,46 +99,46 @@ namespace simd {
         struct Get;
 
         template <std::size_t I, typename T, id FirstId, id... Ids>
-        struct Get<I, id_pack<T, FirstId, Ids...>, typename std::enable_if<I != 0>::type> {
+        struct Get<I, id_pack<T, id_sequence<FirstId, Ids...>>, typename std::enable_if<I != 0>::type> {
             static_assert(sizeof...(Ids) >= I, "retrieving element of id_pack: index out of bounds");
 
-            SIMDIFY_FORCE_INLINE static constexpr T& get(id_pack<T, FirstId, Ids...>& pack) {
-                return Get<I - 1, id_pack<T, Ids...>>::get(pack);
+            SIMDIFY_FORCE_INLINE static constexpr T& get(id_pack<T, id_sequence<FirstId, Ids...>>& pack) {
+                return Get<I - 1, id_pack<T, id_sequence<Ids...>>>::get(pack);
             }
-            SIMDIFY_FORCE_INLINE static constexpr const T& get(const id_pack<T, FirstId, Ids...>& pack) {
-                return Get<I - 1, id_pack<T, Ids...>>::get(pack);
+            SIMDIFY_FORCE_INLINE static constexpr const T& get(const id_pack<T, id_sequence<FirstId, Ids...>>& pack) {
+                return Get<I - 1, id_pack<T, id_sequence<Ids...>>>::get(pack);
             }
-            SIMDIFY_FORCE_INLINE static constexpr T&& get(id_pack<T, FirstId, Ids...>&& pack) {
-                return Get<I - 1, id_pack<T, Ids...>>::get(pack);
+            SIMDIFY_FORCE_INLINE static constexpr T&& get(id_pack<T, id_sequence<FirstId, Ids...>>&& pack) {
+                return Get<I - 1, id_pack<T, id_sequence<Ids...>>>::get(pack);
             }
-            SIMDIFY_FORCE_INLINE static constexpr const T&& get(const id_pack<T, FirstId, Ids...>&& pack) {
-                return Get<I - 1, id_pack<T, Ids...>>::get(pack);
+            SIMDIFY_FORCE_INLINE static constexpr const T&& get(const id_pack<T, id_sequence<FirstId, Ids...>>&& pack) {
+                return Get<I - 1, id_pack<T, id_sequence<Ids...>>>::get(pack);
             }
         };
 
         template <typename T, id... Ids>
-        struct Get<0, id_pack<T, Ids...>> {
+        struct Get<0, id_pack<T, id_sequence<Ids...>>> {
             static_assert(sizeof...(Ids) > 0, "retrieving element of id_pack: pack is empty");
 
-            SIMDIFY_FORCE_INLINE static constexpr T& get(id_pack<T, Ids...>& pack) {
+            SIMDIFY_FORCE_INLINE static constexpr T& get(id_pack<T, id_sequence<Ids...>>& pack) {
                 return pack.get();
             }
-            SIMDIFY_FORCE_INLINE static constexpr const T& get(const id_pack<T, Ids...>& pack) {
+            SIMDIFY_FORCE_INLINE static constexpr const T& get(const id_pack<T, id_sequence<Ids...>>& pack) {
                 return pack.get();
             }
-            SIMDIFY_FORCE_INLINE static constexpr T&& get(id_pack<T, Ids...>&& pack) {
+            SIMDIFY_FORCE_INLINE static constexpr T&& get(id_pack<T, id_sequence<Ids...>>&& pack) {
                 return pack.get();
             }
-            SIMDIFY_FORCE_INLINE static constexpr const T&& get(const id_pack<T, Ids...>&& pack) {
+            SIMDIFY_FORCE_INLINE static constexpr const T&& get(const id_pack<T, id_sequence<Ids...>>&& pack) {
                 return pack.get();
             }
         };
     }
 
     template <typename T, id... Ids>
-    struct named_array : detail::id_pack<T, Ids...> {
+    struct named_array : detail::id_pack<T, id_sequence<Ids...>> {
         enum : std::size_t { N = sizeof...(Ids) };
-        using all_elements = make_sequence_t<0, N>;
+        using base_t = detail::id_pack<T, id_sequence<Ids...>>;
 
         constexpr named_array() = default;
         constexpr named_array(const named_array&) = default;
@@ -147,15 +147,14 @@ namespace simd {
         named_array& operator=(named_array&&) = default;
 
         template <typename... Args>
-        SIMDIFY_FORCE_INLINE constexpr named_array(const std::tuple<Args...>& t) :
-            detail::id_pack<T, Ids...>(t) {
+        SIMDIFY_FORCE_INLINE constexpr named_array(const std::tuple<Args...>& t) : base_t(t) {
             static_assert(sizeof...(Args) == sizeof...(Ids), "named_array: incorrect number of parameters");
         }
 
         template <typename... Args>
         SIMDIFY_FORCE_INLINE named_array& operator=(const std::tuple<Args...>& t) {
             static_assert(sizeof...(Args) == sizeof...(Ids), "named_array operator=: incorrect number of parameters");
-            detail::id_pack<T, Ids...>::operator=(t);
+            base_t::operator=(t);
             return *this;
         }
 
@@ -172,19 +171,19 @@ namespace simd {
 
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr T& get(simd::named_array<T, Ids...>& a) {
-        return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
+        return simd::detail::Get<I, typename simd::named_array<T, Ids...>::base_t>::get(a);
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr T&& get(simd::named_array<T, Ids...>&& a) {
-        return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
+        return simd::detail::Get<I, typename simd::named_array<T, Ids...>::base_t>::get(a);
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr const T& get(const simd::named_array<T, Ids...>& a) {
-        return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
+        return simd::detail::Get<I, typename simd::named_array<T, Ids...>::base_t>::get(a);
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr const T&& get(const simd::named_array<T, Ids...>&& a) {
-        return simd::detail::Get<I, simd::detail::id_pack<T, Ids...>>::get(a);
+        return simd::detail::Get<I, typename simd::named_array<T, Ids...>::base_t>::get(a);
     }
 }
 

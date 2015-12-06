@@ -19,16 +19,16 @@ namespace simd {
 
         static_assert(std::is_trivial<f_t>::value, "structure_of_arrays_impl: f_t not trivial");
 
+        enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
+
         using value_type = named_array<f_t, Ids...>;
         using value_type_vector = named_array<mm_t, Ids...>;
         using reference = named_array<simd::reference<simd::storage<f_t>>, Ids...>;
-        using reference_vector = named_array<simd::reference<simd::storage<Simd_t>>, Ids...>;
         using const_reference = named_array<simd::const_reference<simd::storage<f_t>>, Ids...>;
+        using reference_vector = named_array<simd::reference<simd::storage<Simd_t>>, Ids...>;
         using const_reference_vector = named_array<simd::const_reference<simd::storage<Simd_t>>, Ids...>;
 
-        enum : std::size_t { N = sizeof...(Ids), W = simd_t::W };
-
-        SIMDIFY_CONTAINERS_COMMON_CONSTRUCTION(structure_of_arrays_impl)
+        SIMDIFY_CONTAINERS_COMMON_CONSTRUCTION(structure_of_arrays_impl);
 
         void reserve(std::size_t count) {
             if (count <= m_cap) return;
@@ -40,7 +40,7 @@ namespace simd {
             else do { new_cap *= 2; } while (new_cap < count);
 
             decltype(m_data) new_data(aligned_malloc<f_t, alignof(mm_t)>(N * new_cap), aligned_deleter{});
-            
+
             if (!new_data) throw std::bad_alloc{};
 
             if (m_sz != 0) {
@@ -62,7 +62,7 @@ namespace simd {
             }
         }
 
-        SIMIDFY_CONTAINERS_COMMON_SIZE_MANAGEMENT
+        SIMIDFY_CONTAINERS_COMMON_SIZE_MANAGEMENT;
 
         reference operator[](std::size_t i) {
             reference res;
@@ -78,7 +78,7 @@ namespace simd {
             return res;
         }
 
-        SIMDIFY_CONTAINERS_COMMON_ACCESS("structure_of_arrays")
+        SIMDIFY_CONTAINERS_COMMON_ACCESS("structure_of_arrays");
 
         void push_back(const value_type& val) {
             reserve(m_sz + 1);
@@ -87,22 +87,22 @@ namespace simd {
             ++m_sz;
         }
 
-        SIMDIFY_CONTAINERS_COMMON_POP_BACK("structure_of_arrays")
+        SIMDIFY_CONTAINERS_COMMON_POP_BACK("structure_of_arrays");
 
         template <typename Ref>
-        struct iterator_impl : std::iterator<std::forward_iterator_tag, Ref> {
-            iterator_impl(const self_t& self, std::size_t idx) {
+        struct storage_iterator : std::iterator<std::forward_iterator_tag, Ref> {
+            storage_iterator(const self_t& self, std::size_t idx) {
                 auto base = self.m_data.get() + idx;
                 detail::no_op(simd::get<I>(m_ref).reset(base + I*self.m_cap)...);
             }
 
-            iterator_impl& operator++() {
+            storage_iterator& operator++() {
                 detail::no_op(++simd::get<I>(m_ref).ptr()...);
                 return *this;
             }
 
-            bool operator==(const iterator_impl& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
-            bool operator!=(const iterator_impl& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
+            bool operator==(const storage_iterator& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
+            bool operator!=(const storage_iterator& rhs) const { return m_ref.get().ptr() != rhs.m_ref.get().ptr(); }
             Ref& operator*() { return m_ref; }
             Ref* operator->() { return &m_ref; }
 
@@ -110,15 +110,15 @@ namespace simd {
             Ref m_ref;
         };
 
-        using iterator = iterator_impl<reference>;
-        using iterator_vector = iterator_impl<reference_vector>;
-        using const_iterator = iterator_impl<const_reference>;
-        using const_iterator_vector = iterator_impl<const_reference_vector>;
+        using iterator = storage_iterator<reference>;
+        using const_iterator = storage_iterator<const_reference>;
+        using iterator_vector = storage_iterator<reference_vector>;
+        using const_iterator_vector = storage_iterator<const_reference_vector>;
 
-        SIMIDFY_CONTAINERS_COMMON_ITERATION
+        SIMIDFY_CONTAINERS_COMMON_ITERATION;
 
     private:
-        SIMDIFY_CONTAINERS_COMMON_DATA
+        SIMDIFY_CONTAINERS_COMMON_DATA;
     };
 
     template <typename Simd_t, id... Ids>

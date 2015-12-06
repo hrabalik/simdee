@@ -3,9 +3,9 @@
 #include "catch.hpp"
 #include <algorithm>
 
-using T = simd::structure_of_arrays<simd::sse, simd::id::x, simd::id::y, simd::id::z>;
+using T = simd::array_of_structures<simd::sse, simd::id::x, simd::id::y, simd::id::z>;
 
-TEST_CASE("structure_of_arrays construction", "[containers][structure_of_arrays]") {
+TEST_CASE("array_of_structures construction", "[containers][array_of_structures]") {
     SECTION("default") {
         T t;
         REQUIRE(t.size() == 0);
@@ -29,7 +29,7 @@ TEST_CASE("structure_of_arrays construction", "[containers][structure_of_arrays]
     }
 }
 
-TEST_CASE("structure_of_arrays size management", "[containers][structure_of_arrays]") {
+TEST_CASE("array_of_structures size management", "[containers][array_of_structures]") {
     T t;
 
     SECTION("reserve") {
@@ -111,7 +111,7 @@ TEST_CASE("structure_of_arrays size management", "[containers][structure_of_arra
     }
 }
 
-TEST_CASE("structure_of_arrays iteration", "[containers][structure_of_arrays]") {
+TEST_CASE("array_of_structures iteration", "[containers][array_of_structures]") {
     T t;
     t.push_back(std::make_tuple(1.f, 2.f, 3.f));
     t.push_back(std::make_tuple(2.f, 3.f, 4.f));

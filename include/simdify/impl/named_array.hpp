@@ -161,19 +161,19 @@ namespace simd {
 
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr T& get(simd::named_array<T, Ids...>& a) {
-        return a.get<I>();
+        return a.template get<I>();
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr T&& get(simd::named_array<T, Ids...>&& a) {
-        return std::move(a.get<I>());
+        return std::move(a.template get<I>());
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr const T& get(const simd::named_array<T, Ids...>& a) {
-        return a.get<I>();
+        return a.template get<I>();
     }
     template <size_t I, typename T, simd::id... Ids>
     SIMDIFY_FORCE_INLINE constexpr const T&& get(const simd::named_array<T, Ids...>&& a) {
-        return std::move(a.get<I>());
+        return std::move(a.template get<I>());
     }
 }
 

@@ -8,7 +8,7 @@
 #include <type_traits>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDIFY_ID_PACK_DECLARATION(IDENTIFIER)                                                   \
+#define SIMDIFY_IDENTIFIER_PACK_DECLARATION(IDENTIFIER)                                           \
                                                                                                   \
 template <typename T, id... Ids>                                                                  \
 struct id_pack<T, id_sequence<id::IDENTIFIER, Ids...>> : id_pack<T, id_sequence<Ids...>> {        \
@@ -37,19 +37,157 @@ struct id_pack<T, id_sequence<id::IDENTIFIER, Ids...>> : id_pack<T, id_sequence<
                                                                                                   \
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDIFY_ADD_IDENTIFIER(ID)                                                                \
+                                                                                                  \
+namespace simd {                                                                                  \
+    namespace name {                                                                              \
+        struct ID : detail::name_base<ID> {                                                       \
+            enum : std::size_t { size = 1 };                                                      \
+            using reverse = ID;                                                                   \
+        };                                                                                        \
+    }                                                                                             \
+                                                                                                  \
+    namespace sub {                                                                               \
+        template <typename... T>                                                                  \
+        struct ID;                                                                                \
+    }                                                                                             \
+                                                                                                  \
+    namespace detail {                                                                            \
+        template <typename... T1, typename... T2>                                                 \
+        struct join<sub::ID<T1...>, sub::ID<T2...>> {                                             \
+            using type = sub::ID<T1..., T2...>;                                                   \
+        };                                                                                        \
+    }                                                                                             \
+                                                                                                  \
+    namespace sub {                                                                               \
+        template <>                                                                               \
+        struct ID<> : detail::sub_base<ID<>> {                                                    \
+            enum : std::size_t { size = 0 };                                                      \
+            using reverse = ID<>;                                                                 \
+        };                                                                                        \
+                                                                                                  \
+        template <typename T1, typename... T>                                                     \
+        struct ID<T1, T...> : detail::sub_base<ID<T1, T...>> {                                    \
+            enum : std::size_t { size = T1::size + ID<T...>::size };                              \
+            using reverse = detail::join_t<typename ID<T...>::reverse, ID<typename T1::reverse>>; \
+        };                                                                                        \
+    }                                                                                             \
+                                                                                                  \
+    namespace detail {                                                                            \
+        template <typename T, typename... Names>                                                  \
+        struct pack<T, group<name::ID, Names...>> : pack<T, group<Names...>> {                    \
+            using base_t = pack<T, group<Names...>>;                                              \
+            enum : std::size_t { size = group<name::ID, Names...>::size };                        \
+                                                                                                  \
+            SIMDIFY_FORCE_INLINE constexpr pack() = default;                                      \
+            SIMDIFY_FORCE_INLINE constexpr pack(const pack&) = default;                           \
+            SIMDIFY_FORCE_INLINE constexpr pack(pack&&) = default;                                \
+            SIMDIFY_FORCE_INLINE pack& operator=(const pack&) = default;                          \
+            SIMDIFY_FORCE_INLINE pack& operator=(pack&&) = default;                               \
+                                                                                                  \
+            template <typename... Args>                                                           \
+            SIMDIFY_FORCE_INLINE constexpr pack(const std::tuple<Args...>& t) :                   \
+                base_t(t),                                                                        \
+                ID(std::get<base_t::size>(t)) {}                                                  \
+                                                                                                  \
+            template <typename... Args>                                                           \
+            SIMDIFY_FORCE_INLINE pack& operator=(const std::tuple<Args...>& t) {                  \
+                base_t::operator=(t);                                                             \
+                ID = std::get<base_t::size>(t);                                                   \
+                return *this;                                                                     \
+            }                                                                                     \
+                                                                                                  \
+            T ID;                                                                                 \
+        };                                                                                        \
+    }                                                                                             \
+}                                                                                                 \
+                                                                                                  \
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 namespace simd {
+
+    namespace detail {
+        template <typename T1, typename T2>
+        struct join;
+
+        template <typename T1, typename T2>
+        using join_t = typename join<T1, T2>::type;
+
+        template <typename... T>
+        struct group {};
+
+        template <typename Crtp>
+        struct group_element_base {};
+
+        template <typename Crtp>
+        struct name_base : group_element_base<Crtp> {};
+
+        template <typename Crtp>
+        struct sub_base : group_element_base<Crtp> {};
+
+        template <typename T, typename Group>
+        struct pack;
+
+        template <typename T>
+        struct pack<T, group<>> {
+            enum : std::size_t { size = 0 };
+
+            SIMDIFY_FORCE_INLINE constexpr pack() = default;
+            SIMDIFY_FORCE_INLINE constexpr pack(const pack&) = default;
+            SIMDIFY_FORCE_INLINE constexpr pack(pack&&) = default;
+            SIMDIFY_FORCE_INLINE pack& operator=(const pack&) = default;
+            SIMDIFY_FORCE_INLINE pack& operator=(pack&&) = default;
+
+            template <typename... Args>
+            SIMDIFY_FORCE_INLINE constexpr pack(const std::tuple<Args...>&) {}
+
+            template <typename... Args>
+            SIMDIFY_FORCE_INLINE pack& operator=(const std::tuple<Args...>&) { return *this; }
+        };
+    }
+
     enum class id {
         a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
     };
 
     template <id... Ids>
     struct id_sequence {};
+}
 
+SIMDIFY_ADD_IDENTIFIER(a);
+SIMDIFY_ADD_IDENTIFIER(b);
+SIMDIFY_ADD_IDENTIFIER(c);
+SIMDIFY_ADD_IDENTIFIER(d);
+SIMDIFY_ADD_IDENTIFIER(e);
+SIMDIFY_ADD_IDENTIFIER(f);
+SIMDIFY_ADD_IDENTIFIER(g);
+SIMDIFY_ADD_IDENTIFIER(h);
+SIMDIFY_ADD_IDENTIFIER(i);
+SIMDIFY_ADD_IDENTIFIER(j);
+SIMDIFY_ADD_IDENTIFIER(k);
+SIMDIFY_ADD_IDENTIFIER(l);
+SIMDIFY_ADD_IDENTIFIER(m);
+SIMDIFY_ADD_IDENTIFIER(n);
+SIMDIFY_ADD_IDENTIFIER(o);
+SIMDIFY_ADD_IDENTIFIER(p);
+SIMDIFY_ADD_IDENTIFIER(q);
+SIMDIFY_ADD_IDENTIFIER(r);
+SIMDIFY_ADD_IDENTIFIER(s);
+SIMDIFY_ADD_IDENTIFIER(t);
+SIMDIFY_ADD_IDENTIFIER(u);
+SIMDIFY_ADD_IDENTIFIER(v);
+SIMDIFY_ADD_IDENTIFIER(w);
+SIMDIFY_ADD_IDENTIFIER(x);
+SIMDIFY_ADD_IDENTIFIER(y);
+SIMDIFY_ADD_IDENTIFIER(z);
+ 
+namespace simd {
     namespace detail {
         template <typename... Args>
         SIMDIFY_FORCE_INLINE constexpr int no_op(Args&&...) { return 0; }
 
-        template <typename T, typename IDSequence>
+        template <typename T, typename IdSequence>
         struct id_pack;
 
         template <typename T>
@@ -67,32 +205,32 @@ namespace simd {
             SIMDIFY_FORCE_INLINE id_pack& operator=(const std::tuple<Args...>&) { return *this; }
         };
 
-        SIMDIFY_ID_PACK_DECLARATION(a);
-        SIMDIFY_ID_PACK_DECLARATION(b);
-        SIMDIFY_ID_PACK_DECLARATION(c);
-        SIMDIFY_ID_PACK_DECLARATION(d);
-        SIMDIFY_ID_PACK_DECLARATION(e);
-        SIMDIFY_ID_PACK_DECLARATION(f);
-        SIMDIFY_ID_PACK_DECLARATION(g);
-        SIMDIFY_ID_PACK_DECLARATION(h);
-        SIMDIFY_ID_PACK_DECLARATION(i);
-        SIMDIFY_ID_PACK_DECLARATION(j);
-        SIMDIFY_ID_PACK_DECLARATION(k);
-        SIMDIFY_ID_PACK_DECLARATION(l);
-        SIMDIFY_ID_PACK_DECLARATION(m);
-        SIMDIFY_ID_PACK_DECLARATION(n);
-        SIMDIFY_ID_PACK_DECLARATION(o);
-        SIMDIFY_ID_PACK_DECLARATION(p);
-        SIMDIFY_ID_PACK_DECLARATION(q);
-        SIMDIFY_ID_PACK_DECLARATION(r);
-        SIMDIFY_ID_PACK_DECLARATION(s);
-        SIMDIFY_ID_PACK_DECLARATION(t);
-        SIMDIFY_ID_PACK_DECLARATION(u);
-        SIMDIFY_ID_PACK_DECLARATION(v);
-        SIMDIFY_ID_PACK_DECLARATION(w);
-        SIMDIFY_ID_PACK_DECLARATION(x);
-        SIMDIFY_ID_PACK_DECLARATION(y);
-        SIMDIFY_ID_PACK_DECLARATION(z);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(a);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(b);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(c);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(d);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(e);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(f);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(g);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(h);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(i);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(j);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(k);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(l);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(m);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(n);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(o);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(p);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(q);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(r);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(s);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(t);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(u);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(v);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(w);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(x);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(y);
+        SIMDIFY_IDENTIFIER_PACK_DECLARATION(z);
 
         template <typename In, typename Out>
         struct reverse_impl;
@@ -177,6 +315,6 @@ namespace simd {
     }
 }
 
-#undef SIMDIFY_ID_PACK_DECLARATION
+#undef SIMDIFY_IDENTIFIER_PACK_DECLARATION
 
 #endif // SIMDIFY_NAMED_ARRAY

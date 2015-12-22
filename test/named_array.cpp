@@ -67,3 +67,20 @@ TEST_CASE("named_array data manipulation", "[containers][named_array]") {
         REQUIRE(pos2.z == 45);
     }
 }
+
+TEST_CASE("named_array hierarchical layout", "[containers][named_array]") {
+    simd::named_array<int, simd::id::x, simd::sub::a<simd::sub::b<simd::id::y>, simd::id::z>> na;
+    na = std::make_tuple( 12, std::make_tuple( std::make_tuple( 23 ), 34 ) );
+    REQUIRE(na.x == 12);
+    REQUIRE(na.a.b.y == 23);
+    REQUIRE(na.a.z == 34);
+    REQUIRE(na[0] == 12);
+    REQUIRE(na[1] == 23);
+    REQUIRE(na[2] == 34);
+    REQUIRE(na.get<0>() == 12);
+    REQUIRE(na.get<1>() == 23);
+    REQUIRE(na.get<2>() == 34);
+    REQUIRE(simd::get<0>(na) == 12);
+    REQUIRE(simd::get<1>(na) == 23);
+    REQUIRE(simd::get<2>(na) == 34);
+}

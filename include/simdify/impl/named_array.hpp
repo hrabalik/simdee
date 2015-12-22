@@ -8,36 +8,6 @@
 #include <type_traits>
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDIFY_IDENTIFIER_PACK_DECLARATION(IDENTIFIER)                                           \
-                                                                                                  \
-template <typename T, id... Ids>                                                                  \
-struct id_pack<T, id_sequence<id::IDENTIFIER, Ids...>> : id_pack<T, id_sequence<Ids...>> {        \
-    using base_t = id_pack<T, id_sequence<Ids...>>;                                               \
-                                                                                                  \
-    SIMDIFY_FORCE_INLINE constexpr id_pack() = default;                                           \
-    SIMDIFY_FORCE_INLINE constexpr id_pack(const id_pack&) = default;                             \
-    SIMDIFY_FORCE_INLINE constexpr id_pack(id_pack&&) = default;                                  \
-    SIMDIFY_FORCE_INLINE id_pack& operator=(const id_pack&) = default;                            \
-    SIMDIFY_FORCE_INLINE id_pack& operator=(id_pack&&) = default;                                 \
-                                                                                                  \
-    template <typename... Args>                                                                   \
-    SIMDIFY_FORCE_INLINE constexpr id_pack(const std::tuple<Args...>& t) :                        \
-        base_t(t),                                                                                \
-        IDENTIFIER(std::get<sizeof...(Ids)>(t)) {}                                                \
-                                                                                                  \
-    template <typename... Args>                                                                   \
-    SIMDIFY_FORCE_INLINE id_pack& operator=(const std::tuple<Args...>& t) {                       \
-        base_t::operator=(t);                                                                     \
-        IDENTIFIER = std::get<sizeof...(Ids)>(t);                                                 \
-        return *this;                                                                             \
-    }                                                                                             \
-                                                                                                  \
-    T IDENTIFIER;                                                                                 \
-};                                                                                                \
-                                                                                                  \
-///////////////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDIFY_ADD_IDENTIFIER(ID)                                                                \
                                                                                                   \
 namespace simd {                                                                                  \
@@ -179,13 +149,6 @@ namespace simd {
             SIMDIFY_FORCE_INLINE pack& operator=(const std::tuple<Args...>&) { return *this; }
         };
     }
-
-    enum class id {
-        a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z
-    };
-
-    template <id... Ids>
-    struct id_sequence {};
 }
 
 SIMDIFY_ADD_IDENTIFIER(a);
@@ -219,69 +182,6 @@ namespace simd {
     namespace detail {
         template <typename... Args>
         SIMDIFY_FORCE_INLINE constexpr int no_op(Args&&...) { return 0; }
-
-        template <typename T, typename IdSequence>
-        struct id_pack;
-
-        template <typename T>
-        struct id_pack<T, id_sequence<>> {
-            SIMDIFY_FORCE_INLINE constexpr id_pack() = default;
-            SIMDIFY_FORCE_INLINE constexpr id_pack(const id_pack&) = default;
-            SIMDIFY_FORCE_INLINE constexpr id_pack(id_pack&&) = default;
-            SIMDIFY_FORCE_INLINE id_pack& operator=(const id_pack&) = default;
-            SIMDIFY_FORCE_INLINE id_pack& operator=(id_pack&&) = default;
-
-            template <typename... Args>
-            SIMDIFY_FORCE_INLINE constexpr id_pack(const std::tuple<Args...>&) {}
-
-            template <typename... Args>
-            SIMDIFY_FORCE_INLINE id_pack& operator=(const std::tuple<Args...>&) { return *this; }
-        };
-
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(a);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(b);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(c);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(d);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(e);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(f);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(g);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(h);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(i);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(j);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(k);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(l);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(m);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(n);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(o);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(p);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(q);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(r);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(s);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(t);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(u);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(v);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(w);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(x);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(y);
-        SIMDIFY_IDENTIFIER_PACK_DECLARATION(z);
-
-        template <typename In, typename Out>
-        struct reverse_impl;
-
-        template <id... Out>
-        struct reverse_impl<id_sequence<>, id_sequence<Out...>> {
-            using type = id_sequence<Out...>;
-        };
-
-        template <id First, id... In, id... Out>
-        struct reverse_impl<id_sequence<First, In...>, id_sequence<Out...>> :
-            reverse_impl<id_sequence<In...>, id_sequence<First, Out...>> {};
-
-        template <id... Ids>
-        struct reverse : reverse_impl<id_sequence<Ids...>, id_sequence<>> {};
-
-        template <id... Ids>
-        using reverse_t = typename reverse<Ids...>::type;
     }
 
     template <typename T, typename... Names>
@@ -348,7 +248,5 @@ namespace simd {
         return std::move(a.template get<I>());
     }
 }
-
-#undef SIMDIFY_IDENTIFIER_PACK_DECLARATION
 
 #endif // SIMDIFY_NAMED_ARRAY

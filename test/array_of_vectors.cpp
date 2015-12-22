@@ -3,7 +3,7 @@
 #include "catch.hpp"
 #include <algorithm>
 
-using T = simd::array_of_vectors<simd::sse, simd::id::x, simd::id::y, simd::id::z>;
+using T = simd::array_of_vectors<simd::sse, simd::name::x, simd::name::y, simd::name::z>;
 
 TEST_CASE("array_of_vectors construction", "[containers][array_of_vectors]") {
     SECTION("default") {

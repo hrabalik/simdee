@@ -148,11 +148,13 @@ namespace simd {
 
         template <>
         struct group<> {
+            enum : std::size_t { size = 0 };
             using reverse = group<>;
         };
 
         template <typename T1, typename... T>
         struct group<T1, T...> {
+            enum : std::size_t { size = T1::size + group<T...>::size };
             using reverse = detail::join_t<typename group<T...>::reverse, group<typename T1::reverse>>;
         };
 
@@ -282,10 +284,11 @@ namespace simd {
         using reverse_t = typename reverse<Ids...>::type;
     }
 
-    template <typename T, id... Ids>
-    struct named_array : detail::id_pack<T, detail::reverse_t<Ids...>> {
-        enum : std::size_t { N = sizeof...(Ids) };
-        using base_t = detail::id_pack<T, detail::reverse_t<Ids...>>;
+    template <typename T, typename... Names>
+    struct named_array : detail::pack<T, detail::reverse_group<Names...>> {
+        using group_t = detail::reverse_group<Names...>;
+        using base_t = detail::pack<T, group_t>;
+        enum : std::size_t { N = group_t::size };
 
         constexpr named_array() = default;
         constexpr named_array(const named_array&) = default;
@@ -295,12 +298,12 @@ namespace simd {
 
         template <typename... Args>
         SIMDIFY_FORCE_INLINE constexpr named_array(const std::tuple<Args...>& t) : base_t(t) {
-            static_assert(sizeof...(Args) == sizeof...(Ids), "named_array: incorrect number of parameters");
+            static_assert(sizeof...(Args) == sizeof...(Names), "named_array: incorrect number of parameters");
         }
 
         template <typename... Args>
         SIMDIFY_FORCE_INLINE named_array& operator=(const std::tuple<Args...>& t) {
-            static_assert(sizeof...(Args) == sizeof...(Ids), "named_array operator=: incorrect number of parameters");
+            static_assert(sizeof...(Args) == sizeof...(Names), "named_array operator=: incorrect number of parameters");
             base_t::operator=(t);
             return *this;
         }
@@ -328,20 +331,20 @@ namespace simd {
         }
     };
 
-    template <size_t I, typename T, simd::id... Ids>
-    SIMDIFY_FORCE_INLINE constexpr T& get(simd::named_array<T, Ids...>& a) {
+    template <size_t I, typename T, typename... Names>
+    SIMDIFY_FORCE_INLINE constexpr T& get(simd::named_array<T, Names...>& a) {
         return a.template get<I>();
     }
-    template <size_t I, typename T, simd::id... Ids>
-    SIMDIFY_FORCE_INLINE constexpr T&& get(simd::named_array<T, Ids...>&& a) {
+    template <size_t I, typename T, typename... Names>
+    SIMDIFY_FORCE_INLINE constexpr T&& get(simd::named_array<T, Names...>&& a) {
         return std::move(a.template get<I>());
     }
-    template <size_t I, typename T, simd::id... Ids>
-    SIMDIFY_FORCE_INLINE constexpr const T& get(const simd::named_array<T, Ids...>& a) {
+    template <size_t I, typename T, typename... Names>
+    SIMDIFY_FORCE_INLINE constexpr const T& get(const simd::named_array<T, Names...>& a) {
         return a.template get<I>();
     }
-    template <size_t I, typename T, simd::id... Ids>
-    SIMDIFY_FORCE_INLINE constexpr const T&& get(const simd::named_array<T, Ids...>&& a) {
+    template <size_t I, typename T, typename... Names>
+    SIMDIFY_FORCE_INLINE constexpr const T&& get(const simd::named_array<T, Names...>&& a) {
         return std::move(a.template get<I>());
     }
 }

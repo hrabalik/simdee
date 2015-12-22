@@ -5,12 +5,12 @@
 
 TEST_CASE("named_array basic guarantees", "[containers][named_array]") {
     SECTION("sizeof()") {
-        REQUIRE(sizeof(simd::named_array<char, simd::name::x>) == 1);
-        REQUIRE(sizeof(simd::named_array<char, simd::name::a, simd::name::b>) == 2);
+        REQUIRE(sizeof(simd::named_array<char, simd::id::x>) == 1);
+        REQUIRE(sizeof(simd::named_array<char, simd::id::a, simd::id::b>) == 2);
     }
 }
 
-using T = simd::named_array<int, simd::name::x, simd::name::y, simd::name::z>;
+using T = simd::named_array<int, simd::id::x, simd::id::y, simd::id::z>;
 
 TEST_CASE("named_array construction", "[containers][named_array]") {
     T pos(std::forward_as_tuple(11, 22, 33));

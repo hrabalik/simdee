@@ -5,25 +5,25 @@
 
 namespace simd {
 
-    template <typename Simd_t, typename Names, typename Sequence>
+    template <typename Simd_t, typename Ids, typename Sequence>
     struct array_of_vectors_impl;
 
-    template <typename Simd_t, typename... Names, std::size_t... I>
-    struct array_of_vectors_impl<Simd_t, detail::group<Names...>, sequence<I...>> {
+    template <typename Simd_t, typename... Ids, std::size_t... I>
+    struct array_of_vectors_impl<Simd_t, detail::group<Ids...>, sequence<I...>> {
         using self_t = array_of_vectors_impl;
         using simd_t = Simd_t;
         using f_t = typename simd_t::f_t;
         using mm_t = typename simd_t::mm_t;
 
-        enum : std::size_t { N = detail::group<Names...>::size, W = simd_t::W };
+        enum : std::size_t { N = detail::group<Ids...>::size, W = simd_t::W };
 
         static_assert(N == sizeof...(I), "array_of_vectors_impl: sequence size mismatch");
         static_assert(std::is_trivial<f_t>::value, "array_of_vectors_impl: f_t not trivial");
 
-        using value_type = named_array<f_t, Names...>;
-        using value_type_vector = named_array<simd_t, Names...>;
-        using reference = named_array<simd::reference<simd::storage<f_t>>, Names...>;
-        using const_reference = named_array<simd::const_reference<simd::storage<f_t>>, Names...>;
+        using value_type = named_array<f_t, Ids...>;
+        using value_type_vector = named_array<simd_t, Ids...>;
+        using reference = named_array<simd::reference<simd::storage<f_t>>, Ids...>;
+        using const_reference = named_array<simd::const_reference<simd::storage<f_t>>, Ids...>;
         using reference_vector = value_type_vector&;
         using const_reference_vector = const value_type_vector&;
 
@@ -182,8 +182,8 @@ namespace simd {
         SIMDIFY_CONTAINERS_COMMON_DATA;
     };
 
-    template <typename Simd_t, typename... Names>
-    using array_of_vectors = array_of_vectors_impl<Simd_t, detail::group<Names...>, make_sequence_t<0, detail::group<Names...>::size>>;
+    template <typename Simd_t, typename... Ids>
+    using array_of_vectors = array_of_vectors_impl<Simd_t, detail::group<Ids...>, make_sequence_t<0, detail::group<Ids...>::size>>;
 
 }
 

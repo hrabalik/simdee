@@ -12,18 +12,18 @@ namespace simd {
     struct structure_of_arrays_impl<Simd_t, detail::group<Ids...>, sequence<I...>> {
         using self_t = structure_of_arrays_impl;
         using simd_t = Simd_t;
-        using f_t = typename simd_t::f_t;
+        using e_t = typename simd_t::e_t;
         using mm_t = typename simd_t::mm_t;
 
         enum : std::size_t { N = detail::group<Ids...>::size, W = simd_t::W };
 
         static_assert(N == sizeof...(I), "structure_of_arrays_impl: sequence size mismatch");
-        static_assert(std::is_trivial<f_t>::value, "structure_of_arrays_impl: f_t not trivial");
+        static_assert(std::is_trivial<e_t>::value, "structure_of_arrays_impl: e_t not trivial");
 
-        using value_type = named_array<f_t, Ids...>;
+        using value_type = named_array<e_t, Ids...>;
         using value_type_vector = named_array<simd_t, Ids...>;
-        using reference = named_array<simd::reference<simd::storage<f_t>>, Ids...>;
-        using const_reference = named_array<simd::const_reference<simd::storage<f_t>>, Ids...>;
+        using reference = named_array<simd::reference<simd::storage<e_t>>, Ids...>;
+        using const_reference = named_array<simd::const_reference<simd::storage<e_t>>, Ids...>;
         using reference_vector = named_array<simd::reference<simd::storage<Simd_t>>, Ids...>;
         using const_reference_vector = named_array<simd::const_reference<simd::storage<Simd_t>>, Ids...>;
 
@@ -38,12 +38,12 @@ namespace simd {
             }
             else do { new_cap *= 2; } while (new_cap < count);
 
-            decltype(m_data) new_data(aligned_malloc<f_t, alignof(mm_t)>(N * new_cap), aligned_deleter{});
+            decltype(m_data) new_data(aligned_malloc<e_t, alignof(mm_t)>(N * new_cap), aligned_deleter{});
 
             if (!new_data) throw std::bad_alloc{};
 
             if (m_sz != 0) {
-                detail::no_op(std::memcpy(new_data.get() + I*new_cap, m_data.get() + I*m_cap, sizeof(f_t)*m_sz)...);
+                detail::no_op(std::memcpy(new_data.get() + I*new_cap, m_data.get() + I*m_cap, sizeof(e_t)*m_sz)...);
             }
 
             std::swap(m_data, new_data);
@@ -51,11 +51,11 @@ namespace simd {
         }
 
         void fill(const value_type& val, std::size_t from = 0) {
-            f_t* first = m_data.get() + from;
-            f_t* last = m_data.get() + m_sz;
+            e_t* first = m_data.get() + from;
+            e_t* last = m_data.get() + m_sz;
             for (int n = 0; n < N; ++n, first += m_cap, last += m_cap) {
-                f_t f = val[n];
-                for (f_t* curr = first; curr != last; ++curr) {
+                e_t f = val[n];
+                for (e_t* curr = first; curr != last; ++curr) {
                     *curr = f;
                 }
             }
@@ -81,7 +81,7 @@ namespace simd {
 
         void push_back(const value_type& val) {
             reserve(m_sz + 1);
-            f_t* base = m_data.get() + m_sz;
+            e_t* base = m_data.get() + m_sz;
             detail::no_op(*(base + I*m_cap) = simd::get<I>(val)...);
             ++m_sz;
         }

@@ -26,31 +26,30 @@ namespace simd {
         SIMDIFY_FORCE_INLINE avx& operator=(avx&&) = default;
 
         SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE avx(f_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
+        SIMDIFY_FORCE_INLINE avx(e_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
         SIMDIFY_FORCE_INLINE avx(const expr::zero&) : simd_base(_mm256_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE avx(const expr::bit_not<avx>& r) : simd_base(_mm256_andnot_ps(r.neg.mm, avx(all_bits()).mm)) {}
-        SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = _mm256_load_ps(r); }
-        SIMDIFY_FORCE_INLINE void store(f_t* r) const { _mm256_store_ps(r, mm); }
-        SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
-        SIMDIFY_FORCE_INLINE f_t back() const { return f.back(); }
+        SIMDIFY_FORCE_INLINE void load(const e_t* r) { mm = _mm256_load_ps(r); }
+        SIMDIFY_FORCE_INLINE void store(e_t* r) const { _mm256_store_ps(r, mm); }
+        // access first element: _mm_cvtss_f32(_mm256_castps256_ps128(mm))
 
         template <typename T>
         SIMDIFY_FORCE_INLINE avx(const expr::aligned<T>& r) : simd_base(_mm256_load_ps(r.ptr)) {}
         template <typename T>
         SIMDIFY_FORCE_INLINE avx(const expr::unaligned<T>& r) : simd_base(_mm256_loadu_ps(r.ptr)) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE avx(const expr::tof<T>& r) : avx(r.template to<f_t>()) {}
+        SIMDIFY_FORCE_INLINE avx(const expr::tof<T>& r) : avx(r.template to<e_t>()) {}
 
-        void interleaved_load(const f_t* r, std::size_t step) {
-            alignas(avx)f_t temp[W];
+        void interleaved_load(const e_t* r, std::size_t step) {
+            alignas(avx)e_t temp[W];
             for (std::size_t i = 0; i < W; ++i, r += step) {
                 temp[i] = *r;
             }
             load(temp);
         }
 
-        void interleaved_store(f_t* r, std::size_t step) {
-            alignas(avx)f_t temp[W];
+        void interleaved_store(e_t* r, std::size_t step) {
+            alignas(avx)e_t temp[W];
             store(temp);
             for (std::size_t i = 0; i < W; ++i, r += step) {
                 *r = temp[i];

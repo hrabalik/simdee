@@ -18,8 +18,8 @@ namespace simd {
     template <typename Simd_t>
     struct alignas(Simd_t)storage<Simd_t, typename std::enable_if<is_simd_type<Simd_t>::value>::type> {
         using stored_t = Simd_t;
-        using f_t = typename Simd_t::f_t;
-        using data_t = std::array<f_t, Simd_t::W>;
+        using e_t = typename Simd_t::e_t;
+        using data_t = std::array<e_t, Simd_t::W>;
 
         SIMDIFY_FORCE_INLINE constexpr storage() = default;
         SIMDIFY_FORCE_INLINE constexpr storage(const storage&) = default;
@@ -41,10 +41,10 @@ namespace simd {
             return *this;
         }
 
-        SIMDIFY_FORCE_INLINE f_t* data() { return m_data.data(); }
-        SIMDIFY_FORCE_INLINE const f_t* data() const { return m_data.data(); }
-        SIMDIFY_FORCE_INLINE f_t& operator[](std::size_t i) { return m_data[i]; }
-        SIMDIFY_FORCE_INLINE const f_t& operator[](std::size_t i) const { return m_data[i]; }
+        SIMDIFY_FORCE_INLINE e_t* data() { return m_data.data(); }
+        SIMDIFY_FORCE_INLINE const e_t* data() const { return m_data.data(); }
+        SIMDIFY_FORCE_INLINE e_t& operator[](std::size_t i) { return m_data[i]; }
+        SIMDIFY_FORCE_INLINE const e_t& operator[](std::size_t i) const { return m_data[i]; }
 
         // implicit conversion to Simd_t
         SIMDIFY_FORCE_INLINE operator Simd_t() const { Simd_t s; s.load(data()); return s; }
@@ -54,31 +54,31 @@ namespace simd {
     };
 
     //
-    // specialized storage for floating point types
+    // specialized storage for arithmetic types
     //
-    template <typename F_t>
-    struct storage<F_t, typename std::enable_if<std::is_floating_point<F_t>::value>::type> {
-        using stored_t = F_t;
+    template <typename E_t>
+    struct storage<E_t, typename std::enable_if<std::is_arithmetic<E_t>::value>::type> {
+        using stored_t = E_t;
 
         SIMDIFY_FORCE_INLINE constexpr storage() = default;
         SIMDIFY_FORCE_INLINE constexpr storage(const storage&) = default;
-        SIMDIFY_FORCE_INLINE explicit storage(const F_t& rhs) : m_data(rhs) {}
+        SIMDIFY_FORCE_INLINE explicit storage(const E_t& rhs) : m_data(rhs) {}
 
         SIMDIFY_FORCE_INLINE storage& operator=(const storage&) = default;
 
-        SIMDIFY_FORCE_INLINE storage& operator=(const F_t& rhs) {
+        SIMDIFY_FORCE_INLINE storage& operator=(const E_t& rhs) {
             m_data = rhs;
             return *this;
         }
 
-        SIMDIFY_FORCE_INLINE F_t* data() { return &m_data; }
-        SIMDIFY_FORCE_INLINE const F_t* data() const { return &m_data; }
+        SIMDIFY_FORCE_INLINE E_t* data() { return &m_data; }
+        SIMDIFY_FORCE_INLINE const E_t* data() const { return &m_data; }
 
-        // implicit conversion to F_t
-        SIMDIFY_FORCE_INLINE operator F_t() const { return m_data; }
+        // implicit conversion to E_t
+        SIMDIFY_FORCE_INLINE operator E_t() const { return m_data; }
 
         // data
-        F_t m_data;
+        E_t m_data;
     };
 
     //
@@ -88,8 +88,8 @@ namespace simd {
     struct aos_storage {
         using stored_t = Simd_t;
         enum : std::size_t { W = Simd_t::W };
-        using f_t = typename Simd_t::f_t;
-        using data_t = std::array<f_t, N * W>;
+        using e_t = typename Simd_t::e_t;
+        using data_t = std::array<e_t, N * W>;
 
         SIMDIFY_FORCE_INLINE constexpr aos_storage() = default;
 
@@ -114,10 +114,10 @@ namespace simd {
             return *this;
         }
 
-        SIMDIFY_FORCE_INLINE f_t* data() { return m_data.data(); }
-        SIMDIFY_FORCE_INLINE const f_t* data() const { return m_data.data(); }
-        SIMDIFY_FORCE_INLINE f_t& operator[](std::size_t i) { return m_data[i * N]; }
-        SIMDIFY_FORCE_INLINE const f_t& operator[](std::size_t i) const { return m_data[i * N]; }
+        SIMDIFY_FORCE_INLINE e_t* data() { return m_data.data(); }
+        SIMDIFY_FORCE_INLINE const e_t* data() const { return m_data.data(); }
+        SIMDIFY_FORCE_INLINE e_t& operator[](std::size_t i) { return m_data[i * N]; }
+        SIMDIFY_FORCE_INLINE const e_t& operator[](std::size_t i) const { return m_data[i * N]; }
 
         // implicit conversion to Simd_t
         SIMDIFY_FORCE_INLINE operator Simd_t() const {

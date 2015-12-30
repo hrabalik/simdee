@@ -30,9 +30,18 @@ namespace simd {
     struct select_uint<8> { using type = uint64_t; };
 
     template <std::size_t Size>
+    struct select_float;
+    template <>
+    struct select_float<sizeof(float)> { using type = float; };
+    template <>
+    struct select_float<sizeof(double)> { using type = double; };
+
+    template <std::size_t Size>
     using select_sint_t = typename select_sint<Size>::type;
     template <std::size_t Size>
     using select_uint_t = typename select_uint<Size>::type;
+    template <std::size_t Size>
+    using select_float_t = typename select_float<Size>::type;
 
     template <std::size_t x>
     struct is_power_of_2 : std::integral_constant < bool, x && (x & (x - 1)) == 0 > {};

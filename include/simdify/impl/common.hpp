@@ -21,23 +21,22 @@ namespace simd {
     //
     // SIMD type base class (with derived class as Crtp, CRTP-style)
     //
-    template <typename Mm_t_, typename F_t_, typename Crtp>
+    template <typename Mm_t_, typename E_t_, typename Crtp>
     struct simd_base {
         using mm_t = Mm_t_;
-        using f_t = F_t_;
-        using u_t = select_uint_t<sizeof(f_t)>;
-        using s_t = select_sint_t<sizeof(f_t)>;
+        using e_t = E_t_;
+        using f_t = select_float_t<sizeof(e_t)>;
+        using u_t = select_uint_t<sizeof(e_t)>;
+        using s_t = select_sint_t<sizeof(e_t)>;
 
         enum : std::size_t {
-            W = sizeof(mm_t) / sizeof(f_t)
+            W = sizeof(mm_t) / sizeof(e_t)
         };
-        using array_f = std::array<f_t, W>;
-        using array_u = std::array<u_t, W>;
-        using array_s = std::array<s_t, W>;
+        using array_e = std::array<e_t, W>;
         using horizontal = horizontal_impl<Crtp>;
 
         // data
-        union { mm_t mm; array_f f; array_u u; array_s i; };
+        mm_t mm;
 
         // constructor
         SIMDIFY_FORCE_INLINE simd_base() {}
@@ -98,12 +97,12 @@ namespace simd {
     struct horizontal_impl_base {
         using unary_op_t = const T(*)(const T& in);
         using binary_op_t = const T(*)(const T& l, const T& r);
-        using f_t = typename T::f_t;
-        using reduce_find_t = std::pair<f_t, bit_t>;
+        using e_t = typename T::e_t;
+        using reduce_find_t = std::pair<e_t, bit_t>;
         using ops = operators<T>;
 
         template <binary_op_t F>
-        static SIMDIFY_FORCE_INLINE f_t reduce(const T& in) { return reduce_vector<F>(in).front(); }
+        static SIMDIFY_FORCE_INLINE e_t reduce(const T& in) { return reduce_vector<F>(in).front(); }
 
         template <binary_op_t F>
         static SIMDIFY_FORCE_INLINE const T reduce_vector(const T& in) { return horizontal_impl<T>::template reduce_vector<F>(in); }
@@ -116,7 +115,7 @@ namespace simd {
         }
 
         template <binary_op_t F, typename N>
-        static SIMDIFY_FORCE_INLINE f_t reduce_with_mask(const T& in, const T& mask, N&& neutral_value) {
+        static SIMDIFY_FORCE_INLINE e_t reduce_with_mask(const T& in, const T& mask, N&& neutral_value) {
             return reduce<F>(apply_mask(in, mask, std::forward<N>(neutral_value)));
         }
 
@@ -125,30 +124,30 @@ namespace simd {
             return reduce_find<F>(apply_mask(in, mask, std::forward<N>(neutral_value)));
         }
 
-        static SIMDIFY_FORCE_INLINE f_t min(const T& in) { return reduce<ops::min_>(in); }
-        static SIMDIFY_FORCE_INLINE f_t max(const T& in) { return reduce<ops::max_>(in); }
-        static SIMDIFY_FORCE_INLINE f_t sum(const T& in) { return reduce<ops::add_>(in); }
-        static SIMDIFY_FORCE_INLINE f_t product(const T& in) { return reduce<ops::mul_>(in); }
+        static SIMDIFY_FORCE_INLINE e_t min(const T& in) { return reduce<ops::min_>(in); }
+        static SIMDIFY_FORCE_INLINE e_t max(const T& in) { return reduce<ops::max_>(in); }
+        static SIMDIFY_FORCE_INLINE e_t sum(const T& in) { return reduce<ops::add_>(in); }
+        static SIMDIFY_FORCE_INLINE e_t product(const T& in) { return reduce<ops::mul_>(in); }
         static SIMDIFY_FORCE_INLINE reduce_find_t min_find(const T& in) { return reduce_find<ops::min_>(in); }
         static SIMDIFY_FORCE_INLINE reduce_find_t max_find(const T& in) { return reduce_find<ops::max_>(in); }
 
-        static SIMDIFY_FORCE_INLINE f_t min_with_mask(const T& in, const T& mask) {
-            return reduce_with_mask<ops::min_>(in, mask, std::numeric_limits<f_t>::max());
+        static SIMDIFY_FORCE_INLINE e_t min_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::min_>(in, mask, std::numeric_limits<e_t>::max());
         }
-        static SIMDIFY_FORCE_INLINE f_t max_with_mask(const T& in, const T& mask) {
-            return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<f_t>::min());
+        static SIMDIFY_FORCE_INLINE e_t max_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<e_t>::min());
         }
-        static SIMDIFY_FORCE_INLINE f_t sum_with_mask(const T& in, const T& mask) {
+        static SIMDIFY_FORCE_INLINE e_t sum_with_mask(const T& in, const T& mask) {
             return reduce_with_mask<ops::add_>(in, mask, zero());
         }
-        static SIMDIFY_FORCE_INLINE f_t product_with_mask(const T& in, const T& mask) {
-            return reduce_with_mask<ops::add_>(in, mask, f_t(1));
+        static SIMDIFY_FORCE_INLINE e_t product_with_mask(const T& in, const T& mask) {
+            return reduce_with_mask<ops::add_>(in, mask, e_t(1));
         }
         static SIMDIFY_FORCE_INLINE reduce_find_t min_find_with_mask(const T& in, const T& mask) {
-            return reduce_find_with_mask<ops::min_>(in, mask, std::numeric_limits<f_t>::max());
+            return reduce_find_with_mask<ops::min_>(in, mask, std::numeric_limits<e_t>::max());
         }
         static SIMDIFY_FORCE_INLINE reduce_find_t max_find_with_mask(const T& in, const T& mask) {
-            return reduce_find_with_mask<ops::max_>(in, mask, std::numeric_limits<f_t>::min());
+            return reduce_find_with_mask<ops::max_>(in, mask, std::numeric_limits<e_t>::min());
         }
     };
 

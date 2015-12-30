@@ -21,20 +21,20 @@ namespace simd {
 
         SIMDIFY_FORCE_INLINE flt(mm_t r) : simd_base(r) {}
         SIMDIFY_FORCE_INLINE flt(const expr::zero&) : simd_base(0) {}
-        SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = *r; }
-        SIMDIFY_FORCE_INLINE void store(f_t* r) const { *r = mm; }
-        SIMDIFY_FORCE_INLINE f_t front() const { return mm; }
-        SIMDIFY_FORCE_INLINE f_t back() const { return mm; }
+        SIMDIFY_FORCE_INLINE void load(const e_t* r) { mm = *r; }
+        SIMDIFY_FORCE_INLINE void store(e_t* r) const { *r = mm; }
+        SIMDIFY_FORCE_INLINE e_t front() const { return mm; }
+        SIMDIFY_FORCE_INLINE e_t back() const { return mm; }
 
         template <typename T>
         SIMDIFY_FORCE_INLINE flt(const expr::aligned<T>& r) : simd_base(*r.ptr) {}
         template <typename T>
         SIMDIFY_FORCE_INLINE flt(const expr::unaligned<T>& r) : simd_base(*r.ptr) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE flt(const expr::tof<T>& r) : flt(r.template to<f_t>()) {}
+        SIMDIFY_FORCE_INLINE flt(const expr::tof<T>& r) : flt(r.template to<e_t>()) {}
 
-        SIMDIFY_FORCE_INLINE void interleaved_load(const f_t* r, std::size_t) { load(r); }
-        SIMDIFY_FORCE_INLINE void interleaved_store(f_t* r, std::size_t) { store(r); }
+        SIMDIFY_FORCE_INLINE void interleaved_load(const e_t* r, std::size_t) { load(r); }
+        SIMDIFY_FORCE_INLINE void interleaved_store(e_t* r, std::size_t) { store(r); }
     };
 
     SIMDIFY_FORCE_INLINE const flt operator&(const flt& l, const flt& r) { return utof(tou(l.mm) & tou(r.mm)); }
@@ -79,9 +79,9 @@ namespace simd {
             SIMDIFY_FORCE_INLINE find_result_iterator end() const { return 0; }
         };
 
-        static SIMDIFY_FORCE_INLINE find_result find(const flt& in) { return in.u[0] != 0; }
-        static SIMDIFY_FORCE_INLINE bool any(const flt& in) { return in.u[0] != 0; }
-        static SIMDIFY_FORCE_INLINE bool all(const flt& in) { return in.u[0] != 0; }
+        static SIMDIFY_FORCE_INLINE find_result find(const flt& in) { return simd::tou(in.mm) != 0; }
+        static SIMDIFY_FORCE_INLINE bool any(const flt& in) { return simd::tou(in.mm) != 0; }
+        static SIMDIFY_FORCE_INLINE bool all(const flt& in) { return simd::tou(in.mm) != 0; }
 
         template <binary_op_t F>
         static SIMDIFY_FORCE_INLINE const flt reduce_vector(const flt& in) { return in; }

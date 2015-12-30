@@ -73,8 +73,8 @@ namespace simd {
             template <typename Simd_t>
             SIMDIFY_FORCE_INLINE void operator=(const Simd_t& r) const {
                 static_assert(!std::is_const<T>::value, "Storing into a const pointer via aligned()");
-                using f_t = typename Simd_t::f_t;
-                r.store(reinterpret_cast<f_t*>(ptr));
+                using e_t = typename Simd_t::e_t;
+                r.store(reinterpret_cast<e_t*>(ptr));
             }
 
             // data
@@ -88,8 +88,8 @@ namespace simd {
             template <typename Simd_t>
             SIMDIFY_FORCE_INLINE void operator=(const Simd_t& r) const {
                 static_assert(!std::is_const<T>::value, "Storing into a const pointer via unaligned()");
-                using f_t = typename Simd_t::f_t;
-                r.store(reinterpret_cast<f_t*>(ptr));
+                using e_t = typename Simd_t::e_t;
+                r.store(reinterpret_cast<e_t*>(ptr));
             }
 
             // data

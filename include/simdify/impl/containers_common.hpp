@@ -126,7 +126,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDIFY_CONTAINERS_COMMON_DATA                                                                   \
                                                                                                          \
-    std::unique_ptr<f_t, aligned_deleter> m_data;                                                        \
+    std::unique_ptr<e_t, aligned_deleter> m_data;                                                        \
     std::size_t m_sz;                                                                                    \
     std::size_t m_cap;                                                                                   \
                                                                                                          \

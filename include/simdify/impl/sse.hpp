@@ -39,31 +39,30 @@ namespace simd {
         SIMDIFY_FORCE_INLINE sse& operator=(sse&&) = default;
 
         SIMDIFY_FORCE_INLINE sse(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE sse(f_t r) : simd_base(_mm_set_ps1(r)) {}
+        SIMDIFY_FORCE_INLINE sse(e_t r) : simd_base(_mm_set_ps1(r)) {}
         SIMDIFY_FORCE_INLINE sse(const expr::zero&) : simd_base(_mm_setzero_ps()) {}
         SIMDIFY_FORCE_INLINE sse(const expr::bit_not<sse>& r) : simd_base(_mm_andnot_ps(r.neg.mm, sse(all_bits()).mm)) {}
-        SIMDIFY_FORCE_INLINE void load(const f_t* r) { mm = _mm_load_ps(r); }
-        SIMDIFY_FORCE_INLINE void store(f_t* r) const { _mm_store_ps(r, mm); }
-        SIMDIFY_FORCE_INLINE f_t front() const { return _mm_cvtss_f32(mm); }
-        SIMDIFY_FORCE_INLINE f_t back() const { return f.back(); }
+        SIMDIFY_FORCE_INLINE void load(const e_t* r) { mm = _mm_load_ps(r); }
+        SIMDIFY_FORCE_INLINE void store(e_t* r) const { _mm_store_ps(r, mm); }
+        // access first element: return _mm_cvtss_f32(mm)
 
         template <typename T>
         SIMDIFY_FORCE_INLINE sse(const expr::aligned<T>& r) : simd_base(_mm_load_ps(r.ptr)) {}
         template <typename T>
         SIMDIFY_FORCE_INLINE sse(const expr::unaligned<T>& r) : simd_base(_mm_loadu_ps(r.ptr)) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE sse(const expr::tof<T>& r) : sse(r.template to<f_t>()) {}
+        SIMDIFY_FORCE_INLINE sse(const expr::tof<T>& r) : sse(r.template to<e_t>()) {}
 
-        void interleaved_load(const f_t* r, std::size_t step) {
-            alignas(sse)f_t temp[W];
+        void interleaved_load(const e_t* r, std::size_t step) {
+            alignas(sse)e_t temp[W];
             for (std::size_t i = 0; i < W; ++i, r += step) {
                 temp[i] = *r;
             }
             load(temp);
         }
 
-        void interleaved_store(f_t* r, std::size_t step) {
-            alignas(sse)f_t temp[W];
+        void interleaved_store(e_t* r, std::size_t step) {
+            alignas(sse)e_t temp[W];
             store(temp);
             for (std::size_t i = 0; i < W; ++i, r += step) {
                 *r = temp[i];

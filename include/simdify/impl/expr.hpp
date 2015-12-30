@@ -122,8 +122,8 @@ namespace simd {
         };
 
         template <typename T>
-        struct utof : init<utof<T>> {
-            SIMDIFY_FORCE_INLINE constexpr explicit utof(T&& r) : ref(std::forward<T>(r)) {}
+        struct uval : init<uval<T>> {
+            SIMDIFY_FORCE_INLINE constexpr explicit uval(T&& r) : ref(std::forward<T>(r)) {}
 
             template <typename Target>
             SIMDIFY_FORCE_INLINE constexpr Target to() const {
@@ -136,8 +136,8 @@ namespace simd {
         };
 
         template <typename T>
-        struct stof : init<stof<T>> {
-            SIMDIFY_FORCE_INLINE constexpr explicit stof(T&& r) : ref(std::forward<T>(r)) {}
+        struct sval : init<sval<T>> {
+            SIMDIFY_FORCE_INLINE constexpr explicit sval(T&& r) : ref(std::forward<T>(r)) {}
 
             template <typename Target>
             SIMDIFY_FORCE_INLINE constexpr Target to() const {
@@ -246,9 +246,9 @@ namespace simd {
     template <typename T>
     SIMDIFY_FORCE_INLINE constexpr expr::fval<T&&> fval(T&& r) { return expr::fval<T&&>(std::forward<T>(r)); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::utof<T&&> utof(T&& r) { return expr::utof<T&&>(std::forward<T>(r)); }
+    SIMDIFY_FORCE_INLINE constexpr expr::uval<T&&> uval(T&& r) { return expr::uval<T&&>(std::forward<T>(r)); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::stof<T&&> stof(T&& r) { return expr::stof<T&&>(std::forward<T>(r)); }
+    SIMDIFY_FORCE_INLINE constexpr expr::sval<T&&> sval(T&& r) { return expr::sval<T&&>(std::forward<T>(r)); }
     template <typename T>
     SIMDIFY_FORCE_INLINE constexpr expr::tou<T&&> tou(T&& r) { return expr::tou<T&&>(std::forward<T>(r)); }
     template <typename T>

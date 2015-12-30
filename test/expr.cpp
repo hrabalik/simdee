@@ -31,50 +31,69 @@ TEST_CASE("expr::tos", "[expr]") {
 }
 
 TEST_CASE("expr::fval", "[expr]") {
-    float f = simd::fval(-1.23456789f).to<float>();
-    double d = simd::fval(-1.23456789).to<double>();
-    REQUIRE(f == -1.23456789f);
-    REQUIRE(d == -1.23456789);
+    SECTION("float") {
+        unsigned int u = 0;
+        u = simd::fval(2.f).to<unsigned int>();
+        REQUIRE(u == 0x40000000U);
+        u = simd::fval(-6.2598534e18f).to<unsigned int>();
+        REQUIRE(u == 0xdeadbeefU);
+
+        int s = 0;
+        s = simd::fval(-2.f).to<int>();
+        REQUIRE(s == -0x40000000);
+    }
+
+    SECTION("double") {
+        unsigned long long u = 0;
+        u = simd::fval(2.).to<unsigned long long>();
+        REQUIRE(u == 0x4000000000000000ULL);
+        u = simd::fval(-1.1885959257070704e+148).to<unsigned long long>();
+        REQUIRE(u == 0xdeadbeefdeadbeefULL);
+
+        long long s = 0;
+        s = simd::fval(-2.).to<long long>();
+        REQUIRE(s == -0x4000000000000000LL);
+    }
 }
 
-TEST_CASE("expr::utof", "[expr]") {
+TEST_CASE("expr::uval", "[expr]") {
     SECTION("float") {
         float f = 0;
-        f = simd::utof(0xdeadbeefU).to<float>();
+        f = simd::uval(0xdeadbeefU).to<float>();
         REQUIRE(simd::tou(f) == 0xdeadbeefU);
-        f = simd::utof(std::numeric_limits<uint32_t>::min()).to<float>();
+        f = simd::uval(std::numeric_limits<uint32_t>::min()).to<float>();
         REQUIRE(simd::tou(f) == std::numeric_limits<uint32_t>::min());
-        f = simd::utof(std::numeric_limits<uint32_t>::max()).to<float>();
+        f = simd::uval(std::numeric_limits<uint32_t>::max()).to<float>();
         REQUIRE(simd::tou(f) == std::numeric_limits<uint32_t>::max());
     }
     SECTION("double") {
         double d = 0;
-        d = simd::utof(0xdeadbeefdeadbeefULL).to<double>();
+        d = simd::uval(0xdeadbeefdeadbeefULL).to<double>();
         REQUIRE(simd::tou(d) == 0xdeadbeefdeadbeefULL);
-        d = simd::utof(std::numeric_limits<uint64_t>::min()).to<double>();
+        d = simd::uval(std::numeric_limits<uint64_t>::min()).to<double>();
         REQUIRE(simd::tou(d) == std::numeric_limits<uint64_t>::min());
-        d = simd::utof(std::numeric_limits<uint64_t>::max()).to<double>();
+        d = simd::uval(std::numeric_limits<uint64_t>::max()).to<double>();
         REQUIRE(simd::tou(d) == std::numeric_limits<uint64_t>::max());
     }
 }
 
-TEST_CASE("expr::stof", "[expr]") {
+TEST_CASE("expr::sval", "[expr]") {
     SECTION("float") {
         float f = 0;
-        f = simd::stof(-123456789).to<float>();
+        f = simd::sval(-123456789).to<float>();
         REQUIRE(simd::tos(f) == -123456789);
-        f = simd::stof(std::numeric_limits<int32_t>::min()).to<float>();
+        f = simd::sval(std::numeric_limits<int32_t>::min()).to<float>();
         REQUIRE(simd::tos(f) == std::numeric_limits<int32_t>::min());
-        f = simd::stof(std::numeric_limits<int32_t>::max()).to<float>();
+        f = simd::sval(std::numeric_limits<int32_t>::max()).to<float>();
         REQUIRE(simd::tos(f) == std::numeric_limits<int32_t>::max());
     }
     SECTION("double") {
         double d = 0;
-        d = simd::stof(-1234567890123LL).to<double>();
+        d = simd::sval(-1234567890123LL).to<double>();
         REQUIRE(simd::tos(d) == -1234567890123LL);
-        d = simd::stof(std::numeric_limits<int64_t>::min()).to<double>();
+        d = simd::sval(std::numeric_limits<int64_t>::min()).to<double>();
         REQUIRE(simd::tos(d) == std::numeric_limits<int64_t>::min());
-        d = simd::stof(std::numeric_limits<int64_t>::max()).to<double>();
+        d = simd::sval(std::numeric_limits<int64_t>::max()).to<double>();
         REQUIRE(simd::tos(d) == std::numeric_limits<int64_t>::max());
     }
 }

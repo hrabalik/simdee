@@ -100,10 +100,10 @@ namespace simd {
         struct init {
             SIMDIFY_FORCE_INLINE constexpr const Crtp& self() const { return static_cast<const Crtp&>(*this); }
 
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                static_assert(std::is_floating_point<F_t>::value, "init::to<F_t>():: F_t must be a floating point type");
-                return self().template to<F_t>();
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                static_assert(std::is_arithmetic<Target>::value, "init::to<Target>():: Target must be an arithmetic type");
+                return self().template to<Target>();
             }
         };
 
@@ -111,9 +111,10 @@ namespace simd {
         struct fval : init<fval<T>> {
             SIMDIFY_FORCE_INLINE constexpr explicit fval(T&& r) : ref(std::forward<T>(r)) {}
 
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                return ref;
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using f_t = select_float_t<sizeof(Target)>;
+                return dirty_cast<f_t, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -124,10 +125,10 @@ namespace simd {
         struct utof : init<utof<T>> {
             SIMDIFY_FORCE_INLINE constexpr explicit utof(T&& r) : ref(std::forward<T>(r)) {}
 
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                using u_t = select_uint_t<sizeof(F_t)>;
-                return dirty_cast<u_t, F_t>(std::forward<T>(ref));
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using u_t = select_uint_t<sizeof(Target)>;
+                return dirty_cast<u_t, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -138,10 +139,10 @@ namespace simd {
         struct stof : init<stof<T>> {
             SIMDIFY_FORCE_INLINE constexpr explicit stof(T&& r) : ref(std::forward<T>(r)) {}
 
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                using s_t = select_sint_t<sizeof(F_t)>;
-                return dirty_cast<s_t, F_t>(std::forward<T>(ref));
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using s_t = select_sint_t<sizeof(Target)>;
+                return dirty_cast<s_t, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -149,56 +150,59 @@ namespace simd {
         };
 
         struct zero : init<zero> {
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                using u_t = select_uint_t<sizeof(F_t)>;
-                return dirty_cast<u_t, F_t>(0);
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using u_t = select_uint_t<sizeof(Target)>;
+                return dirty_cast<u_t, Target>(0);
             }
         };
 
         struct all_bits : init<all_bits> {
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                using u_t = select_uint_t<sizeof(F_t)>;
-                return dirty_cast<u_t, F_t>(~u_t(0));
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using u_t = select_uint_t<sizeof(Target)>;
+                return dirty_cast<u_t, Target>(~u_t(0));
             }
         };
 
 
         struct sign_bit : init<sign_bit> {
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                using u_t = select_uint_t<sizeof(F_t)>;
-                return dirty_cast<u_t, F_t>(~(~u_t(0) >> 1));
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using u_t = select_uint_t<sizeof(Target)>;
+                return dirty_cast<u_t, Target>(~(~u_t(0) >> 1));
             }
         };
 
         struct abs_mask : init<abs_mask> {
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                using u_t = select_uint_t<sizeof(F_t)>;
-                return dirty_cast<u_t, F_t>(~u_t(0) >> 1);
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using u_t = select_uint_t<sizeof(Target)>;
+                return dirty_cast<u_t, Target>(~u_t(0) >> 1);
             }
         };
 
         struct inf : init<inf> {
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                return std::numeric_limits<F_t>::infinity();
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using f_t = select_float_t<sizeof(Target)>;
+                return dirty_cast<f_t, Target>(std::numeric_limits<f_t>::infinity());
             }
         };
 
         struct ninf : init<ninf> {
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                return -std::numeric_limits<F_t>::infinity();
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using f_t = select_float_t<sizeof(Target)>;
+                return dirty_cast<f_t, Target>(-std::numeric_limits<f_t>::infinity());
             }
         };
 
         struct nan : init<nan> {
-            template <typename F_t>
-            SIMDIFY_FORCE_INLINE constexpr F_t to() const {
-                return std::numeric_limits<F_t>::quiet_NaN();
+            template <typename Target>
+            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+                using f_t = select_float_t<sizeof(Target)>;
+                return dirty_cast<f_t, Target>(std::numeric_limits<f_t>::quiet_NaN());
             }
         };
 

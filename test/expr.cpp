@@ -2,6 +2,27 @@
 
 #include <simdify/simdify.hpp>
 
+TEST_CASE("expr::tof", "[expr]") {
+    SECTION("rvalues") {
+        REQUIRE(simd::tof(0x40000000U) == 2.0f);
+        REQUIRE(simd::tof(0x4000000000000000ULL) == 2.0);
+        REQUIRE(simd::tof(0xdeadbeefU) == -6.2598534e18f);
+        REQUIRE(simd::tof(0xdeadbeefdeadbeefULL) == -1.1885959257070704e+148);
+        REQUIRE(simd::tof(-0x40000000) == -2.0f);
+        REQUIRE(simd::tof(-0x4000000000000000LL) == -2.0);
+    }
+    SECTION("lvalues") {
+        unsigned int u = 0x40000000U;
+        unsigned long long ul = 0x4000000000000000ULL;
+        int s = -0x40000000;
+        long long sl = -0x4000000000000000LL;
+        REQUIRE(simd::tof(u) == 2.0f);
+        REQUIRE(simd::tof(ul) == 2.0);
+        REQUIRE(simd::tof(s) == -2.0f);
+        REQUIRE(simd::tof(sl) == -2.0);
+    }
+}
+
 TEST_CASE("expr::tou", "[expr]") {
     SECTION("rvalues") {
         REQUIRE(simd::tou(2.0f) == 0x40000000U);

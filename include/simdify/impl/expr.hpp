@@ -207,15 +207,31 @@ namespace simd {
         };
 
         template <typename T>
+        struct tof {
+            using Source = typename std::decay<T>::type;
+            using Target = select_float_t<sizeof(Source)>;
+            static_assert(std::is_arithmetic<Source>::value, "tof() must be used to convert from an arithmetic type");
+
+            SIMDIFY_FORCE_INLINE constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
+
+            SIMDIFY_FORCE_INLINE constexpr operator Target() const {
+                return dirty_cast<Source, Target>(std::forward<T>(ref));
+            }
+
+            // data
+            T&& ref;
+        };
+
+        template <typename T>
         struct tou {
-            using f_t = typename std::decay<T>::type;
-            using u_t = select_uint_t<sizeof(f_t)>;
-            static_assert(std::is_floating_point<f_t>::value, "tou() must be used to convert from a floating-point value");
+            using Source = typename std::decay<T>::type;
+            using Target = select_uint_t<sizeof(Source)>;
+            static_assert(std::is_arithmetic<Source>::value, "tou() must be used to convert from an arithmetic type");
 
             SIMDIFY_FORCE_INLINE constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
 
-            SIMDIFY_FORCE_INLINE constexpr operator u_t() const {
-                return dirty_cast<f_t, u_t>(std::forward<T>(ref));
+            SIMDIFY_FORCE_INLINE constexpr operator Target() const {
+                return dirty_cast<Source, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -224,14 +240,14 @@ namespace simd {
 
         template <typename T>
         struct tos {
-            using f_t = typename std::decay<T>::type;
-            using s_t = select_sint_t<sizeof(f_t)>;
-            static_assert(std::is_floating_point<f_t>::value, "tos() must be used to convert from a floating-point value");
+            using Source = typename std::decay<T>::type;
+            using Target = select_sint_t<sizeof(Source)>;
+            static_assert(std::is_arithmetic<Source>::value, "tos() must be used to convert from an arithmetic type");
 
             SIMDIFY_FORCE_INLINE constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
 
-            SIMDIFY_FORCE_INLINE constexpr operator s_t() const {
-                return dirty_cast<f_t, s_t>(std::forward<T>(ref));
+            SIMDIFY_FORCE_INLINE constexpr operator Target() const {
+                return dirty_cast<Source, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -249,6 +265,8 @@ namespace simd {
     SIMDIFY_FORCE_INLINE constexpr expr::uval<T&&> uval(T&& r) { return expr::uval<T&&>(std::forward<T>(r)); }
     template <typename T>
     SIMDIFY_FORCE_INLINE constexpr expr::sval<T&&> sval(T&& r) { return expr::sval<T&&>(std::forward<T>(r)); }
+    template <typename T>
+    SIMDIFY_FORCE_INLINE constexpr expr::tof<T&&> tof(T&& r) { return expr::tof<T&&>(std::forward<T>(r)); }
     template <typename T>
     SIMDIFY_FORCE_INLINE constexpr expr::tou<T&&> tou(T&& r) { return expr::tou<T&&>(std::forward<T>(r)); }
     template <typename T>

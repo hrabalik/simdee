@@ -38,7 +38,7 @@ namespace simd {
         template <typename T>
         SIMDIFY_FORCE_INLINE avx(const expr::unaligned<T>& r) : simd_base(_mm256_loadu_ps(r.ptr)) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE avx(const expr::tof<T>& r) : avx(r.template to<e_t>()) {}
+        SIMDIFY_FORCE_INLINE avx(const expr::init<T>& r) : avx(r.template to<e_t>()) {}
 
         void interleaved_load(const e_t* r, std::size_t step) {
             alignas(avx)e_t temp[W];

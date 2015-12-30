@@ -31,7 +31,7 @@ namespace simd {
         template <typename T>
         SIMDIFY_FORCE_INLINE flt(const expr::unaligned<T>& r) : simd_base(*r.ptr) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE flt(const expr::tof<T>& r) : flt(r.template to<e_t>()) {}
+        SIMDIFY_FORCE_INLINE flt(const expr::init<T>& r) : flt(r.template to<e_t>()) {}
 
         SIMDIFY_FORCE_INLINE void interleaved_load(const e_t* r, std::size_t) { load(r); }
         SIMDIFY_FORCE_INLINE void interleaved_store(e_t* r, std::size_t) { store(r); }

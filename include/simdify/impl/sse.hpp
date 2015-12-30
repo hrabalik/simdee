@@ -51,7 +51,7 @@ namespace simd {
         template <typename T>
         SIMDIFY_FORCE_INLINE sse(const expr::unaligned<T>& r) : simd_base(_mm_loadu_ps(r.ptr)) {}
         template <typename T>
-        SIMDIFY_FORCE_INLINE sse(const expr::tof<T>& r) : sse(r.template to<e_t>()) {}
+        SIMDIFY_FORCE_INLINE sse(const expr::init<T>& r) : sse(r.template to<e_t>()) {}
 
         void interleaved_load(const e_t* r, std::size_t step) {
             alignas(sse)e_t temp[W];

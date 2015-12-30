@@ -84,7 +84,7 @@ TEST_CASE("AVX explicit construction", "[simd_t][x86][avx]") {
         T t(aos_stor);
         tor(t); REQUIRE(r == bufA);
     }
-    SECTION("from utof, stof, zero, etc. (simd::tof family)") {
+    SECTION("from utof, stof, zero, etc. (simd::init family)") {
         T ta(simd::utof(0xdeadbeef));
         T tb(simd::stof(-123456789));
         T tc(simd::zero());
@@ -133,7 +133,7 @@ TEST_CASE("AVX implicit construction", "[simd_t][x86][avx]") {
         implicit_test(aos_stor);
         REQUIRE(r == bufA);
     }
-    SECTION("from utof, stof, zero, etc. (simd::tof family)") {
+    SECTION("from utof, stof, zero, etc. (simd::init family)") {
         implicit_test(simd::utof(0xdeadbeef));
         for (auto val : r) REQUIRE(simd::tou(val) == 0xdeadbeef);
         implicit_test(simd::stof(-123456789));
@@ -187,7 +187,7 @@ TEST_CASE("AVX assignment", "[simd_t][x86][avx]") {
         int i = 0;
         tor(); for (auto val : r) REQUIRE(val == 1.234f * bufA[i++]);
     }
-    SECTION("from utof, stof, zero, etc. (simd::tof family)") {
+    SECTION("from utof, stof, zero, etc. (simd::init family)") {
         t = simd::utof(0xdeadbeef);
         tor(); for (auto val : r) REQUIRE(simd::tou(val) == 0xdeadbeef);
         t = simd::stof(-123456789);

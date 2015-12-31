@@ -37,9 +37,9 @@
                                                                                                          \
     std::size_t capacity() const { return m_cap; }                                                       \
     std::size_t size() const { return m_sz; }                                                            \
-    std::size_t size_head() const { return div_floor_shift<W>(m_sz); }                                   \
-    std::size_t size_vector() const { return div_ceil_shift<W>(m_sz); }                                  \
-    std::size_t size_tail() const { return size() - size_head(); }                                       \
+    std::size_t size_body() const { return div_floor_shift<W>(m_sz); }                                   \
+    std::size_t size_overspan() const { return div_ceil_shift<W>(m_sz); }                                \
+    std::size_t size_tail() const { return size() - size_body(); }                                       \
                                                                                                          \
     void resize(std::size_t count) {                                                                     \
         reserve(count);                                                                                  \
@@ -61,29 +61,29 @@
                                                                                                          \
     iterator begin() { return iterator(*this, 0); }                                                      \
     iterator end() { return iterator(*this, size()); }                                                   \
-    iterator_vector begin_vector() { return iterator_vector(*this, 0); }                                 \
-    iterator_vector end_vector() { return iterator_vector(*this, size_vector()); }                       \
-    iterator_vector begin_head() { return iterator_vector(*this, 0); }                                   \
-    iterator_vector end_head() { return iterator_vector(*this, size_head()); }                           \
-    iterator begin_tail() { return iterator(*this, size_head()); }                                       \
+    iterator_vector begin_overspan() { return iterator_vector(*this, 0); }                               \
+    iterator_vector end_vector() { return iterator_vector(*this, size_overspan()); }                     \
+    iterator_vector begin_body() { return iterator_vector(*this, 0); }                                   \
+    iterator_vector end_body() { return iterator_vector(*this, size_body()); }                           \
+    iterator begin_tail() { return iterator(*this, size_body()); }                                       \
     iterator end_tail() { return iterator(*this, size()); }                                              \
                                                                                                          \
     const_iterator begin() const { return cbegin(); }                                                    \
     const_iterator end() const { return cend(); }                                                        \
-    const_iterator_vector begin_vector() const { return cbegin_vector(); }                               \
+    const_iterator_vector begin_overspan() const { return cbegin_overspan(); }                           \
     const_iterator_vector end_vector() const { return cend_vector(); }                                   \
-    const_iterator_vector begin_head() const { return cbegin_head(); }                                   \
-    const_iterator_vector end_head() const { return cend_head(); }                                       \
+    const_iterator_vector begin_body() const { return cbegin_body(); }                                   \
+    const_iterator_vector end_body() const { return cend_body(); }                                       \
     const_iterator begin_tail() const { return cbegin_tail(); }                                          \
     const_iterator end_tail() const { return cend_tail(); }                                              \
                                                                                                          \
     const_iterator cbegin() const { return const_iterator(*this, 0); }                                   \
     const_iterator cend() const { return const_iterator(*this, size()); }                                \
-    const_iterator_vector cbegin_vector() const { return const_iterator_vector(*this, 0); }              \
-    const_iterator_vector cend_vector() const { return const_iterator_vector(*this, size_vector()); }    \
-    const_iterator_vector cbegin_head() const { return const_iterator_vector(*this, 0); }                \
-    const_iterator_vector cend_head() const { return const_iterator_vector(*this, size_head()); }        \
-    const_iterator cbegin_tail() const { return const_iterator(*this, size_head()); }                    \
+    const_iterator_vector cbegin_overspan() const { return const_iterator_vector(*this, 0); }            \
+    const_iterator_vector cend_vector() const { return const_iterator_vector(*this, size_overspan()); }  \
+    const_iterator_vector cbegin_body() const { return const_iterator_vector(*this, 0); }                \
+    const_iterator_vector cend_body() const { return const_iterator_vector(*this, size_body()); }        \
+    const_iterator cbegin_tail() const { return const_iterator(*this, size_body()); }                    \
     const_iterator cend_tail() const { return const_iterator(*this, size()); }                           \
                                                                                                          \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////

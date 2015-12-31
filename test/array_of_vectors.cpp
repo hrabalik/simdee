@@ -22,7 +22,7 @@ TEST_CASE("array_of_vectors construction", "[containers][array_of_vectors]") {
             return ref.x == 11.f && ref.y == 22.f && ref.z == 33.f;
         });
         REQUIRE(win);
-        bool win2 = std::all_of(t.cbegin_head(), t.cend_head(), [](T::const_reference_vector ref) {
+        bool win2 = std::all_of(t.cbegin_body(), t.cend_body(), [](T::const_reference_vector ref) {
             return simd::sse::horizontal::all(ref.x == 11.f & ref.y == 22.f & ref.z == 33.f);
         });
         REQUIRE(win2);
@@ -48,9 +48,9 @@ TEST_CASE("array_of_vectors size management", "[containers][array_of_vectors]") 
     SECTION("resize, clear") {
         t.resize(13, std::make_tuple(11.f, 22.f, 33.f));
         REQUIRE(t.size() == 13);
-        REQUIRE(t.size_head() == 12);
+        REQUIRE(t.size_body() == 12);
         REQUIRE(t.size_tail() == 1);
-        REQUIRE(t.size_vector() == 16);
+        REQUIRE(t.size_overspan() == 16);
         REQUIRE(t.capacity() >= 13);
 
         bool win = std::all_of(t.cbegin(), t.cend(), [](T::const_reference ref) {
@@ -60,9 +60,9 @@ TEST_CASE("array_of_vectors size management", "[containers][array_of_vectors]") 
 
         t.resize(8);
         REQUIRE(t.size() == 8);
-        REQUIRE(t.size_head() == 8);
+        REQUIRE(t.size_body() == 8);
         REQUIRE(t.size_tail() == 0);
-        REQUIRE(t.size_vector() == 8);
+        REQUIRE(t.size_overspan() == 8);
         REQUIRE(t.capacity() >= 13);
 
         t.resize(26, std::make_tuple(11.f, 22.f, 33.f));
@@ -140,7 +140,7 @@ TEST_CASE("array_of_vectors iteration", "[containers][array_of_vectors]") {
     }
 
     {
-        auto begin = t.begin_vector();
+        auto begin = t.begin_overspan();
         auto end = t.end_vector();
         simd::storage<simd::sse> stor;
 
@@ -168,8 +168,8 @@ TEST_CASE("array_of_vectors iteration", "[containers][array_of_vectors]") {
     }
 
     {
-        auto begin = t.begin_head();
-        auto end = t.end_head();
+        auto begin = t.begin_body();
+        auto end = t.end_body();
         simd::storage<simd::sse> stor;
 
         REQUIRE(begin != end);

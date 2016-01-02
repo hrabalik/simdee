@@ -37,8 +37,8 @@
                                                                                                          \
     std::size_t capacity() const { return m_cap; }                                                       \
     std::size_t size() const { return m_sz; }                                                            \
-    std::size_t size_body() const { return div_floor_shift<W>(m_sz); }                                   \
-    std::size_t size_overspan() const { return div_ceil_shift<W>(m_sz); }                                \
+    std::size_t size_body() const { return div_floor_mult<W>(m_sz); }                                    \
+    std::size_t size_overspan() const { return div_ceil_mult<W>(m_sz); }                                 \
     std::size_t size_tail() const { return size() - size_body(); }                                       \
                                                                                                          \
     void resize(std::size_t count) {                                                                     \

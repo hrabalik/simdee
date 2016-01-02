@@ -53,7 +53,7 @@ namespace simd {
     SIMDIFY_FORCE_INLINE std::size_t div_ceil(std::size_t a) { return (a + (b - 1)) / b; }
 
     template <std::size_t b>
-    SIMDIFY_FORCE_INLINE std::size_t div_floor_shift(std::size_t a) {
+    SIMDIFY_FORCE_INLINE std::size_t div_floor_mult(std::size_t a) {
         if (is_power_of_2<b>::value)
             return a & ~(b - 1);
         else
@@ -61,7 +61,7 @@ namespace simd {
     }
 
     template <std::size_t b>
-    SIMDIFY_FORCE_INLINE std::size_t div_ceil_shift(std::size_t a) {
+    SIMDIFY_FORCE_INLINE std::size_t div_ceil_mult(std::size_t a) {
         if (is_power_of_2<b>::value)
             return (a + (b - 1)) & ~(b - 1);
         else

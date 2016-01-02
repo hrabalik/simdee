@@ -34,7 +34,7 @@ namespace simd {
 
             std::size_t new_cap = m_cap;
             if (new_cap == 0) {
-                new_cap = div_ceil_shift<W>(count);
+                new_cap = div_ceil_mult<W>(count);
             }
             else do { new_cap *= 2; } while (new_cap < count);
 

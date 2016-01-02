@@ -19,6 +19,12 @@ namespace simd {
     SIMDIFY_FORCE_INLINE int ls1b(unsigned long long in) { return __builtin_ctzll(in); }
     // most significant "1" bit index; result undefined if in == 0
     SIMDIFY_FORCE_INLINE int ms1b(unsigned long long in) { return (8*int(sizeof(unsigned long long)) - 1) - __builtin_clzll(in); }
+    // convert little/big endian
+    SIMDIFY_FORCE_INLINE uint16_t bswap(uint16_t in) { return __builtin_bswap16(in); }
+    // convert little/big endian
+    SIMDIFY_FORCE_INLINE uint32_t bswap(uint32_t in) { return __builtin_bswap32(in); }
+    // convert little/big endian
+    SIMDIFY_FORCE_INLINE uint64_t bswap(uint64_t in) { return __builtin_bswap64(in); }
 }
 
 #elif defined(_MSC_VER) // Visual Studio
@@ -30,6 +36,12 @@ namespace simd {
     SIMDIFY_FORCE_INLINE unsigned long ls1b(unsigned __int32 in) { unsigned long res; _BitScanForward(&res, in); return res; }
     // most significant "1" bit index; result undefined if in == 0
     SIMDIFY_FORCE_INLINE unsigned long ms1b(unsigned __int32 in) { unsigned long res; _BitScanReverse(&res, in); return res; }
+    // convert little/big endian
+    SIMDIFY_FORCE_INLINE uint16_t bswap(uint16_t in) { return _byteswap_ushort(in); }
+    // convert little/big endian
+    SIMDIFY_FORCE_INLINE uint32_t bswap(uint32_t in) { return _byteswap_ulong(in); }
+    // convert little/big endian
+    SIMDIFY_FORCE_INLINE uint64_t bswap(uint64_t in) { return _byteswap_uint64(in); }
 
 #if defined(_M_X64)
     // least significant "1" bit index; result undefined if in == 0

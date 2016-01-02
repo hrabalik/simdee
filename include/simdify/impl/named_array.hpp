@@ -45,9 +45,9 @@ namespace simd {                                                                
     }                                                                                             \
                                                                                                   \
     namespace detail {                                                                            \
-        template <typename T, typename... Ids>                                                    \
-        struct pack<T, group<id::ID, Ids...>> : pack<T, group<Ids...>> {                          \
-            using base_t = pack<T, group<Ids...>>;                                                \
+        template <int D, typename T, typename... Ids>                                             \
+        struct pack<D, T, group<id::ID, Ids...>> : pack<D, T, group<Ids...>> {                    \
+            using base_t = pack<D, T, group<Ids...>>;                                             \
                                                                                                   \
             SIMDIFY_FORCE_INLINE constexpr pack() = default;                                      \
             SIMDIFY_FORCE_INLINE constexpr pack(const pack&) = default;                           \
@@ -70,9 +70,9 @@ namespace simd {                                                                
             T ID;                                                                                 \
         };                                                                                        \
                                                                                                   \
-        template <typename T, typename... MyNames, typename... Ids>                               \
-        struct pack<T, group<sub::ID<MyNames...>, Ids...>> : pack<T, group<Ids...>> {             \
-            using base_t = pack<T, group<Ids...>>;                                                \
+        template <int D, typename T, typename... MyNames, typename... Ids>                        \
+        struct pack<D, T, group<sub::ID<MyNames...>, Ids...>> : pack<D, T, group<Ids...>> {       \
+            using base_t = pack<D, T, group<Ids...>>;                                             \
                                                                                                   \
             SIMDIFY_FORCE_INLINE constexpr pack() = default;                                      \
             SIMDIFY_FORCE_INLINE constexpr pack(const pack&) = default;                           \
@@ -92,7 +92,7 @@ namespace simd {                                                                
                 return *this;                                                                     \
             }                                                                                     \
                                                                                                   \
-            pack<T, group<MyNames...>> ID;                                                        \
+            pack<D + 1, T, group<MyNames...>> ID;                                                 \
         };                                                                                        \
     }                                                                                             \
 }                                                                                                 \
@@ -131,11 +131,11 @@ namespace simd {
         template <typename... T>
         using reverse_group = typename group<T...>::reverse;
 
-        template <typename T, typename Group>
+        template <int D, typename T, typename Group>
         struct pack;
 
-        template <typename T>
-        struct pack<T, group<>> {
+        template <int D, typename T>
+        struct pack<D, T, group<>> {
             SIMDIFY_FORCE_INLINE constexpr pack() = default;
             SIMDIFY_FORCE_INLINE constexpr pack(const pack&) = default;
             SIMDIFY_FORCE_INLINE constexpr pack(pack&&) = default;
@@ -177,7 +177,7 @@ SIMDIFY_ADD_IDENTIFIER(w);
 SIMDIFY_ADD_IDENTIFIER(x);
 SIMDIFY_ADD_IDENTIFIER(y);
 SIMDIFY_ADD_IDENTIFIER(z);
- 
+
 namespace simd {
     namespace detail {
         template <typename... Args>
@@ -185,9 +185,9 @@ namespace simd {
     }
 
     template <typename T, typename... Ids>
-    struct named_array : detail::pack<T, detail::reverse_group<Ids...>> {
+    struct named_array : detail::pack<0, T, detail::reverse_group<Ids...>> {
         using group_t = detail::reverse_group<Ids...>;
-        using base_t = detail::pack<T, group_t>;
+        using base_t = detail::pack<0, T, group_t>;
         enum : std::size_t { N = group_t::size };
 
         constexpr named_array() = default;

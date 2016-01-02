@@ -32,26 +32,34 @@ namespace simd {
     // SIMD with SSE
     struct sse : simd_base<__m128, float, sse> {
         SIMDIFY_FORCE_INLINE ~sse() = default;
+
         SIMDIFY_FORCE_INLINE sse() = default;
         SIMDIFY_FORCE_INLINE sse(const sse&) = default;
-        SIMDIFY_FORCE_INLINE sse(sse&&) = default;
-        SIMDIFY_FORCE_INLINE sse& operator=(const sse&) = default;
-        SIMDIFY_FORCE_INLINE sse& operator=(sse&&) = default;
+        SIMDIFY_FORCE_INLINE sse(const mm_t& r) { *this = r; }
+        SIMDIFY_FORCE_INLINE sse(e_t r) { *this = r; }
+        SIMDIFY_FORCE_INLINE sse(const expr::zero& r) { *this = r; }
+        SIMDIFY_FORCE_INLINE sse(const expr::bit_not<sse>& r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE sse(const expr::aligned<T>& r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE sse(const expr::unaligned<T>& r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE sse(const expr::init<T>& r) { *this = r; }
 
-        SIMDIFY_FORCE_INLINE sse(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE sse(e_t r) : simd_base(_mm_set_ps1(r)) {}
-        SIMDIFY_FORCE_INLINE sse(const expr::zero&) : simd_base(_mm_setzero_ps()) {}
-        SIMDIFY_FORCE_INLINE sse(const expr::bit_not<sse>& r) : simd_base(_mm_andnot_ps(r.neg.mm, sse(all_bits()).mm)) {}
+        SIMDIFY_FORCE_INLINE sse& operator=(const sse&) = default;
+        SIMDIFY_FORCE_INLINE sse& operator=(const mm_t& r) { mm = r; return *this; }
+        SIMDIFY_FORCE_INLINE sse& operator=(e_t r) { mm = _mm_set_ps1(r); return *this; }
+        SIMDIFY_FORCE_INLINE sse& operator=(const expr::zero& r) { mm = _mm_setzero_ps(); return *this; }
+        SIMDIFY_FORCE_INLINE sse& operator=(const expr::bit_not<sse>& r) { mm = _mm_andnot_ps(r.neg.mm, sse(all_bits()).mm); return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE sse& operator=(const expr::aligned<T>& r) { mm = _mm_load_ps(r.ptr); return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE sse& operator=(const expr::unaligned<T>& r) { mm = _mm_loadu_ps(r.ptr); return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE sse& operator=(const expr::init<T>& r) { *this = r.template to<e_t>(); return *this; }
+
         SIMDIFY_FORCE_INLINE void load(const e_t* r) { mm = _mm_load_ps(r); }
         SIMDIFY_FORCE_INLINE void store(e_t* r) const { _mm_store_ps(r, mm); }
-        // access first element: return _mm_cvtss_f32(mm)
-
-        template <typename T>
-        SIMDIFY_FORCE_INLINE sse(const expr::aligned<T>& r) : simd_base(_mm_load_ps(r.ptr)) {}
-        template <typename T>
-        SIMDIFY_FORCE_INLINE sse(const expr::unaligned<T>& r) : simd_base(_mm_loadu_ps(r.ptr)) {}
-        template <typename T>
-        SIMDIFY_FORCE_INLINE sse(const expr::init<T>& r) : sse(r.template to<e_t>()) {}
 
         void interleaved_load(const e_t* r, std::size_t step) {
             alignas(sse)e_t temp[W];

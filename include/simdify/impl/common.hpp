@@ -37,10 +37,6 @@ namespace simd {
 
         // data
         mm_t mm;
-
-        // constructor
-        SIMDIFY_FORCE_INLINE simd_base() {}
-        SIMDIFY_FORCE_INLINE simd_base(mm_t r) : mm(r) {}
     };
 
     //

@@ -1,3 +1,4 @@
+#define SIMDIFY_NEED_SSE
 #include <simdify/containers.hpp>
 
 #include "catch.hpp"

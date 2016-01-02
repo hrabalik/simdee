@@ -13,25 +13,30 @@ namespace simd {
     // SIMD emulation with a glorified float
     struct flt : simd_base<float, float, flt> {
         SIMDIFY_FORCE_INLINE ~flt() = default;
+
         SIMDIFY_FORCE_INLINE flt() = default;
         SIMDIFY_FORCE_INLINE flt(const flt&) = default;
-        SIMDIFY_FORCE_INLINE flt(flt&&) = default;
-        SIMDIFY_FORCE_INLINE flt& operator=(const flt&) = default;
-        SIMDIFY_FORCE_INLINE flt& operator=(flt&&) = default;
+        SIMDIFY_FORCE_INLINE flt(mm_t r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE flt(const expr::aligned<T>& r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE flt(const expr::unaligned<T>& r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE flt(const expr::init<T>& r) { *this = r; }
 
-        SIMDIFY_FORCE_INLINE flt(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE flt(const expr::zero&) : simd_base(0) {}
+        SIMDIFY_FORCE_INLINE flt& operator=(const flt&) = default;
+        SIMDIFY_FORCE_INLINE flt& operator=(mm_t r) { mm = r; return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE flt& operator=(const expr::aligned<T>& r) { mm = *r.ptr; return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE flt& operator=(const expr::unaligned<T>& r) { mm = *r.ptr; return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE flt& operator=(const expr::init<T>& r) { *this = r.template to<e_t>(); return *this; }
+
         SIMDIFY_FORCE_INLINE void load(const e_t* r) { mm = *r; }
         SIMDIFY_FORCE_INLINE void store(e_t* r) const { *r = mm; }
         SIMDIFY_FORCE_INLINE e_t front() const { return mm; }
         SIMDIFY_FORCE_INLINE e_t back() const { return mm; }
-
-        template <typename T>
-        SIMDIFY_FORCE_INLINE flt(const expr::aligned<T>& r) : simd_base(*r.ptr) {}
-        template <typename T>
-        SIMDIFY_FORCE_INLINE flt(const expr::unaligned<T>& r) : simd_base(*r.ptr) {}
-        template <typename T>
-        SIMDIFY_FORCE_INLINE flt(const expr::init<T>& r) : flt(r.template to<e_t>()) {}
 
         SIMDIFY_FORCE_INLINE void interleaved_load(const e_t* r, std::size_t) { load(r); }
         SIMDIFY_FORCE_INLINE void interleaved_store(e_t* r, std::size_t) { store(r); }

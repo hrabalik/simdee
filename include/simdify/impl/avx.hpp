@@ -19,26 +19,34 @@ namespace simd {
     // SIMD with AVX
     struct avx : simd_base<__m256, float, avx> {
         SIMDIFY_FORCE_INLINE ~avx() = default;
+
         SIMDIFY_FORCE_INLINE avx() = default;
         SIMDIFY_FORCE_INLINE avx(const avx&) = default;
-        SIMDIFY_FORCE_INLINE avx(avx&&) = default;
-        SIMDIFY_FORCE_INLINE avx& operator=(const avx&) = default;
-        SIMDIFY_FORCE_INLINE avx& operator=(avx&&) = default;
+        SIMDIFY_FORCE_INLINE avx(const mm_t& r) { *this = r; }
+        SIMDIFY_FORCE_INLINE avx(e_t r) { *this = r; }
+        SIMDIFY_FORCE_INLINE avx(const expr::zero& r) { *this = r; }
+        SIMDIFY_FORCE_INLINE avx(const expr::bit_not<avx>& r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE avx(const expr::aligned<T>& r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE avx(const expr::unaligned<T>& r) { *this = r; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE avx(const expr::init<T>& r) { *this = r; }
 
-        SIMDIFY_FORCE_INLINE avx(mm_t r) : simd_base(r) {}
-        SIMDIFY_FORCE_INLINE avx(e_t r) : simd_base(_mm256_broadcast_ss(&r)) {}
-        SIMDIFY_FORCE_INLINE avx(const expr::zero&) : simd_base(_mm256_setzero_ps()) {}
-        SIMDIFY_FORCE_INLINE avx(const expr::bit_not<avx>& r) : simd_base(_mm256_andnot_ps(r.neg.mm, avx(all_bits()).mm)) {}
+        SIMDIFY_FORCE_INLINE avx& operator=(const avx&) = default;
+        SIMDIFY_FORCE_INLINE avx& operator=(const mm_t& r) { mm = r; return *this; }
+        SIMDIFY_FORCE_INLINE avx& operator=(e_t r) { mm = _mm256_broadcast_ss(&r); return *this; }
+        SIMDIFY_FORCE_INLINE avx& operator=(const expr::zero& r) { mm = _mm256_setzero_ps(); return *this; }
+        SIMDIFY_FORCE_INLINE avx& operator=(const expr::bit_not<avx>& r) { mm = _mm256_andnot_ps(r.neg.mm, avx(all_bits()).mm); return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE avx& operator=(const expr::aligned<T>& r) { mm = _mm256_load_ps(r.ptr); return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE avx& operator=(const expr::unaligned<T>& r) { mm = _mm256_loadu_ps(r.ptr); return *this; }
+        template <typename T>
+        SIMDIFY_FORCE_INLINE avx& operator=(const expr::init<T>& r) { *this = r.template to<e_t>(); return *this; }
+
         SIMDIFY_FORCE_INLINE void load(const e_t* r) { mm = _mm256_load_ps(r); }
         SIMDIFY_FORCE_INLINE void store(e_t* r) const { _mm256_store_ps(r, mm); }
-        // access first element: _mm_cvtss_f32(_mm256_castps256_ps128(mm))
-
-        template <typename T>
-        SIMDIFY_FORCE_INLINE avx(const expr::aligned<T>& r) : simd_base(_mm256_load_ps(r.ptr)) {}
-        template <typename T>
-        SIMDIFY_FORCE_INLINE avx(const expr::unaligned<T>& r) : simd_base(_mm256_loadu_ps(r.ptr)) {}
-        template <typename T>
-        SIMDIFY_FORCE_INLINE avx(const expr::init<T>& r) : avx(r.template to<e_t>()) {}
 
         void interleaved_load(const e_t* r, std::size_t step) {
             alignas(avx)e_t temp[W];

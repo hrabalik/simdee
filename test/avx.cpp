@@ -51,11 +51,8 @@ TEST_CASE("AVX explicit construction", "[simd_t][x86][avx]") {
         simd::aligned(r.data()) = t;
     };
 
-    SECTION("default") {
-        T t;
-    }
     SECTION("copy") {
-        T t;
+        T t(1.2345678f);
         T t2(t);
     }
     SECTION("from e_t") {

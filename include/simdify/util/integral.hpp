@@ -47,13 +47,13 @@ namespace simd {
     struct is_power_of_2 : std::integral_constant < bool, x && (x & (x - 1)) == 0 > {};
 
     template <std::size_t b>
-    SIMDIFY_FORCE_INLINE std::size_t div_floor(std::size_t a) { return a / b; }
+    SIMDIFY_INL std::size_t div_floor(std::size_t a) { return a / b; }
 
     template <std::size_t b>
-    SIMDIFY_FORCE_INLINE std::size_t div_ceil(std::size_t a) { return (a + (b - 1)) / b; }
+    SIMDIFY_INL std::size_t div_ceil(std::size_t a) { return (a + (b - 1)) / b; }
 
     template <std::size_t b>
-    SIMDIFY_FORCE_INLINE std::size_t div_floor_mult(std::size_t a) {
+    SIMDIFY_INL std::size_t div_floor_mult(std::size_t a) {
         if (is_power_of_2<b>::value)
             return a & ~(b - 1);
         else
@@ -61,7 +61,7 @@ namespace simd {
     }
 
     template <std::size_t b>
-    SIMDIFY_FORCE_INLINE std::size_t div_ceil_mult(std::size_t a) {
+    SIMDIFY_INL std::size_t div_ceil_mult(std::size_t a) {
         if (is_power_of_2<b>::value)
             return (a + (b - 1)) & ~(b - 1);
         else
@@ -69,7 +69,7 @@ namespace simd {
     }
 
     template <std::size_t b>
-    SIMDIFY_FORCE_INLINE std::size_t mod(std::size_t a) {
+    SIMDIFY_INL std::size_t mod(std::size_t a) {
         if (is_power_of_2<b>::value)
             return a & (b - 1);
         else

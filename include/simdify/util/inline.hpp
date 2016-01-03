@@ -3,15 +3,15 @@
 
 #if defined(__clang__)
 
-#define SIMDIFY_FORCE_INLINE __inline__ __attribute__((always_inline, nodebug))
+#define SIMDIFY_INL __inline__ __attribute__((always_inline, nodebug))
 
 #elif defined(__GNUC__)
 
-#define SIMDIFY_FORCE_INLINE __inline__ __attribute__((always_inline))
+#define SIMDIFY_INL __inline__ __attribute__((always_inline))
 
 #elif defined(_MSC_VER)
 
-#define SIMDIFY_FORCE_INLINE __forceinline
+#define SIMDIFY_INL __forceinline
 
 #else
 

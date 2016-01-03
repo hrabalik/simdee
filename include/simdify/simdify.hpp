@@ -51,7 +51,7 @@
 #endif
 
 #if 1 || defined(SIMDIFY_NEED_FLT)
-#include "impl/flt.hpp"
+#include "impl/dum.hpp"
 #endif
 
 //
@@ -60,17 +60,17 @@
 //
 namespace simd {
 #if defined(SIMDIFY_PREFER_AVX) && defined(SIMDIFY_AVX)
-    using simd_t = avx;
+    using simd_t = avxf;
 #elif defined(SIMDIFY_PREFER_SSE) && defined(SIMDIFY_SSE)
-    using simd_t = sse;
-#elif defined(SIMDIFY_PREFER_FLT) && defined(SIMDIFY_FLT)
-    using simd_t = flt;
+    using simd_t = ssef;
+#elif defined(SIMDIFY_PREFER_DUM) && defined(SIMDIFY_DUM)
+    using simd_t = dumf;
 #elif defined(SIMDIFY_AVX)
-    using simd_t = avx;
+    using simd_t = avxf;
 #elif defined(SIMDIFY_SSE)
-    using simd_t = sse;
-#elif defined(SIMDIFY_FLT)
-    using simd_t = flt;
+    using simd_t = ssef;
+#elif defined(SIMDIFY_DUM)
+    using simd_t = dumf;
 #else
 #error "Simdify could not determine a suitable SIMD type as simd_t."
 #endif

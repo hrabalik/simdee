@@ -4,7 +4,7 @@
 #include "catch.hpp"
 #include <algorithm>
 
-using T = simd::array_of_structures<simd::sse, simd::id::x, simd::id::y, simd::id::z>;
+using T = simd::array_of_structures<simd::ssef, simd::id::x, simd::id::y, simd::id::z>;
 
 TEST_CASE("array_of_structures construction", "[containers][array_of_structures]") {
     SECTION("default") {
@@ -24,7 +24,7 @@ TEST_CASE("array_of_structures construction", "[containers][array_of_structures]
         });
         REQUIRE(win);
         bool win2 = std::all_of(t.cbegin_body(), t.cend_body(), [](T::const_reference_vector ref) {
-            return simd::sse::horizontal::all(ref.x == 11.f & ref.y == 22.f & ref.z == 33.f);
+            return simd::ssef::horizontal::all(ref.x == 11.f & ref.y == 22.f & ref.z == 33.f);
         });
         REQUIRE(win2);
     }
@@ -143,7 +143,7 @@ TEST_CASE("array_of_structures iteration", "[containers][array_of_structures]") 
     {
         auto begin = t.begin_overspan();
         auto end = t.end_vector();
-        simd::storage<simd::sse> stor;
+        simd::storage<simd::ssef> stor;
 
         REQUIRE(begin != end);
         stor = begin->x;
@@ -171,7 +171,7 @@ TEST_CASE("array_of_structures iteration", "[containers][array_of_structures]") 
     {
         auto begin = t.begin_body();
         auto end = t.end_body();
-        simd::storage<simd::sse> stor;
+        simd::storage<simd::ssef> stor;
 
         REQUIRE(begin != end);
         stor = begin->x;

@@ -8,37 +8,42 @@
 #include <utility>
 
 namespace simd {
+    template <typename T>
+    struct is_simd_type;
+    template <typename T>
+    struct simd_type_traits;
+
     namespace expr {
         template <typename T>
         struct bit_not {
-            SIMDIFY_FORCE_INLINE constexpr explicit bit_not(const T& r) : neg(r) {}
+            SIMDIFY_INL constexpr explicit bit_not(const T& r) : neg(r) {}
 
             // data
             const T neg;
         };
 
         template<typename T>
-        SIMDIFY_FORCE_INLINE constexpr const T operator~(const bit_not<T>& l) {
+        SIMDIFY_INL constexpr const T operator~(const bit_not<T>& l) {
             return l.neg;
         }
         template<typename T>
-        SIMDIFY_FORCE_INLINE const T operator&(const bit_not<T>& l, const T& r) {
-            return andnot(l.neg, r);
+        SIMDIFY_INL const T operator&(const bit_not<T>& l, const T& r) {
+            return nand(l.neg, r);
         }
         template<typename T>
-        SIMDIFY_FORCE_INLINE const T operator&(const T& l, const bit_not<T>& r) {
-            return andnot(r.neg, l);
+        SIMDIFY_INL const T operator&(const T& l, const bit_not<T>& r) {
+            return nand(r.neg, l);
         }
         template<typename T>
-        SIMDIFY_FORCE_INLINE const bit_not<T> operator&(const bit_not<T>& l, const bit_not<T>& r) {
+        SIMDIFY_INL const bit_not<T> operator&(const bit_not<T>& l, const bit_not<T>& r) {
             return bit_not<T>(l.neg | r.neg);
         }
         template<typename T>
-        SIMDIFY_FORCE_INLINE const bit_not<T> operator|(const bit_not<T>& l, const bit_not<T>& r) {
+        SIMDIFY_INL const bit_not<T> operator|(const bit_not<T>& l, const bit_not<T>& r) {
             return bit_not<T>(l.neg & r.neg);
         }
         template<typename T>
-        SIMDIFY_FORCE_INLINE const T operator^(const bit_not<T>& l, const bit_not<T>& r) {
+        SIMDIFY_INL const T operator^(const bit_not<T>& l, const bit_not<T>& r) {
             return l.neg ^ r.neg;
         }
 
@@ -68,13 +73,13 @@ namespace simd {
 
         template <typename T>
         struct aligned {
-            SIMDIFY_FORCE_INLINE constexpr explicit aligned(T* r) : ptr(r) {}
+            SIMDIFY_INL constexpr explicit aligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDIFY_FORCE_INLINE void operator=(const Simd_t& r) const {
+            SIMDIFY_INL void operator=(const Simd_t& r) const {
                 static_assert(!std::is_const<T>::value, "Storing into a const pointer via aligned()");
                 using e_t = typename Simd_t::e_t;
-                r.store(reinterpret_cast<e_t*>(ptr));
+                r.aligned_store(reinterpret_cast<e_t*>(ptr));
             }
 
             // data
@@ -83,13 +88,13 @@ namespace simd {
 
         template <typename T>
         struct unaligned {
-            SIMDIFY_FORCE_INLINE constexpr explicit unaligned(T* r) : ptr(r) {}
+            SIMDIFY_INL constexpr explicit unaligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDIFY_FORCE_INLINE void operator=(const Simd_t& r) const {
+            SIMDIFY_INL void operator=(const Simd_t& r) const {
                 static_assert(!std::is_const<T>::value, "Storing into a const pointer via unaligned()");
                 using e_t = typename Simd_t::e_t;
-                r.store(reinterpret_cast<e_t*>(ptr));
+                r.unaligned_store(reinterpret_cast<e_t*>(ptr));
             }
 
             // data
@@ -98,10 +103,10 @@ namespace simd {
 
         template <typename Crtp>
         struct init {
-            SIMDIFY_FORCE_INLINE constexpr const Crtp& self() const { return static_cast<const Crtp&>(*this); }
+            SIMDIFY_INL constexpr const Crtp& self() const { return static_cast<const Crtp&>(*this); }
 
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 static_assert(std::is_arithmetic<Target>::value, "init::to<Target>():: Target must be an arithmetic type");
                 return self().template to<Target>();
             }
@@ -109,10 +114,10 @@ namespace simd {
 
         template <typename T>
         struct fval : init<fval<T>> {
-            SIMDIFY_FORCE_INLINE constexpr explicit fval(T&& r) : ref(std::forward<T>(r)) {}
+            SIMDIFY_INL constexpr explicit fval(T&& r) : ref(std::forward<T>(r)) {}
 
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using f_t = select_float_t<sizeof(Target)>;
                 return dirty_cast<f_t, Target>(std::forward<T>(ref));
             }
@@ -123,10 +128,10 @@ namespace simd {
 
         template <typename T>
         struct uval : init<uval<T>> {
-            SIMDIFY_FORCE_INLINE constexpr explicit uval(T&& r) : ref(std::forward<T>(r)) {}
+            SIMDIFY_INL constexpr explicit uval(T&& r) : ref(std::forward<T>(r)) {}
 
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
                 return dirty_cast<u_t, Target>(std::forward<T>(ref));
             }
@@ -137,10 +142,10 @@ namespace simd {
 
         template <typename T>
         struct sval : init<sval<T>> {
-            SIMDIFY_FORCE_INLINE constexpr explicit sval(T&& r) : ref(std::forward<T>(r)) {}
+            SIMDIFY_INL constexpr explicit sval(T&& r) : ref(std::forward<T>(r)) {}
 
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using s_t = select_sint_t<sizeof(Target)>;
                 return dirty_cast<s_t, Target>(std::forward<T>(ref));
             }
@@ -151,7 +156,7 @@ namespace simd {
 
         struct zero : init<zero> {
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
                 return dirty_cast<u_t, Target>(0);
             }
@@ -159,7 +164,7 @@ namespace simd {
 
         struct all_bits : init<all_bits> {
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
                 return dirty_cast<u_t, Target>(~u_t(0));
             }
@@ -168,7 +173,7 @@ namespace simd {
 
         struct sign_bit : init<sign_bit> {
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
                 return dirty_cast<u_t, Target>(~(~u_t(0) >> 1));
             }
@@ -176,7 +181,7 @@ namespace simd {
 
         struct abs_mask : init<abs_mask> {
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
                 return dirty_cast<u_t, Target>(~u_t(0) >> 1);
             }
@@ -184,7 +189,7 @@ namespace simd {
 
         struct inf : init<inf> {
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using f_t = select_float_t<sizeof(Target)>;
                 return dirty_cast<f_t, Target>(std::numeric_limits<f_t>::infinity());
             }
@@ -192,7 +197,7 @@ namespace simd {
 
         struct ninf : init<ninf> {
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using f_t = select_float_t<sizeof(Target)>;
                 return dirty_cast<f_t, Target>(-std::numeric_limits<f_t>::infinity());
             }
@@ -200,21 +205,23 @@ namespace simd {
 
         struct nan : init<nan> {
             template <typename Target>
-            SIMDIFY_FORCE_INLINE constexpr Target to() const {
+            SIMDIFY_INL constexpr Target to() const {
                 using f_t = select_float_t<sizeof(Target)>;
                 return dirty_cast<f_t, Target>(std::numeric_limits<f_t>::quiet_NaN());
             }
         };
 
+        template <typename T, typename Enable = void>
+        struct tof;
+
         template <typename T>
-        struct tof {
+        struct tof<T, typename std::enable_if<std::is_arithmetic<typename std::decay<T>::type>::value>::type> {
             using Source = typename std::decay<T>::type;
             using Target = select_float_t<sizeof(Source)>;
-            static_assert(std::is_arithmetic<Source>::value, "tof() must be used to convert from an arithmetic type");
 
-            SIMDIFY_FORCE_INLINE constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
+            SIMDIFY_INL constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
 
-            SIMDIFY_FORCE_INLINE constexpr operator Target() const {
+            SIMDIFY_INL constexpr operator Target() const {
                 return dirty_cast<Source, Target>(std::forward<T>(ref));
             }
 
@@ -223,14 +230,31 @@ namespace simd {
         };
 
         template <typename T>
-        struct tou {
+        struct tof<T, typename std::enable_if<is_simd_type<typename std::decay<T>::type>::value>::type> {
+            using Source = typename std::decay<T>::type;
+            using Target = typename simd_type_traits<Source>::vec_f;
+
+            SIMDIFY_INL constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
+
+            SIMDIFY_INL constexpr operator Target() const {
+                return dirty_cast<Source, Target>(std::forward<T>(ref));
+            }
+
+            // data
+            T&& ref;
+        };
+
+        template <typename T, typename Enable = void>
+        struct tou;
+
+        template <typename T>
+        struct tou<T, typename std::enable_if<std::is_arithmetic<typename std::decay<T>::type>::value>::type> {
             using Source = typename std::decay<T>::type;
             using Target = select_uint_t<sizeof(Source)>;
-            static_assert(std::is_arithmetic<Source>::value, "tou() must be used to convert from an arithmetic type");
 
-            SIMDIFY_FORCE_INLINE constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
+            SIMDIFY_INL constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
 
-            SIMDIFY_FORCE_INLINE constexpr operator Target() const {
+            SIMDIFY_INL constexpr operator Target() const {
                 return dirty_cast<Source, Target>(std::forward<T>(ref));
             }
 
@@ -239,14 +263,47 @@ namespace simd {
         };
 
         template <typename T>
-        struct tos {
+        struct tou<T, typename std::enable_if<is_simd_type<typename std::decay<T>::type>::value>::type> {
+            using Source = typename std::decay<T>::type;
+            using Target = typename simd_type_traits<Source>::vec_u;
+
+            SIMDIFY_INL constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
+
+            SIMDIFY_INL constexpr operator Target() const {
+                return dirty_cast<Source, Target>(std::forward<T>(ref));
+            }
+
+            // data
+            T&& ref;
+        };
+
+        template <typename T, typename Enable = void>
+        struct tos;
+
+        template <typename T>
+        struct tos<T, typename std::enable_if<std::is_arithmetic<typename std::decay<T>::type>::value>::type> {
             using Source = typename std::decay<T>::type;
             using Target = select_sint_t<sizeof(Source)>;
             static_assert(std::is_arithmetic<Source>::value, "tos() must be used to convert from an arithmetic type");
 
-            SIMDIFY_FORCE_INLINE constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
+            SIMDIFY_INL constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
 
-            SIMDIFY_FORCE_INLINE constexpr operator Target() const {
+            SIMDIFY_INL constexpr operator Target() const {
+                return dirty_cast<Source, Target>(std::forward<T>(ref));
+            }
+
+            // data
+            T&& ref;
+        };
+
+        template <typename T>
+        struct tos<T, typename std::enable_if<is_simd_type<typename std::decay<T>::type>::value>::type> {
+            using Source = typename std::decay<T>::type;
+            using Target = typename simd_type_traits<Source>::vec_s;
+
+            SIMDIFY_INL constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
+
+            SIMDIFY_INL constexpr operator Target() const {
                 return dirty_cast<Source, Target>(std::forward<T>(ref));
             }
 
@@ -256,29 +313,29 @@ namespace simd {
     }
 
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::aligned<T> aligned(T* const& r) { return expr::aligned<T>(r); }
+    SIMDIFY_INL constexpr expr::aligned<T> aligned(T* const& r) { return expr::aligned<T>(r); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::unaligned<T> unaligned(T* const& r) { return expr::unaligned<T>(r); }
+    SIMDIFY_INL constexpr expr::unaligned<T> unaligned(T* const& r) { return expr::unaligned<T>(r); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::fval<T&&> fval(T&& r) { return expr::fval<T&&>(std::forward<T>(r)); }
+    SIMDIFY_INL constexpr expr::fval<T&&> fval(T&& r) { return expr::fval<T&&>(std::forward<T>(r)); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::uval<T&&> uval(T&& r) { return expr::uval<T&&>(std::forward<T>(r)); }
+    SIMDIFY_INL constexpr expr::uval<T&&> uval(T&& r) { return expr::uval<T&&>(std::forward<T>(r)); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::sval<T&&> sval(T&& r) { return expr::sval<T&&>(std::forward<T>(r)); }
+    SIMDIFY_INL constexpr expr::sval<T&&> sval(T&& r) { return expr::sval<T&&>(std::forward<T>(r)); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::tof<T&&> tof(T&& r) { return expr::tof<T&&>(std::forward<T>(r)); }
+    SIMDIFY_INL constexpr expr::tof<T&&> tof(T&& r) { return expr::tof<T&&>(std::forward<T>(r)); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::tou<T&&> tou(T&& r) { return expr::tou<T&&>(std::forward<T>(r)); }
+    SIMDIFY_INL constexpr expr::tou<T&&> tou(T&& r) { return expr::tou<T&&>(std::forward<T>(r)); }
     template <typename T>
-    SIMDIFY_FORCE_INLINE constexpr expr::tos<T&&> tos(T&& r) { return expr::tos<T&&>(std::forward<T>(r)); }
+    SIMDIFY_INL constexpr expr::tos<T&&> tos(T&& r) { return expr::tos<T&&>(std::forward<T>(r)); }
 
-    SIMDIFY_FORCE_INLINE constexpr expr::zero zero() { return expr::zero{}; }
-    SIMDIFY_FORCE_INLINE constexpr expr::all_bits all_bits() { return expr::all_bits{}; }
-    SIMDIFY_FORCE_INLINE constexpr expr::sign_bit sign_bit() { return expr::sign_bit{}; }
-    SIMDIFY_FORCE_INLINE constexpr expr::abs_mask abs_mask() { return expr::abs_mask{}; }
-    SIMDIFY_FORCE_INLINE constexpr expr::inf inf() { return expr::inf{}; }
-    SIMDIFY_FORCE_INLINE constexpr expr::ninf ninf() { return expr::ninf{}; }
-    SIMDIFY_FORCE_INLINE constexpr expr::nan nan() { return expr::nan{}; }
+    SIMDIFY_INL constexpr expr::zero zero() { return expr::zero{}; }
+    SIMDIFY_INL constexpr expr::all_bits all_bits() { return expr::all_bits{}; }
+    SIMDIFY_INL constexpr expr::sign_bit sign_bit() { return expr::sign_bit{}; }
+    SIMDIFY_INL constexpr expr::abs_mask abs_mask() { return expr::abs_mask{}; }
+    SIMDIFY_INL constexpr expr::inf inf() { return expr::inf{}; }
+    SIMDIFY_INL constexpr expr::ninf ninf() { return expr::ninf{}; }
+    SIMDIFY_INL constexpr expr::nan nan() { return expr::nan{}; }
 }
 
 #endif // SIMDIFY_EXPR

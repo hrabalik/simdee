@@ -79,57 +79,33 @@ namespace simd {
         using unary_op_t = const T(*)(const T& in);
         using binary_op_t = const T(*)(const T& l, const T& r);
         using e_t = typename T::e_t;
-        using reduce_find_t = std::pair<e_t, bit_t>;
         using ops = operators<T>;
         using mask_t = typename simd_type_traits<T>::vec_u;
 
         template <binary_op_t F>
-        static SIMDIFY_INL e_t reduce(const T& in) { return reduce_vector<F>(in).front(); }
-
-        template <binary_op_t F>
-        static SIMDIFY_INL const T reduce_vector(const T& in) { return horizontal_impl<T>::template reduce_vector<F>(in); }
-
-        template <binary_op_t F>
-        static SIMDIFY_INL reduce_find_t reduce_find(const T& in) {
-            auto in_reduced = reduce_vector<F>(in);
-            auto selected = horizontal_impl<T>::find(in == in_reduced);
-            return std::make_pair(in_reduced.front(), selected);
-        }
+        static SIMDIFY_INL const T reduce(const T& in) { return horizontal_impl<T>::template reduce<F>(in); }
 
         template <binary_op_t F, typename N>
-        static SIMDIFY_INL e_t reduce_with_mask(const T& in, const mask_t& mask, const N& neutral_value) {
-            return reduce<F>(apply_mask(in, mask, neutral_value));
+        static SIMDIFY_INL const T reduce_with_mask(const T& in, const mask_t& mask, const N& neutral_value) {
+            return reduce<F>(cond(mask, in, neutral_value));
         }
 
-        template <binary_op_t F, typename N>
-        static SIMDIFY_INL reduce_find_t reduce_find_with_mask(const T& in, const mask_t& mask, N&& neutral_value) {
-            return reduce_find<F>(apply_mask(in, mask, std::forward<N>(neutral_value)));
-        }
+        static SIMDIFY_INL const T min(const T& in) { return reduce<ops::min_>(in); }
+        static SIMDIFY_INL const T max(const T& in) { return reduce<ops::max_>(in); }
+        static SIMDIFY_INL const T sum(const T& in) { return reduce<ops::add_>(in); }
+        static SIMDIFY_INL const T product(const T& in) { return reduce<ops::mul_>(in); }
 
-        static SIMDIFY_INL e_t min(const T& in) { return reduce<ops::min_>(in); }
-        static SIMDIFY_INL e_t max(const T& in) { return reduce<ops::max_>(in); }
-        static SIMDIFY_INL e_t sum(const T& in) { return reduce<ops::add_>(in); }
-        static SIMDIFY_INL e_t product(const T& in) { return reduce<ops::mul_>(in); }
-        static SIMDIFY_INL reduce_find_t min_find(const T& in) { return reduce_find<ops::min_>(in); }
-        static SIMDIFY_INL reduce_find_t max_find(const T& in) { return reduce_find<ops::max_>(in); }
-
-        static SIMDIFY_INL e_t min_with_mask(const T& in, const mask_t& mask) {
+        static SIMDIFY_INL const T min_with_mask(const T& in, const mask_t& mask) {
             return reduce_with_mask<ops::min_>(in, mask, std::numeric_limits<e_t>::max());
         }
-        static SIMDIFY_INL e_t max_with_mask(const T& in, const mask_t& mask) {
+        static SIMDIFY_INL const T max_with_mask(const T& in, const mask_t& mask) {
             return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<e_t>::lowest());
         }
-        static SIMDIFY_INL e_t sum_with_mask(const T& in, const mask_t& mask) {
+        static SIMDIFY_INL const T sum_with_mask(const T& in, const mask_t& mask) {
             return reduce_with_mask<ops::add_>(in, mask, zero());
         }
-        static SIMDIFY_INL e_t product_with_mask(const T& in, const mask_t& mask) {
+        static SIMDIFY_INL const T product_with_mask(const T& in, const mask_t& mask) {
             return reduce_with_mask<ops::add_>(in, mask, e_t(1));
-        }
-        static SIMDIFY_INL reduce_find_t min_find_with_mask(const T& in, const mask_t& mask) {
-            return reduce_find_with_mask<ops::min_>(in, mask, std::numeric_limits<e_t>::max());
-        }
-        static SIMDIFY_INL reduce_find_t max_find_with_mask(const T& in, const mask_t& mask) {
-            return reduce_find_with_mask<ops::max_>(in, mask, std::numeric_limits<e_t>::lowest());
         }
     };
 

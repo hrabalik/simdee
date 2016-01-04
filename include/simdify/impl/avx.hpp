@@ -151,7 +151,7 @@ namespace simd {
     struct avxf : simd_base<avxf> {
         SIMDIFY_AVX_COMMON_DECLARATIONS(avxf, ps, float);
 
-        e_t front() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
+        SIMDIFY_INL e_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
     };
 
     struct avxu : simd_base<avxu> {
@@ -164,13 +164,17 @@ namespace simd {
             return *this;
         }
 
-        e_t front() const { return _mm_cvt_ss2si(_mm256_castps256_ps128(mm)); }
+        SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(_mm256_castps256_ps128(mm)); }
+
+        SIMDIFY_INL bit_t front() const { return ls1b(bit_t(_mm256_movemask_ps(mm)));; }
+        SIMDIFY_INL bit_iterator begin() const { return bit_iterator(_mm256_movemask_ps(mm)); }
+        SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
     };
 
     struct avxs : simd_base<avxs> {
         SIMDIFY_AVX_COMMON_DECLARATIONS(avxs, ps, float);
 
-        e_t front() const { return _mm_cvt_ss2si(_mm256_castps256_ps128(mm)); }
+        SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(_mm256_castps256_ps128(mm)); }
     };
 
     SIMDIFY_INL const avxu operator&(const avxu& l, const avxu& r) { return _mm256_and_ps(l.mm, r.mm); }
@@ -178,6 +182,8 @@ namespace simd {
     SIMDIFY_INL const avxu operator^(const avxu& l, const avxu& r) { return _mm256_xor_ps(l.mm, r.mm); }
     SIMDIFY_INL const expr::bit_not<avxu> operator~(const avxu& l) { return expr::bit_not<avxu>(l); }
     SIMDIFY_INL const avxu nand(const avxu& l, const avxu& r) { return _mm256_andnot_ps(l.mm, r.mm); }
+    SIMDIFY_INL const bool any(const avxu& l) { return _mm256_movemask_ps(l.mm) != 0; }
+    SIMDIFY_INL const bool all(const avxu& l) { return _mm256_movemask_ps(l.mm) == 0xFF; }
 
     SIMDIFY_INL const avxu operator<(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_LT_OQ); }
     SIMDIFY_INL const avxu operator>(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_GT_OQ); }
@@ -210,12 +216,8 @@ namespace simd {
 
     template <typename Crtp>
     struct avx_horizontal_impl : horizontal_impl_base<Crtp> {
-        static SIMDIFY_INL bit_field find(const avxu& in) { return bit_field(bit_t(_mm256_movemask_ps(in.mm))); }
-        static SIMDIFY_INL bool any(const avxu& in) { return _mm256_movemask_ps(in.mm) != 0; }
-        static SIMDIFY_INL bool all(const avxu& in) { return _mm256_movemask_ps(in.mm) == 0xFF; }
-
         template <binary_op_t F>
-        static SIMDIFY_INL const Crtp reduce_vector(const Crtp& in) {
+        static SIMDIFY_INL const Crtp reduce(const Crtp& in) {
             Crtp tmp = F(in, _mm256_permute_ps(in.mm, _MM_SHUFFLE(2, 3, 0, 1)));
             tmp = F(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));
             return F(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));

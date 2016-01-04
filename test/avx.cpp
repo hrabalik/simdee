@@ -598,13 +598,15 @@ TEST_CASE("AVX horizontal operations", "[simd_t][x86][avx]") {
     F a = simd::aligned(bufAF.data());
     F::e_t v;
     uint32_t idx;
+
     SECTION("max") {
-        v = F::horizontal::max(a);
+        v = F::horizontal::max(a).first_element();
         REQUIRE(v == 2.22944568f);
-        v = F::horizontal::max_with_mask(a, a != 2.22944568f);
+        idx = (v == a).front();
+        REQUIRE(idx == 3);
+        v = F::horizontal::max_with_mask(a, a != 2.22944568f).first_element();
         REQUIRE(v == 0.70154146f);
-        //idx = F::horizontal::max_find(a).second;
-        //REQUIRE(idx == 3);
+        idx = (v == a).front();
+        REQUIRE(idx == 1);
     }
 }
-

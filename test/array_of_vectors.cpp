@@ -24,7 +24,7 @@ TEST_CASE("array_of_vectors construction", "[containers][array_of_vectors]") {
         });
         REQUIRE(win);
         bool win2 = std::all_of(t.cbegin_body(), t.cend_body(), [](T::const_reference_vector ref) {
-            return simd::ssef::horizontal::all(ref.x == 11.f & ref.y == 22.f & ref.z == 33.f);
+            return all(ref.x == 11.f & ref.y == 22.f & ref.z == 33.f);
         });
         REQUIRE(win2);
     }

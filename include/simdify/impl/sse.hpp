@@ -48,11 +48,11 @@ namespace simd {
     };
 
     template <>
-    struct simd_type_traits<ssef> : sse_traits<__m128, float>{};
+    struct simd_type_traits<ssef> : sse_traits<__m128, float> {};
     template <>
-    struct simd_type_traits<sseu> : sse_traits<__m128i, uint32_t> {};
+    struct simd_type_traits<sseu> : sse_traits<__m128, uint32_t> {};
     template <>
-    struct simd_type_traits<sses> : sse_traits<__m128i, int32_t> {};
+    struct simd_type_traits<sses> : sse_traits<__m128, int32_t> {};
 
     // SIMD with SSE
     struct ssef : simd_base<ssef> {
@@ -103,13 +103,22 @@ namespace simd {
                 *r = temp[i];
             }
         }
+
+        SIMDIFY_INL e_t first_element() const { return _mm_cvtss_f32(mm); }
     };
 
     struct sseu : simd_base<sseu> {
 
+        SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(mm); }
+
+        SIMDIFY_INL bit_t front() const { return ls1b(bit_t(_mm_movemask_ps(mm)));; }
+        SIMDIFY_INL bit_iterator begin() const { return bit_iterator(_mm_movemask_ps(mm)); }
+        SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
     };
 
     struct sses : simd_base<sses> {
+
+        SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(mm); }
 
     };
 
@@ -117,35 +126,44 @@ namespace simd {
     SIMDIFY_INL const ssef operator|(const ssef& l, const ssef& r) { return _mm_or_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator^(const ssef& l, const ssef& r) { return _mm_xor_ps(l.mm, r.mm); }
     SIMDIFY_INL const expr::bit_not<ssef> operator~(const ssef& l) { return expr::bit_not<ssef>(l); }
+    SIMDIFY_INL const ssef nand(const ssef& l, const ssef& r) { return _mm_andnot_ps(l.mm, r.mm); }
+    SIMDIFY_INL const bool any(const ssef& l) { return _mm_movemask_ps(l.mm) != 0; }
+    SIMDIFY_INL const bool all(const ssef& l) { return _mm_movemask_ps(l.mm) == 0xF; }
+
     SIMDIFY_INL const ssef operator<(const ssef& l, const ssef& r) { return _mm_cmplt_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator>(const ssef& l, const ssef& r) { return _mm_cmpgt_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator<=(const ssef& l, const ssef& r) { return _mm_cmple_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator>=(const ssef& l, const ssef& r) { return _mm_cmpge_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator==(const ssef& l, const ssef& r) { return _mm_cmpeq_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator!=(const ssef& l, const ssef& r) { return _mm_cmpneq_ps(l.mm, r.mm); }
+
+    SIMDIFY_INL const ssef operator-(const ssef& l) { return _mm_xor_ps(l.mm, ssef(sign_bit()).mm); }
     SIMDIFY_INL const ssef operator+(const ssef& l, const ssef& r) { return _mm_add_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator-(const ssef& l, const ssef& r) { return _mm_sub_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator*(const ssef& l, const ssef& r) { return _mm_mul_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef operator/(const ssef& l, const ssef& r) { return _mm_div_ps(l.mm, r.mm); }
-    SIMDIFY_INL const ssef operator-(const ssef& in) { return in ^ sign_bit(); }
-    SIMDIFY_INL const ssef nand(const ssef& l, const ssef& r) { return _mm_andnot_ps(l.mm, r.mm); }
+
     SIMDIFY_INL const ssef min(const ssef& l, const ssef& r) { return _mm_min_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef max(const ssef& l, const ssef& r) { return _mm_max_ps(l.mm, r.mm); }
+
     SIMDIFY_INL const ssef cond(const ssef& pred, const ssef& if_true, const ssef& if_false) { return (if_true & pred) | (if_false & ~pred); }
 
     // horizontal operations
-    template <>
-    struct horizontal_impl<ssef> : horizontal_impl_base<ssef> {
-        static SIMDIFY_INL bit_field find(const ssef& in) { return  bit_field(bit_t(_mm_movemask_ps(in.mm))); }
-        static SIMDIFY_INL bool any(const ssef& in) { return _mm_movemask_ps(in.mm) != 0; }
-        static SIMDIFY_INL bool all(const ssef& in) { return _mm_movemask_ps(in.mm) == 0xF; }
-
+    template <typename Crtp>
+    struct sse_horizontal_impl : horizontal_impl_base<Crtp> {
         template <binary_op_t F>
-        static SIMDIFY_INL const ssef reduce_vector(const ssef& in) {
+        static SIMDIFY_INL const ssef reduce(const ssef& in) {
             ssef tmp = F(in, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(in.mm), _MM_SHUFFLE(2, 3, 0, 1))));
             return F(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm), _MM_SHUFFLE(1, 0, 3, 2))));
         }
     };
+
+    template <>
+    struct horizontal_impl<ssef> : sse_horizontal_impl<ssef> {};
+    template <>
+    struct horizontal_impl<sseu> : sse_horizontal_impl<sseu> {};
+    template <>
+    struct horizontal_impl<sses> : sse_horizontal_impl<sses> {};
 
 }
 

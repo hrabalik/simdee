@@ -669,3 +669,27 @@ TEST_CASE("AVX horizontal operations", "[simd_t][x86][avx]") {
         REQUIRE(v == 1);
     }
 }
+
+TEST_CASE("AVX conditional", "[simd_t][x86][avx]") {
+    F af = simd::aligned(bufAF.data());
+    U au = simd::aligned(bufAU.data());
+    S as = simd::aligned(bufAS.data());
+    F bf = simd::aligned(bufBF.data());
+    U bu = simd::aligned(bufBU.data());
+    S bs = simd::aligned(bufBS.data());
+
+    U sel = af >= bf;
+    bool sel0[F::W];
+    for (auto& val : sel0) val = false;
+    for (auto idx : sel) sel0[idx] = true;
+
+    simd::storage<F> rf(cond(sel, af, bf));
+    simd::storage<U> ru(cond(sel, au, bu));
+    simd::storage<S> rs(cond(sel, as, bs));
+
+    for (int i = 0; i < F::W; ++i) {
+        REQUIRE((rf[i]) == (sel0[i] ? bufAF[i] : bufBF[i]));
+        REQUIRE((ru[i]) == (sel0[i] ? bufAU[i] : bufBU[i]));
+        REQUIRE((rs[i]) == (sel0[i] ? bufAS[i] : bufBS[i]));
+    }
+}

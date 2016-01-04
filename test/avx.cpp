@@ -475,20 +475,32 @@ TEST_CASE("AVX arithmetic", "[simd_t][x86][avx]") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::plus<F::e_t>());
         tor(a + b);
         REQUIRE(r == e);
+        a += b;
+        tor(a);
+        REQUIRE(r == e);
     }
     SECTION("minus") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::minus<F::e_t>());
         tor(a - b);
+        REQUIRE(r == e);
+        a -= b;
+        tor(a);
         REQUIRE(r == e);
     }
     SECTION("multiplies") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::multiplies<F::e_t>());
         tor(a * b);
         REQUIRE(r == e);
+        a *= b;
+        tor(a);
+        REQUIRE(r == e);
     }
     SECTION("divides") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::divides<F::e_t>());
         tor(a / b);
+        REQUIRE(r == e);
+        a /= b;
+        tor(a);
         REQUIRE(r == e);
     }
 }
@@ -562,6 +574,9 @@ TEST_CASE("AVX bitwise", "[simd_t][x86][avx]") {
         });
         tor(a & b);
         REQUIRE(r == e);
+        a &= b;
+        tor(a);
+        REQUIRE(r == e);
     }
     SECTION("bit or") {
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::e_t a, U::e_t b) {
@@ -569,12 +584,18 @@ TEST_CASE("AVX bitwise", "[simd_t][x86][avx]") {
         });
         tor(a | b);
         REQUIRE(r == e);
+        a |= b;
+        tor(a);
+        REQUIRE(r == e);
     }
     SECTION("bit xor") {
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::e_t a, U::e_t b) {
             return simd::tou(a) ^ simd::tou(b);
         });
         tor(a ^ b);
+        REQUIRE(r == e);
+        a ^= b;
+        tor(a);
         REQUIRE(r == e);
     }
     SECTION("bit not") {

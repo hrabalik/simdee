@@ -105,7 +105,7 @@ namespace simd {
             return reduce_mask<ops::add_>(in, mask, zero());
         }
         static SIMDIFY_INL const T product_mask(const T& in, const mask_t& mask) {
-            return reduce_mask<ops::add_>(in, mask, e_t(1));
+            return reduce_mask<ops::mul_>(in, mask, e_t(1));
         }
     };
 

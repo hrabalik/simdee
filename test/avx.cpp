@@ -6,6 +6,7 @@
 #include <array>
 #include <type_traits>
 #include <algorithm>
+#include <numeric>
 #include <functional>
 
 using F = simd::avxf;
@@ -596,7 +597,7 @@ TEST_CASE("AVX bitwise", "[simd_t][x86][avx]") {
 
 TEST_CASE("AVX horizontal operations", "[simd_t][x86][avx]") {
     F a = simd::aligned(bufAF.data());
-    F::e_t v;
+    F::e_t v, v0;
     uint32_t idx;
 
     SECTION("max") {
@@ -604,7 +605,7 @@ TEST_CASE("AVX horizontal operations", "[simd_t][x86][avx]") {
         REQUIRE(v == 2.22944568f);
         idx = (v == a).front();
         REQUIRE(idx == 3);
-        v = F::horizontal::max_mask(a, a != 2.22944568f).first_element();
+        v = F::horizontal::max_mask(a, a != v).first_element();
         REQUIRE(v == 0.70154146f);
         idx = (v == a).front();
         REQUIRE(idx == 1);
@@ -614,9 +615,23 @@ TEST_CASE("AVX horizontal operations", "[simd_t][x86][avx]") {
         REQUIRE(v == -2.05181630f);
         idx = (v == a).front();
         REQUIRE(idx == 2);
-        v = F::horizontal::min_mask(a, a != -2.05181630f).first_element();
+        v = F::horizontal::min_mask(a, a != v).first_element();
         REQUIRE(v == -1.57705702f);
         idx = (v == a).front();
         REQUIRE(idx == 5);
+    }
+    SECTION("sum") {
+        v0 = std::accumulate(begin(bufAF), end(bufAF), F::e_t(0));
+        v = F::horizontal::sum(a).first_element();
+        REQUIRE(v == Approx(v0));
+        v = F::horizontal::sum_mask(a, simd::zero()).first_element();
+        REQUIRE(v == 0);
+    }
+    SECTION("product") {
+        v0 = std::accumulate(begin(bufAF), end(bufAF), F::e_t(1), std::multiplies<F::e_t>());
+        v = F::horizontal::product(a).first_element();
+        REQUIRE(v == Approx(v0));
+        v = F::horizontal::product_mask(a, simd::zero()).first_element();
+        REQUIRE(v == 1);
     }
 }

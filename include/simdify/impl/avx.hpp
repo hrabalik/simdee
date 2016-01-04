@@ -49,23 +49,23 @@ SIMDIFY_INL CLASS& operator=(const expr::zero& r) {                             
                                                                                                          \
 template <typename T>                                                                                    \
 SIMDIFY_INL CLASS(const expr::aligned<T>& r) {                                                           \
-    aligned_load(r.float);                                                                               \
+    aligned_load(r.ptr);                                                                                 \
 }                                                                                                        \
                                                                                                          \
 template <typename T>                                                                                    \
 SIMDIFY_INL CLASS& operator=(const expr::aligned<T>& r) {                                                \
-    aligned_load(r.float);                                                                               \
+    aligned_load(r.ptr);                                                                                 \
     return *this;                                                                                        \
 }                                                                                                        \
                                                                                                          \
 template <typename T>                                                                                    \
 SIMDIFY_INL CLASS(const expr::unaligned<T>& r) {                                                         \
-    unaligned_load(r.float);                                                                             \
+    unaligned_load(r.ptr);                                                                               \
 }                                                                                                        \
                                                                                                          \
 template <typename T>                                                                                    \
 SIMDIFY_INL CLASS& operator=(const expr::unaligned<T>& r) {                                              \
-    unaligned_load(r.float);                                                                             \
+    unaligned_load(r.ptr);                                                                               \
     return *this;                                                                                        \
 }                                                                                                        \
                                                                                                          \

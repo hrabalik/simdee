@@ -10,7 +10,7 @@
 #include <immintrin.h>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDIFY_AVX_COMMON_DECLARATIONS( CLASS, OPNAME, PTR )                                            \
+#define SIMDIFY_AVX_COMMON_DECLARATIONS( CLASS )                                                         \
                                                                                                          \
 SIMDIFY_INL ~CLASS() = default;                                                                          \
                                                                                                          \
@@ -30,42 +30,42 @@ SIMDIFY_INL CLASS& operator=(const mm_t& r) {                                   
 }                                                                                                        \
                                                                                                          \
 SIMDIFY_INL CLASS(e_t r) {                                                                               \
-    mm = _mm256_broadcast_ss((PTR*)&r);                                                                  \
+    mm = _mm256_broadcast_ss((float*)&r);                                                                \
 }                                                                                                        \
                                                                                                          \
 SIMDIFY_INL CLASS& operator=(e_t r) {                                                                    \
-    mm = _mm256_broadcast_ss((PTR*)&r);                                                                  \
+    mm = _mm256_broadcast_ss((float*)&r);                                                                \
     return *this;                                                                                        \
 }                                                                                                        \
                                                                                                          \
 SIMDIFY_INL CLASS(const expr::zero& r) {                                                                 \
-    mm = _mm256_setzero_##OPNAME();                                                                      \
+    mm = _mm256_setzero_ps();                                                                            \
 }                                                                                                        \
                                                                                                          \
 SIMDIFY_INL CLASS& operator=(const expr::zero& r) {                                                      \
-    mm = _mm256_setzero_##OPNAME();                                                                      \
+    mm = _mm256_setzero_ps();                                                                            \
     return *this;                                                                                        \
 }                                                                                                        \
                                                                                                          \
 template <typename T>                                                                                    \
 SIMDIFY_INL CLASS(const expr::aligned<T>& r) {                                                           \
-    aligned_load(r.ptr);                                                                                 \
+    aligned_load(r.float);                                                                               \
 }                                                                                                        \
                                                                                                          \
 template <typename T>                                                                                    \
 SIMDIFY_INL CLASS& operator=(const expr::aligned<T>& r) {                                                \
-    aligned_load(r.ptr);                                                                                 \
+    aligned_load(r.float);                                                                               \
     return *this;                                                                                        \
 }                                                                                                        \
                                                                                                          \
 template <typename T>                                                                                    \
 SIMDIFY_INL CLASS(const expr::unaligned<T>& r) {                                                         \
-    unaligned_load(r.ptr);                                                                               \
+    unaligned_load(r.float);                                                                             \
 }                                                                                                        \
                                                                                                          \
 template <typename T>                                                                                    \
 SIMDIFY_INL CLASS& operator=(const expr::unaligned<T>& r) {                                              \
-    unaligned_load(r.ptr);                                                                               \
+    unaligned_load(r.float);                                                                             \
     return *this;                                                                                        \
 }                                                                                                        \
                                                                                                          \
@@ -81,19 +81,19 @@ SIMDIFY_INL CLASS& operator=(const expr::init<T>& r) {                          
 }                                                                                                        \
                                                                                                          \
 SIMDIFY_INL void aligned_load(const e_t* r) {                                                            \
-    mm = _mm256_load_##OPNAME((const PTR*)r);                                                            \
+    mm = _mm256_load_ps((const float*)r);                                                                \
 }                                                                                                        \
                                                                                                          \
 SIMDIFY_INL void aligned_store(e_t* r) const {                                                           \
-    _mm256_store_##OPNAME((PTR*)r, mm);                                                                  \
+    _mm256_store_ps((float*)r, mm);                                                                      \
 }                                                                                                        \
                                                                                                          \
 SIMDIFY_INL void unaligned_load(const e_t* r) {                                                          \
-    mm = _mm256_loadu_##OPNAME((const PTR*)r);                                                           \
+    mm = _mm256_loadu_ps((const float*)r);                                                               \
 }                                                                                                        \
                                                                                                          \
 SIMDIFY_INL void unaligned_store(e_t* r) {                                                               \
-    _mm256_storeu_##OPNAME((PTR*)r, mm);                                                                 \
+    _mm256_storeu_ps((float*)r, mm);                                                                     \
 }                                                                                                        \
                                                                                                          \
 void interleaved_load(const e_t* r, std::size_t step) {                                                  \
@@ -149,13 +149,13 @@ namespace simd {
     struct simd_type_traits<avxs> : avx_traits<__m256, int32_t> {};
 
     struct avxf : simd_base<avxf> {
-        SIMDIFY_AVX_COMMON_DECLARATIONS(avxf, ps, float);
+        SIMDIFY_AVX_COMMON_DECLARATIONS(avxf);
 
         SIMDIFY_INL e_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
     };
 
     struct avxu : simd_base<avxu> {
-        SIMDIFY_AVX_COMMON_DECLARATIONS(avxu, ps, float);
+        SIMDIFY_AVX_COMMON_DECLARATIONS(avxu);
 
         SIMDIFY_INL avxu(const expr::bit_not<avxu>& r) { *this = r; }
 
@@ -172,7 +172,7 @@ namespace simd {
     };
 
     struct avxs : simd_base<avxs> {
-        SIMDIFY_AVX_COMMON_DECLARATIONS(avxs, ps, float);
+        SIMDIFY_AVX_COMMON_DECLARATIONS(avxs);
 
         SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(_mm256_castps256_ps128(mm)); }
     };

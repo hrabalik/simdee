@@ -36,6 +36,14 @@ namespace simd {
         using array_e = std::array<e_t, W>;
         using horizontal = horizontal_impl<Crtp>;
 
+        SIMDIFY_INL Crtp& self() {
+            return static_cast<Crtp&>(*this);
+        }
+
+        SIMDIFY_INL constexpr const Crtp& self() const {
+            return static_cast<const Crtp&>(*this);
+        }
+
         // data
         mm_t mm;
     };
@@ -43,17 +51,46 @@ namespace simd {
     //
     // meta operations - apply to all SIMD types
     //
-    template <typename T> SIMDIFY_INL T& operator &=(T& l, const T& r) { l = l & r; return l; }
-    template <typename T> SIMDIFY_INL T& operator |=(T& l, const T& r) { l = l | r; return l; }
-    template <typename T> SIMDIFY_INL T& operator ^=(T& l, const T& r) { l = l ^ r; return l; }
-    template <typename T> SIMDIFY_INL T& operator +=(T& l, const T& r) { l = l + r; return l; }
-    template <typename T> SIMDIFY_INL T& operator -=(T& l, const T& r) { l = l - r; return l; }
-    template <typename T> SIMDIFY_INL T& operator *=(T& l, const T& r) { l = l * r; return l; }
-    template <typename T> SIMDIFY_INL T& operator /=(T& l, const T& r) { l = l / r; return l; }
-    template <typename T> SIMDIFY_INL const T operator+(const T& in) { return in; }
-    template <typename T> SIMDIFY_INL const T abs(const T& in) { return in & abs_mask(); }
-    template <typename T> SIMDIFY_INL const T signbit(const T& in) { return in & sign_bit(); }
-    template <typename T> SIMDIFY_INL const T signum(const T& in) { return cond(in > zero(), 1, -1); }
+    template <typename T> SIMDIFY_INL T& operator&=(simd_base<T>& l, const simd_base<T>& r) {
+        l.self() = l.self() & r.self();
+        return l.self();
+    }
+    template <typename T> SIMDIFY_INL T& operator|=(simd_base<T>& l, const simd_base<T>& r) {
+        l.self() = l.self() | r.self();
+        return l.self();
+    }
+    template <typename T> SIMDIFY_INL T& operator^=(simd_base<T>& l, const simd_base<T>& r) {
+        l.self() = l.self() ^ r.self();
+        return l.self();
+    }
+    template <typename T> SIMDIFY_INL T& operator+=(simd_base<T>& l, const simd_base<T>& r) {
+        l.self() = l.self() + r.self();
+        return l.self();
+    }
+    template <typename T> SIMDIFY_INL T& operator-=(simd_base<T>& l, const simd_base<T>& r) {
+        l.self() = l.self() - r.self();
+        return l.self();
+    }
+    template <typename T> SIMDIFY_INL T& operator*=(simd_base<T>& l, const simd_base<T>& r) {
+        l.self() = l.self() * r.self();
+        return l.self();
+    }
+    template <typename T> SIMDIFY_INL T& operator/=(simd_base<T>& l, const simd_base<T>& r) {
+        l.self() = l.self() / r.self();
+        return l.self();
+    }
+    template <typename T> SIMDIFY_INL const T operator+(const simd_base<T>& l) {
+        return l.self();
+    }
+    template <typename T> SIMDIFY_INL const T abs(const simd_base<T>& l) {
+        return l.self() & abs_mask();
+    }
+    template <typename T> SIMDIFY_INL const T signbit(const simd_base<T>& l) {
+        return l.self() & sign_bit();
+    }
+    template <typename T> SIMDIFY_INL const T signum(const simd_base<T>& l) {
+        return cond(l.self() > zero(), 1, -1);
+    }
 
     //
     // provides access to min, max, operator+, operator* before they have been declared

@@ -604,9 +604,19 @@ TEST_CASE("AVX horizontal operations", "[simd_t][x86][avx]") {
         REQUIRE(v == 2.22944568f);
         idx = (v == a).front();
         REQUIRE(idx == 3);
-        v = F::horizontal::max_with_mask(a, a != 2.22944568f).first_element();
+        v = F::horizontal::max_mask(a, a != 2.22944568f).first_element();
         REQUIRE(v == 0.70154146f);
         idx = (v == a).front();
         REQUIRE(idx == 1);
+    }
+    SECTION("min") {
+        v = F::horizontal::min(a).first_element();
+        REQUIRE(v == -2.05181630f);
+        idx = (v == a).front();
+        REQUIRE(idx == 2);
+        v = F::horizontal::min_mask(a, a != -2.05181630f).first_element();
+        REQUIRE(v == -1.57705702f);
+        idx = (v == a).front();
+        REQUIRE(idx == 5);
     }
 }

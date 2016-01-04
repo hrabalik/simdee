@@ -86,7 +86,7 @@ namespace simd {
         static SIMDIFY_INL const T reduce(const T& in) { return horizontal_impl<T>::template reduce<F>(in); }
 
         template <binary_op_t F, typename N>
-        static SIMDIFY_INL const T reduce_with_mask(const T& in, const mask_t& mask, const N& neutral_value) {
+        static SIMDIFY_INL const T reduce_mask(const T& in, const mask_t& mask, const N& neutral_value) {
             return reduce<F>(cond(mask, in, neutral_value));
         }
 
@@ -95,17 +95,17 @@ namespace simd {
         static SIMDIFY_INL const T sum(const T& in) { return reduce<ops::add_>(in); }
         static SIMDIFY_INL const T product(const T& in) { return reduce<ops::mul_>(in); }
 
-        static SIMDIFY_INL const T min_with_mask(const T& in, const mask_t& mask) {
-            return reduce_with_mask<ops::min_>(in, mask, std::numeric_limits<e_t>::max());
+        static SIMDIFY_INL const T min_mask(const T& in, const mask_t& mask) {
+            return reduce_mask<ops::min_>(in, mask, std::numeric_limits<e_t>::max());
         }
-        static SIMDIFY_INL const T max_with_mask(const T& in, const mask_t& mask) {
-            return reduce_with_mask<ops::max_>(in, mask, std::numeric_limits<e_t>::lowest());
+        static SIMDIFY_INL const T max_mask(const T& in, const mask_t& mask) {
+            return reduce_mask<ops::max_>(in, mask, std::numeric_limits<e_t>::lowest());
         }
-        static SIMDIFY_INL const T sum_with_mask(const T& in, const mask_t& mask) {
-            return reduce_with_mask<ops::add_>(in, mask, zero());
+        static SIMDIFY_INL const T sum_mask(const T& in, const mask_t& mask) {
+            return reduce_mask<ops::add_>(in, mask, zero());
         }
-        static SIMDIFY_INL const T product_with_mask(const T& in, const mask_t& mask) {
-            return reduce_with_mask<ops::add_>(in, mask, e_t(1));
+        static SIMDIFY_INL const T product_mask(const T& in, const mask_t& mask) {
+            return reduce_mask<ops::add_>(in, mask, e_t(1));
         }
     };
 

@@ -145,6 +145,10 @@ namespace simd {
 
     SIMDIFY_INL const ssef min(const ssef& l, const ssef& r) { return _mm_min_ps(l.mm, r.mm); }
     SIMDIFY_INL const ssef max(const ssef& l, const ssef& r) { return _mm_max_ps(l.mm, r.mm); }
+    SIMDIFY_INL const ssef sqrt(const ssef& l) { return _mm_sqrt_ps(l.mm); }
+    SIMDIFY_INL const ssef rsqrt(const ssef& l) { return _mm_rsqrt_ps(l.mm); }
+    SIMDIFY_INL const ssef rcp(const ssef& l) { return _mm_rcp_ps(l.mm); }
+    SIMDIFY_INL const ssef abs(const ssef& l) { return _mm_and_ps(l.mm, ssef(abs_mask()).mm); }
 
     SIMDIFY_INL const ssef cond(const ssef& pred, const ssef& if_true, const ssef& if_false) { return (if_true & pred) | (if_false & ~pred); }
 

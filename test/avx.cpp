@@ -21,10 +21,6 @@ alignas(F) const F::array_e bufBF = { {
     -0.23645458f, +2.02369089f, -2.25835397f, +2.22944568f,
     +0.33756370f, -0.87587426f, -1.66416447f, -0.59003456f,
 } };
-alignas(F) const F::array_e bufCF = { {
-    +0.42862268f, +2.02369089f, +1.87786546f, +0.94070440f,
-    +0.78734578f, -0.87587426f, +0.31994913f, -0.55829428f,
-} };
 alignas(U) const U::array_e bufAU = { {
     1753029375U, 1117080442U, 3817141237U, 3761735248U,
     244284091U, 1874242234U, 3400252368U, 2648404707U,
@@ -33,10 +29,6 @@ alignas(U) const U::array_e bufBU = { {
     1679702461U, 2102346647U, 480083363U, 779803484U,
     1213208312U, 2121108407U, 2718691794U, 3724041010U,
 } };
-alignas(U) const U::array_e bufCU = { {
-    3711596194U, 3758981691U, 1461019327U, 1724711885U,
-    2547714412U, 134170785U, 3677092208U, 550564293U,
-} };
 alignas(S) const S::array_e bufAS = { {
     -1712190449, -48692967, -214510247, 440646957,
     471289320, 614985478, -2035465541, 248883859,
@@ -44,10 +36,6 @@ alignas(S) const S::array_e bufAS = { {
 alignas(S) const S::array_e bufBS = { {
     724135231, 56848532, 64122653, 1641874147,
     -899302812, -2112882416, 77287484, 1066617619,
-} };
-alignas(S) const S::array_e bufCS = { {
-    1818678780, -173366572, 720923552, 1876267689,
-    -383931588, 2109147291, 1412606237, -1579022037,
 } };
 alignas(F) const F::array_e bufZF = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
 alignas(U) const U::array_e bufZU = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
@@ -106,22 +94,22 @@ TEST_CASE("AVX explicit construction", "[simd_t][x86][avx]") {
         REQUIRE(rs == bufAS);
     }
     SECTION("from aligned pointer") {
-        F tf(simd::aligned(bufBF.data()));
-        U tu(simd::aligned(bufBU.data()));
-        S ts(simd::aligned(bufBS.data()));
+        F tf(simd::aligned(bufAF.data()));
+        U tu(simd::aligned(bufAU.data()));
+        S ts(simd::aligned(bufAS.data()));
         tor(tf, tu, ts);
-        REQUIRE(rf == bufBF);
-        REQUIRE(ru == bufBU);
-        REQUIRE(rs == bufBS);
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
-        F tf(simd::unaligned(bufCF.data()));
-        U tu(simd::unaligned(bufCU.data()));
-        S ts(simd::unaligned(bufCS.data()));
+        F tf(simd::unaligned(bufAF.data()));
+        U tu(simd::unaligned(bufAU.data()));
+        S ts(simd::unaligned(bufAS.data()));
         tor(tf, tu, ts);
-        REQUIRE(rf == bufCF);
-        REQUIRE(ru == bufCU);
-        REQUIRE(rs == bufCS);
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
     }
     SECTION("from simd::storage") {
         simd::storage<F> storf;
@@ -248,21 +236,21 @@ TEST_CASE("AVX implicit construction", "[simd_t][x86][avx]") {
     }
     SECTION("from aligned pointer") {
         implicit_test(
-            simd::aligned(bufBF.data()),
-            simd::aligned(bufBU.data()),
-            simd::aligned(bufBS.data()));
-        REQUIRE(rf == bufBF);
-        REQUIRE(ru == bufBU);
-        REQUIRE(rs == bufBS);
+            simd::aligned(bufAF.data()),
+            simd::aligned(bufAU.data()),
+            simd::aligned(bufAS.data()));
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
         implicit_test(
-            simd::unaligned(bufCF.data()),
-            simd::unaligned(bufCU.data()),
-            simd::unaligned(bufCS.data()));
-        REQUIRE(rf == bufCF);
-        REQUIRE(ru == bufCU);
-        REQUIRE(rs == bufCS);
+            simd::unaligned(bufAF.data()),
+            simd::unaligned(bufAU.data()),
+            simd::unaligned(bufAS.data()));
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
     }
     SECTION("from simd::storage") {
         simd::storage<F> storf;
@@ -352,22 +340,22 @@ TEST_CASE("AVX assignment", "[simd_t][x86][avx]") {
         REQUIRE(rs == bufAS);
     }
     SECTION("from aligned pointer") {
-        tf = simd::aligned(bufBF.data());
-        tu = simd::aligned(bufBU.data());
-        ts = simd::aligned(bufBS.data());
+        tf = simd::aligned(bufAF.data());
+        tu = simd::aligned(bufAU.data());
+        ts = simd::aligned(bufAS.data());
         tor();
-        REQUIRE(rf == bufBF);
-        REQUIRE(ru == bufBU);
-        REQUIRE(rs == bufBS);
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
-        tf = simd::unaligned(bufCF.data());
-        tu = simd::unaligned(bufCU.data());
-        ts = simd::unaligned(bufCS.data());
+        tf = simd::unaligned(bufAF.data());
+        tu = simd::unaligned(bufAU.data());
+        ts = simd::unaligned(bufAS.data());
         tor();
-        REQUIRE(rf == bufCF);
-        REQUIRE(ru == bufCU);
-        REQUIRE(rs == bufCS);
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
     }
     SECTION("from simd::storage") {
         simd::storage<F> storf;
@@ -502,6 +490,31 @@ TEST_CASE("AVX arithmetic", "[simd_t][x86][avx]") {
         a /= b;
         tor(a);
         REQUIRE(r == e);
+    }
+    SECTION("absolute value") {
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::e_t a) { return std::abs(a); });
+        tor(abs(a));
+        REQUIRE(r == e);
+    }
+    SECTION("signum") {
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::e_t a) { return std::signbit(a)? F::e_t(-1) : F::e_t(1); });
+        tor(signum(a));
+        REQUIRE(r == e);
+    }
+    SECTION("square root") {
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::e_t a) { return std::sqrt(std::abs(a)); });
+        tor(sqrt(abs(a)));
+        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]));
+    }
+    SECTION("fast reciprocal") {
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::e_t a) { return 1 / a; });
+        tor(rcp(a));
+        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+    }
+    SECTION("fast reciprocal square root") {
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::e_t a) { return 1 / std::sqrt(std::abs(a)); });
+        tor(rsqrt(abs(a)));
+        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
 }
 

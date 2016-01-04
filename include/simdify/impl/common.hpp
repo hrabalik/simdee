@@ -82,14 +82,8 @@ namespace simd {
     template <typename T> SIMDIFY_INL const T operator+(const simd_base<T>& l) {
         return l.self();
     }
-    template <typename T> SIMDIFY_INL const T abs(const simd_base<T>& l) {
-        return l.self() & abs_mask();
-    }
-    template <typename T> SIMDIFY_INL const T signbit(const simd_base<T>& l) {
-        return l.self() & sign_bit();
-    }
     template <typename T> SIMDIFY_INL const T signum(const simd_base<T>& l) {
-        return cond(l.self() > zero(), 1, -1);
+        return cond(l.self() > zero(), T(1), T(-1));
     }
 
     //

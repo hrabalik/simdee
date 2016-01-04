@@ -203,6 +203,7 @@ namespace simd {
     SIMDIFY_INL const avxf sqrt(const avxf& l) { return _mm256_sqrt_ps(l.mm); }
     SIMDIFY_INL const avxf rsqrt(const avxf& l) { return _mm256_rsqrt_ps(l.mm); }
     SIMDIFY_INL const avxf rcp(const avxf& l) { return _mm256_rcp_ps(l.mm); }
+    SIMDIFY_INL const avxf abs(const avxf& l) { return _mm256_and_ps(l.mm, avxf(abs_mask()).mm); }
 
     SIMDIFY_INL const avxf cond(const avxu& pred, const avxf& if_true, const avxf& if_false) {
         return _mm256_blendv_ps(if_false.mm, if_true.mm, pred.mm);

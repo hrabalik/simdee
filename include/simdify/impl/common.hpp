@@ -55,11 +55,6 @@ namespace simd {
     template <typename T> SIMDIFY_INL const T signbit(const T& in) { return in & sign_bit(); }
     template <typename T> SIMDIFY_INL const T signum(const T& in) { return cond(in > zero(), 1, -1); }
 
-    template <typename T, typename Mask, typename N>
-    SIMDIFY_INL const T apply_mask(const T& in, const Mask& mask, const N& neutral_value) {
-        return cond(mask, in, neutral_value);
-    }
-
     //
     // provides access to min, max, operator+, operator* before they have been declared
     //

@@ -91,6 +91,29 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDIFY_CONTAINERS_COMMON_ACCESS( CLASS_STRING )                                                 \
                                                                                                          \
+    named_array<simd_t, Ids...> operator[](simd::reference<storage<vec_u>> idx) const {                  \
+        return operator[](*idx.ptr());                                                                   \
+    }                                                                                                    \
+                                                                                                         \
+    named_array<simd_t, Ids...> operator[](simd::const_reference<storage<vec_u>> idx) const {            \
+        return operator[](*idx.ptr());                                                                   \
+    }                                                                                                    \
+                                                                                                         \
+    template <std::size_t L>                                                                             \
+    named_array<simd_t, Ids...> operator[](const aos_storage<vec_u, L>& idx) const {                     \
+        return operator[](storage<vec_u>(idx));                                                          \
+    }                                                                                                    \
+                                                                                                         \
+    template <std::size_t L>                                                                             \
+    named_array<simd_t, Ids...> operator[](simd::reference<aos_storage<vec_u, L>> idx) const {           \
+        return operator[](storage<vec_u>(*idx.ptr()));                                                   \
+    }                                                                                                    \
+                                                                                                         \
+    template <std::size_t L>                                                                             \
+    named_array<simd_t, Ids...> operator[](simd::const_reference<aos_storage<vec_u, L>> idx) const {     \
+        return operator[](storage<vec_u>(*idx.ptr()));                                                   \
+    }                                                                                                    \
+                                                                                                         \
     reference at(std::size_t i) {                                                                        \
         if (i >= m_sz) throw std::runtime_error( CLASS_STRING ": out of bounds in at()");                \
         return operator[](i);                                                                            \

@@ -8,8 +8,8 @@
 #error "Simdify requires C++."
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1600
-#error "Simdify requires Visual Studio 2010."
+#if defined(_MSC_VER) && _MSC_VER < 1900
+#error "Simdify requires Visual Studio 2015."
 #endif
 
 #if !defined(_MSC_VER) && __cplusplus < 201103L && !defined(__GXX_EXPERIMENTAL_CXX0X__)
@@ -50,9 +50,7 @@
 #include "impl/sse.hpp"
 #endif
 
-#if 1 || defined(SIMDIFY_NEED_FLT)
 #include "impl/dum.hpp"
-#endif
 
 //
 // set some (successfully loaded) SIMD type as simd_t
@@ -60,25 +58,32 @@
 //
 namespace simd {
 #if defined(SIMDIFY_PREFER_AVX) && defined(SIMDIFY_AVX)
-    using simd_t = avxf;
+    using vecf = avxf;
+    using vecu = avxu;
+    using vecs = avxs;
 #elif defined(SIMDIFY_PREFER_SSE) && defined(SIMDIFY_SSE)
-    using simd_t = ssef;
+    using vecf = ssef;
+    using vecu = sseu;
+    using vecs = sses;
 #elif defined(SIMDIFY_PREFER_DUM) && defined(SIMDIFY_DUM)
-    using simd_t = dumf;
+    using vecf = dumf;
+    using vecu = dumu;
+    using vecs = dums;
 #elif defined(SIMDIFY_AVX)
-    using simd_t = avxf;
+    using vecf = avxf;
+    using vecu = avxu;
+    using vecs = avxs;
 #elif defined(SIMDIFY_SSE)
-    using simd_t = ssef;
+    using vecf = ssef;
+    using vecu = sseu;
+    using vecs = sses;
 #elif defined(SIMDIFY_DUM)
-    using simd_t = dumf;
+    using vecf = dumf;
+    using vecu = dumu;
+    using vecs = dums;
 #else
 #error "Simdify could not determine a suitable SIMD type as simd_t."
 #endif
-
-    //
-    // convenience shorthand
-    //
-    const auto W = simd_t::W;
 
 }
 

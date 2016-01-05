@@ -19,6 +19,18 @@ namespace simd {
     struct aos_storage;
 
     //
+    // reference to storage (proxy object)
+    //
+    template <typename Storage>
+    struct reference;
+
+    //
+    // const reference to storage (proxy object)
+    //
+    template <typename Storage>
+    struct const_reference;
+
+    //
     // specialized storage for SIMD types
     //
     template <typename Simd_t>
@@ -29,16 +41,23 @@ namespace simd {
 
         SIMDIFY_INL constexpr storage() = default;
         SIMDIFY_INL constexpr storage(const storage&) = default;
+        SIMDIFY_INL constexpr storage(reference<storage> rhs) : storage(*rhs.ptr()) {}
+        SIMDIFY_INL constexpr storage(const_reference<storage> rhs) : storage(*rhs.ptr()) {}
+
+        SIMDIFY_INL explicit storage(const Simd_t& rhs) { rhs.aligned_store(data()); }
+
         SIMDIFY_INL constexpr explicit storage(const data_t& rhs) : m_data(rhs) {}
 
         template <std::size_t N>
-        SIMDIFY_INL constexpr storage(const aos_storage<Simd_t, N>& rhs) { operator=(rhs); }
-
-        SIMDIFY_INL explicit storage(const Simd_t& rhs) {
-            rhs.aligned_store(data());
-        }
+        SIMDIFY_INL storage(const aos_storage<Simd_t, N>& rhs) { operator=(rhs); }
+        template <std::size_t N>
+        SIMDIFY_INL storage(reference<aos_storage<Simd_t, N>> rhs) { operator=(*rhs.ptr()); }
+        template <std::size_t N>
+        SIMDIFY_INL storage(const_reference<aos_storage<Simd_t, N>> rhs) { operator=(*rhs.ptr()); }
 
         SIMDIFY_INL storage& operator=(const storage&) = default;
+        SIMDIFY_INL storage& operator=(reference<storage> rhs) { return operator=(*rhs.ptr()); }
+        SIMDIFY_INL storage& operator=(const_reference<storage> rhs) { return operator=(*rhs.ptr()); }
 
         SIMDIFY_INL storage& operator=(const Simd_t& rhs) {
             rhs.aligned_store(data());
@@ -58,6 +77,16 @@ namespace simd {
                 *lp = *rp;
             }
             return *this;
+        }
+
+        template <std::size_t N>
+        SIMDIFY_INL storage& operator=(reference<aos_storage<Simd_t, N>> rhs) {
+            return operator=(*rhs.ptr());
+        }
+
+        template <std::size_t N>
+        SIMDIFY_INL storage& operator=(const_reference<aos_storage<Simd_t, N>> rhs) {
+            return operator=(*rhs.ptr());
         }
 
         SIMDIFY_INL e_t* data() { return m_data.data(); }

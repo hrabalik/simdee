@@ -12,22 +12,31 @@
 #include <iterator>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDIFY_CONTAINERS_COMMON_CONSTRUCTION( CLASS )                                                  \
+#define SIMDIFY_CONTAINERS_COMMON_CONSTRUCTION(CLASS)                                                    \
                                                                                                          \
-    CLASS () : m_data(nullptr, aligned_deleter{}), m_sz(0), m_cap(0) {}                                  \
+    CLASS() : m_data(nullptr, aligned_deleter{}), m_sz(0), m_cap(0) {}                                   \
                                                                                                          \
-    CLASS (std::size_t count) : CLASS () {                                                               \
+    CLASS(std::size_t count) : CLASS() {                                                                 \
         resize(count);                                                                                   \
     }                                                                                                    \
                                                                                                          \
-    CLASS (std::size_t count, const value_type& val)                                                     \
-        : CLASS (count) {                                                                                \
+    CLASS(std::size_t count, const value_type& val)                                                      \
+        : CLASS(count) {                                                                                 \
         fill(val);                                                                                       \
     }                                                                                                    \
                                                                                                          \
-    CLASS ( CLASS && rhs) :                                                                              \
+    CLASS(CLASS && rhs) :                                                                                \
         m_data(std::move(rhs.m_data)), m_sz(rhs.m_sz), m_cap(rhs.m_cap) {                                \
         rhs.m_sz = 0; rhs.m_cap = 0;                                                                     \
+    }                                                                                                    \
+                                                                                                         \
+    CLASS& operator=(CLASS && rhs) {                                                                     \
+        m_data = std::move(rhs.m_data);                                                                  \
+        m_sz = rhs.m_sz;                                                                                 \
+        m_cap = rhs.m_cap;                                                                               \
+        rhs.m_sz = 0;                                                                                    \
+        rhs.m_cap = 0;                                                                                   \
+        return *this;                                                                                    \
     }                                                                                                    \
                                                                                                          \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////

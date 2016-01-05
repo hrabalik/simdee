@@ -13,6 +13,12 @@ namespace simd {
     struct storage;
 
     //
+    // storage replacement for loading SIMD vectors from interleaved (AOS) data
+    //
+    template <typename Simd_t, std::size_t N>
+    struct aos_storage;
+
+    //
     // specialized storage for SIMD types
     //
     template <typename Simd_t>
@@ -24,6 +30,9 @@ namespace simd {
         SIMDIFY_INL constexpr storage() = default;
         SIMDIFY_INL constexpr storage(const storage&) = default;
         SIMDIFY_INL constexpr explicit storage(const data_t& rhs) : m_data(rhs) {}
+
+        template <std::size_t N>
+        SIMDIFY_INL constexpr storage(const aos_storage<Simd_t, N>& rhs) { operator=(rhs); }
 
         SIMDIFY_INL explicit storage(const Simd_t& rhs) {
             rhs.aligned_store(data());
@@ -38,6 +47,16 @@ namespace simd {
 
         SIMDIFY_INL storage& operator=(const data_t& rhs) {
             m_data = rhs;
+            return *this;
+        }
+
+        template <std::size_t N>
+        SIMDIFY_INL storage& operator=(const aos_storage<Simd_t, N>& rhs) {
+            auto lp = data();
+            auto rp = rhs.data();
+            for (std::size_t i = 0; i < Simd_t::W; ++i, ++lp, rp += N) {
+                *lp = *rp;
+            }
             return *this;
         }
 
@@ -92,14 +111,9 @@ namespace simd {
         using data_t = std::array<e_t, N * W>;
 
         SIMDIFY_INL constexpr aos_storage() = default;
-
-        SIMDIFY_INL aos_storage(const aos_storage& rhs) {
-            operator=(rhs);
-        }
-
-        SIMDIFY_INL explicit aos_storage(const Simd_t& rhs) {
-            rhs.interleaved_store(data(), N);
-        }
+        SIMDIFY_INL aos_storage(const aos_storage& rhs) { operator=(rhs); }
+        SIMDIFY_INL explicit aos_storage(const Simd_t& rhs) { operator=(rhs); }
+        SIMDIFY_INL explicit aos_storage(const storage<Simd_t>& rhs) { operator=(rhs); }
 
         SIMDIFY_INL aos_storage& operator=(const aos_storage& rhs) {
             auto lp = data();
@@ -107,10 +121,20 @@ namespace simd {
             for (std::size_t i = 0; i < W; ++i, lp += N, rp += N) {
                 *lp = *rp;
             }
+            return *this;
         }
 
         SIMDIFY_INL aos_storage& operator=(const Simd_t& rhs) {
             rhs.interleaved_store(data(), N);
+            return *this;
+        }
+
+        SIMDIFY_INL aos_storage& operator=(const storage<Simd_t>& rhs) {
+            auto lp = data();
+            auto rp = rhs.data();
+            for (std::size_t i = 0; i < W; ++i, lp += N, ++rp) {
+                *lp = *rp;
+            }
             return *this;
         }
 

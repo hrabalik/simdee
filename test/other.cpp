@@ -30,3 +30,25 @@ TEST_CASE("simd::reference", "[other]") {
     flr = 6.7f;
     REQUIRE(all(fl == 6.7f));
 }
+
+TEST_CASE("storage-aos_storage interop", "[other]") {
+    simd::aos_storage<simd::sses, 7> as;
+    as[0] = 123;
+    as[1] = -234;
+    as[2] = 345;
+    as[3] = -456;
+    simd::storage<simd::sses> s = as;
+    REQUIRE(s[0] == 123);
+    REQUIRE(s[1] == -234);
+    REQUIRE(s[2] == 345);
+    REQUIRE(s[3] == -456);
+    s[0] = -567;
+    s[1] = 678;
+    s[2] = -789;
+    s[3] = 890;
+    as = s;
+    REQUIRE(as[0] == -567);
+    REQUIRE(as[1] == 678);
+    REQUIRE(as[2] == -789);
+    REQUIRE(as[3] == 890);
+}

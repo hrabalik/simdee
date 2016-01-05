@@ -14,6 +14,7 @@ namespace simd {
         using simd_t = Simd_t;
         using e_t = typename simd_t::e_t;
         using mm_t = typename simd_t::mm_t;
+        using vec_u = typename simd_type_traits<Simd_t>::vec_u;
 
         enum : std::size_t { N = detail::group<Ids...>::size, W = simd_t::W };
 
@@ -74,6 +75,30 @@ namespace simd {
             auto base = m_data.get() + (N*W)*div_floor<W>(i) + mod<W>(i);
             detail::no_op(simd::get<I>(res).reset(base + I*W)...);
             return res;
+        }
+
+        named_array<simd_t, Ids...> operator[](const vec_u& idx) const {
+            return operator[](storage<vec_u>(idx));
+        }
+
+        named_array<simd_t, Ids...> operator[](const storage<vec_u>& idx) const {
+            e_t* ptr[W];
+
+            for (int i = 0; i < W; ++i) {
+                ptr[i] = m_data.get() + (N*W)*div_floor<W>(idx[i]) + mod<W>(idx[i]);
+            }
+
+            named_array<simd_t, Ids...> out;
+
+            for (int j = 0; j < N; ++j) {
+                storage<simd_t> stor;
+                for (int i = 0; i < W; ++i) {
+                    stor[i] = *(ptr[i] + j*W);
+                }
+                out[j] = stor;
+            }
+
+            return out;
         }
 
         SIMDIFY_CONTAINERS_COMMON_ACCESS("structure_of_arrays");

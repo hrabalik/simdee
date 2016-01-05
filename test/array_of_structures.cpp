@@ -112,6 +112,49 @@ TEST_CASE("array_of_structures size management", "[containers][array_of_structur
     }
 }
 
+TEST_CASE("array_of_structures element access", "[containers][array_of_structures]") {
+    T t;
+    t.push_back(std::make_tuple(11.f, 12.f, 13.f));
+    t.push_back(std::make_tuple(21.f, 22.f, 23.f));
+    t.push_back(std::make_tuple(31.f, 32.f, 33.f));
+    t.push_back(std::make_tuple(41.f, 42.f, 43.f));
+    t.push_back(std::make_tuple(51.f, 52.f, 53.f));
+    t.push_back(std::make_tuple(61.f, 62.f, 63.f));
+
+    auto el1 = t[3];
+    REQUIRE(el1.x == 41.f);
+    REQUIRE(el1.y == 42.f);
+    REQUIRE(el1.z == 43.f);
+    auto el2 = t[5];
+    REQUIRE(el2.x == 61.f);
+    REQUIRE(el2.y == 62.f);
+    REQUIRE(el2.z == 63.f);
+
+    simd::storage<simd::sseu> stor;
+    stor[0] = 3;
+    stor[1] = 2;
+    stor[2] = 1;
+    stor[3] = 0;
+    auto na = t[stor];
+
+    simd::storage<simd::ssef> storf;
+    storf = na.x;
+    REQUIRE(storf[0] == 41.f);
+    REQUIRE(storf[1] == 31.f);
+    REQUIRE(storf[2] == 21.f);
+    REQUIRE(storf[3] == 11.f);
+    storf = na.y;
+    REQUIRE(storf[0] == 42.f);
+    REQUIRE(storf[1] == 32.f);
+    REQUIRE(storf[2] == 22.f);
+    REQUIRE(storf[3] == 12.f);
+    storf = na.z;
+    REQUIRE(storf[0] == 43.f);
+    REQUIRE(storf[1] == 33.f);
+    REQUIRE(storf[2] == 23.f);
+    REQUIRE(storf[3] == 13.f);
+}
+
 TEST_CASE("array_of_structures iteration", "[containers][array_of_structures]") {
     T t;
     t.push_back(std::make_tuple(1.f, 2.f, 3.f));

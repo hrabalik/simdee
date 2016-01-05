@@ -104,7 +104,7 @@ void interleaved_load(const e_t* r, std::size_t step) {                         
     aligned_load(temp);                                                                                  \
 }                                                                                                        \
                                                                                                          \
-void interleaved_store(e_t* r, std::size_t step) {                                                       \
+void interleaved_store(e_t* r, std::size_t step) const {                                                 \
     alignas(CLASS)e_t temp[W];                                                                           \
     aligned_store(temp);                                                                                 \
     for (std::size_t i = 0; i < W; ++i, r += step) {                                                     \

@@ -76,7 +76,7 @@ void interleaved_load(const e_t* r, std::size_t step) {                         
     mm = *r;                                                                                             \
 }                                                                                                        \
                                                                                                          \
-void interleaved_store(e_t* r, std::size_t step) {                                                       \
+void interleaved_store(e_t* r, std::size_t step) const {                                                 \
     *r = mm;                                                                                             \
 }                                                                                                        \
                                                                                                          \

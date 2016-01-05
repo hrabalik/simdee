@@ -142,7 +142,7 @@ TEST_CASE("array_of_structures iteration", "[containers][array_of_structures]") 
 
     {
         auto begin = t.begin_overspan();
-        auto end = t.end_vector();
+        auto end = t.end_overspan();
         simd::storage<simd::ssef> stor;
 
         REQUIRE(begin != end);

@@ -62,7 +62,7 @@
     iterator begin() { return iterator(*this, 0); }                                                      \
     iterator end() { return iterator(*this, size()); }                                                   \
     iterator_vector begin_overspan() { return iterator_vector(*this, 0); }                               \
-    iterator_vector end_vector() { return iterator_vector(*this, size_overspan()); }                     \
+    iterator_vector end_overspan() { return iterator_vector(*this, size_overspan()); }                   \
     iterator_vector begin_body() { return iterator_vector(*this, 0); }                                   \
     iterator_vector end_body() { return iterator_vector(*this, size_body()); }                           \
     iterator begin_tail() { return iterator(*this, size_body()); }                                       \
@@ -71,7 +71,7 @@
     const_iterator begin() const { return cbegin(); }                                                    \
     const_iterator end() const { return cend(); }                                                        \
     const_iterator_vector begin_overspan() const { return cbegin_overspan(); }                           \
-    const_iterator_vector end_vector() const { return cend_vector(); }                                   \
+    const_iterator_vector end_overspan() const { return cend_overspan(); }                               \
     const_iterator_vector begin_body() const { return cbegin_body(); }                                   \
     const_iterator_vector end_body() const { return cend_body(); }                                       \
     const_iterator begin_tail() const { return cbegin_tail(); }                                          \
@@ -80,7 +80,7 @@
     const_iterator cbegin() const { return const_iterator(*this, 0); }                                   \
     const_iterator cend() const { return const_iterator(*this, size()); }                                \
     const_iterator_vector cbegin_overspan() const { return const_iterator_vector(*this, 0); }            \
-    const_iterator_vector cend_vector() const { return const_iterator_vector(*this, size_overspan()); }  \
+    const_iterator_vector cend_overspan() const { return const_iterator_vector(*this, size_overspan()); }\
     const_iterator_vector cbegin_body() const { return const_iterator_vector(*this, 0); }                \
     const_iterator_vector cend_body() const { return const_iterator_vector(*this, size_body()); }        \
     const_iterator cbegin_tail() const { return const_iterator(*this, size_body()); }                    \

@@ -10,7 +10,7 @@ TEST_CASE("simd::reference", "[other]") {
 
     simd::storage<simd::dumf> fl;
     fl = 5.6f;
-    REQUIRE(simd::dumf::horizontal::all(fl == 5.6f));
+    REQUIRE(all(fl == 5.6f));
 
     simd::reference<simd::storage<float>> fr;
     fr.reset(&f);
@@ -26,7 +26,7 @@ TEST_CASE("simd::reference", "[other]") {
 
     simd::reference<simd::storage<simd::dumf>> flr;
     flr.reset(&fl);
-    REQUIRE(simd::dumf::horizontal::all(flr == 5.6f));
+    REQUIRE(all(flr == 5.6f));
     flr = 6.7f;
-    REQUIRE(simd::dumf::horizontal::all(fl == 6.7f));
+    REQUIRE(all(fl == 6.7f));
 }

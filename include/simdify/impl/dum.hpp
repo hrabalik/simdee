@@ -3,6 +3,85 @@
 
 #include "common.hpp"
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDIFY_DUM_COMMON_DECLARATIONS( CLASS )                                                         \
+                                                                                                         \
+SIMDIFY_INL ~CLASS() = default;                                                                          \
+                                                                                                         \
+SIMDIFY_INL CLASS() = default;                                                                           \
+                                                                                                         \
+SIMDIFY_INL CLASS(const CLASS&) = default;                                                               \
+                                                                                                         \
+SIMDIFY_INL CLASS& operator=(const CLASS&) = default;                                                    \
+                                                                                                         \
+SIMDIFY_INL CLASS(const e_t& r) {                                                                        \
+    mm = r;                                                                                              \
+}                                                                                                        \
+                                                                                                         \
+SIMDIFY_INL CLASS& operator=(const e_t& r) {                                                             \
+    mm = r;                                                                                              \
+    return *this;                                                                                        \
+}                                                                                                        \
+                                                                                                         \
+template <typename T>                                                                                    \
+SIMDIFY_INL CLASS(const expr::aligned<T>& r) {                                                           \
+    aligned_load(r.ptr);                                                                                 \
+}                                                                                                        \
+                                                                                                         \
+template <typename T>                                                                                    \
+SIMDIFY_INL CLASS& operator=(const expr::aligned<T>& r) {                                                \
+    aligned_load(r.ptr);                                                                                 \
+    return *this;                                                                                        \
+}                                                                                                        \
+                                                                                                         \
+template <typename T>                                                                                    \
+SIMDIFY_INL CLASS(const expr::unaligned<T>& r) {                                                         \
+    unaligned_load(r.ptr);                                                                               \
+}                                                                                                        \
+                                                                                                         \
+template <typename T>                                                                                    \
+SIMDIFY_INL CLASS& operator=(const expr::unaligned<T>& r) {                                              \
+    unaligned_load(r.ptr);                                                                               \
+    return *this;                                                                                        \
+}                                                                                                        \
+                                                                                                         \
+template <typename T>                                                                                    \
+SIMDIFY_INL CLASS(const expr::init<T>& r) {                                                              \
+    *this = r.template to<e_t>();                                                                        \
+}                                                                                                        \
+                                                                                                         \
+template <typename T>                                                                                    \
+SIMDIFY_INL CLASS& operator=(const expr::init<T>& r) {                                                   \
+    *this = r.template to<e_t>();                                                                        \
+    return *this;                                                                                        \
+}                                                                                                        \
+                                                                                                         \
+SIMDIFY_INL void aligned_load(const e_t* r) {                                                            \
+    mm = *r;                                                                                             \
+}                                                                                                        \
+                                                                                                         \
+SIMDIFY_INL void aligned_store(e_t* r) const {                                                           \
+    *r = mm;                                                                                             \
+}                                                                                                        \
+                                                                                                         \
+SIMDIFY_INL void unaligned_load(const e_t* r) {                                                          \
+    mm = *r;                                                                                             \
+}                                                                                                        \
+                                                                                                         \
+SIMDIFY_INL void unaligned_store(e_t* r) {                                                               \
+    *r = mm;                                                                                             \
+}                                                                                                        \
+                                                                                                         \
+void interleaved_load(const e_t* r, std::size_t step) {                                                  \
+    mm = *r;                                                                                             \
+}                                                                                                        \
+                                                                                                         \
+void interleaved_store(e_t* r, std::size_t step) {                                                       \
+    *r = mm;                                                                                             \
+}                                                                                                        \
+                                                                                                         \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 namespace simd {
 
     struct dumf;
@@ -39,39 +118,14 @@ namespace simd {
 
     // SIMD emulation with a glorified float
     struct dumf : simd_base<dumf> {
-        SIMDIFY_INL ~dumf() = default;
-
-        SIMDIFY_INL dumf() = default;
-        SIMDIFY_INL dumf(const dumf&) = default;
-        SIMDIFY_INL dumf(mm_t r) { *this = r; }
-        template <typename T>
-        SIMDIFY_INL dumf(const expr::aligned<T>& r) { *this = r; }
-        template <typename T>
-        SIMDIFY_INL dumf(const expr::unaligned<T>& r) { *this = r; }
-        template <typename T>
-        SIMDIFY_INL dumf(const expr::init<T>& r) { *this = r; }
-
-        SIMDIFY_INL dumf& operator=(const dumf&) = default;
-        SIMDIFY_INL dumf& operator=(mm_t r) { mm = r; return *this; }
-        template <typename T>
-        SIMDIFY_INL dumf& operator=(const expr::aligned<T>& r) { mm = *r.ptr; return *this; }
-        template <typename T>
-        SIMDIFY_INL dumf& operator=(const expr::unaligned<T>& r) { mm = *r.ptr; return *this; }
-        template <typename T>
-        SIMDIFY_INL dumf& operator=(const expr::init<T>& r) { *this = r.template to<e_t>(); return *this; }
-
-        SIMDIFY_INL void aligned_load(const e_t* r) { mm = *r; }
-        SIMDIFY_INL void aligned_store(e_t* r) const { *r = mm; }
-        SIMDIFY_INL void unaligned_load(const e_t* r) { mm = *r; }
-        SIMDIFY_INL void unaligned_store(e_t* r) const { *r = mm; }
-
-        SIMDIFY_INL void interleaved_load(const e_t* r, std::size_t) { mm = *r; }
-        SIMDIFY_INL void interleaved_store(e_t* r, std::size_t) { *r = mm; }
+        SIMDIFY_DUM_COMMON_DECLARATIONS(dumf);
 
         SIMDIFY_INL e_t first_element() const { return mm; }
     };
 
     struct dumu : simd_base<dumu> {
+        SIMDIFY_DUM_COMMON_DECLARATIONS(dumu);
+
         SIMDIFY_INL e_t first_element() const { return mm; }
 
         struct iterator : std::iterator<std::input_iterator_tag, bit_t> {
@@ -86,65 +140,70 @@ namespace simd {
         };
 
         SIMDIFY_INL bit_t front() const { return 0; }
-        SIMDIFY_INL iterator begin() const { return iterator(simd::tou(mm) ? 1: 0); }
+        SIMDIFY_INL iterator begin() const { return iterator((simd::tou(mm) & 0x80000000U) >> 31); }
         SIMDIFY_INL iterator end() const { return iterator(0); }
     };
 
     struct dums : simd_base<dums> {
-        SIMDIFY_INL e_t first_element() const { return mm; }
+        SIMDIFY_DUM_COMMON_DECLARATIONS(dums);
 
+        SIMDIFY_INL e_t first_element() const { return mm; }
     };
 
-    SIMDIFY_INL const dumf operator&(const dumf& l, const dumf& r) { return uval(tou(l.mm) & tou(r.mm)); }
-    SIMDIFY_INL const dumf operator|(const dumf& l, const dumf& r) { return uval(tou(l.mm) | tou(r.mm)); }
-    SIMDIFY_INL const dumf operator^(const dumf& l, const dumf& r) { return uval(tou(l.mm) ^ tou(r.mm)); }
-    SIMDIFY_INL const dumf operator~(const dumf& l) { return uval(~tou(l.mm)); }
-    SIMDIFY_INL const dumf operator<(const dumf& l, const dumf& r) { return l.mm < r.mm ? dumf(all_bits()) : dumf(zero()); }
-    SIMDIFY_INL const dumf operator>(const dumf& l, const dumf& r) { return l.mm > r.mm ? dumf(all_bits()) : dumf(zero()); }
-    SIMDIFY_INL const dumf operator<=(const dumf& l, const dumf& r) { return l.mm <= r.mm ? dumf(all_bits()) : dumf(zero()); }
-    SIMDIFY_INL const dumf operator>=(const dumf& l, const dumf& r) { return l.mm >= r.mm ? dumf(all_bits()) : dumf(zero()); }
-    SIMDIFY_INL const dumf operator==(const dumf& l, const dumf& r) { return l.mm == r.mm ? dumf(all_bits()) : dumf(zero()); }
-    SIMDIFY_INL const dumf operator!=(const dumf& l, const dumf& r) { return l.mm != r.mm ? dumf(all_bits()) : dumf(zero()); }
+    SIMDIFY_INL const dumu operator&(const dumu& l, const dumu& r) { return uval(tou(l.mm) & tou(r.mm)); }
+    SIMDIFY_INL const dumu operator|(const dumu& l, const dumu& r) { return uval(tou(l.mm) | tou(r.mm)); }
+    SIMDIFY_INL const dumu operator^(const dumu& l, const dumu& r) { return uval(tou(l.mm) ^ tou(r.mm)); }
+    SIMDIFY_INL const dumu operator~(const dumu& l) { return uval(~tou(l.mm)); }
+    SIMDIFY_INL const dumu nand(const dumu& l, const dumu& r) { return uval(tou(l.mm) & ~tou(r.mm)); }
+    SIMDIFY_INL const bool any(const dumu& in) { return (simd::tou(in.mm) & 0x80000000U) != 0; }
+    SIMDIFY_INL const bool all(const dumu& in) { return (simd::tou(in.mm) & 0x80000000U) != 0; }
+
+    SIMDIFY_INL const dumu operator<(const dumf& l, const dumf& r) { return (l.mm < r.mm) ? 0xffffffffU : 0; }
+    SIMDIFY_INL const dumu operator>(const dumf& l, const dumf& r) { return (l.mm > r.mm) ? 0xffffffffU : 0; }
+    SIMDIFY_INL const dumu operator<=(const dumf& l, const dumf& r) { return (l.mm <= r.mm) ? 0xffffffffU : 0; }
+    SIMDIFY_INL const dumu operator>=(const dumf& l, const dumf& r) { return (l.mm >= r.mm) ? 0xffffffffU : 0; }
+    SIMDIFY_INL const dumu operator==(const dumf& l, const dumf& r) { return (l.mm == r.mm) ? 0xffffffffU : 0; }
+    SIMDIFY_INL const dumu operator!=(const dumf& l, const dumf& r) { return (l.mm != r.mm) ? 0xffffffffU : 0; }
+
+    SIMDIFY_INL const dumf operator-(const dumf& in) { return -in.mm; }
     SIMDIFY_INL const dumf operator+(const dumf& l, const dumf& r) { return l.mm + r.mm; }
     SIMDIFY_INL const dumf operator-(const dumf& l, const dumf& r) { return l.mm - r.mm; }
     SIMDIFY_INL const dumf operator*(const dumf& l, const dumf& r) { return l.mm * r.mm; }
     SIMDIFY_INL const dumf operator/(const dumf& l, const dumf& r) { return l.mm / r.mm; }
-    SIMDIFY_INL const dumf operator-(const dumf& in) { return -in.mm; }
-    SIMDIFY_INL const dumf nand(const dumf& l, const dumf& r) { return uval(tou(l.mm) & ~tou(r.mm)); }
+
     SIMDIFY_INL const dumf min(const dumf& l, const dumf& r) { return std::min(l.mm, r.mm); }
     SIMDIFY_INL const dumf max(const dumf& l, const dumf& r) { return std::max(l.mm, r.mm); }
-    SIMDIFY_INL const dumf cond(const dumf& pred, const dumf& if_true, const dumf& if_false) { return pred.mm != 0 ? if_true : if_false; }
+    SIMDIFY_INL const dumf sqrt(const dumf& l) { return std::sqrt(l.mm); }
+    SIMDIFY_INL const dumf rsqrt(const dumf& l) { return 1 / std::sqrt(l.mm); }
+    SIMDIFY_INL const dumf rcp(const dumf& l) { return 1 / l.mm; }
+    SIMDIFY_INL const dumf abs(const dumf& l) { return std::abs(l.mm); }
+
+    SIMDIFY_INL const dumf cond(const dumu& pred, const dumf& if_true, const dumf& if_false) {
+        return any(pred) ? if_true : if_false;
+    }
+    SIMDIFY_INL const dumu cond(const dumu& pred, const dumu& if_true, const dumu& if_false) {
+        return any(pred) ? if_true : if_false;
+    }
+    SIMDIFY_INL const dums cond(const dumu& pred, const dums& if_true, const dums& if_false) {
+        return any(pred) ? if_true : if_false;
+    }
 
     // horizontal operations
-    template <>
-    struct horizontal_impl<dumf> : horizontal_impl_base<dumf> {
-        struct find_result_iterator : std::iterator<std::input_iterator_tag, bit_t> {
-            bit_t mask;
-
-            SIMDIFY_INL find_result_iterator(bit_t mask_) : mask(mask_) {}
-            SIMDIFY_INL bit_t operator*() const { return 0; }
-            SIMDIFY_INL bit_t operator->() const { return 0; }
-            SIMDIFY_INL find_result_iterator& operator++() { mask = 0; return *this; }
-            SIMDIFY_INL find_result_iterator operator++(int) { find_result_iterator r{ mask }; mask = 0; return r; }
-            SIMDIFY_INL bool operator!=(const find_result_iterator& rhs) const { return mask != rhs.mask; }
-        };
-
-        struct find_result {
-            bit_t field;
-
-            SIMDIFY_INL find_result(bit_t field_) : field(field_) {}
-            SIMDIFY_INL find_result_iterator begin() const { return field; }
-            SIMDIFY_INL find_result_iterator end() const { return 0; }
-        };
-
-        static SIMDIFY_INL find_result find(const dumf& in) { return simd::tou(in.mm) != 0; }
-        static SIMDIFY_INL bool any(const dumf& in) { return simd::tou(in.mm) != 0; }
-        static SIMDIFY_INL bool all(const dumf& in) { return simd::tou(in.mm) != 0; }
-
+    template <typename Crtp>
+    struct dum_horizontal_impl : horizontal_impl_base<Crtp> {
         template <binary_op_t F>
-        static SIMDIFY_INL const dumf reduce_vector(const dumf& in) { return in; }
+        static SIMDIFY_INL const Crtp reduce(const Crtp& in) { return in; }
     };
 
+    template <>
+    struct horizontal_impl<dumf> : dum_horizontal_impl<dumf> {};
+    template <>
+    struct horizontal_impl<dumu> : dum_horizontal_impl<dumu> {};
+    template <>
+    struct horizontal_impl<dums> : dum_horizontal_impl<dums> {};
+
 }
+
+#undef SIMDIFY_DUM_COMMON_DECLARATIONS
 
 #endif // SIMDIFY_DUM

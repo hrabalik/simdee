@@ -2,6 +2,7 @@
 #define SIMDIFY_STORAGE_IMPL
 
 #include "common.hpp"
+#include "expr.hpp"
 #include "../util/inline.hpp"
 
 namespace simd {
@@ -242,6 +243,32 @@ namespace simd {
         Storage* m_data;
     };
 
+    template <typename T>
+    SIMDIFY_INL constexpr auto tof(storage<T> r) -> decltype(tof(T(r))) { return tof(T(r)); }
+    template <typename T, std::size_t N>
+    SIMDIFY_INL constexpr auto tof(aos_storage<T, N> r) -> decltype(tof(T(r))) { return tof(T(r)); }
+    template <typename T>
+    SIMDIFY_INL constexpr auto tof(reference<T> r) -> decltype(tof(*r.ptr())) { return tof(*r.ptr()); }
+    template <typename T>
+    SIMDIFY_INL constexpr auto tof(const_reference<T> r) -> decltype(tof(*r.ptr())) { return tof(*r.ptr()); }
+
+    template <typename T>
+    SIMDIFY_INL constexpr auto tou(storage<T> r) -> decltype(tou(T(r))) { return tou(T(r)); }
+    template <typename T, std::size_t N>
+    SIMDIFY_INL constexpr auto tou(aos_storage<T, N> r) -> decltype(tou(T(r))) { return tou(T(r)); }
+    template <typename T>
+    SIMDIFY_INL constexpr auto tou(reference<T> r) -> decltype(tou(*r.ptr())) { return tou(*r.ptr()); }
+    template <typename T>
+    SIMDIFY_INL constexpr auto tou(const_reference<T> r) -> decltype(tou(*r.ptr())) { return tou(*r.ptr()); }
+
+    template <typename T>
+    SIMDIFY_INL constexpr auto tos(storage<T> r) -> decltype(tos(T(r))) { return tos(T(r)); }
+    template <typename T, std::size_t N>
+    SIMDIFY_INL constexpr auto tos(aos_storage<T, N> r) -> decltype(tos(T(r))) { return tos(T(r)); }
+    template <typename T>
+    SIMDIFY_INL constexpr auto tos(reference<T> r) -> decltype(tos(*r.ptr())) { return tos(*r.ptr()); }
+    template <typename T>
+    SIMDIFY_INL constexpr auto tos(const_reference<T> r) -> decltype(tos(*r.ptr())) { return tos(*r.ptr()); }
 }
 
 #endif // SIMDIFY_STORAGE_IMPL

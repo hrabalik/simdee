@@ -114,6 +114,7 @@ TEST_CASE("structure_of_arrays size management", "[containers][structure_of_arra
 
 TEST_CASE("structure_of_arrays element access", "[containers][structure_of_arrays]") {
     T t;
+    t.reserve(6);
     t.push_back(std::make_tuple(11.f, 12.f, 13.f));
     t.push_back(std::make_tuple(21.f, 22.f, 23.f));
     t.push_back(std::make_tuple(31.f, 32.f, 33.f));
@@ -121,38 +122,75 @@ TEST_CASE("structure_of_arrays element access", "[containers][structure_of_array
     t.push_back(std::make_tuple(51.f, 52.f, 53.f));
     t.push_back(std::make_tuple(61.f, 62.f, 63.f));
 
-    auto el1 = t[3];
-    REQUIRE(el1.x == 41.f);
-    REQUIRE(el1.y == 42.f);
-    REQUIRE(el1.z == 43.f);
-    auto el2 = t[5];
-    REQUIRE(el2.x == 61.f);
-    REQUIRE(el2.y == 62.f);
-    REQUIRE(el2.z == 63.f);
+    SECTION("using values to access values") {
+        auto el1 = t[3];
+        REQUIRE(el1.x == 41.f);
+        REQUIRE(el1.y == 42.f);
+        REQUIRE(el1.z == 43.f);
+        auto el2 = t[5];
+        REQUIRE(el2.x == 61.f);
+        REQUIRE(el2.y == 62.f);
+        REQUIRE(el2.z == 63.f);
+        el1 = std::make_tuple(71.f, 72.f, 73.f);
+    }
 
-    simd::storage<simd::sseu> stor;
-    stor[0] = 3;
-    stor[1] = 2;
-    stor[2] = 1;
-    stor[3] = 0;
-    auto na = t[stor];
+    SECTION("getting references to values via operator []") {
+        T::reference el1 = t[3];
+        el1.x = 71.f;
+        el1.y = 72.f;
+        el1.z = 73.f;
+        T::reference el2 = t[3];
+        REQUIRE(el2.x == 71.f);
+        REQUIRE(el2.y == 72.f);
+        REQUIRE(el2.z == 73.f);
+    }
 
-    simd::storage<simd::ssef> storf;
-    storf = na.x;
-    REQUIRE(storf[0] == 41.f);
-    REQUIRE(storf[1] == 31.f);
-    REQUIRE(storf[2] == 21.f);
-    REQUIRE(storf[3] == 11.f);
-    storf = na.y;
-    REQUIRE(storf[0] == 42.f);
-    REQUIRE(storf[1] == 32.f);
-    REQUIRE(storf[2] == 22.f);
-    REQUIRE(storf[3] == 12.f);
-    storf = na.z;
-    REQUIRE(storf[0] == 43.f);
-    REQUIRE(storf[1] == 33.f);
-    REQUIRE(storf[2] == 23.f);
-    REQUIRE(storf[3] == 13.f);
+    SECTION("getting references to values via iterator") {
+        T::reference el1 = *t.begin();
+        el1.x = 71.f;
+        el1.y = 72.f;
+        el1.z = 73.f;
+        T::reference el2 = *t.begin();
+        REQUIRE(el2.x == 71.f);
+        REQUIRE(el2.y == 72.f);
+        REQUIRE(el2.z == 73.f);
+    }
+
+    SECTION("getting references to vectors via iterator") {
+        T::reference_vector el1 = *t.begin_overspan();
+        el1.x = 71.f;
+        el1.y = 72.f;
+        el1.z = 73.f;
+        T::reference_vector el2 = *t.begin_overspan();
+        REQUIRE(all(el2.x == 71.f));
+        REQUIRE(all(el2.y == 72.f));
+        REQUIRE(all(el2.z == 73.f));
+    }
+
+    SECTION("using vectors to access vectors") {
+        simd::storage<simd::sseu> stor;
+        stor[0] = 3;
+        stor[1] = 2;
+        stor[2] = 1;
+        stor[3] = 0;
+        auto na = t[stor];
+        simd::storage<simd::ssef> storf;
+        storf = na.x;
+        REQUIRE(storf[0] == 41.f);
+        REQUIRE(storf[1] == 31.f);
+        REQUIRE(storf[2] == 21.f);
+        REQUIRE(storf[3] == 11.f);
+        storf = na.y;
+        REQUIRE(storf[0] == 42.f);
+        REQUIRE(storf[1] == 32.f);
+        REQUIRE(storf[2] == 22.f);
+        REQUIRE(storf[3] == 12.f);
+        storf = na.z;
+        REQUIRE(storf[0] == 43.f);
+        REQUIRE(storf[1] == 33.f);
+        REQUIRE(storf[2] == 23.f);
+        REQUIRE(storf[3] == 13.f);
+    }
 }
 
 TEST_CASE("structure_of_arrays iteration", "[containers][structure_of_arrays]") {

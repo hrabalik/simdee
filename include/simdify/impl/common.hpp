@@ -137,4 +137,17 @@ namespace simd {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDIFY_TRIVIAL_TYPE( CLASS )                                                                   \
+                                                                                                         \
+SIMDIFY_INL ~CLASS() = default;                                                                          \
+                                                                                                         \
+SIMDIFY_INL CLASS() = default;                                                                           \
+                                                                                                         \
+SIMDIFY_INL CLASS(const CLASS&) = default;                                                               \
+                                                                                                         \
+SIMDIFY_INL CLASS& operator=(const CLASS&) = default;                                                    \
+                                                                                                         \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #endif // SIMDIFY_COMMON

@@ -9,111 +9,6 @@
 #include "common.hpp"
 #include <immintrin.h>
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDIFY_AVX_COMMON_DECLARATIONS( CLASS )                                                         \
-                                                                                                         \
-SIMDIFY_INL ~CLASS() = default;                                                                          \
-                                                                                                         \
-SIMDIFY_INL CLASS() = default;                                                                           \
-                                                                                                         \
-SIMDIFY_INL CLASS(const CLASS&) = default;                                                               \
-                                                                                                         \
-SIMDIFY_INL CLASS& operator=(const CLASS&) = default;                                                    \
-                                                                                                         \
-SIMDIFY_INL CLASS(const mm_t& r) {                                                                       \
-    mm = r;                                                                                              \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL CLASS& operator=(const mm_t& r) {                                                            \
-    mm = r;                                                                                              \
-    return *this;                                                                                        \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL CLASS(e_t r) {                                                                               \
-    mm = _mm256_broadcast_ss((float*)&r);                                                                \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL CLASS& operator=(e_t r) {                                                                    \
-    mm = _mm256_broadcast_ss((float*)&r);                                                                \
-    return *this;                                                                                        \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL CLASS(const expr::zero& r) {                                                                 \
-    mm = _mm256_setzero_ps();                                                                            \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL CLASS& operator=(const expr::zero& r) {                                                      \
-    mm = _mm256_setzero_ps();                                                                            \
-    return *this;                                                                                        \
-}                                                                                                        \
-                                                                                                         \
-template <typename T>                                                                                    \
-SIMDIFY_INL CLASS(const expr::aligned<T>& r) {                                                           \
-    aligned_load(r.ptr);                                                                                 \
-}                                                                                                        \
-                                                                                                         \
-template <typename T>                                                                                    \
-SIMDIFY_INL CLASS& operator=(const expr::aligned<T>& r) {                                                \
-    aligned_load(r.ptr);                                                                                 \
-    return *this;                                                                                        \
-}                                                                                                        \
-                                                                                                         \
-template <typename T>                                                                                    \
-SIMDIFY_INL CLASS(const expr::unaligned<T>& r) {                                                         \
-    unaligned_load(r.ptr);                                                                               \
-}                                                                                                        \
-                                                                                                         \
-template <typename T>                                                                                    \
-SIMDIFY_INL CLASS& operator=(const expr::unaligned<T>& r) {                                              \
-    unaligned_load(r.ptr);                                                                               \
-    return *this;                                                                                        \
-}                                                                                                        \
-                                                                                                         \
-template <typename T>                                                                                    \
-SIMDIFY_INL CLASS(const expr::init<T>& r) {                                                              \
-    *this = r.template to<e_t>();                                                                        \
-}                                                                                                        \
-                                                                                                         \
-template <typename T>                                                                                    \
-SIMDIFY_INL CLASS& operator=(const expr::init<T>& r) {                                                   \
-    *this = r.template to<e_t>();                                                                        \
-    return *this;                                                                                        \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL void aligned_load(const e_t* r) {                                                            \
-    mm = _mm256_load_ps((const float*)r);                                                                \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL void aligned_store(e_t* r) const {                                                           \
-    _mm256_store_ps((float*)r, mm);                                                                      \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL void unaligned_load(const e_t* r) {                                                          \
-    mm = _mm256_loadu_ps((const float*)r);                                                               \
-}                                                                                                        \
-                                                                                                         \
-SIMDIFY_INL void unaligned_store(e_t* r) {                                                               \
-    _mm256_storeu_ps((float*)r, mm);                                                                     \
-}                                                                                                        \
-                                                                                                         \
-void interleaved_load(const e_t* r, std::size_t step) {                                                  \
-    alignas(CLASS)e_t temp[W];                                                                           \
-    for (std::size_t i = 0; i < W; ++i, r += step) {                                                     \
-        temp[i] = *r;                                                                                    \
-    }                                                                                                    \
-    aligned_load(temp);                                                                                  \
-}                                                                                                        \
-                                                                                                         \
-void interleaved_store(e_t* r, std::size_t step) const {                                                 \
-    alignas(CLASS)e_t temp[W];                                                                           \
-    aligned_store(temp);                                                                                 \
-    for (std::size_t i = 0; i < W; ++i, r += step) {                                                     \
-        *r = temp[i];                                                                                    \
-    }                                                                                                    \
-}                                                                                                        \
-                                                                                                         \
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 namespace simd {
 
     struct avxf;
@@ -148,14 +43,115 @@ namespace simd {
     template <>
     struct simd_type_traits<avxs> : avx_traits<__m256, int32_t> {};
 
-    struct avxf : simd_base<avxf> {
-        SIMDIFY_AVX_COMMON_DECLARATIONS(avxf);
+    template <typename Crtp>
+    struct avx_base : simd_base<Crtp> {
+        SIMDIFY_TRIVIAL_TYPE(avx_base);
+
+        SIMDIFY_INL avx_base(const mm_t& r) {
+            mm = r;
+        }
+
+        SIMDIFY_INL avx_base& operator=(const mm_t& r) {
+            mm = r;
+            return *this;
+        }
+
+        SIMDIFY_INL avx_base(e_t r) {
+            mm = _mm256_broadcast_ss((float*)&r);
+        }
+
+        SIMDIFY_INL avx_base& operator=(e_t r) {
+            mm = _mm256_broadcast_ss((float*)&r);
+            return *this;
+        }
+
+        SIMDIFY_INL avx_base(const expr::zero& r) {
+            mm = _mm256_setzero_ps();
+        }
+
+        SIMDIFY_INL avx_base& operator=(const expr::zero& r) {
+            mm = _mm256_setzero_ps();
+            return *this;
+        }
+
+        template <typename T>
+        SIMDIFY_INL avx_base(const expr::aligned<T>& r) {
+            aligned_load(r.ptr);
+        }
+
+        template <typename T>
+        SIMDIFY_INL avx_base& operator=(const expr::aligned<T>& r) {
+            aligned_load(r.ptr);
+            return *this;
+        }
+
+        template <typename T>
+        SIMDIFY_INL avx_base(const expr::unaligned<T>& r) {
+            unaligned_load(r.ptr);
+        }
+
+        template <typename T>
+        SIMDIFY_INL avx_base& operator=(const expr::unaligned<T>& r) {
+            unaligned_load(r.ptr);
+            return *this;
+        }
+
+        template <typename T>
+        SIMDIFY_INL avx_base(const expr::init<T>& r) {
+            *this = r.template to<e_t>();
+        }
+
+        template <typename T>
+        SIMDIFY_INL avx_base& operator=(const expr::init<T>& r) {
+            *this = r.template to<e_t>();
+            return *this;
+        }
+
+        SIMDIFY_INL void aligned_load(const e_t* r) {
+            mm = _mm256_load_ps((const float*)r);
+        }
+
+        SIMDIFY_INL void aligned_store(e_t* r) const {
+            _mm256_store_ps((float*)r, mm);
+        }
+
+        SIMDIFY_INL void unaligned_load(const e_t* r) {
+            mm = _mm256_loadu_ps((const float*)r);
+        }
+
+        SIMDIFY_INL void unaligned_store(e_t* r) {
+            _mm256_storeu_ps((float*)r, mm);
+        }
+
+        void interleaved_load(const e_t* r, std::size_t step) {
+            alignas(avx_base)e_t temp[W];
+            for (std::size_t i = 0; i < W; ++i, r += step) {
+                temp[i] = *r;
+            }
+            aligned_load(temp);
+        }
+
+        void interleaved_store(e_t* r, std::size_t step) const {
+            alignas(avx_base)e_t temp[W];
+            aligned_store(temp);
+            for (std::size_t i = 0; i < W; ++i, r += step) {
+                *r = temp[i];
+            }
+        }
+    };
+
+    struct avxf : avx_base<avxf> {
+        using avx_base::avx_base;
+
+        SIMDIFY_TRIVIAL_TYPE(avxf);
 
         SIMDIFY_INL e_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
     };
 
-    struct avxu : simd_base<avxu> {
-        SIMDIFY_AVX_COMMON_DECLARATIONS(avxu);
+    struct avxu : avx_base<avxu> {
+        using avx_base::avx_base;
+
+        SIMDIFY_TRIVIAL_TYPE(avxu);
 
         SIMDIFY_INL avxu(const expr::bit_not<avxu>& r) { *this = r; }
 
@@ -171,8 +167,10 @@ namespace simd {
         SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
     };
 
-    struct avxs : simd_base<avxs> {
-        SIMDIFY_AVX_COMMON_DECLARATIONS(avxs);
+    struct avxs : avx_base<avxs> {
+        using avx_base::avx_base;
+
+        SIMDIFY_TRIVIAL_TYPE(avxs);
 
         SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(_mm256_castps256_ps128(mm)); }
     };

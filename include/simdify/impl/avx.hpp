@@ -178,6 +178,8 @@ namespace simd {
         SIMDIFY_INL bit_t front() const { return ls1b(bit_t(_mm256_movemask_ps(mm)));; }
         SIMDIFY_INL bit_iterator begin() const { return bit_iterator(_mm256_movemask_ps(mm)); }
         SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
+        SIMDIFY_INL bool any() const { return _mm256_movemask_ps(mm) != 0; }
+        SIMDIFY_INL bool all() const { return _mm256_movemask_ps(mm) == 0xFF; }
     };
 
     struct avxs : avx_base<avxs> {
@@ -193,8 +195,6 @@ namespace simd {
     SIMDIFY_INL const avxu operator^(const avxu& l, const avxu& r) { return _mm256_xor_ps(l.mm, r.mm); }
     SIMDIFY_INL const expr::bit_not<avxu> operator~(const avxu& l) { return expr::bit_not<avxu>(l); }
     SIMDIFY_INL const avxu nand(const avxu& l, const avxu& r) { return _mm256_andnot_ps(l.mm, r.mm); }
-    SIMDIFY_INL const bool any(const avxu& l) { return _mm256_movemask_ps(l.mm) != 0; }
-    SIMDIFY_INL const bool all(const avxu& l) { return _mm256_movemask_ps(l.mm) == 0xFF; }
 
     SIMDIFY_INL const avxu operator<(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_LT_OQ); }
     SIMDIFY_INL const avxu operator>(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_GT_OQ); }

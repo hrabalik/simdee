@@ -24,7 +24,7 @@ TEST_CASE("structure_of_arrays construction", "[containers][structure_of_arrays]
         });
         REQUIRE(win);
         bool win2 = std::all_of(t.cbegin_body(), t.cend_body(), [](T::const_reference_vector ref) {
-            return all(ref.x == 11.f & ref.y == 22.f & ref.z == 33.f);
+            return (ref.x == 11.f & ref.y == 22.f & ref.z == 33.f).all();
         });
         REQUIRE(win2);
     }
@@ -162,9 +162,9 @@ TEST_CASE("structure_of_arrays element access", "[containers][structure_of_array
         el1.y = 72.f;
         el1.z = 73.f;
         T::reference_vector el2 = *t.begin_overspan();
-        REQUIRE(all(el2.x == 71.f));
-        REQUIRE(all(el2.y == 72.f));
-        REQUIRE(all(el2.z == 73.f));
+        REQUIRE((el2.x == 71.f).all());
+        REQUIRE((el2.y == 72.f).all());
+        REQUIRE((el2.z == 73.f).all());
     }
 
     SECTION("using vectors to access vectors") {

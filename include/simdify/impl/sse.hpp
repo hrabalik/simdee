@@ -188,6 +188,8 @@ namespace simd {
         SIMDIFY_INL bit_t front() const { return ls1b(bit_t(_mm_movemask_ps(mm)));; }
         SIMDIFY_INL bit_iterator begin() const { return bit_iterator(_mm_movemask_ps(mm)); }
         SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
+        SIMDIFY_INL bool any() const { return _mm_movemask_ps(mm) != 0; }
+        SIMDIFY_INL bool all() const { return _mm_movemask_ps(mm) == 0xF; }
     };
 
     struct sses : sse_base<sses> {
@@ -203,8 +205,6 @@ namespace simd {
     SIMDIFY_INL const sseu operator^(const sseu& l, const sseu& r) { return _mm_xor_ps(l.mm, r.mm); }
     SIMDIFY_INL const expr::bit_not<sseu> operator~(const sseu& l) { return expr::bit_not<sseu>(l); }
     SIMDIFY_INL const sseu nand(const sseu& l, const sseu& r) { return _mm_andnot_ps(l.mm, r.mm); }
-    SIMDIFY_INL const bool any(const sseu& l) { return _mm_movemask_ps(l.mm) != 0; }
-    SIMDIFY_INL const bool all(const sseu& l) { return _mm_movemask_ps(l.mm) == 0xF; }
 
     SIMDIFY_INL const sseu operator<(const ssef& l, const ssef& r) { return _mm_cmplt_ps(l.mm, r.mm); }
     SIMDIFY_INL const sseu operator>(const ssef& l, const ssef& r) { return _mm_cmpgt_ps(l.mm, r.mm); }

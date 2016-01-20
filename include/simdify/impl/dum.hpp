@@ -147,6 +147,8 @@ namespace simd {
         SIMDIFY_INL bit_t front() const { return 0; }
         SIMDIFY_INL iterator begin() const { return iterator((simd::tou(mm) & 0x80000000U) >> 31); }
         SIMDIFY_INL iterator end() const { return iterator(0); }
+        SIMDIFY_INL bool any() const { return (simd::tou(mm) & 0x80000000U) != 0; }
+        SIMDIFY_INL bool all() const { return (simd::tou(mm) & 0x80000000U) != 0; }
     };
 
     struct dums : dum_base<dums> {
@@ -162,8 +164,6 @@ namespace simd {
     SIMDIFY_INL const dumu operator^(const dumu& l, const dumu& r) { return uval(tou(l.mm) ^ tou(r.mm)); }
     SIMDIFY_INL const dumu operator~(const dumu& l) { return uval(~tou(l.mm)); }
     SIMDIFY_INL const dumu nand(const dumu& l, const dumu& r) { return uval(tou(l.mm) & ~tou(r.mm)); }
-    SIMDIFY_INL const bool any(const dumu& in) { return (simd::tou(in.mm) & 0x80000000U) != 0; }
-    SIMDIFY_INL const bool all(const dumu& in) { return (simd::tou(in.mm) & 0x80000000U) != 0; }
 
     SIMDIFY_INL const dumu operator<(const dumf& l, const dumf& r) { return (l.mm < r.mm) ? 0xffffffffU : 0; }
     SIMDIFY_INL const dumu operator>(const dumf& l, const dumf& r) { return (l.mm > r.mm) ? 0xffffffffU : 0; }
@@ -186,13 +186,13 @@ namespace simd {
     SIMDIFY_INL const dumf abs(const dumf& l) { return std::abs(l.mm); }
 
     SIMDIFY_INL const dumf cond(const dumu& pred, const dumf& if_true, const dumf& if_false) {
-        return any(pred) ? if_true : if_false;
+        return pred.any() ? if_true : if_false;
     }
     SIMDIFY_INL const dumu cond(const dumu& pred, const dumu& if_true, const dumu& if_false) {
-        return any(pred) ? if_true : if_false;
+        return pred.any() ? if_true : if_false;
     }
     SIMDIFY_INL const dums cond(const dumu& pred, const dums& if_true, const dums& if_false) {
-        return any(pred) ? if_true : if_false;
+        return pred.any() ? if_true : if_false;
     }
 }
 

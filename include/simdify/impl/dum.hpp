@@ -113,6 +113,9 @@ namespace simd {
         void interleaved_store(e_t* r, std::size_t step) const {
             *r = mm;
         }
+
+        using binary_op_t = const Crtp(*)(const Crtp& l, const Crtp& r);
+        SIMDIFY_INL const Crtp reduce(binary_op_t f) const { return self(); }
     };
 
     struct dumf : dum_base<dumf> {
@@ -191,23 +194,6 @@ namespace simd {
     SIMDIFY_INL const dums cond(const dumu& pred, const dums& if_true, const dums& if_false) {
         return any(pred) ? if_true : if_false;
     }
-
-    // horizontal operations
-    template <typename Crtp>
-    struct dum_horizontal_impl : horizontal_impl_base<Crtp> {
-        using binary_op_t = typename horizontal_impl_base<Crtp>::binary_op_t;
-
-        template <binary_op_t F>
-        static SIMDIFY_INL const Crtp reduce(const Crtp& in) { return in; }
-    };
-
-    template <>
-    struct horizontal_impl<dumf> : dum_horizontal_impl<dumf> {};
-    template <>
-    struct horizontal_impl<dumu> : dum_horizontal_impl<dumu> {};
-    template <>
-    struct horizontal_impl<dums> : dum_horizontal_impl<dums> {};
-
 }
 
 #undef SIMDIFY_DUM_COMMON_DECLARATIONS

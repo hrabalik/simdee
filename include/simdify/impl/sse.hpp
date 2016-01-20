@@ -155,6 +155,12 @@ namespace simd {
                 *r = temp[i];
             }
         }
+
+        using binary_op_t = const Crtp(*)(const Crtp& l, const Crtp& r);
+        SIMDIFY_INL const Crtp reduce(binary_op_t f) const {
+            Crtp tmp = f(self(), _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(mm), _MM_SHUFFLE(2, 3, 0, 1))));
+            return f(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm), _MM_SHUFFLE(1, 0, 3, 2))));
+        }
     };
 
     struct ssef : sse_base<ssef> {
@@ -231,26 +237,6 @@ namespace simd {
     SIMDIFY_INL const sses cond(const sseu& pred, const sses& if_true, const sses& if_false) {
         return tos((tou(if_true) & pred) | (tou(if_false) & ~pred));
     }
-
-    // horizontal operations
-    template <typename Crtp>
-    struct sse_horizontal_impl : horizontal_impl_base<Crtp> {
-        using binary_op_t = typename horizontal_impl_base<Crtp>::binary_op_t;
-
-        template <binary_op_t F>
-        static SIMDIFY_INL const ssef reduce(const ssef& in) {
-            ssef tmp = F(in, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(in.mm), _MM_SHUFFLE(2, 3, 0, 1))));
-            return F(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm), _MM_SHUFFLE(1, 0, 3, 2))));
-        }
-    };
-
-    template <>
-    struct horizontal_impl<ssef> : sse_horizontal_impl<ssef> {};
-    template <>
-    struct horizontal_impl<sseu> : sse_horizontal_impl<sseu> {};
-    template <>
-    struct horizontal_impl<sses> : sse_horizontal_impl<sses> {};
-
 }
 
 #undef SIMDIFY_SSE_COMMON_DECLARATIONS

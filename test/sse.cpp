@@ -629,37 +629,37 @@ TEST_CASE("SSE horizontal operations", "[simd_t][x86][sse]") {
     uint32_t idx;
 
     SECTION("max") {
-        v = F::horizontal::max(a).first_element();
+        v = a.reduce(simd::max).first_element();
         REQUIRE(v == 2.22944568f);
         idx = (v == a).front();
         REQUIRE(idx == 3);
-        v = F::horizontal::max_mask(a, a != v).first_element();
+        v = max_mask(a, a != v).reduce(simd::max).first_element();
         REQUIRE(v == 0.70154146f);
         idx = (v == a).front();
         REQUIRE(idx == 1);
     }
     SECTION("min") {
-        v = F::horizontal::min(a).first_element();
+        v = a.reduce(simd::min).first_element();
         REQUIRE(v == -2.05181630f);
         idx = (v == a).front();
         REQUIRE(idx == 2);
-        v = F::horizontal::min_mask(a, a != v).first_element();
+        v = min_mask(a, a != v).reduce(simd::min).first_element();
         REQUIRE(v == -0.27787193f);
         idx = (v == a).front();
         REQUIRE(idx == 0);
     }
     SECTION("sum") {
         v0 = std::accumulate(begin(bufAF), end(bufAF), F::e_t(0));
-        v = F::horizontal::sum(a).first_element();
+        v = a.reduce(simd::operator+).first_element();
         REQUIRE(v == Approx(v0));
-        v = F::horizontal::sum_mask(a, simd::zero()).first_element();
+        v = sum_mask(a, simd::zero()).reduce(simd::operator+).first_element();
         REQUIRE(v == 0);
     }
     SECTION("product") {
         v0 = std::accumulate(begin(bufAF), end(bufAF), F::e_t(1), std::multiplies<F::e_t>());
-        v = F::horizontal::product(a).first_element();
+        v = a.reduce(simd::operator*).first_element();
         REQUIRE(v == Approx(v0));
-        v = F::horizontal::product_mask(a, simd::zero()).first_element();
+        v = product_mask(a, simd::zero()).reduce(simd::operator*).first_element();
         REQUIRE(v == 1);
     }
 }

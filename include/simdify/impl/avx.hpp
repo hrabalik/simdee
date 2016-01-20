@@ -144,6 +144,13 @@ namespace simd {
                 *r = temp[i];
             }
         }
+
+        using binary_op_t = const Crtp(*)(const Crtp& l, const Crtp& r);
+        SIMDIFY_INL const Crtp reduce(binary_op_t f) const {
+            Crtp tmp = f(self(), _mm256_permute_ps(mm, _MM_SHUFFLE(2, 3, 0, 1)));
+            tmp = f(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));
+            return f(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));
+        }
     };
 
     struct avxf : avx_base<avxf> {
@@ -218,25 +225,6 @@ namespace simd {
     SIMDIFY_INL const avxs cond(const avxu& pred, const avxs& if_true, const avxs& if_false) {
         return _mm256_blendv_ps(if_false.mm, if_true.mm, pred.mm);
     }
-
-    template <typename Crtp>
-    struct avx_horizontal_impl : horizontal_impl_base<Crtp> {
-        using binary_op_t = typename horizontal_impl_base<Crtp>::binary_op_t;
-
-        template <binary_op_t F>
-        static SIMDIFY_INL const Crtp reduce(const Crtp& in) {
-            Crtp tmp = F(in, _mm256_permute_ps(in.mm, _MM_SHUFFLE(2, 3, 0, 1)));
-            tmp = F(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));
-            return F(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));
-        }
-    };
-
-    template <>
-    struct horizontal_impl<avxf> : avx_horizontal_impl<avxf> {};
-    template <>
-    struct horizontal_impl<avxu> : avx_horizontal_impl<avxu> {};
-    template <>
-    struct horizontal_impl<avxs> : avx_horizontal_impl<avxs> {};
 }
 
 #undef SIMDIFY_AVX_COMMON_DECLARATIONS

@@ -16,8 +16,6 @@ namespace simd {
     template <typename T>
     struct is_simd_type : std::integral_constant<bool, false> {};
     template <typename T>
-    struct horizontal_impl;
-    template <typename T>
     struct simd_type_traits;
 
     //
@@ -34,7 +32,6 @@ namespace simd {
         };
 
         using array_e = std::array<e_t, W>;
-        using horizontal = horizontal_impl<Crtp>;
 
         SIMDIFY_INL Crtp& self() {
             return static_cast<Crtp&>(*this);
@@ -85,60 +82,31 @@ namespace simd {
     template <typename T> SIMDIFY_INL const T signum(const simd_base<T>& l) {
         return cond(l.self() > zero(), T(1), T(-1));
     }
-
-    //
-    // provides access to min, max, operator+, operator* before they have been declared
-    //
     template <typename T>
-    struct operators {
-        static SIMDIFY_INL const T min_(const T& l, const T& r) { return min(l, r); }
-        static SIMDIFY_INL const T max_(const T& l, const T& r) { return max(l, r); }
-        static SIMDIFY_INL const T add_(const T& l, const T& r) { return l + r; }
-        static SIMDIFY_INL const T mul_(const T& l, const T& r) { return l * r; }
-    };
-
-    //
-    // base class for horizontal<T>
-    //
+    const T max_mask(const simd_base<T>& in, const typename simd_type_traits<T>::vec_u& mask) {
+        using simd::cond;
+        return cond(mask, in.self(), simd::ninf());
+    }
     template <typename T>
-    struct horizontal_impl_base {
-        using unary_op_t = const T(*)(const T& in);
-        using binary_op_t = const T(*)(const T& l, const T& r);
-        using e_t = typename T::e_t;
-        using ops = operators<T>;
-        using mask_t = typename simd_type_traits<T>::vec_u;
-
-        template <binary_op_t F>
-        static SIMDIFY_INL const T reduce(const T& in) { return horizontal_impl<T>::template reduce<F>(in); }
-
-        template <binary_op_t F, typename N>
-        static SIMDIFY_INL const T reduce_mask(const T& in, const mask_t& mask, const N& neutral_value) {
-            return reduce<F>(cond(mask, in, neutral_value));
-        }
-
-        static SIMDIFY_INL const T min(const T& in) { return reduce<ops::min_>(in); }
-        static SIMDIFY_INL const T max(const T& in) { return reduce<ops::max_>(in); }
-        static SIMDIFY_INL const T sum(const T& in) { return reduce<ops::add_>(in); }
-        static SIMDIFY_INL const T product(const T& in) { return reduce<ops::mul_>(in); }
-
-        static SIMDIFY_INL const T min_mask(const T& in, const mask_t& mask) {
-            return reduce_mask<ops::min_>(in, mask, std::numeric_limits<e_t>::max());
-        }
-        static SIMDIFY_INL const T max_mask(const T& in, const mask_t& mask) {
-            return reduce_mask<ops::max_>(in, mask, std::numeric_limits<e_t>::lowest());
-        }
-        static SIMDIFY_INL const T sum_mask(const T& in, const mask_t& mask) {
-            return reduce_mask<ops::add_>(in, mask, zero());
-        }
-        static SIMDIFY_INL const T product_mask(const T& in, const mask_t& mask) {
-            return reduce_mask<ops::mul_>(in, mask, e_t(1));
-        }
-    };
+    const T min_mask(const simd_base<T>& in, const typename simd_type_traits<T>::vec_u& mask) {
+        using simd::cond;
+        return cond(mask, in.self(), simd::inf());
+    }
+    template <typename T>
+    const T sum_mask(const simd_base<T>& in, const typename simd_type_traits<T>::vec_u& mask) {
+        using simd::cond;
+        return cond(mask, in.self(), simd::zero());
+    }
+    template <typename T>
+    const T product_mask(const simd_base<T>& in, const typename simd_type_traits<T>::vec_u& mask) {
+        using simd::cond;
+        return cond(mask, in.self(), 1);
+    }
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDIFY_TRIVIAL_TYPE( CLASS )                                                                   \
+#define SIMDIFY_TRIVIAL_TYPE( CLASS )                                                                    \
                                                                                                          \
 SIMDIFY_INL ~CLASS() = default;                                                                          \
                                                                                                          \

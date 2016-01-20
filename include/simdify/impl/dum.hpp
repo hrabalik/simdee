@@ -46,14 +46,15 @@ namespace simd {
         using e_t = typename simd_base<Crtp>::e_t;
         using simd_base<Crtp>::mm;
         using simd_base<Crtp>::W;
+        using simd_base<Crtp>::self;
 
         SIMDIFY_INL dum_base(const e_t& r) {
             mm = r;
         }
 
-        SIMDIFY_INL dum_base& operator=(const e_t& r) {
+        SIMDIFY_INL Crtp& operator=(const e_t& r) {
             mm = r;
-            return *this;
+            return self();
         }
 
         template <typename T>
@@ -62,9 +63,9 @@ namespace simd {
         }
 
         template <typename T>
-        SIMDIFY_INL dum_base& operator=(const expr::aligned<T>& r) {
+        SIMDIFY_INL Crtp& operator=(const expr::aligned<T>& r) {
             aligned_load(r.ptr);
-            return *this;
+            return self();
         }
 
         template <typename T>
@@ -73,9 +74,9 @@ namespace simd {
         }
 
         template <typename T>
-        SIMDIFY_INL dum_base& operator=(const expr::unaligned<T>& r) {
+        SIMDIFY_INL Crtp& operator=(const expr::unaligned<T>& r) {
             unaligned_load(r.ptr);
-            return *this;
+            return self();
         }
 
         template <typename T>
@@ -84,9 +85,9 @@ namespace simd {
         }
 
         template <typename T>
-        SIMDIFY_INL dum_base& operator=(const expr::init<T>& r) {
+        SIMDIFY_INL Crtp& operator=(const expr::init<T>& r) {
             *this = r.template to<e_t>();
-            return *this;
+            return self();
         }
 
         SIMDIFY_INL void aligned_load(const e_t* r) {

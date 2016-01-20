@@ -51,32 +51,33 @@ namespace simd {
         using e_t = typename simd_base<Crtp>::e_t;
         using simd_base<Crtp>::mm;
         using simd_base<Crtp>::W;
+        using simd_base<Crtp>::self;
 
         SIMDIFY_INL avx_base(const mm_t& r) {
             mm = r;
         }
 
-        SIMDIFY_INL avx_base& operator=(const mm_t& r) {
+        SIMDIFY_INL Crtp& operator=(const mm_t& r) {
             mm = r;
-            return *this;
+            return self();
         }
 
         SIMDIFY_INL avx_base(e_t r) {
             mm = _mm256_broadcast_ss((float*)&r);
         }
 
-        SIMDIFY_INL avx_base& operator=(e_t r) {
+        SIMDIFY_INL Crtp& operator=(e_t r) {
             mm = _mm256_broadcast_ss((float*)&r);
-            return *this;
+            return self();
         }
 
         SIMDIFY_INL avx_base(const expr::zero& r) {
             mm = _mm256_setzero_ps();
         }
 
-        SIMDIFY_INL avx_base& operator=(const expr::zero& r) {
+        SIMDIFY_INL Crtp& operator=(const expr::zero& r) {
             mm = _mm256_setzero_ps();
-            return *this;
+            return self();
         }
 
         template <typename T>
@@ -85,9 +86,9 @@ namespace simd {
         }
 
         template <typename T>
-        SIMDIFY_INL avx_base& operator=(const expr::aligned<T>& r) {
+        SIMDIFY_INL Crtp& operator=(const expr::aligned<T>& r) {
             aligned_load(r.ptr);
-            return *this;
+            return self();
         }
 
         template <typename T>
@@ -96,9 +97,9 @@ namespace simd {
         }
 
         template <typename T>
-        SIMDIFY_INL avx_base& operator=(const expr::unaligned<T>& r) {
+        SIMDIFY_INL Crtp& operator=(const expr::unaligned<T>& r) {
             unaligned_load(r.ptr);
-            return *this;
+            return self();
         }
 
         template <typename T>
@@ -107,9 +108,9 @@ namespace simd {
         }
 
         template <typename T>
-        SIMDIFY_INL avx_base& operator=(const expr::init<T>& r) {
+        SIMDIFY_INL Crtp& operator=(const expr::init<T>& r) {
             *this = r.template to<e_t>();
-            return *this;
+            return self();
         }
 
         SIMDIFY_INL void aligned_load(const e_t* r) {

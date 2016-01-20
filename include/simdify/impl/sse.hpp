@@ -58,6 +58,11 @@ namespace simd {
     struct sse_base : simd_base<Crtp> {
         SIMDIFY_TRIVIAL_TYPE(sse_base);
 
+        using mm_t = typename simd_base<Crtp>::mm_t;
+        using e_t = typename simd_base<Crtp>::e_t;
+        using simd_base<Crtp>::mm;
+        using simd_base<Crtp>::W;
+
         SIMDIFY_INL sse_base(const mm_t& r) {
             mm = r;
         }
@@ -229,6 +234,8 @@ namespace simd {
     // horizontal operations
     template <typename Crtp>
     struct sse_horizontal_impl : horizontal_impl_base<Crtp> {
+        using binary_op_t = typename horizontal_impl_base<Crtp>::binary_op_t;
+
         template <binary_op_t F>
         static SIMDIFY_INL const ssef reduce(const ssef& in) {
             ssef tmp = F(in, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(in.mm), _MM_SHUFFLE(2, 3, 0, 1))));

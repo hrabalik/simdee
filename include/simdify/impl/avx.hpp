@@ -47,6 +47,11 @@ namespace simd {
     struct avx_base : simd_base<Crtp> {
         SIMDIFY_TRIVIAL_TYPE(avx_base);
 
+        using mm_t = typename simd_base<Crtp>::mm_t;
+        using e_t = typename simd_base<Crtp>::e_t;
+        using simd_base<Crtp>::mm;
+        using simd_base<Crtp>::W;
+
         SIMDIFY_INL avx_base(const mm_t& r) {
             mm = r;
         }
@@ -215,6 +220,8 @@ namespace simd {
 
     template <typename Crtp>
     struct avx_horizontal_impl : horizontal_impl_base<Crtp> {
+        using binary_op_t = typename horizontal_impl_base<Crtp>::binary_op_t;
+
         template <binary_op_t F>
         static SIMDIFY_INL const Crtp reduce(const Crtp& in) {
             Crtp tmp = F(in, _mm256_permute_ps(in.mm, _MM_SHUFFLE(2, 3, 0, 1)));

@@ -2,6 +2,7 @@
 #define SIMDIFY_DUM
 
 #include "common.hpp"
+#include <cmath>
 
 namespace simd {
 
@@ -40,6 +41,11 @@ namespace simd {
     template <typename Crtp>
     struct dum_base : simd_base<Crtp> {
         SIMDIFY_TRIVIAL_TYPE(dum_base);
+
+        using mm_t = typename simd_base<Crtp>::mm_t;
+        using e_t = typename simd_base<Crtp>::e_t;
+        using simd_base<Crtp>::mm;
+        using simd_base<Crtp>::W;
 
         SIMDIFY_INL dum_base(const e_t& r) {
             mm = r;
@@ -188,6 +194,8 @@ namespace simd {
     // horizontal operations
     template <typename Crtp>
     struct dum_horizontal_impl : horizontal_impl_base<Crtp> {
+        using binary_op_t = typename horizontal_impl_base<Crtp>::binary_op_t;
+
         template <binary_op_t F>
         static SIMDIFY_INL const Crtp reduce(const Crtp& in) { return in; }
     };

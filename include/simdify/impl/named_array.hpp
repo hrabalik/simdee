@@ -196,6 +196,50 @@ namespace simd {
         named_array& operator=(const named_array&) = default;
         named_array& operator=(named_array&&) = default;
 
+        template <typename U>
+        named_array(const named_array<U, Ids...>& rhs) {
+            auto& la = as_array();
+            auto& ra = rhs.as_array();
+
+            for (int i = 0; i < N; ++i) {
+                new (&la[i]) T(ra[i]);
+            }
+        }
+
+        template <typename U>
+        named_array(named_array<U, Ids...>& rhs) {
+            auto& la = as_array();
+            auto& ra = rhs.as_array();
+
+            for (int i = 0; i < N; ++i) {
+                new (&la[i]) T(ra[i]);
+            }
+        }
+
+        template <typename T>
+        named_array& operator=(const named_array<T, Ids...>& rhs) {
+            auto& la = as_array();
+            auto& ra = rhs.as_array();
+            
+            for (int i = 0; i < N; ++i) {
+                la[i] = ra[i];
+            }
+
+            return *this;
+        }
+
+        template <typename T>
+        named_array& operator=(named_array<T, Ids...>& rhs) {
+            auto& la = as_array();
+            auto& ra = rhs.as_array();
+
+            for (int i = 0; i < N; ++i) {
+                la[i] = ra[i];
+            }
+
+            return *this;
+        }
+
         template <typename... Args>
         SIMDIFY_INL constexpr named_array(const std::tuple<Args...>& t) : base_t(t) {
             static_assert(sizeof...(Args) == sizeof...(Ids), "named_array: incorrect number of parameters");
@@ -230,7 +274,6 @@ namespace simd {
             as_array().swap(rhs.as_array());
         }
 
-    private:
         std::array<T, N>& as_array() {
             return reinterpret_cast<std::array<T, N>&>(*this);
         }

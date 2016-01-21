@@ -194,6 +194,15 @@ namespace simd {
         SIMDIFY_INL constexpr reference() = default;
         SIMDIFY_INL constexpr reference(const reference&) = default;
 
+        SIMDIFY_INL reference(Storage& rhs) {
+            m_data = &rhs;
+        }
+
+        template <typename U = int>
+        SIMDIFY_INL reference(referred_t& rhs, typename std::enable_if<std::is_arithmetic<referred_t>::value, U>::type = 0) {
+            m_data = reinterpret_cast<Storage*>(&rhs);
+        }
+
         SIMDIFY_INL reference& operator=(const reference& rhs) {
             *m_data = *rhs.m_data;
             return *this;

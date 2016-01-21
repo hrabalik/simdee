@@ -113,57 +113,57 @@ namespace simd {
         SIMDIFY_CONTAINERS_COMMON_POP_BACK("structure_of_arrays");
 
         template <typename Val>
-        struct value_iterator : std::iterator<std::random_access_iterator_tag, Val> {
-            value_iterator(const self_t& self, std::size_t idx) :
+        struct vector_iterator : std::iterator<std::random_access_iterator_tag, Val> {
+            vector_iterator(const self_t& self, std::size_t idx) :
                 m_ptr(self.data_as_value_vector_type_ptr() + (idx / W)) {}
 
-            value_iterator& operator=(const value_iterator& rhs) = default;
+            vector_iterator& operator=(const vector_iterator& rhs) = default;
 
-            value_iterator& operator++() { ++m_ptr; return *this; }
-            value_iterator& operator--() { --m_ptr; return *this; }
-            value_iterator& operator+=(std::ptrdiff_t add) { m_ptr += add; return *this; }
-            std::ptrdiff_t operator-(const value_iterator& rhs) { return m_ptr - rhs.m_ptr; }
-            bool operator<(const value_iterator& rhs) const { return m_ptr < rhs.m_ptr; }
-            bool operator<=(const value_iterator& rhs) const { return m_ptr <= rhs.m_ptr; }
-            bool operator==(const value_iterator& rhs) const { return m_ptr == rhs.m_ptr; }
+            vector_iterator& operator++() { ++m_ptr; return *this; }
+            vector_iterator& operator--() { --m_ptr; return *this; }
+            vector_iterator& operator+=(std::ptrdiff_t add) { m_ptr += add; return *this; }
+            std::ptrdiff_t operator-(const vector_iterator& rhs) { return m_ptr - rhs.m_ptr; }
+            bool operator<(const vector_iterator& rhs) const { return m_ptr < rhs.m_ptr; }
+            bool operator<=(const vector_iterator& rhs) const { return m_ptr <= rhs.m_ptr; }
+            bool operator==(const vector_iterator& rhs) const { return m_ptr == rhs.m_ptr; }
             Val& operator*() { return *m_ptr; }
             Val* operator->() { return m_ptr; }
 
-            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(value_iterator);
+            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(vector_iterator);
 
         private:
             Val* m_ptr;
         };
 
-        template <typename Ref>
-        struct reference_iterator : std::iterator<std::random_access_iterator_tag, Ref> {
-            reference_iterator(const self_t& self, std::size_t idx) {
+        template <typename Val, typename Ref>
+        struct scalar_iterator : std::iterator<std::random_access_iterator_tag, Val, std::ptrdiff_t, scalar_iterator<Val, Ref>, Ref> {
+            scalar_iterator(const self_t& self, std::size_t idx) {
                 auto base = self.m_data.get() + (N*W)*div_floor<W>(idx) + mod<W>(idx);
                 detail::no_op(simd::get<I>(m_ref).reset(base + I*W)...);
                 pos = idx;
             }
 
-            reference_iterator& operator=(const reference_iterator& rhs) {
+            scalar_iterator& operator=(const scalar_iterator& rhs) {
                 detail::no_op(simd::get<I>(m_ref).reset(simd::get<I>(rhs.m_ref).ptr())...);
                 pos = rhs.pos;
                 return *this;
             }
 
-            reference_iterator& operator++() {
+            scalar_iterator& operator++() {
                 auto incr = (mod<W>(pos) == W - 1) ? ((N - 1)*W + 1) : 1;
                 detail::no_op(simd::get<I>(m_ref).ptr() += incr...);
                 ++pos;
                 return *this;
             }
 
-            reference_iterator& operator--() {
+            scalar_iterator& operator--() {
                 auto decr = (mod<W>(pos) == 0) ? ((N - 1)*W + 1) : 1;
                 detail::no_op(simd::get<I>(m_ref).ptr() -= decr...);
                 --pos;
                 return *this;
             }
 
-            reference_iterator& operator+=(std::ptrdiff_t add) {
+            scalar_iterator& operator+=(std::ptrdiff_t add) {
                 enum : std::ptrdiff_t { sigW = W, sigN = N };
                 auto tail = static_cast<std::ptrdiff_t>(mod<W>(pos));
                 tail = (add >= 0) ? tail : (tail - sigW + 1);
@@ -175,27 +175,27 @@ namespace simd {
                 return *this;
             }
 
-            std::ptrdiff_t operator-(const reference_iterator& rhs) {
+            std::ptrdiff_t operator-(const scalar_iterator& rhs) {
                 return static_cast<std::ptrdiff_t>(pos - rhs.pos);
             }
 
-            bool operator<(const reference_iterator& rhs) const { return pos < rhs.pos; }
-            bool operator<=(const reference_iterator& rhs) const { return pos <= rhs.pos; }
-            bool operator==(const reference_iterator& rhs) const { return pos == rhs.pos; }
+            bool operator<(const scalar_iterator& rhs) const { return pos < rhs.pos; }
+            bool operator<=(const scalar_iterator& rhs) const { return pos <= rhs.pos; }
+            bool operator==(const scalar_iterator& rhs) const { return pos == rhs.pos; }
             Ref& operator*() { return m_ref; }
             Ref* operator->() { return &m_ref; }
 
-            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(reference_iterator);
+            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(scalar_iterator);
 
         private:
             Ref m_ref;
             std::size_t pos;
         };
 
-        using iterator = reference_iterator<reference>;
-        using const_iterator = reference_iterator<const_reference>;
-        using iterator_vector = value_iterator<value_type_vector>;
-        using const_iterator_vector = value_iterator<const value_type_vector>;
+        using iterator = scalar_iterator<value_type, reference>;
+        using const_iterator = scalar_iterator<const value_type, const_reference>;
+        using iterator_vector = vector_iterator<value_type_vector>;
+        using const_iterator_vector = vector_iterator<const value_type_vector>;
 
         SIMDIFY_CONTAINERS_COMMON_ITERATION;
 

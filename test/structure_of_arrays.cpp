@@ -134,6 +134,17 @@ TEST_CASE("structure_of_arrays element access", "[containers][structure_of_array
         el1 = std::make_tuple(71.f, 72.f, 73.f);
     }
 
+    SECTION("getting values via operator []") {
+        T::value_type el1 = t[3];
+        el1.x = 71.f;
+        el1.y = 72.f;
+        el1.z = 73.f;
+        T::value_type el2 = t[3];
+        REQUIRE(el2.x == 41.f);
+        REQUIRE(el2.y == 42.f);
+        REQUIRE(el2.z == 43.f);
+    }
+
     SECTION("getting references to values via operator []") {
         T::reference el1 = t[3];
         el1.x = 71.f;
@@ -145,6 +156,17 @@ TEST_CASE("structure_of_arrays element access", "[containers][structure_of_array
         REQUIRE(el2.z == 73.f);
     }
 
+    SECTION("getting values via iterator") {
+        T::value_type el1 = *t.begin();
+        el1.x = 71.f;
+        el1.y = 72.f;
+        el1.z = 73.f;
+        T::value_type el2 = *t.begin();
+        REQUIRE(el2.x == 11.f);
+        REQUIRE(el2.y == 12.f);
+        REQUIRE(el2.z == 13.f);
+    }
+
     SECTION("getting references to values via iterator") {
         T::reference el1 = *t.begin();
         el1.x = 71.f;
@@ -154,6 +176,17 @@ TEST_CASE("structure_of_arrays element access", "[containers][structure_of_array
         REQUIRE(el2.x == 71.f);
         REQUIRE(el2.y == 72.f);
         REQUIRE(el2.z == 73.f);
+    }
+
+    SECTION("getting vectors via iterator") {
+        T::value_type_vector el1 = *t.begin_overspan();
+        el1.x = 71.f;
+        el1.y = 72.f;
+        el1.z = 73.f;
+        T::value_type_vector el2 = *t.begin_overspan();
+        REQUIRE(!(el2.x == 71.f).any());
+        REQUIRE(!(el2.y == 72.f).any());
+        REQUIRE(!(el2.z == 73.f).any());
     }
 
     SECTION("getting references to vectors via iterator") {
@@ -327,5 +360,28 @@ TEST_CASE("structure_of_arrays iteration", "[containers][structure_of_arrays]") 
         REQUIRE((begin != end && begin->x == 5.f && begin->y == 6.f && begin->z == 7.f));
         --begin;
         REQUIRE((begin != end && begin->x == 4.f && begin->y == 5.f && begin->z == 6.f));
+    }
+
+    SECTION("sort") {
+        std::sort(t.begin(), t.end(), [](T::reference lhs, T::reference rhs) {
+            return lhs.x > rhs.x;
+        });
+
+        auto begin = t.begin();
+        auto end = t.end();
+
+        REQUIRE((begin != end && begin->x == 6.f && begin->y == 7.f && begin->z == 8.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 5.f && begin->y == 6.f && begin->z == 7.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 4.f && begin->y == 5.f && begin->z == 6.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 3.f && begin->y == 4.f && begin->z == 5.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 2.f && begin->y == 3.f && begin->z == 4.f));
+        ++begin;
+        REQUIRE((begin != end && begin->x == 1.f && begin->y == 2.f && begin->z == 3.f));
+        ++begin;
+        REQUIRE(begin == end);
     }
 }

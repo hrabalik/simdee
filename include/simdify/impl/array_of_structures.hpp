@@ -104,60 +104,60 @@ namespace simd {
         SIMDIFY_CONTAINERS_COMMON_POP_BACK("array_of_structures");
 
         template <typename Val>
-        struct value_iterator : std::iterator<std::random_access_iterator_tag, Val> {
-            value_iterator(const self_t& self, std::size_t idx) :
+        struct scalar_iterator : std::iterator<std::random_access_iterator_tag, Val> {
+            scalar_iterator(const self_t& self, std::size_t idx) :
                 m_ptr(self.data_as_value_type_ptr() + idx) {}
 
-            value_iterator& operator=(const value_iterator& rhs) = default;
+            scalar_iterator& operator=(const scalar_iterator& rhs) = default;
 
-            value_iterator& operator++() { ++m_ptr; return *this; }
-            value_iterator& operator--() { --m_ptr; return *this; }
-            value_iterator& operator+=(std::ptrdiff_t add) { m_ptr += add; return *this; }
-            std::ptrdiff_t operator-(const value_iterator& rhs) { return m_ptr - rhs.m_ptr; }
-            bool operator<(const value_iterator& rhs) const { return m_ptr < rhs.m_ptr; }
-            bool operator<=(const value_iterator& rhs) const { return m_ptr <= rhs.m_ptr; }
-            bool operator==(const value_iterator& rhs) const { return m_ptr == rhs.m_ptr; }
+            scalar_iterator& operator++() { ++m_ptr; return *this; }
+            scalar_iterator& operator--() { --m_ptr; return *this; }
+            scalar_iterator& operator+=(std::ptrdiff_t add) { m_ptr += add; return *this; }
+            std::ptrdiff_t operator-(const scalar_iterator& rhs) { return m_ptr - rhs.m_ptr; }
+            bool operator<(const scalar_iterator& rhs) const { return m_ptr < rhs.m_ptr; }
+            bool operator<=(const scalar_iterator& rhs) const { return m_ptr <= rhs.m_ptr; }
+            bool operator==(const scalar_iterator& rhs) const { return m_ptr == rhs.m_ptr; }
             Val& operator*() { return *m_ptr; }
             Val* operator->() { return m_ptr; }
 
-            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(value_iterator);
+            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(scalar_iterator);
 
         private:
             Val* m_ptr;
         };
 
-        template <typename Ref>
-        struct reference_iterator : std::iterator<std::random_access_iterator_tag, Ref> {
-            reference_iterator(const self_t& self, std::size_t idx) {
+        template <typename Val, typename Ref>
+        struct vector_iterator : std::iterator<std::random_access_iterator_tag, Val, std::ptrdiff_t, vector_iterator<Val, Ref>, Ref> {
+            vector_iterator(const self_t& self, std::size_t idx) {
                 auto base = self.m_data.get() + N * idx;
                 detail::no_op(simd::get<I>(m_ref).reset(base + I)...);
             }
 
-            reference_iterator& operator=(const reference_iterator& rhs) {
+            vector_iterator& operator=(const vector_iterator& rhs) {
                 detail::no_op(simd::get<I>(m_ref).reset(simd::get<I>(rhs.m_ref).ptr())...);
                 return *this;
             }
 
-            reference_iterator& operator++() { detail::no_op(++simd::get<I>(m_ref).ptr()...); return *this; }
-            reference_iterator& operator--() { detail::no_op(--simd::get<I>(m_ref).ptr()...); return *this; }
-            reference_iterator& operator+=(std::ptrdiff_t add) { detail::no_op(simd::get<I>(m_ref).ptr() += add...); return *this; }
-            std::ptrdiff_t operator-(const reference_iterator& rhs) { return m_ref.get().ptr() - rhs.m_ref.get().ptr(); }
-            bool operator<(const reference_iterator& rhs) const { return m_ref.get().ptr() < rhs.m_ref.get().ptr(); }
-            bool operator<=(const reference_iterator& rhs) const { return m_ref.get().ptr() <= rhs.m_ref.get().ptr(); }
-            bool operator==(const reference_iterator& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
+            vector_iterator& operator++() { detail::no_op(++simd::get<I>(m_ref).ptr()...); return *this; }
+            vector_iterator& operator--() { detail::no_op(--simd::get<I>(m_ref).ptr()...); return *this; }
+            vector_iterator& operator+=(std::ptrdiff_t add) { detail::no_op(simd::get<I>(m_ref).ptr() += add...); return *this; }
+            std::ptrdiff_t operator-(const vector_iterator& rhs) { return m_ref.get().ptr() - rhs.m_ref.get().ptr(); }
+            bool operator<(const vector_iterator& rhs) const { return m_ref.get().ptr() < rhs.m_ref.get().ptr(); }
+            bool operator<=(const vector_iterator& rhs) const { return m_ref.get().ptr() <= rhs.m_ref.get().ptr(); }
+            bool operator==(const vector_iterator& rhs) const { return m_ref.get().ptr() == rhs.m_ref.get().ptr(); }
             Ref& operator*() { return m_ref; }
             Ref* operator->() { return &m_ref; }
 
-            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(reference_iterator);
+            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(vector_iterator);
 
         private:
             Ref m_ref;
         };
 
-        using iterator = value_iterator<value_type>;
-        using const_iterator = value_iterator<const value_type>;
-        using iterator_vector = reference_iterator<reference_vector>;
-        using const_iterator_vector = reference_iterator<const_reference_vector>;
+        using iterator = scalar_iterator<value_type>;
+        using const_iterator = scalar_iterator<const value_type>;
+        using iterator_vector = vector_iterator<value_type_vector, reference_vector>;
+        using const_iterator_vector = vector_iterator<const value_type_vector, const_reference_vector>;
 
         SIMDIFY_CONTAINERS_COMMON_ITERATION;
 

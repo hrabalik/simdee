@@ -202,7 +202,7 @@ TEST_CASE("array_of_vectors iteration", "[containers][array_of_vectors]") {
     t.push_back(std::make_tuple(5.f, 6.f, 7.f));
     t.push_back(std::make_tuple(6.f, 7.f, 8.f));
 
-    {
+    SECTION("standard begin/end iteration") {
         auto begin = t.begin();
         auto end = t.end();
 
@@ -219,9 +219,15 @@ TEST_CASE("array_of_vectors iteration", "[containers][array_of_vectors]") {
         REQUIRE((begin != end && begin->x == 6.f && begin->y == 7.f && begin->z == 8.f));
         ++begin;
         REQUIRE(begin == end);
+
+        auto first = t.begin();
+        auto other = t.end() - 1;
+        std::iter_swap(first, other);
+        REQUIRE((first->x == 6.f && first->y == 7.f && first->z == 8.f));
+        REQUIRE((other->x == 1.f && other->y == 2.f && other->z == 3.f));
     }
 
-    {
+    SECTION("overspan iteration") {
         auto begin = t.begin_overspan();
         auto end = t.end_overspan();
         simd::storage<simd::ssef> stor;
@@ -247,9 +253,25 @@ TEST_CASE("array_of_vectors iteration", "[containers][array_of_vectors]") {
         ++begin;
 
         REQUIRE(begin == end);
+
+        auto first = t.begin_overspan();
+        auto other = t.end_overspan() - 1;
+        std::iter_swap(first, other);
+        stor = first->x;
+        REQUIRE((stor[0] == 5.f && stor[1] == 6.f));
+        stor = first->y;
+        REQUIRE((stor[0] == 6.f && stor[1] == 7.f));
+        stor = first->z;
+        REQUIRE((stor[0] == 7.f && stor[1] == 8.f));
+        stor = other->x;
+        REQUIRE((stor[0] == 1.f && stor[1] == 2.f && stor[2] == 3.f && stor[3] == 4.f));
+        stor = other->y;
+        REQUIRE((stor[0] == 2.f && stor[1] == 3.f && stor[2] == 4.f && stor[3] == 5.f));
+        stor = other->z;
+        REQUIRE((stor[0] == 3.f && stor[1] == 4.f && stor[2] == 5.f && stor[3] == 6.f));
     }
 
-    {
+    SECTION("body iteration") {
         auto begin = t.begin_body();
         auto end = t.end_body();
         simd::storage<simd::ssef> stor;
@@ -267,7 +289,7 @@ TEST_CASE("array_of_vectors iteration", "[containers][array_of_vectors]") {
         REQUIRE(begin == end);
     }
 
-    {
+    SECTION("tail iteration") {
         auto begin = t.begin_tail();
         auto end = t.end_tail();
 
@@ -278,7 +300,7 @@ TEST_CASE("array_of_vectors iteration", "[containers][array_of_vectors]") {
         REQUIRE(begin == end);
     }
 
-    {
+    SECTION("pointer arithmetic") {
         auto begin = t.begin();
         auto end = t.end();
 

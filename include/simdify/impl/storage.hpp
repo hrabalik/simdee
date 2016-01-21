@@ -212,6 +212,11 @@ namespace simd {
         SIMDIFY_INL Storage* reset(void* ptr) { m_data = static_cast<Storage*>(ptr); return m_data; }
         SIMDIFY_INL Storage*& ptr() { return m_data; }
         SIMDIFY_INL Storage* ptr() const { return m_data; }
+        
+        SIMDIFY_INL void swap(reference& rhs) {
+            using std::swap;
+            swap(*m_data, *rhs.m_data);
+        }
 
         // implicit conversion to const referred_t
         SIMDIFY_INL operator const referred_t() const { return referred_t(*m_data); }
@@ -219,6 +224,11 @@ namespace simd {
         // data
         Storage* m_data;
     };
+
+    template <typename Storage>
+    SIMDIFY_INL void swap(reference<Storage>& lhs, reference<Storage>& rhs) {
+        lhs.swap(rhs);
+    }
 
     //
     // const reference to storage (proxy object)

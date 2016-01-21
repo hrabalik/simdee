@@ -209,27 +209,40 @@ namespace simd {
         }
 
         T& operator[](std::size_t i) {
-            auto& as_array = reinterpret_cast<std::array<T, N>&>(*this);
-            return as_array[i];
+            return as_array()[i];
         }
 
         const T& operator[](std::size_t i) const {
-            auto& as_array = reinterpret_cast<const std::array<const T, N>&>(*this);
-            return as_array[i];
+            return as_array()[i];
         }
 
         template <std::size_t I = 0>
         T& get() {
-            auto& as_array = reinterpret_cast<std::array<T, N>&>(*this);
-            return std::get<I>(as_array);
+            return std::get<I>(as_array());
         }
 
         template <std::size_t I = 0>
         const T& get() const {
-            auto& as_array = reinterpret_cast<const std::array<const T, N>&>(*this);
-            return std::get<I>(as_array);
+            return std::get<I>(as_array());
+        }
+
+        void swap(named_array& rhs) {
+            as_array().swap(rhs.as_array());
+        }
+
+    private:
+        std::array<T, N>& as_array() {
+            return reinterpret_cast<std::array<T, N>&>(*this);
+        }
+        const std::array<T, N>& as_array() const {
+            return reinterpret_cast<const std::array<T, N>&>(*this);
         }
     };
+
+    template <typename T, typename... Ids>
+    SIMDIFY_INL void swap(named_array<T, Ids...>& lhs, named_array<T, Ids...>& rhs) {
+        return lhs.swap(rhs);
+    }
 
     template <size_t I, typename T, typename... Ids>
     SIMDIFY_INL constexpr T& get(simd::named_array<T, Ids...>& a) {

@@ -216,11 +216,11 @@ namespace simd {
             }
         }
 
-        template <typename T>
-        named_array& operator=(const named_array<T, Ids...>& rhs) {
+        template <typename U>
+        named_array& operator=(const named_array<U, Ids...>& rhs) {
             auto& la = as_array();
             auto& ra = rhs.as_array();
-            
+
             for (int i = 0; i < N; ++i) {
                 la[i] = ra[i];
             }
@@ -228,8 +228,8 @@ namespace simd {
             return *this;
         }
 
-        template <typename T>
-        named_array& operator=(named_array<T, Ids...>& rhs) {
+        template <typename U>
+        named_array& operator=(named_array<U, Ids...>& rhs) {
             auto& la = as_array();
             auto& ra = rhs.as_array();
 

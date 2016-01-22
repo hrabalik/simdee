@@ -150,7 +150,7 @@ TEST_CASE("array_of_structures element access", "[containers][array_of_structure
         el1.x = 71.f;
         el1.y = 72.f;
         el1.z = 73.f;
-        T::reference el2 = t[3];
+        T::const_reference el2 = t[3];
         REQUIRE(el2.x == 71.f);
         REQUIRE(el2.y == 72.f);
         REQUIRE(el2.z == 73.f);
@@ -172,7 +172,7 @@ TEST_CASE("array_of_structures element access", "[containers][array_of_structure
         el1.x = 71.f;
         el1.y = 72.f;
         el1.z = 73.f;
-        T::reference el2 = *t.begin();
+        T::const_reference el2 = *t.begin();
         REQUIRE(el2.x == 71.f);
         REQUIRE(el2.y == 72.f);
         REQUIRE(el2.z == 73.f);
@@ -194,7 +194,7 @@ TEST_CASE("array_of_structures element access", "[containers][array_of_structure
         el1.x = 71.f;
         el1.y = 72.f;
         el1.z = 73.f;
-        T::reference_vector el2 = *t.begin_overspan();
+        T::const_reference_vector el2 = *t.begin_overspan();
         REQUIRE((el2.x == 71.f).all());
         REQUIRE((el2.y == 72.f).all());
         REQUIRE((el2.z == 73.f).all());
@@ -363,7 +363,7 @@ TEST_CASE("array_of_structures iteration", "[containers][array_of_structures]") 
     }
 
     SECTION("sort") {
-        std::sort(t.begin(), t.end(), [](T::reference lhs, T::reference rhs) {
+        std::sort(t.begin(), t.end(), [](T::const_reference lhs, T::const_reference rhs) {
             return lhs.x > rhs.x;
         });
 

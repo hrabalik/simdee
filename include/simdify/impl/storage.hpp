@@ -221,7 +221,7 @@ namespace simd {
         SIMDIFY_INL Storage* reset(void* ptr) { m_data = static_cast<Storage*>(ptr); return m_data; }
         SIMDIFY_INL Storage*& ptr() { return m_data; }
         SIMDIFY_INL Storage* ptr() const { return m_data; }
-        
+
         SIMDIFY_INL void swap(reference& rhs) {
             using std::swap;
             swap(*m_data, *rhs.m_data);
@@ -249,17 +249,30 @@ namespace simd {
         SIMDIFY_INL constexpr const_reference() = default;
         SIMDIFY_INL constexpr const_reference(const const_reference&) = default;
 
+        SIMDIFY_INL const_reference(const reference<Storage>& rhs) {
+            m_data = rhs.ptr();
+        }
+
+        SIMDIFY_INL const_reference(const Storage& rhs) {
+            m_data = &rhs;
+        }
+
+        template <typename U = int>
+        SIMDIFY_INL const_reference(const referred_t& rhs, typename std::enable_if<std::is_arithmetic<referred_t>::value, U>::type = 0) {
+            m_data = reinterpret_cast<const Storage*>(&rhs);
+        }
+
         // no assignment operations
 
-        SIMDIFY_INL Storage* reset(void* ptr) { m_data = static_cast<Storage*>(ptr); return m_data; }
-        SIMDIFY_INL Storage*& ptr() { return m_data; }
-        SIMDIFY_INL Storage* ptr() const { return m_data; }
+        SIMDIFY_INL const Storage* reset(const void* ptr) { m_data = static_cast<const Storage*>(ptr); return m_data; }
+        SIMDIFY_INL const Storage*& ptr() { return m_data; }
+        SIMDIFY_INL const Storage* ptr() const { return m_data; }
 
         // implicit conversion to const referred_t
         SIMDIFY_INL operator const referred_t() const { return referred_t(*m_data); }
 
         // data
-        Storage* m_data;
+        const Storage* m_data;
     };
 
     template <typename T>

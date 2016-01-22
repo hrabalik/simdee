@@ -22,7 +22,7 @@ namespace simd {
         static_assert(std::is_trivial<e_t>::value, "array_of_vectors_impl: e_t not trivial");
 
         using value_type = named_array<e_t, Ids...>;
-        using value_type_vector = named_array<simd_t, Ids...>;
+        using value_type_vector = named_array<simd::storage<simd_t>, Ids...>;
         using reference = named_array<simd::reference<simd::storage<e_t>>, Ids...>;
         using const_reference = named_array<simd::const_reference<simd::storage<e_t>>, Ids...>;
         using reference_vector = value_type_vector&;
@@ -112,29 +112,6 @@ namespace simd {
 
         SIMDIFY_CONTAINERS_COMMON_POP_BACK("structure_of_arrays");
 
-        template <typename Val>
-        struct vector_iterator : std::iterator<std::random_access_iterator_tag, Val> {
-            vector_iterator(const self_t& self, std::size_t idx) :
-                m_ptr(self.data_as_value_vector_type_ptr() + (idx / W)) {}
-
-            vector_iterator& operator=(const vector_iterator& rhs) = default;
-
-            vector_iterator& operator++() { ++m_ptr; return *this; }
-            vector_iterator& operator--() { --m_ptr; return *this; }
-            vector_iterator& operator+=(std::ptrdiff_t add) { m_ptr += add; return *this; }
-            std::ptrdiff_t operator-(const vector_iterator& rhs) { return m_ptr - rhs.m_ptr; }
-            bool operator<(const vector_iterator& rhs) const { return m_ptr < rhs.m_ptr; }
-            bool operator<=(const vector_iterator& rhs) const { return m_ptr <= rhs.m_ptr; }
-            bool operator==(const vector_iterator& rhs) const { return m_ptr == rhs.m_ptr; }
-            Val& operator*() { return *m_ptr; }
-            Val* operator->() { return m_ptr; }
-
-            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(vector_iterator);
-
-        private:
-            Val* m_ptr;
-        };
-
         template <typename Val, typename Ref>
         struct scalar_iterator : std::iterator<std::random_access_iterator_tag, Val, std::ptrdiff_t, scalar_iterator<Val, Ref>, Ref> {
             scalar_iterator(const self_t& self, std::size_t idx) {
@@ -194,11 +171,25 @@ namespace simd {
 
         using iterator = scalar_iterator<value_type, reference>;
         using const_iterator = scalar_iterator<const value_type, const_reference>;
-        using iterator_vector = vector_iterator<value_type_vector>;
-        using const_iterator_vector = vector_iterator<const value_type_vector>;
+        using iterator_vector = value_type_vector*;
+        using const_iterator_vector = const value_type_vector*;
+
+        SIMDIFY_INL iterator_vector begin_overspan() { return data_as_value_vector_type_ptr(); }
+        SIMDIFY_INL iterator_vector end_overspan() { return data_as_value_vector_type_ptr() + (size_overspan() / W); }
+        SIMDIFY_INL iterator_vector begin_body() { return data_as_value_vector_type_ptr(); }
+        SIMDIFY_INL iterator_vector end_body() { return data_as_value_vector_type_ptr() + (size_body() / W); }
+
+        SIMDIFY_INL const_iterator_vector begin_overspan() const { return cbegin_overspan(); }
+        SIMDIFY_INL const_iterator_vector end_overspan() const { return cend_overspan(); }
+        SIMDIFY_INL const_iterator_vector begin_body() const { return cbegin_body(); }
+        SIMDIFY_INL const_iterator_vector end_body() const { return cend_body(); }
+
+        SIMDIFY_INL const_iterator_vector cbegin_overspan() const { return data_as_value_vector_type_ptr(); }
+        SIMDIFY_INL const_iterator_vector cend_overspan() const { return data_as_value_vector_type_ptr() + (size_overspan() / W); }
+        SIMDIFY_INL const_iterator_vector cbegin_body() const { return data_as_value_vector_type_ptr(); }
+        SIMDIFY_INL const_iterator_vector cend_body() const { return data_as_value_vector_type_ptr() + (size_body() / W); }
 
         SIMDIFY_CONTAINERS_COMMON_ITERATION_SCALAR;
-        SIMDIFY_CONTAINERS_COMMON_ITERATION_VECTOR;
 
     private:
         value_type_vector* data_as_value_vector_type_ptr() const {

@@ -57,6 +57,9 @@ TEST_CASE("SSE basic guarantees", "[simd_t][x86][sse]") {
     REQUIRE(sizeof(F::e_t) * F::W == sizeof(F));
     REQUIRE(sizeof(U::e_t) * U::W == sizeof(U));
     REQUIRE(sizeof(S::e_t) * S::W == sizeof(S));
+    REQUIRE((std::is_trivially_copyable<F>::value));
+    REQUIRE((std::is_trivially_copyable<U>::value));
+    REQUIRE((std::is_trivially_copyable<S>::value));
 }
 
 TEST_CASE("SSE explicit construction", "[simd_t][x86][sse]") {

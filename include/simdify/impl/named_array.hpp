@@ -271,7 +271,7 @@ namespace simd {
         }
 
         SIMDIFY_INL void swap(named_array& rhs) {
-            if (std::is_trivial<T>::value) {
+            if (std::is_trivially_copyable<T>::value) {
                 std::swap(*this, rhs);
             }
             else {

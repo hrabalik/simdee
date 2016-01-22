@@ -141,7 +141,8 @@ namespace simd {
         using iterator_vector = common_iterator<value_type_vector, reference_vector>;
         using const_iterator_vector = common_iterator<const value_type_vector, const_reference_vector>;
 
-        SIMDIFY_CONTAINERS_COMMON_ITERATION;
+        SIMDIFY_CONTAINERS_COMMON_ITERATION_SCALAR;
+        SIMDIFY_CONTAINERS_COMMON_ITERATION_VECTOR;
 
     private:
         SIMDIFY_CONTAINERS_COMMON_DATA;

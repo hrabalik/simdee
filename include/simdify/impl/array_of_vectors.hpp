@@ -197,7 +197,8 @@ namespace simd {
         using iterator_vector = vector_iterator<value_type_vector>;
         using const_iterator_vector = vector_iterator<const value_type_vector>;
 
-        SIMDIFY_CONTAINERS_COMMON_ITERATION;
+        SIMDIFY_CONTAINERS_COMMON_ITERATION_SCALAR;
+        SIMDIFY_CONTAINERS_COMMON_ITERATION_VECTOR;
 
     private:
         value_type_vector* data_as_value_vector_type_ptr() const {

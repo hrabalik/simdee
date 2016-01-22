@@ -252,32 +252,37 @@ namespace simd {
             return *this;
         }
 
-        T& operator[](std::size_t i) {
+        SIMDIFY_INL T& operator[](std::size_t i) {
             return as_array()[i];
         }
 
-        const T& operator[](std::size_t i) const {
+        SIMDIFY_INL const T& operator[](std::size_t i) const {
             return as_array()[i];
         }
 
         template <std::size_t I = 0>
-        T& get() {
+        SIMDIFY_INL T& get() {
             return std::get<I>(as_array());
         }
 
         template <std::size_t I = 0>
-        const T& get() const {
+        SIMDIFY_INL const T& get() const {
             return std::get<I>(as_array());
         }
 
-        void swap(named_array& rhs) {
-            as_array().swap(rhs.as_array());
+        SIMDIFY_INL void swap(named_array& rhs) {
+            if (std::is_trivial<T>::value) {
+                std::swap(*this, rhs);
+            }
+            else {
+                as_array().swap(rhs.as_array());
+            }
         }
 
-        std::array<T, N>& as_array() {
+        SIMDIFY_INL std::array<T, N>& as_array() {
             return reinterpret_cast<std::array<T, N>&>(*this);
         }
-        const std::array<T, N>& as_array() const {
+        SIMDIFY_INL const std::array<T, N>& as_array() const {
             return reinterpret_cast<const std::array<T, N>&>(*this);
         }
     };

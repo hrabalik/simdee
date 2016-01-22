@@ -103,29 +103,6 @@ namespace simd {
 
         SIMDIFY_CONTAINERS_COMMON_POP_BACK("array_of_structures");
 
-        template <typename Val>
-        struct scalar_iterator : std::iterator<std::random_access_iterator_tag, Val> {
-            scalar_iterator(const self_t& self, std::size_t idx) :
-                m_ptr(self.data_as_value_type_ptr() + idx) {}
-
-            scalar_iterator& operator=(const scalar_iterator& rhs) = default;
-
-            scalar_iterator& operator++() { ++m_ptr; return *this; }
-            scalar_iterator& operator--() { --m_ptr; return *this; }
-            scalar_iterator& operator+=(std::ptrdiff_t add) { m_ptr += add; return *this; }
-            std::ptrdiff_t operator-(const scalar_iterator& rhs) { return m_ptr - rhs.m_ptr; }
-            bool operator<(const scalar_iterator& rhs) const { return m_ptr < rhs.m_ptr; }
-            bool operator<=(const scalar_iterator& rhs) const { return m_ptr <= rhs.m_ptr; }
-            bool operator==(const scalar_iterator& rhs) const { return m_ptr == rhs.m_ptr; }
-            Val& operator*() { return *m_ptr; }
-            Val* operator->() { return m_ptr; }
-
-            SIMDIFY_CONTAINERS_COMMON_ITERATOR_FACILITIES(scalar_iterator);
-
-        private:
-            Val* m_ptr;
-        };
-
         template <typename Val, typename Ref>
         struct vector_iterator : std::iterator<std::random_access_iterator_tag, Val, std::ptrdiff_t, vector_iterator<Val, Ref>, Ref> {
             vector_iterator(const self_t& self, std::size_t idx) {
@@ -154,12 +131,27 @@ namespace simd {
             Ref m_ref;
         };
 
-        using iterator = scalar_iterator<value_type>;
-        using const_iterator = scalar_iterator<const value_type>;
+        using iterator = value_type*;
+        using const_iterator = const value_type*;
         using iterator_vector = vector_iterator<value_type_vector, reference_vector>;
         using const_iterator_vector = vector_iterator<const value_type_vector, const_reference_vector>;
 
-        SIMDIFY_CONTAINERS_COMMON_ITERATION;
+        SIMDIFY_INL iterator begin() { return data_as_value_type_ptr() + 0; }
+        SIMDIFY_INL iterator end() { return data_as_value_type_ptr() + size(); }
+        SIMDIFY_INL iterator begin_tail() { return data_as_value_type_ptr() + size_body(); }
+        SIMDIFY_INL iterator end_tail() { return data_as_value_type_ptr() + size(); }
+
+        SIMDIFY_INL const_iterator begin() const { return cbegin(); }
+        SIMDIFY_INL const_iterator end() const { return cend(); }
+        SIMDIFY_INL const_iterator begin_tail() const { return cbegin_tail(); }
+        SIMDIFY_INL const_iterator end_tail() const { return cend_tail(); }
+
+        SIMDIFY_INL const_iterator cbegin() const { return data_as_value_type_ptr() + 0; }
+        SIMDIFY_INL const_iterator cend() const { return data_as_value_type_ptr() + size(); }
+        SIMDIFY_INL const_iterator cbegin_tail() const { return data_as_value_type_ptr() + size_body(); }
+        SIMDIFY_INL const_iterator cend_tail() const { return data_as_value_type_ptr() + size(); }
+
+        SIMDIFY_CONTAINERS_COMMON_ITERATION_VECTOR;
 
     private:
         value_type* data_as_value_type_ptr() const {

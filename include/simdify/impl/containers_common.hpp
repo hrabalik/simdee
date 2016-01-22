@@ -66,34 +66,46 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDIFY_CONTAINERS_COMMON_ITERATION                                                              \
+#define SIMDIFY_CONTAINERS_COMMON_ITERATION_SCALAR                                                       \
                                                                                                          \
-    iterator begin() { return iterator(*this, 0); }                                                      \
-    iterator end() { return iterator(*this, size()); }                                                   \
-    iterator_vector begin_overspan() { return iterator_vector(*this, 0); }                               \
-    iterator_vector end_overspan() { return iterator_vector(*this, size_overspan()); }                   \
-    iterator_vector begin_body() { return iterator_vector(*this, 0); }                                   \
-    iterator_vector end_body() { return iterator_vector(*this, size_body()); }                           \
-    iterator begin_tail() { return iterator(*this, size_body()); }                                       \
-    iterator end_tail() { return iterator(*this, size()); }                                              \
+    SIMDIFY_INL iterator begin() { return iterator(*this, 0); }                                          \
+    SIMDIFY_INL iterator end() { return iterator(*this, size()); }                                       \
+    SIMDIFY_INL iterator begin_tail() { return iterator(*this, size_body()); }                           \
+    SIMDIFY_INL iterator end_tail() { return iterator(*this, size()); }                                  \
                                                                                                          \
-    const_iterator begin() const { return cbegin(); }                                                    \
-    const_iterator end() const { return cend(); }                                                        \
-    const_iterator_vector begin_overspan() const { return cbegin_overspan(); }                           \
-    const_iterator_vector end_overspan() const { return cend_overspan(); }                               \
-    const_iterator_vector begin_body() const { return cbegin_body(); }                                   \
-    const_iterator_vector end_body() const { return cend_body(); }                                       \
-    const_iterator begin_tail() const { return cbegin_tail(); }                                          \
-    const_iterator end_tail() const { return cend_tail(); }                                              \
+    SIMDIFY_INL const_iterator begin() const { return cbegin(); }                                        \
+    SIMDIFY_INL const_iterator end() const { return cend(); }                                            \
+    SIMDIFY_INL const_iterator begin_tail() const { return cbegin_tail(); }                              \
+    SIMDIFY_INL const_iterator end_tail() const { return cend_tail(); }                                  \
                                                                                                          \
-    const_iterator cbegin() const { return const_iterator(*this, 0); }                                   \
-    const_iterator cend() const { return const_iterator(*this, size()); }                                \
+    SIMDIFY_INL const_iterator cbegin() const { return const_iterator(*this, 0); }                       \
+    SIMDIFY_INL const_iterator cend() const { return const_iterator(*this, size()); }                    \
+    SIMDIFY_INL const_iterator cbegin_tail() const { return const_iterator(*this, size_body()); }        \
+    SIMDIFY_INL const_iterator cend_tail() const { return const_iterator(*this, size()); }               \
+                                                                                                         \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDIFY_CONTAINERS_COMMON_ITERATION_VECTOR                                                       \
+                                                                                                         \
+    SIMDIFY_INL iterator_vector begin_overspan() { return iterator_vector(*this, 0); }                   \
+    SIMDIFY_INL iterator_vector end_overspan() { return iterator_vector(*this, size_overspan()); }       \
+    SIMDIFY_INL iterator_vector begin_body() { return iterator_vector(*this, 0); }                       \
+    SIMDIFY_INL iterator_vector end_body() { return iterator_vector(*this, size_body()); }               \
+                                                                                                         \
+    SIMDIFY_INL const_iterator_vector begin_overspan() const { return cbegin_overspan(); }               \
+    SIMDIFY_INL const_iterator_vector end_overspan() const { return cend_overspan(); }                   \
+    SIMDIFY_INL const_iterator_vector begin_body() const { return cbegin_body(); }                       \
+    SIMDIFY_INL const_iterator_vector end_body() const { return cend_body(); }                           \
+                                                                                                         \
+    SIMDIFY_INL                                                                                          \
     const_iterator_vector cbegin_overspan() const { return const_iterator_vector(*this, 0); }            \
+    SIMDIFY_INL                                                                                          \
     const_iterator_vector cend_overspan() const { return const_iterator_vector(*this, size_overspan()); }\
+    SIMDIFY_INL                                                                                          \
     const_iterator_vector cbegin_body() const { return const_iterator_vector(*this, 0); }                \
+    SIMDIFY_INL                                                                                          \
     const_iterator_vector cend_body() const { return const_iterator_vector(*this, size_body()); }        \
-    const_iterator cbegin_tail() const { return const_iterator(*this, size_body()); }                    \
-    const_iterator cend_tail() const { return const_iterator(*this, size()); }                           \
                                                                                                          \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 

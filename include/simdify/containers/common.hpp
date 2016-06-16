@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_CONTAINERS_COMMON
-#define SIMDIFY_CONTAINERS_COMMON
+#ifndef SIMDIFY_CONTAINERS_COMMON_HPP
+#define SIMDIFY_CONTAINERS_COMMON_HPP
 
 #include "../simd_types.hpp"
 #include "../util/malloc.hpp"
@@ -224,4 +224,4 @@
                                                                                                          \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#endif // SIMDIFY_CONTAINERS_COMMON
+#endif // SIMDIFY_CONTAINERS_COMMON_HPP

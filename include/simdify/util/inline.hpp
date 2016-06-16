@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_UTIL_INLINE
-#define SIMDIFY_UTIL_INLINE
+#ifndef SIMDIFY_UTIL_INLINE_HPP
+#define SIMDIFY_UTIL_INLINE_HPP
 
 #if defined(__clang__)
 
@@ -19,4 +19,4 @@
 
 #endif
 
-#endif // SIMDIFY_UTIL_INLINE
+#endif // SIMDIFY_UTIL_INLINE_HPP

@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_STRUCTURE_OF_ARRAYS
-#define SIMDIFY_STRUCTURE_OF_ARRAYS
+#ifndef SIMDIFY_CONTAINERS_STRUCTURE_OF_ARRAYS_HPP
+#define SIMDIFY_CONTAINERS_STRUCTURE_OF_ARRAYS_HPP
 
 #include "common.hpp"
 
@@ -152,4 +152,4 @@ namespace simd {
     using structure_of_arrays = structure_of_arrays_impl<Simd_t, detail::group<Ids...>, make_sequence_t<0, detail::group<Ids...>::size>>;
 }
 
-#endif // SIMDIFY_STRUCTURE_OF_ARRAYS
+#endif // SIMDIFY_CONTAINERS_STRUCTURE_OF_ARRAYS_HPP

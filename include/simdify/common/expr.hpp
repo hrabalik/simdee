@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_EXPR
-#define SIMDIFY_EXPR
+#ifndef SIMDIFY_COMMON_EXPR_HPP
+#define SIMDIFY_COMMON_EXPR_HPP
 
 #include "../util/inline.hpp"
 #include "../util/integral.hpp"
@@ -338,4 +338,4 @@ namespace simd {
     SIMDIFY_INL constexpr expr::nan nan() { return expr::nan{}; }
 }
 
-#endif // SIMDIFY_EXPR
+#endif // SIMDIFY_COMMON_EXPR_HPP

@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_UTIL_MALLOC
-#define SIMDIFY_UTIL_MALLOC
+#ifndef SIMDIFY_UTIL_MALLOC_HPP
+#define SIMDIFY_UTIL_MALLOC_HPP
 
 #include <type_traits>
 #include <exception>
@@ -120,4 +120,4 @@ namespace simd {
 
 }
 
-#endif // SIMDIFY_UTIL_MALLOC
+#endif // SIMDIFY_UTIL_MALLOC_HPP

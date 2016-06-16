@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_NAMED_ARRAY
-#define SIMDIFY_NAMED_ARRAY
+#ifndef SIMDIFY_COMMON_NAMED_ARRAY_HPP
+#define SIMDIFY_COMMON_NAMED_ARRAY_HPP
 
 #include "expr.hpp"
 #include "../util/inline.hpp"
@@ -310,4 +310,4 @@ namespace simd {
     }
 }
 
-#endif // SIMDIFY_NAMED_ARRAY
+#endif // SIMDIFY_COMMON_NAMED_ARRAY_HPP

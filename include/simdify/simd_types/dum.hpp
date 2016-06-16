@@ -1,4 +1,5 @@
-#ifndef SIMDIFY_DUM
+#ifndef SIMDIFY_SIMD_TYPES_DUM_HPP
+#define SIMDIFY_SIMD_TYPES_DUM_HPP
 #define SIMDIFY_DUM
 
 #include "common.hpp"
@@ -198,4 +199,4 @@ namespace simd {
 
 #undef SIMDIFY_DUM_COMMON_DECLARATIONS
 
-#endif // SIMDIFY_DUM
+#endif // SIMDIFY_SIMD_TYPES_DUM_HPP

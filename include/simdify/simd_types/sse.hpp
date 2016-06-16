@@ -1,4 +1,5 @@
-#ifndef SIMDIFY_SSE
+#ifndef SIMDIFY_SIMD_TYPES_SSE_HPP
+#define SIMDIFY_SIMD_TYPES_SSE_HPP
 #define SIMDIFY_SSE
 
 // ensure SSE2 is on
@@ -241,4 +242,4 @@ namespace simd {
 
 #undef SIMDIFY_SSE_COMMON_DECLARATIONS
 
-#endif // SIMDIFY_SSE
+#endif // SIMDIFY_SIMD_TYPES_SSE_HPP

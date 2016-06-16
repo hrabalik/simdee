@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_UTIL_INTEGRAL
-#define SIMDIFY_UTIL_INTEGRAL
+#ifndef SIMDIFY_UTIL_INTEGRAL_HPP
+#define SIMDIFY_UTIL_INTEGRAL_HPP
 
 #include "inline.hpp"
 #include <cstdint>
@@ -104,4 +104,4 @@ namespace simd {
 
 }
 
-#endif // SIMDIFY_UTIL_INTEGRAL
+#endif // SIMDIFY_UTIL_INTEGRAL_HPP

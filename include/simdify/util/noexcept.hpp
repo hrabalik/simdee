@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_UTIL_NOEXCEPT
-#define SIMDIFY_UTIL_NOEXCEPT
+#ifndef SIMDIFY_UTIL_NOEXCEPT_HPP
+#define SIMDIFY_UTIL_NOEXCEPT_HPP
 
 #if defined(_MSC_VER)
 
@@ -13,4 +13,4 @@
 
 #endif
 
-#endif
+#endif // SIMDIFY_UTIL_NOEXCEPT_HPP

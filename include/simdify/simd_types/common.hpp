@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_COMMON
-#define SIMDIFY_COMMON
+#ifndef SIMDIFY_SIMD_TYPES_COMMON_HPP
+#define SIMDIFY_SIMD_TYPES_COMMON_HPP
 
 #include "../util/inline.hpp"
 #include "../util/1b.hpp"
@@ -110,4 +110,4 @@ SIMDIFY_INL CLASS& operator=(const CLASS&) = default;                           
                                                                                                          \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#endif // SIMDIFY_COMMON
+#endif // SIMDIFY_SIMD_TYPES_COMMON_HPP

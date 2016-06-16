@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_STORAGE_IMPL
-#define SIMDIFY_STORAGE_IMPL
+#ifndef SIMDIFY_COMMON_STORAGE_HPP
+#define SIMDIFY_COMMON_STORAGE_HPP
 
 #include "expr.hpp"
 #include "../simd_types/common.hpp"
@@ -312,4 +312,4 @@ namespace simd {
     SIMDIFY_INL constexpr auto tos(const_reference<T> r) -> decltype(tos(*r.ptr())) { return tos(*r.ptr()); }
 }
 
-#endif // SIMDIFY_STORAGE_IMPL
+#endif // SIMDIFY_COMMON_STORAGE_HPP

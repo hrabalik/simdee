@@ -1,4 +1,5 @@
-#ifndef SIMDIFY_AVX
+#ifndef SIMDIFY_SIMD_TYPES_AVX_HPP
+#define SIMDIFY_SIMD_TYPES_AVX_HPP
 #define SIMDIFY_AVX
 
 // ensure AVX is on
@@ -229,4 +230,4 @@ namespace simd {
 
 #undef SIMDIFY_AVX_COMMON_DECLARATIONS
 
-#endif // SIMDIFY_AVX
+#endif // SIMDIFY_SIMD_TYPES_AVX_HPP

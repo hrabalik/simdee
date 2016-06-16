@@ -49,19 +49,19 @@ namespace simd {                                                                
         struct pack<D, T, group<id::ID, Ids...>> : pack<D, T, group<Ids...>> {                    \
             using base_t = pack<D, T, group<Ids...>>;                                             \
                                                                                                   \
-            SIMDIFY_INL constexpr pack() = default;                                      \
-            SIMDIFY_INL constexpr pack(const pack&) = default;                           \
-            SIMDIFY_INL constexpr pack(pack&&) = default;                                \
-            SIMDIFY_INL pack& operator=(const pack&) = default;                          \
-            SIMDIFY_INL pack& operator=(pack&&) = default;                               \
+            SIMDIFY_INL constexpr pack() = default;                                               \
+            SIMDIFY_INL constexpr pack(const pack&) = default;                                    \
+            SIMDIFY_INL constexpr pack(pack&&) = default;                                         \
+            SIMDIFY_INL pack& operator=(const pack&) = default;                                   \
+            SIMDIFY_INL pack& operator=(pack&&) = default;                                        \
                                                                                                   \
             template <typename... Args>                                                           \
-            SIMDIFY_INL constexpr pack(const std::tuple<Args...>& t) :                   \
+            SIMDIFY_INL constexpr pack(const std::tuple<Args...>& t) :                            \
                 base_t(t),                                                                        \
                 ID(std::get<sizeof...(Ids)>(t)) {}                                                \
                                                                                                   \
             template <typename... Args>                                                           \
-            SIMDIFY_INL pack& operator=(const std::tuple<Args...>& t) {                  \
+            SIMDIFY_INL pack& operator=(const std::tuple<Args...>& t) {                           \
                 base_t::operator=(t);                                                             \
                 ID = std::get<sizeof...(Ids)>(t);                                                 \
                 return *this;                                                                     \
@@ -74,19 +74,19 @@ namespace simd {                                                                
         struct pack<D, T, group<sub::ID<MyNames...>, Ids...>> : pack<D, T, group<Ids...>> {       \
             using base_t = pack<D, T, group<Ids...>>;                                             \
                                                                                                   \
-            SIMDIFY_INL constexpr pack() = default;                                      \
-            SIMDIFY_INL constexpr pack(const pack&) = default;                           \
-            SIMDIFY_INL constexpr pack(pack&&) = default;                                \
-            SIMDIFY_INL pack& operator=(const pack&) = default;                          \
-            SIMDIFY_INL pack& operator=(pack&&) = default;                               \
+            SIMDIFY_INL constexpr pack() = default;                                               \
+            SIMDIFY_INL constexpr pack(const pack&) = default;                                    \
+            SIMDIFY_INL constexpr pack(pack&&) = default;                                         \
+            SIMDIFY_INL pack& operator=(const pack&) = default;                                   \
+            SIMDIFY_INL pack& operator=(pack&&) = default;                                        \
                                                                                                   \
             template <typename... Args>                                                           \
-            SIMDIFY_INL constexpr pack(const std::tuple<Args...>& t) :                   \
+            SIMDIFY_INL constexpr pack(const std::tuple<Args...>& t) :                            \
                 base_t(t),                                                                        \
                 ID(std::get<sizeof...(Ids)>(t)) {}                                                \
                                                                                                   \
             template <typename... Args>                                                           \
-            SIMDIFY_INL pack& operator=(const std::tuple<Args...>& t) {                  \
+            SIMDIFY_INL pack& operator=(const std::tuple<Args...>& t) {                           \
                 base_t::operator=(t);                                                             \
                 ID = std::get<sizeof...(Ids)>(t);                                                 \
                 return *this;                                                                     \

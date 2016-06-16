@@ -1,7 +1,7 @@
 #ifndef SIMDIFY_ARRAY_OF_VECTORS
 #define SIMDIFY_ARRAY_OF_VECTORS
 
-#include "containers_common.hpp"
+#include "common.hpp"
 
 namespace simd {
 

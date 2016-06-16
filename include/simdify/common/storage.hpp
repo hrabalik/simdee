@@ -1,8 +1,8 @@
 #ifndef SIMDIFY_STORAGE_IMPL
 #define SIMDIFY_STORAGE_IMPL
 
-#include "common.hpp"
 #include "expr.hpp"
+#include "../simd_types/common.hpp"
 #include "../util/inline.hpp"
 
 namespace simd {

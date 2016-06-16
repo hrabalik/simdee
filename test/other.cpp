@@ -1,4 +1,4 @@
-#include <simdify/simdify.hpp>
+#include <simdify/simd_types.hpp>
 #include <simdify/storage.hpp>
 
 #include "catch.hpp"

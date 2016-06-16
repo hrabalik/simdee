@@ -4,7 +4,7 @@
 #include "../util/inline.hpp"
 #include "../util/1b.hpp"
 #include "../util/integral.hpp"
-#include "expr.hpp"
+#include "../common/expr.hpp"
 #include <array>
 #include <type_traits>
 

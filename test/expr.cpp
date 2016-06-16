@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include <simdify/simdify.hpp>
+#include <simdify/simd_types.hpp>
 
 TEST_CASE("expr::tof", "[expr]") {
     SECTION("rvalues") {

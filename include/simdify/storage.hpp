@@ -1,7 +1,7 @@
 #ifndef SIMDIFY_STORAGE
 #define SIMDIFY_STORAGE
 
-#include "simdify.hpp"
-#include "impl/storage.hpp"
+#include "simd_types.hpp"
+#include "common/storage.hpp"
 
 #endif // SIMDIFY_STORAGE

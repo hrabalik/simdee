@@ -43,14 +43,14 @@
 // use the SIMDIFY_NEED_* macros to force the include
 //
 #if defined(__AVX__) || defined(SIMDIFY_NEED_AVX)
-#include "impl/avx.hpp"
+#include "simd_types/avx.hpp"
 #endif
 
 #if defined(__SSE2__) || defined(SIMDIFY_NEED_SSE)
-#include "impl/sse.hpp"
+#include "simd_types/sse.hpp"
 #endif
 
-#include "impl/dum.hpp"
+#include "simd_types/dum.hpp"
 
 //
 // set some (successfully loaded) SIMD type as simd_t

@@ -1,4 +1,4 @@
-#include <simdify/impl/named_array.hpp>
+#include <simdify/common/named_array.hpp>
 
 #include "catch.hpp"
 #include <tuple>

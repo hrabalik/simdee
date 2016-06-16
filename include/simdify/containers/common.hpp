@@ -1,11 +1,12 @@
 #ifndef SIMDIFY_CONTAINERS_COMMON
 #define SIMDIFY_CONTAINERS_COMMON
 
+#include "../simd_types.hpp"
 #include "../util/malloc.hpp"
 #include "../util/integral.hpp"
-#include "expr.hpp"
-#include "named_array.hpp"
-#include "storage.hpp"
+#include "../common/expr.hpp"
+#include "../common/named_array.hpp"
+#include "../common/storage.hpp"
 #include <memory>
 #include <exception>
 #include <cstring>

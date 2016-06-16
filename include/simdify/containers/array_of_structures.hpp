@@ -1,7 +1,7 @@
 #ifndef SIMDIFY_ARRAY_OF_STRUCTURES
 #define SIMDIFY_ARRAY_OF_STRUCTURES
 
-#include "containers_common.hpp"
+#include "common.hpp"
 
 namespace simd {
 

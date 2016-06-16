@@ -186,7 +186,7 @@ namespace simd {
 
         SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(mm); }
 
-        SIMDIFY_INL bit_t front() const { return ls1b(bit_t(_mm_movemask_ps(mm)));; }
+        SIMDIFY_INL bit_t front() const { return lsb(bit_t(_mm_movemask_ps(mm)));; }
         SIMDIFY_INL bit_iterator begin() const { return bit_iterator(_mm_movemask_ps(mm)); }
         SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
         SIMDIFY_INL bool any() const { return _mm_movemask_ps(mm) != 0; }

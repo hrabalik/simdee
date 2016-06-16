@@ -2,7 +2,7 @@
 #define SIMDIFY_SIMD_TYPES_COMMON_HPP
 
 #include "../util/inline.hpp"
-#include "../util/1b.hpp"
+#include "../util/bitfiddle.hpp"
 #include "../util/integral.hpp"
 #include "../common/expr.hpp"
 #include <array>

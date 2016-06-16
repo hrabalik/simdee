@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_UTIL_1B_HPP
-#define SIMDIFY_UTIL_1B_HPP
+#ifndef SIMDIFY_UTIL_BITFIDDLE_HPP
+#define SIMDIFY_UTIL_BITFIDDLE_HPP
 
 #include "inline.hpp"
 #include <iterator>
@@ -83,4 +83,4 @@ namespace simd {
 
 }
 
-#endif // SIMDIFY_UTIL_1B_HPP
+#endif // SIMDIFY_UTIL_BITFIDDLE_HPP

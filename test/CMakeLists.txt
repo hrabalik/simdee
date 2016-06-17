@@ -1,0 +1,11 @@
+file(GLOB_RECURSE SIMDIFY_HEADERS "${CMAKE_SOURCE_DIR}/include/*.hpp")
+file(GLOB_RECURSE SIMDIFY_TEST_SOURCES "*.hpp" "*.cpp")
+add_executable(simdify_test ${SIMDIFY_HEADERS} ${SIMDIFY_TEST_SOURCES})
+target_include_directories(simdify_test PUBLIC ${CMAKE_SOURCE_DIR}/include)
+set_property(TARGET simdify_test PROPERTY CXX_STANDARD 11)
+
+if(MSVC)
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /arch:AVX2")
+else()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+endif()

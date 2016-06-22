@@ -1,4 +1,4 @@
-#define SIMDIFY_NEED_SSE
+#define SIMDIFY_NEED_SSE 1
 #include <simdify/simd_types.hpp>
 #include <simdify/storage.hpp>
 

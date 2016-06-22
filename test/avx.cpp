@@ -1,4 +1,4 @@
-#define SIMDIFY_NEED_AVX
+#define SIMDIFY_NEED_AVX 1
 #include <simdify/simd_types.hpp>
 #include <simdify/storage.hpp>
 

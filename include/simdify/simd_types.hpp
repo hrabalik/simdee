@@ -18,6 +18,22 @@
 #endif
 
 //
+// defaults for feature requests
+//
+#ifndef SIMDIFY_NEED_INT
+#define SIMDIFY_NEED_INT 1 // require integer operations for SIMD types
+#endif
+#ifndef SIMDIFY_NEED_AVX
+#define SIMDIFY_NEED_AVX 0 // require AVX SIMD types to be declared
+#endif
+#ifndef SIMDIFY_NEED_SSE
+#define SIMDIFY_NEED_SSE 0 // require SSE SIMD types to be declared
+#endif
+#ifndef SIMDIFY_NEED_DUM
+#define SIMDIFY_NEED_DUM 0 // require dummy SIMD types to be declared
+#endif
+
+//
 // fix MSVC borked SSE macros (ICC has got them right though)
 //
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
@@ -43,11 +59,11 @@
 // include all supported SIMD types
 // use the SIMDIFY_NEED_* macros to force the include
 //
-#if defined(__AVX__) || defined(SIMDIFY_NEED_AVX)
+#if defined(__AVX__) || SIMDIFY_NEED_AVX
 #include "simd_types/avx.hpp"
 #endif
 
-#if defined(__SSE2__) || defined(SIMDIFY_NEED_SSE)
+#if defined(__SSE2__) || SIMDIFY_NEED_SSE
 #include "simd_types/sse.hpp"
 #endif
 

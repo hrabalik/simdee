@@ -1,6 +1,6 @@
 #ifndef SIMDIFY_SIMD_TYPES_AVX_HPP
 #define SIMDIFY_SIMD_TYPES_AVX_HPP
-#define SIMDIFY_AVX
+#define SIMDIFY_HAVE_AVX
 
 // ensure AVX is on
 #ifndef __AVX__

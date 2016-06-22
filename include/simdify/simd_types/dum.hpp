@@ -1,6 +1,6 @@
 #ifndef SIMDIFY_SIMD_TYPES_DUM_HPP
 #define SIMDIFY_SIMD_TYPES_DUM_HPP
-#define SIMDIFY_DUM
+#define SIMDIFY_HAVE_DUM
 
 #include "common.hpp"
 #include <cmath>

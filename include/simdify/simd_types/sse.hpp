@@ -1,6 +1,6 @@
 #ifndef SIMDIFY_SIMD_TYPES_SSE_HPP
 #define SIMDIFY_SIMD_TYPES_SSE_HPP
-#define SIMDIFY_SSE
+#define SIMDIFY_HAVE_SSE
 
 // ensure SSE2 is on
 #ifndef __SSE2__

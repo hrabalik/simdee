@@ -58,27 +58,27 @@
 // use SIMDIFY_PREFER_* to use a specific type
 //
 namespace simd {
-#if defined(SIMDIFY_PREFER_AVX) && defined(SIMDIFY_AVX)
+#if defined(SIMDIFY_PREFER_AVX) && defined(SIMDIFY_HAVE_AVX)
     using vecf = avxf;
     using vecu = avxu;
     using vecs = avxs;
-#elif defined(SIMDIFY_PREFER_SSE) && defined(SIMDIFY_SSE)
+#elif defined(SIMDIFY_PREFER_SSE) && defined(SIMDIFY_HAVE_SSE)
     using vecf = ssef;
     using vecu = sseu;
     using vecs = sses;
-#elif defined(SIMDIFY_PREFER_DUM) && defined(SIMDIFY_DUM)
+#elif defined(SIMDIFY_PREFER_DUM) && defined(SIMDIFY_HAVE_DUM)
     using vecf = dumf;
     using vecu = dumu;
     using vecs = dums;
-#elif defined(SIMDIFY_AVX)
+#elif defined(SIMDIFY_HAVE_AVX)
     using vecf = avxf;
     using vecu = avxu;
     using vecs = avxs;
-#elif defined(SIMDIFY_SSE)
+#elif defined(SIMDIFY_HAVE_SSE)
     using vecf = ssef;
     using vecu = sseu;
     using vecs = sses;
-#elif defined(SIMDIFY_DUM)
+#elif defined(SIMDIFY_HAVE_DUM)
     using vecf = dumf;
     using vecu = dumu;
     using vecs = dums;

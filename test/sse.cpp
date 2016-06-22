@@ -628,28 +628,24 @@ TEST_CASE("SSE bitwise", "[simd_t][x86][sse]") {
 
 TEST_CASE("SSE horizontal operations", "[simd_t][x86][sse]") {
     F a = simd::aligned(bufAF.data());
+    auto max = [](F::e_t l, F::e_t r) { return std::max(l, r); };
+    auto min = [](F::e_t l, F::e_t r) { return std::min(l, r); };
+    F::e_t inf = std::numeric_limits<F::e_t>::infinity();
     F::e_t v, v0;
-    uint32_t idx;
 
     SECTION("max") {
+        v0 = std::accumulate(begin(bufAF), end(bufAF), -inf, max);
         v = a.reduce(simd::max).first_element();
-        REQUIRE(v == 2.22944568f);
-        idx = (v == a).front();
-        REQUIRE(idx == 3);
-        v = max_mask(a, a != v).reduce(simd::max).first_element();
-        REQUIRE(v == 0.70154146f);
-        idx = (v == a).front();
-        REQUIRE(idx == 1);
+        REQUIRE(v == v0);
+        v = max_mask(a, simd::zero()).reduce(simd::max).first_element();
+        REQUIRE(v == -inf);
     }
     SECTION("min") {
+        v0 = std::accumulate(begin(bufAF), end(bufAF), inf, min);
         v = a.reduce(simd::min).first_element();
-        REQUIRE(v == -2.05181630f);
-        idx = (v == a).front();
-        REQUIRE(idx == 2);
-        v = min_mask(a, a != v).reduce(simd::min).first_element();
-        REQUIRE(v == -0.27787193f);
-        idx = (v == a).front();
-        REQUIRE(idx == 0);
+        REQUIRE(v == v0);
+        v = min_mask(a, simd::zero()).reduce(simd::min).first_element();
+        REQUIRE(v == inf);
     }
     SECTION("sum") {
         v0 = std::accumulate(begin(bufAF), end(bufAF), F::e_t(0));

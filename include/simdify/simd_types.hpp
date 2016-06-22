@@ -59,11 +59,13 @@
 // include all supported SIMD types
 // use the SIMDIFY_NEED_* macros to force the include
 //
-#if defined(__AVX__) || SIMDIFY_NEED_AVX
+#if SIMDIFY_NEED_AVX || \
+    (!SIMDIFY_NEED_INT && defined(__AVX__)) || \
+    (SIMDIFY_NEED_INT && defined(__AVX2__))
 #include "simd_types/avx.hpp"
 #endif
 
-#if defined(__SSE2__) || SIMDIFY_NEED_SSE
+#if SIMDIFY_NEED_SSE || defined(__SSE2__)
 #include "simd_types/sse.hpp"
 #endif
 

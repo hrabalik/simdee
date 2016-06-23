@@ -1,27 +1,31 @@
 #ifndef SIMDIFY_SIMD_TYPES_SSE_HPP
 #define SIMDIFY_SIMD_TYPES_SSE_HPP
+
+#include "common.hpp"
+
+// set feature flag
 #define SIMDIFY_HAVE_SSE
 
-// ensure SSE2 is on
+// ensure that intrinsics are available
 #ifndef __SSE2__
 #error "The macro '__SSE2__' is not set. SSE2 intrinsics are required to use the SSE SIMD type. Please check your build options."
 #endif
 
-#include "common.hpp"
 #include <emmintrin.h>
 
-//#if defined(__SSE3__)
-//#include <pmmintrin.h>
-//#endif
-//#if defined(__SSSE3__)
-//#include <tmmintrin.h>
-//#endif
-//#if defined (__SSE4_1__)
-//#include <smmintrin.h>
-//#endif
-//#if defined (__SSE4_2__)
-//#include <nmmintrin.h>
-//#endif
+// additional includes for extra instruction sets
+#if defined(__SSE3__)
+#include <pmmintrin.h>
+#endif
+#if defined(__SSSE3__)
+#include <tmmintrin.h>
+#endif
+#if defined (__SSE4_1__)
+#include <smmintrin.h>
+#endif
+#if defined (__SSE4_2__)
+#include <nmmintrin.h>
+#endif
 
 namespace simd {
 

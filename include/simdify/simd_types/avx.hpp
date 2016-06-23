@@ -1,8 +1,12 @@
 #ifndef SIMDIFY_SIMD_TYPES_AVX_HPP
 #define SIMDIFY_SIMD_TYPES_AVX_HPP
+
+#include "common.hpp"
+
+// set feature flag
 #define SIMDIFY_HAVE_AVX
 
-// ensure AVX is on
+// ensure that intrinsics are available
 #if !defined(__AVX__)
 #error "The macro '__AVX__' is not set. AVX intrinsics are required to use the AVX SIMD type. Please check your build options."
 #endif
@@ -10,7 +14,6 @@
 #error "AVX2 intrinsics are required to use the AVX SIMD type with integer operations. Use SIMDIFY_NEED_INT 0 to use floating-point operations only."
 #endif
 
-#include "common.hpp"
 #include <immintrin.h>
 
 namespace simd {

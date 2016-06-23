@@ -1,8 +1,11 @@
 #ifndef SIMDIFY_SIMD_TYPES_DUM_HPP
 #define SIMDIFY_SIMD_TYPES_DUM_HPP
-#define SIMDIFY_HAVE_DUM
 
 #include "common.hpp"
+
+// set feature flag
+#define SIMDIFY_HAVE_DUM
+
 #include <cmath>
 
 namespace simd {

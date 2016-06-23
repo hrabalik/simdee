@@ -25,13 +25,13 @@ namespace simd {
     struct simd_base {
         using traits_t = simd_type_traits<Crtp>;
         using vector_t = typename traits_t::vector_t;
-        using e_t = typename traits_t::e_t;
+        using scalar_t = typename traits_t::scalar_t;
 
         enum : std::size_t {
-            W = sizeof(vector_t) / sizeof(e_t)
+            W = sizeof(vector_t) / sizeof(scalar_t)
         };
 
-        using array_t = std::array<e_t, W>;
+        using array_t = std::array<scalar_t, W>;
 
         SIMDIFY_INL Crtp& self() {
             return static_cast<Crtp&>(*this);

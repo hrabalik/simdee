@@ -37,8 +37,8 @@ namespace simd {
     template <typename Simd_t>
     struct alignas(Simd_t)storage<Simd_t, typename std::enable_if<is_simd_type<Simd_t>::value>::type> {
         using stored_t = Simd_t;
-        using e_t = typename Simd_t::e_t;
-        using data_t = std::array<e_t, Simd_t::W>;
+        using scalar_t = typename Simd_t::scalar_t;
+        using data_t = std::array<scalar_t, Simd_t::W>;
 
         SIMDIFY_INL constexpr storage() = default;
         SIMDIFY_INL constexpr storage(const storage&) = default;
@@ -90,10 +90,10 @@ namespace simd {
             return operator=(*rhs.ptr());
         }
 
-        SIMDIFY_INL e_t* data() { return m_data.data(); }
-        SIMDIFY_INL const e_t* data() const { return m_data.data(); }
-        SIMDIFY_INL e_t& operator[](std::size_t i) { return m_data[i]; }
-        SIMDIFY_INL const e_t& operator[](std::size_t i) const { return m_data[i]; }
+        SIMDIFY_INL scalar_t* data() { return m_data.data(); }
+        SIMDIFY_INL const scalar_t* data() const { return m_data.data(); }
+        SIMDIFY_INL scalar_t& operator[](std::size_t i) { return m_data[i]; }
+        SIMDIFY_INL const scalar_t& operator[](std::size_t i) const { return m_data[i]; }
 
         // implicit conversion to Simd_t
         SIMDIFY_INL operator Simd_t() const { Simd_t s; s.aligned_load(data()); return s; }
@@ -108,7 +108,7 @@ namespace simd {
     template <typename E_t>
     struct storage<E_t, typename std::enable_if<std::is_arithmetic<E_t>::value>::type> {
         using stored_t = E_t;
-        using e_t = E_t;
+        using scalar_t = E_t;
         using data_t = E_t;
 
         SIMDIFY_INL constexpr storage() = default;
@@ -124,8 +124,8 @@ namespace simd {
 
         SIMDIFY_INL E_t* data() { return &m_data; }
         SIMDIFY_INL const E_t* data() const { return &m_data; }
-        SIMDIFY_INL e_t& operator[](std::size_t i) { return m_data; }
-        SIMDIFY_INL const e_t& operator[](std::size_t i) const { return m_data; }
+        SIMDIFY_INL scalar_t& operator[](std::size_t i) { return m_data; }
+        SIMDIFY_INL const scalar_t& operator[](std::size_t i) const { return m_data; }
 
         // implicit conversion to E_t
         SIMDIFY_INL operator E_t() const { return m_data; }
@@ -141,8 +141,8 @@ namespace simd {
     struct aos_storage {
         using stored_t = Simd_t;
         enum : std::size_t { W = Simd_t::W };
-        using e_t = typename Simd_t::e_t;
-        using data_t = std::array<e_t, N * W>;
+        using scalar_t = typename Simd_t::scalar_t;
+        using data_t = std::array<scalar_t, N * W>;
 
         SIMDIFY_INL constexpr aos_storage() = default;
         SIMDIFY_INL aos_storage(const aos_storage& rhs) { operator=(rhs); }
@@ -172,10 +172,10 @@ namespace simd {
             return *this;
         }
 
-        SIMDIFY_INL e_t* data() { return m_data.data(); }
-        SIMDIFY_INL const e_t* data() const { return m_data.data(); }
-        SIMDIFY_INL e_t& operator[](std::size_t i) { return m_data[i * N]; }
-        SIMDIFY_INL const e_t& operator[](std::size_t i) const { return m_data[i * N]; }
+        SIMDIFY_INL scalar_t* data() { return m_data.data(); }
+        SIMDIFY_INL const scalar_t* data() const { return m_data.data(); }
+        SIMDIFY_INL scalar_t& operator[](std::size_t i) { return m_data[i * N]; }
+        SIMDIFY_INL const scalar_t& operator[](std::size_t i) const { return m_data[i * N]; }
 
         // implicit conversion to Simd_t
         SIMDIFY_INL operator Simd_t() const {
@@ -194,7 +194,7 @@ namespace simd {
     template <typename Storage>
     struct reference {
         using referred_t = typename Storage::stored_t;
-        using e_t = typename Storage::e_t;
+        using scalar_t = typename Storage::scalar_t;
 
         SIMDIFY_INL constexpr reference() = default;
         SIMDIFY_INL constexpr reference(const reference&) = default;
@@ -226,8 +226,8 @@ namespace simd {
         SIMDIFY_INL Storage* reset(void* ptr) { m_data = static_cast<Storage*>(ptr); return m_data; }
         SIMDIFY_INL Storage*& ptr() { return m_data; }
         SIMDIFY_INL Storage* ptr() const { return m_data; }
-        SIMDIFY_INL e_t& operator[](std::size_t i) { return (*m_data)[i]; }
-        SIMDIFY_INL const e_t& operator[](std::size_t i) const { return (*m_data)[i]; }
+        SIMDIFY_INL scalar_t& operator[](std::size_t i) { return (*m_data)[i]; }
+        SIMDIFY_INL const scalar_t& operator[](std::size_t i) const { return (*m_data)[i]; }
 
         SIMDIFY_INL void swap(reference& rhs) {
             using std::swap;
@@ -252,7 +252,7 @@ namespace simd {
     template <typename Storage>
     struct const_reference {
         using referred_t = typename Storage::stored_t;
-        using e_t = typename Storage::e_t;
+        using scalar_t = typename Storage::scalar_t;
 
         SIMDIFY_INL constexpr const_reference() = default;
         SIMDIFY_INL constexpr const_reference(const const_reference&) = default;
@@ -275,7 +275,7 @@ namespace simd {
         SIMDIFY_INL const Storage* reset(const void* ptr) { m_data = static_cast<const Storage*>(ptr); return m_data; }
         SIMDIFY_INL const Storage*& ptr() { return m_data; }
         SIMDIFY_INL const Storage* ptr() const { return m_data; }
-        SIMDIFY_INL const e_t& operator[](std::size_t i) const { return (*m_data)[i]; }
+        SIMDIFY_INL const scalar_t& operator[](std::size_t i) const { return (*m_data)[i]; }
 
         // implicit conversion to const referred_t
         SIMDIFY_INL operator const referred_t() const { return referred_t(*m_data); }

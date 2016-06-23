@@ -39,7 +39,7 @@ namespace simd {
     template <typename Mm_t, typename E_t>
     struct sse_traits {
         using vector_t = Mm_t;
-        using e_t = E_t;
+        using scalar_t = E_t;
         using f_t = float;
         using u_t = uint32_t;
         using s_t = int32_t;
@@ -60,7 +60,7 @@ namespace simd {
         SIMDIFY_TRIVIAL_TYPE(sse_base);
 
         using vector_t = typename simd_base<Crtp>::vector_t;
-        using e_t = typename simd_base<Crtp>::e_t;
+        using scalar_t = typename simd_base<Crtp>::scalar_t;
         using simd_base<Crtp>::mm;
         using simd_base<Crtp>::W;
         using simd_base<Crtp>::self;
@@ -74,11 +74,11 @@ namespace simd {
             return self();
         }
 
-        SIMDIFY_INL sse_base(e_t r) {
+        SIMDIFY_INL sse_base(scalar_t r) {
             mm = _mm_set_ps1(reinterpret_cast<float&>(r));
         }
 
-        SIMDIFY_INL Crtp& operator=(e_t r) {
+        SIMDIFY_INL Crtp& operator=(scalar_t r) {
             mm = _mm_set_ps1(reinterpret_cast<float&>(r));
             return self();
         }
@@ -116,41 +116,41 @@ namespace simd {
 
         template <typename T>
         SIMDIFY_INL sse_base(const expr::init<T>& r) {
-            *this = r.template to<e_t>();
+            *this = r.template to<scalar_t>();
         }
 
         template <typename T>
         SIMDIFY_INL Crtp& operator=(const expr::init<T>& r) {
-            *this = r.template to<e_t>();
+            *this = r.template to<scalar_t>();
             return self();
         }
 
-        SIMDIFY_INL void aligned_load(const e_t* r) {
+        SIMDIFY_INL void aligned_load(const scalar_t* r) {
             mm = _mm_load_ps((const float*)r);
         }
 
-        SIMDIFY_INL void aligned_store(e_t* r) const {
+        SIMDIFY_INL void aligned_store(scalar_t* r) const {
             _mm_store_ps((float*)r, mm);
         }
 
-        SIMDIFY_INL void unaligned_load(const e_t* r) {
+        SIMDIFY_INL void unaligned_load(const scalar_t* r) {
             mm = _mm_loadu_ps((const float*)r);
         }
 
-        SIMDIFY_INL void unaligned_store(e_t* r) {
+        SIMDIFY_INL void unaligned_store(scalar_t* r) {
             _mm_storeu_ps((float*)r, mm);
         }
 
-        void interleaved_load(const e_t* r, std::size_t step) {
-            alignas(Crtp)e_t temp[W];
+        void interleaved_load(const scalar_t* r, std::size_t step) {
+            alignas(Crtp)scalar_t temp[W];
             for (std::size_t i = 0; i < W; ++i, r += step) {
                 temp[i] = *r;
             }
             aligned_load(temp);
         }
 
-        void interleaved_store(e_t* r, std::size_t step) const {
-            alignas(Crtp)e_t temp[W];
+        void interleaved_store(scalar_t* r, std::size_t step) const {
+            alignas(Crtp)scalar_t temp[W];
             aligned_store(temp);
             for (std::size_t i = 0; i < W; ++i, r += step) {
                 *r = temp[i];
@@ -169,7 +169,7 @@ namespace simd {
 
         SIMDIFY_TRIVIAL_TYPE(ssef);
 
-        SIMDIFY_INL e_t first_element() const { return _mm_cvtss_f32(mm); }
+        SIMDIFY_INL scalar_t first_element() const { return _mm_cvtss_f32(mm); }
     };
 
     struct sseu : sse_base<sseu> {
@@ -184,7 +184,7 @@ namespace simd {
             return *this;
         }
 
-        SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(mm); }
+        SIMDIFY_INL scalar_t first_element() const { return _mm_cvt_ss2si(mm); }
 
         SIMDIFY_INL bit_t front() const { return lsb(bit_t(_mm_movemask_ps(mm)));; }
         SIMDIFY_INL bit_iterator begin() const { return bit_iterator(_mm_movemask_ps(mm)); }
@@ -198,7 +198,7 @@ namespace simd {
 
         SIMDIFY_TRIVIAL_TYPE(sses);
 
-        SIMDIFY_INL e_t first_element() const { return _mm_cvt_ss2si(mm); }
+        SIMDIFY_INL scalar_t first_element() const { return _mm_cvt_ss2si(mm); }
     };
 
     SIMDIFY_INL const sseu operator&(const sseu& l, const sseu& r) { return _mm_and_ps(l.mm, r.mm); }

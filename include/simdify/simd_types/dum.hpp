@@ -21,7 +21,7 @@ namespace simd {
     template <typename Mm_t>
     struct dum_traits {
         using vector_t = Mm_t;
-        using e_t = Mm_t;
+        using scalar_t = Mm_t;
         using f_t = float;
         using u_t = uint32_t;
         using s_t = int32_t;
@@ -44,16 +44,16 @@ namespace simd {
         SIMDIFY_TRIVIAL_TYPE(dum_base);
 
         using vector_t = typename simd_base<Crtp>::vector_t;
-        using e_t = typename simd_base<Crtp>::e_t;
+        using scalar_t = typename simd_base<Crtp>::scalar_t;
         using simd_base<Crtp>::mm;
         using simd_base<Crtp>::W;
         using simd_base<Crtp>::self;
 
-        SIMDIFY_INL dum_base(const e_t& r) {
+        SIMDIFY_INL dum_base(const scalar_t& r) {
             mm = r;
         }
 
-        SIMDIFY_INL Crtp& operator=(const e_t& r) {
+        SIMDIFY_INL Crtp& operator=(const scalar_t& r) {
             mm = r;
             return self();
         }
@@ -82,36 +82,36 @@ namespace simd {
 
         template <typename T>
         SIMDIFY_INL dum_base(const expr::init<T>& r) {
-            *this = r.template to<e_t>();
+            *this = r.template to<scalar_t>();
         }
 
         template <typename T>
         SIMDIFY_INL Crtp& operator=(const expr::init<T>& r) {
-            *this = r.template to<e_t>();
+            *this = r.template to<scalar_t>();
             return self();
         }
 
-        SIMDIFY_INL void aligned_load(const e_t* r) {
+        SIMDIFY_INL void aligned_load(const scalar_t* r) {
             mm = *r;
         }
 
-        SIMDIFY_INL void aligned_store(e_t* r) const {
+        SIMDIFY_INL void aligned_store(scalar_t* r) const {
             *r = mm;
         }
 
-        SIMDIFY_INL void unaligned_load(const e_t* r) {
+        SIMDIFY_INL void unaligned_load(const scalar_t* r) {
             mm = *r;
         }
 
-        SIMDIFY_INL void unaligned_store(e_t* r) {
+        SIMDIFY_INL void unaligned_store(scalar_t* r) {
             *r = mm;
         }
 
-        void interleaved_load(const e_t* r, std::size_t step) {
+        void interleaved_load(const scalar_t* r, std::size_t step) {
             mm = *r;
         }
 
-        void interleaved_store(e_t* r, std::size_t step) const {
+        void interleaved_store(scalar_t* r, std::size_t step) const {
             *r = mm;
         }
 
@@ -124,7 +124,7 @@ namespace simd {
 
         SIMDIFY_TRIVIAL_TYPE(dumf);
 
-        SIMDIFY_INL e_t first_element() const { return mm; }
+        SIMDIFY_INL scalar_t first_element() const { return mm; }
     };
 
     struct dumu : dum_base<dumu> {
@@ -132,7 +132,7 @@ namespace simd {
 
         SIMDIFY_TRIVIAL_TYPE(dumu);
 
-        SIMDIFY_INL e_t first_element() const { return mm; }
+        SIMDIFY_INL scalar_t first_element() const { return mm; }
 
         struct iterator : std::iterator<std::input_iterator_tag, bit_t> {
             bit_t mask;
@@ -157,7 +157,7 @@ namespace simd {
 
         SIMDIFY_TRIVIAL_TYPE(dums);
 
-        SIMDIFY_INL e_t first_element() const { return mm; }
+        SIMDIFY_INL scalar_t first_element() const { return mm; }
     };
 
     SIMDIFY_INL const dumu operator&(const dumu& l, const dumu& r) { return uval(tou(l.mm) & tou(r.mm)); }

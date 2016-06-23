@@ -20,7 +20,7 @@ namespace simd {
 
     template <typename Mm_t>
     struct dum_traits {
-        using mm_t = Mm_t;
+        using vector_t = Mm_t;
         using e_t = Mm_t;
         using f_t = float;
         using u_t = uint32_t;
@@ -43,7 +43,7 @@ namespace simd {
     struct dum_base : simd_base<Crtp> {
         SIMDIFY_TRIVIAL_TYPE(dum_base);
 
-        using mm_t = typename simd_base<Crtp>::mm_t;
+        using vector_t = typename simd_base<Crtp>::vector_t;
         using e_t = typename simd_base<Crtp>::e_t;
         using simd_base<Crtp>::mm;
         using simd_base<Crtp>::W;

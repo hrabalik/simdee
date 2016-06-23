@@ -24,11 +24,11 @@ namespace simd {
     template <typename Crtp>
     struct simd_base {
         using traits_t = simd_type_traits<Crtp>;
-        using mm_t = typename traits_t::mm_t;
+        using vector_t = typename traits_t::vector_t;
         using e_t = typename traits_t::e_t;
 
         enum : std::size_t {
-            W = sizeof(mm_t) / sizeof(e_t)
+            W = sizeof(vector_t) / sizeof(e_t)
         };
 
         using array_t = std::array<e_t, W>;
@@ -42,7 +42,7 @@ namespace simd {
         }
 
         // data
-        mm_t mm;
+        vector_t mm;
     };
 
     //

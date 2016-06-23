@@ -28,7 +28,7 @@ namespace simd {
 
     template <typename Mm_t, typename E_t>
     struct avx_traits {
-        using mm_t = Mm_t;
+        using vector_t = Mm_t;
         using e_t = E_t;
         using f_t = float;
         using u_t = uint32_t;
@@ -51,17 +51,17 @@ namespace simd {
     struct avx_base : simd_base<Crtp> {
         SIMDIFY_TRIVIAL_TYPE(avx_base);
 
-        using mm_t = typename simd_base<Crtp>::mm_t;
+        using vector_t = typename simd_base<Crtp>::vector_t;
         using e_t = typename simd_base<Crtp>::e_t;
         using simd_base<Crtp>::mm;
         using simd_base<Crtp>::W;
         using simd_base<Crtp>::self;
 
-        SIMDIFY_INL avx_base(const mm_t& r) {
+        SIMDIFY_INL avx_base(const vector_t& r) {
             mm = r;
         }
 
-        SIMDIFY_INL Crtp& operator=(const mm_t& r) {
+        SIMDIFY_INL Crtp& operator=(const vector_t& r) {
             mm = r;
             return self();
         }

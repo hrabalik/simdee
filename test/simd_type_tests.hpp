@@ -5,9 +5,9 @@
 // SIMD_TYPE -- name of the SIMD type as a string
 // SIMD_TEST_TAG -- catch tests tag(s) as a string
 // SIMD_WIDTH -- expected W
-// SIMD_LOAD_AF -- expression that extracts mm_t from bufAF
-// SIMD_LOAD_AU -- expression that extracts mm_t from bufAU
-// SIMD_LOAD_AS -- expression that extracts mm_t from bufAS
+// SIMD_LOAD_AF -- expression that extracts vector_t from bufAF
+// SIMD_LOAD_AU -- expression that extracts vector_t from bufAU
+// SIMD_LOAD_AS -- expression that extracts vector_t from bufAS
 //
 
 TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
@@ -20,12 +20,12 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((std::is_same<F::array_t, std::array<F::e_t, F::W>>::value));
     REQUIRE((std::is_same<U::array_t, std::array<U::e_t, U::W>>::value));
     REQUIRE((std::is_same<S::array_t, std::array<S::e_t, S::W>>::value));
-    REQUIRE(sizeof(F) == sizeof(F::mm_t));
-    REQUIRE(sizeof(U) == sizeof(U::mm_t));
-    REQUIRE(sizeof(S) == sizeof(S::mm_t));
-    REQUIRE(alignof(F) == alignof(F::mm_t));
-    REQUIRE(alignof(U) == alignof(U::mm_t));
-    REQUIRE(alignof(S) == alignof(S::mm_t));
+    REQUIRE(sizeof(F) == sizeof(F::vector_t));
+    REQUIRE(sizeof(U) == sizeof(U::vector_t));
+    REQUIRE(sizeof(S) == sizeof(S::vector_t));
+    REQUIRE(alignof(F) == alignof(F::vector_t));
+    REQUIRE(alignof(U) == alignof(U::vector_t));
+    REQUIRE(alignof(S) == alignof(S::vector_t));
     REQUIRE(sizeof(F::e_t) * F::W == sizeof(F));
     REQUIRE(sizeof(U::e_t) * U::W == sizeof(U));
     REQUIRE(sizeof(S::e_t) * S::W == sizeof(S));
@@ -53,7 +53,7 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
-    SECTION("from mm_t") {
+    SECTION("from vector_t") {
         F tf(SIMD_LOAD_AF);
         U tu(SIMD_LOAD_AU);
         S ts(SIMD_LOAD_AS);
@@ -194,7 +194,7 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
-    SECTION("from mm_t") {
+    SECTION("from vector_t") {
         implicit_test(
             SIMD_LOAD_AF,
             SIMD_LOAD_AU,
@@ -299,7 +299,7 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
-    SECTION("from mm_t") {
+    SECTION("from vector_t") {
         tf = SIMD_LOAD_AF;
         tu = SIMD_LOAD_AU;
         ts = SIMD_LOAD_AS;

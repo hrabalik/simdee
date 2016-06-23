@@ -36,10 +36,10 @@ namespace simd {
     template<>
     struct is_simd_type<sses> : std::integral_constant<bool, true> {};
 
-    template <typename Mm_t, typename E_t>
+    template <typename Vector_t, typename Scalar_t>
     struct sse_traits {
-        using vector_t = Mm_t;
-        using scalar_t = E_t;
+        using vector_t = Vector_t;
+        using scalar_t = Scalar_t;
         using vec_f = ssef;
         using vec_u = sseu;
         using vec_s = sses;

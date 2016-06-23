@@ -18,10 +18,10 @@ namespace simd {
     template<>
     struct is_simd_type<dums> : std::integral_constant<bool, true> {};
 
-    template <typename Mm_t>
+    template <typename Vector_t>
     struct dum_traits {
-        using vector_t = Mm_t;
-        using scalar_t = Mm_t;
+        using vector_t = Vector_t;
+        using scalar_t = Vector_t;
         using vec_f = dumf;
         using vec_u = dumu;
         using vec_s = dums;

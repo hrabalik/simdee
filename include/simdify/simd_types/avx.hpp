@@ -26,10 +26,10 @@ namespace simd {
     template <>
     struct is_simd_type<avxs> : std::integral_constant<bool, true> {};
 
-    template <typename Mm_t, typename E_t>
+    template <typename Vector_t, typename Scalar_t>
     struct avx_traits {
-        using vector_t = Mm_t;
-        using scalar_t = E_t;
+        using vector_t = Vector_t;
+        using scalar_t = Scalar_t;
         using vec_f = avxf;
         using vec_u = avxu;
         using vec_s = avxs;

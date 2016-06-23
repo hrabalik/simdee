@@ -105,30 +105,30 @@ namespace simd {
     //
     // specialized storage for arithmetic types
     //
-    template <typename E_t>
-    struct storage<E_t, typename std::enable_if<std::is_arithmetic<E_t>::value>::type> {
-        using stored_t = E_t;
-        using scalar_t = E_t;
-        using data_t = E_t;
+    template <typename Scalar_t>
+    struct storage<Scalar_t, typename std::enable_if<std::is_arithmetic<Scalar_t>::value>::type> {
+        using stored_t = Scalar_t;
+        using scalar_t = Scalar_t;
+        using data_t = Scalar_t;
 
         SIMDIFY_INL constexpr storage() = default;
         SIMDIFY_INL constexpr storage(const storage&) = default;
-        SIMDIFY_INL explicit storage(const E_t& rhs) : m_data(rhs) {}
+        SIMDIFY_INL explicit storage(const Scalar_t& rhs) : m_data(rhs) {}
 
         SIMDIFY_INL storage& operator=(const storage&) = default;
 
-        SIMDIFY_INL storage& operator=(const E_t& rhs) {
+        SIMDIFY_INL storage& operator=(const Scalar_t& rhs) {
             m_data = rhs;
             return *this;
         }
 
-        SIMDIFY_INL E_t* data() { return &m_data; }
-        SIMDIFY_INL const E_t* data() const { return &m_data; }
+        SIMDIFY_INL Scalar_t* data() { return &m_data; }
+        SIMDIFY_INL const Scalar_t* data() const { return &m_data; }
         SIMDIFY_INL scalar_t& operator[](std::size_t i) { return m_data; }
         SIMDIFY_INL const scalar_t& operator[](std::size_t i) const { return m_data; }
 
-        // implicit conversion to E_t
-        SIMDIFY_INL operator E_t() const { return m_data; }
+        // implicit conversion to Scalar_t
+        SIMDIFY_INL operator Scalar_t() const { return m_data; }
 
         // data
         data_t m_data;

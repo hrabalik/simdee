@@ -13,27 +13,27 @@ using F = simd::dumf;
 using U = simd::dumu;
 using S = simd::dums;
 
-alignas(F) const F::array_e bufAF = { {
+alignas(F) const F::array_t bufAF = { {
         -0.27787193f,
     } };
-alignas(F) const F::array_e bufBF = { {
+alignas(F) const F::array_t bufBF = { {
         -0.23645458f,
     } };
-alignas(U) const U::array_e bufAU = { {
+alignas(U) const U::array_t bufAU = { {
         1753029375U,
     } };
-alignas(U) const U::array_e bufBU = { {
+alignas(U) const U::array_t bufBU = { {
         1679702461U,
     } };
-alignas(S) const S::array_e bufAS = { {
+alignas(S) const S::array_t bufAS = { {
         -1712190449,
     } };
-alignas(S) const S::array_e bufBS = { {
+alignas(S) const S::array_t bufBS = { {
         724135231,
     } };
-alignas(F) const F::array_e bufZF = { { 0 } };
-alignas(U) const U::array_e bufZU = { { 0 } };
-alignas(S) const S::array_e bufZS = { { 0 } };
+alignas(F) const F::array_t bufZF = { { 0 } };
+alignas(U) const U::array_t bufZU = { { 0 } };
+alignas(S) const S::array_t bufZS = { { 0 } };
 
 #define SIMD_TYPE "DUM"
 #define SIMD_TEST_TAG "[simd_types][dum]"

@@ -31,7 +31,7 @@ namespace simd {
             W = sizeof(mm_t) / sizeof(e_t)
         };
 
-        using array_e = std::array<e_t, W>;
+        using array_t = std::array<e_t, W>;
 
         SIMDIFY_INL Crtp& self() {
             return static_cast<Crtp&>(*this);

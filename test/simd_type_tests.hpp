@@ -17,9 +17,9 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((std::is_same<F::e_t, float>::value));
     REQUIRE((std::is_same<U::e_t, uint32_t>::value));
     REQUIRE((std::is_same<S::e_t, int32_t>::value));
-    REQUIRE((std::is_same<F::array_e, std::array<F::e_t, F::W>>::value));
-    REQUIRE((std::is_same<U::array_e, std::array<U::e_t, U::W>>::value));
-    REQUIRE((std::is_same<S::array_e, std::array<S::e_t, S::W>>::value));
+    REQUIRE((std::is_same<F::array_t, std::array<F::e_t, F::W>>::value));
+    REQUIRE((std::is_same<U::array_t, std::array<U::e_t, U::W>>::value));
+    REQUIRE((std::is_same<S::array_t, std::array<S::e_t, S::W>>::value));
     REQUIRE(sizeof(F) == sizeof(F::mm_t));
     REQUIRE(sizeof(U) == sizeof(U::mm_t));
     REQUIRE(sizeof(S) == sizeof(S::mm_t));
@@ -35,9 +35,9 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
-    alignas(F)F::array_e rf = bufZF;
-    alignas(U)U::array_e ru = bufZU;
-    alignas(S)S::array_e rs = bufZS;
+    alignas(F)F::array_t rf = bufZF;
+    alignas(U)U::array_t ru = bufZU;
+    alignas(S)S::array_t rs = bufZS;
     auto tor = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
         tf.aligned_store(rf.data());
         tu.aligned_store(ru.data());
@@ -179,9 +179,9 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
 
 
 TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
-    alignas(F)F::array_e rf = bufZF;
-    alignas(U)U::array_e ru = bufZU;
-    alignas(S)S::array_e rs = bufZS;
+    alignas(F)F::array_t rf = bufZF;
+    alignas(U)U::array_t ru = bufZU;
+    alignas(S)S::array_t rs = bufZS;
     auto implicit_test = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
         tf.aligned_store(rf.data());
         tu.aligned_store(ru.data());
@@ -278,9 +278,9 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
-    alignas(F)F::array_e rf = bufZF;
-    alignas(U)U::array_e ru = bufZU;
-    alignas(S)S::array_e rs = bufZS;
+    alignas(F)F::array_t rf = bufZF;
+    alignas(U)U::array_t ru = bufZU;
+    alignas(S)S::array_t rs = bufZS;
     F tf;
     U tu;
     S ts;
@@ -410,8 +410,8 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {
-    alignas(F)F::array_e r;
-    alignas(F)F::array_e e;
+    alignas(F)F::array_t r;
+    alignas(F)F::array_t e;
     F a = simd::aligned(bufAF.data());
     F b = simd::aligned(bufBF.data());
     auto tor = [&r](const F& t) {
@@ -489,8 +489,8 @@ TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " comparison", SIMD_TEST_TAG) {
     auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
-    alignas(U)U::array_e r;
-    alignas(U)U::array_e e;
+    alignas(U)U::array_t r;
+    alignas(U)U::array_t e;
     F a = simd::aligned(bufAF.data());
     F b = simd::aligned(bufBF.data());
     auto tor = [&r](const U& t) {
@@ -542,8 +542,8 @@ TEST_CASE(SIMD_TYPE " comparison", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
-    alignas(U)U::array_e r;
-    alignas(U)U::array_e e;
+    alignas(U)U::array_t r;
+    alignas(U)U::array_t e;
     U a = simd::aligned(bufAU.data());
     U b = simd::aligned(bufBU.data());
     auto tor = [&r](const U& t) {

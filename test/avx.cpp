@@ -13,33 +13,33 @@ using F = simd::avxf;
 using U = simd::avxu;
 using S = simd::avxs;
 
-alignas(F) const F::array_e bufAF = { {
+alignas(F) const F::array_t bufAF = { {
     -0.27787193f, +0.70154146f, -2.05181630f, +2.22944568f,
     -0.82358653f, -1.57705702f, +0.50797465f, -0.59003456f,
 } };
-alignas(F) const F::array_e bufBF = { {
+alignas(F) const F::array_t bufBF = { {
     -0.23645458f, +2.02369089f, -2.25835397f, +2.22944568f,
     +0.33756370f, -0.87587426f, -1.66416447f, -0.59003456f,
 } };
-alignas(U) const U::array_e bufAU = { {
+alignas(U) const U::array_t bufAU = { {
     1753029375U, 1117080442U, 3817141237U, 3761735248U,
     244284091U, 1874242234U, 3400252368U, 2648404707U,
 } };
-alignas(U) const U::array_e bufBU = { {
+alignas(U) const U::array_t bufBU = { {
     1679702461U, 2102346647U, 480083363U, 779803484U,
     1213208312U, 2121108407U, 2718691794U, 3724041010U,
 } };
-alignas(S) const S::array_e bufAS = { {
+alignas(S) const S::array_t bufAS = { {
     -1712190449, -48692967, -214510247, 440646957,
     471289320, 614985478, -2035465541, 248883859,
 } };
-alignas(S) const S::array_e bufBS = { {
+alignas(S) const S::array_t bufBS = { {
     724135231, 56848532, 64122653, 1641874147,
     -899302812, -2112882416, 77287484, 1066617619,
 } };
-alignas(F) const F::array_e bufZF = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
-alignas(U) const U::array_e bufZU = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
-alignas(S) const S::array_e bufZS = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
+alignas(F) const F::array_t bufZF = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
+alignas(U) const U::array_t bufZU = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
+alignas(S) const S::array_t bufZS = { { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
 #define SIMD_TYPE "AVX"
 #define SIMD_TEST_TAG "[simd_types][avx]"

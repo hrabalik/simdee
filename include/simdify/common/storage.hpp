@@ -20,18 +20,6 @@ namespace simd {
     struct aos_storage;
 
     //
-    // reference to storage (proxy object)
-    //
-    template <typename Storage>
-    struct reference;
-
-    //
-    // const reference to storage (proxy object)
-    //
-    template <typename Storage>
-    struct const_reference;
-
-    //
     // specialized storage for SIMD types
     //
     template <typename Simd_t>
@@ -42,8 +30,6 @@ namespace simd {
 
         SIMDIFY_INL constexpr storage() = default;
         SIMDIFY_INL constexpr storage(const storage&) = default;
-        SIMDIFY_INL constexpr storage(reference<storage> rhs) : storage(*rhs.ptr()) {}
-        SIMDIFY_INL constexpr storage(const_reference<storage> rhs) : storage(*rhs.ptr()) {}
 
         SIMDIFY_INL explicit storage(const Simd_t& rhs) { rhs.aligned_store(data()); }
 
@@ -51,14 +37,8 @@ namespace simd {
 
         template <std::size_t N>
         SIMDIFY_INL storage(const aos_storage<Simd_t, N>& rhs) { operator=(rhs); }
-        template <std::size_t N>
-        SIMDIFY_INL storage(reference<aos_storage<Simd_t, N>> rhs) { operator=(*rhs.ptr()); }
-        template <std::size_t N>
-        SIMDIFY_INL storage(const_reference<aos_storage<Simd_t, N>> rhs) { operator=(*rhs.ptr()); }
 
         SIMDIFY_INL storage& operator=(const storage&) = default;
-        SIMDIFY_INL storage& operator=(reference<storage> rhs) { return operator=(*rhs.ptr()); }
-        SIMDIFY_INL storage& operator=(const_reference<storage> rhs) { return operator=(*rhs.ptr()); }
 
         SIMDIFY_INL storage& operator=(const Simd_t& rhs) {
             rhs.aligned_store(data());
@@ -78,16 +58,6 @@ namespace simd {
                 *lp = *rp;
             }
             return *this;
-        }
-
-        template <std::size_t N>
-        SIMDIFY_INL storage& operator=(reference<aos_storage<Simd_t, N>> rhs) {
-            return operator=(*rhs.ptr());
-        }
-
-        template <std::size_t N>
-        SIMDIFY_INL storage& operator=(const_reference<aos_storage<Simd_t, N>> rhs) {
-            return operator=(*rhs.ptr());
         }
 
         SIMDIFY_INL scalar_t* data() { return m_data.data(); }
@@ -188,128 +158,20 @@ namespace simd {
         data_t m_data;
     };
 
-    //
-    // reference to storage (proxy object)
-    //
-    template <typename Storage>
-    struct reference {
-        using referred_t = typename Storage::stored_t;
-        using scalar_t = typename Storage::scalar_t;
-
-        SIMDIFY_INL constexpr reference() = default;
-        SIMDIFY_INL constexpr reference(const reference&) = default;
-
-        SIMDIFY_INL reference(Storage& rhs) {
-            m_data = &rhs;
-        }
-
-        template <typename U = int>
-        SIMDIFY_INL reference(referred_t& rhs, typename std::enable_if<std::is_arithmetic<referred_t>::value, U>::type = 0) {
-            m_data = reinterpret_cast<Storage*>(&rhs);
-        }
-
-        SIMDIFY_INL reference& operator=(const reference& rhs) {
-            *m_data = *rhs.m_data;
-            return *this;
-        }
-
-        SIMDIFY_INL reference& operator=(const Storage& rhs) {
-            *m_data = rhs;
-            return *this;
-        }
-
-        SIMDIFY_INL reference& operator=(const referred_t& rhs) {
-            *m_data = rhs;
-            return *this;
-        }
-
-        SIMDIFY_INL Storage* reset(void* ptr) { m_data = static_cast<Storage*>(ptr); return m_data; }
-        SIMDIFY_INL Storage*& ptr() { return m_data; }
-        SIMDIFY_INL Storage* ptr() const { return m_data; }
-        SIMDIFY_INL scalar_t& operator[](std::size_t i) { return (*m_data)[i]; }
-        SIMDIFY_INL const scalar_t& operator[](std::size_t i) const { return (*m_data)[i]; }
-
-        SIMDIFY_INL void swap(reference& rhs) {
-            using std::swap;
-            swap(*m_data, *rhs.m_data);
-        }
-
-        // implicit conversion to const referred_t
-        SIMDIFY_INL operator const referred_t() const { return referred_t(*m_data); }
-
-        // data
-        Storage* m_data;
-    };
-
-    template <typename Storage>
-    SIMDIFY_INL void swap(reference<Storage>& lhs, reference<Storage>& rhs) {
-        lhs.swap(rhs);
-    }
-
-    //
-    // const reference to storage (proxy object)
-    //
-    template <typename Storage>
-    struct const_reference {
-        using referred_t = typename Storage::stored_t;
-        using scalar_t = typename Storage::scalar_t;
-
-        SIMDIFY_INL constexpr const_reference() = default;
-        SIMDIFY_INL constexpr const_reference(const const_reference&) = default;
-
-        SIMDIFY_INL const_reference(const reference<Storage>& rhs) {
-            m_data = rhs.ptr();
-        }
-
-        SIMDIFY_INL const_reference(const Storage& rhs) {
-            m_data = &rhs;
-        }
-
-        template <typename U = int>
-        SIMDIFY_INL const_reference(const referred_t& rhs, typename std::enable_if<std::is_arithmetic<referred_t>::value, U>::type = 0) {
-            m_data = reinterpret_cast<const Storage*>(&rhs);
-        }
-
-        // no assignment operations
-
-        SIMDIFY_INL const Storage* reset(const void* ptr) { m_data = static_cast<const Storage*>(ptr); return m_data; }
-        SIMDIFY_INL const Storage*& ptr() { return m_data; }
-        SIMDIFY_INL const Storage* ptr() const { return m_data; }
-        SIMDIFY_INL const scalar_t& operator[](std::size_t i) const { return (*m_data)[i]; }
-
-        // implicit conversion to const referred_t
-        SIMDIFY_INL operator const referred_t() const { return referred_t(*m_data); }
-
-        // data
-        const Storage* m_data;
-    };
-
     template <typename T>
     SIMDIFY_INL constexpr auto tof(storage<T> r) -> decltype(tof(T(r))) { return tof(T(r)); }
     template <typename T, std::size_t N>
     SIMDIFY_INL constexpr auto tof(aos_storage<T, N> r) -> decltype(tof(T(r))) { return tof(T(r)); }
-    template <typename T>
-    SIMDIFY_INL constexpr auto tof(reference<T> r) -> decltype(tof(*r.ptr())) { return tof(*r.ptr()); }
-    template <typename T>
-    SIMDIFY_INL constexpr auto tof(const_reference<T> r) -> decltype(tof(*r.ptr())) { return tof(*r.ptr()); }
 
     template <typename T>
     SIMDIFY_INL constexpr auto tou(storage<T> r) -> decltype(tou(T(r))) { return tou(T(r)); }
     template <typename T, std::size_t N>
     SIMDIFY_INL constexpr auto tou(aos_storage<T, N> r) -> decltype(tou(T(r))) { return tou(T(r)); }
-    template <typename T>
-    SIMDIFY_INL constexpr auto tou(reference<T> r) -> decltype(tou(*r.ptr())) { return tou(*r.ptr()); }
-    template <typename T>
-    SIMDIFY_INL constexpr auto tou(const_reference<T> r) -> decltype(tou(*r.ptr())) { return tou(*r.ptr()); }
 
     template <typename T>
     SIMDIFY_INL constexpr auto tos(storage<T> r) -> decltype(tos(T(r))) { return tos(T(r)); }
     template <typename T, std::size_t N>
     SIMDIFY_INL constexpr auto tos(aos_storage<T, N> r) -> decltype(tos(T(r))) { return tos(T(r)); }
-    template <typename T>
-    SIMDIFY_INL constexpr auto tos(reference<T> r) -> decltype(tos(*r.ptr())) { return tos(*r.ptr()); }
-    template <typename T>
-    SIMDIFY_INL constexpr auto tos(const_reference<T> r) -> decltype(tos(*r.ptr())) { return tos(*r.ptr()); }
 }
 
 #endif // SIMDIFY_COMMON_STORAGE_HPP

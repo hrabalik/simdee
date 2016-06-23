@@ -95,21 +95,6 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from simd::aos_storage") {
-        simd::aos_storage<F, 7> aos_storf;
-        simd::aos_storage<U, 8> aos_storu;
-        simd::aos_storage<S, 9> aos_stors;
-        for (int i = 0; i < F::W; ++i) aos_storf[i] = bufAF[i];
-        for (int i = 0; i < U::W; ++i) aos_storu[i] = bufAU[i];
-        for (int i = 0; i < S::W; ++i) aos_stors[i] = bufAS[i];
-        F tf(aos_storf);
-        U tu(aos_storu);
-        S ts(aos_stors);
-        tor(tf, tu, ts);
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
     SECTION("from uval, sval, zero, etc. (simd::init family)") {
         {
             F tf(simd::fval(1.2345678f));
@@ -233,18 +218,6 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from simd::aos_storage") {
-        simd::aos_storage<F, 7> aos_storf;
-        simd::aos_storage<U, 8> aos_storu;
-        simd::aos_storage<S, 9> aos_stors;
-        for (int i = 0; i < F::W; ++i) aos_storf[i] = bufAF[i];
-        for (int i = 0; i < U::W; ++i) aos_storu[i] = bufAU[i];
-        for (int i = 0; i < S::W; ++i) aos_stors[i] = bufAS[i];
-        implicit_test(aos_storf, aos_storu, aos_stors);
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
     SECTION("from uval, sval, zero, etc. (simd::init family)") {
         implicit_test(simd::fval(1.2345678f), simd::fval(1.2345678f), simd::fval(1.2345678f));
         for (auto val : rf) REQUIRE(simd::tof(val) == 1.2345678f);
@@ -336,21 +309,6 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         tf = storf;
         tu = storu;
         ts = stors;
-        tor();
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
-    SECTION("from simd::aos_storage") {
-        simd::aos_storage<F, 7> aos_storf;
-        simd::aos_storage<U, 8> aos_storu;
-        simd::aos_storage<S, 9> aos_stors;
-        for (int i = 0; i < F::W; ++i) aos_storf[i] = bufAF[i];
-        for (int i = 0; i < U::W; ++i) aos_storu[i] = bufAU[i];
-        for (int i = 0; i < S::W; ++i) aos_stors[i] = bufAS[i];
-        tf = aos_storf;
-        tu = aos_storu;
-        ts = aos_stors;
         tor();
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);

@@ -22,9 +22,6 @@ namespace simd {
     struct dum_traits {
         using vector_t = Mm_t;
         using scalar_t = Mm_t;
-        using f_t = float;
-        using u_t = uint32_t;
-        using s_t = int32_t;
         using vec_f = dumf;
         using vec_u = dumu;
         using vec_s = dums;

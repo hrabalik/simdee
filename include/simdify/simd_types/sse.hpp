@@ -40,9 +40,6 @@ namespace simd {
     struct sse_traits {
         using vector_t = Mm_t;
         using scalar_t = E_t;
-        using f_t = float;
-        using u_t = uint32_t;
-        using s_t = int32_t;
         using vec_f = ssef;
         using vec_u = sseu;
         using vec_s = sses;

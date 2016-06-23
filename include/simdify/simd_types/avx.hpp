@@ -30,9 +30,6 @@ namespace simd {
     struct avx_traits {
         using vector_t = Mm_t;
         using scalar_t = E_t;
-        using f_t = float;
-        using u_t = uint32_t;
-        using s_t = int32_t;
         using vec_f = avxf;
         using vec_u = avxu;
         using vec_s = avxs;

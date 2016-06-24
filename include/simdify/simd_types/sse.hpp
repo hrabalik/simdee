@@ -292,6 +292,10 @@ namespace simd {
     SIMDIFY_INL const sses operator+(const sses& l, const sses& r) { return _mm_add_epi32(l.mmi(), r.mmi()); }
     SIMDIFY_INL const sses operator-(const sses& l, const sses& r) { return _mm_sub_epi32(l.mmi(), r.mmi()); }
     SIMDIFY_INL const sses operator*(const sses& l, const sses& r) { return _mm_mullo_epi32(l.mmi(), r.mmi()); }
+
+    SIMDIFY_INL const sses min(const sses& l, const sses& r) { return _mm_min_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const sses max(const sses& l, const sses& r) { return _mm_max_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const sses abs(const sses& l) { return _mm_abs_epi32(l.mmi()); }
 #endif
 
 }

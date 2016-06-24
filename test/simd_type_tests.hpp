@@ -519,6 +519,16 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         r = a;
         REQUIRE(r == e);
     }
+    SECTION("absolute value") {
+        std::transform(begin(bufAS), end(bufAS), begin(e), [](S::scalar_t a) { return std::abs(a); });
+        r = abs(a);
+        REQUIRE(r == e);
+    }
+    SECTION("signum") {
+        std::transform(begin(bufAS), end(bufAS), begin(e), [](S::scalar_t a) { return (a < 0) ? S::scalar_t(-1) : S::scalar_t(1); });
+        r = signum(a);
+        REQUIRE(r == e);
+    }
 }
 
 TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {

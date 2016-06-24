@@ -288,6 +288,10 @@ namespace simd {
     SIMDIFY_INL const avxs operator+(const avxs& l, const avxs& r) { return _mm256_add_epi32(l.mmi(), r.mmi()); }
     SIMDIFY_INL const avxs operator-(const avxs& l, const avxs& r) { return _mm256_sub_epi32(l.mmi(), r.mmi()); }
     SIMDIFY_INL const avxs operator*(const avxs& l, const avxs& r) { return _mm256_mullo_epi32(l.mmi(), r.mmi()); }
+
+    SIMDIFY_INL const avxs min(const avxs& l, const avxs& r) { return _mm256_min_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const avxs max(const avxs& l, const avxs& r) { return _mm256_max_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const avxs abs(const avxs& l) { return _mm256_abs_epi32(l.mmi()); }
 #endif
 
 }

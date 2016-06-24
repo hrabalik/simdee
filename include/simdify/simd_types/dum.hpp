@@ -225,6 +225,10 @@ namespace simd {
     SIMDIFY_INL const dums operator+(const dums& l, const dums& r) { return l.mm + r.mm; }
     SIMDIFY_INL const dums operator-(const dums& l, const dums& r) { return l.mm - r.mm; }
     SIMDIFY_INL const dums operator*(const dums& l, const dums& r) { return l.mm * r.mm; }
+
+    SIMDIFY_INL const dums min(const dums& l, const dums& r) { return std::min(l.mm, r.mm); }
+    SIMDIFY_INL const dums max(const dums& l, const dums& r) { return std::max(l.mm, r.mm); }
+    SIMDIFY_INL const dums abs(const dums& l) { return std::abs(l.mm); }
 #endif
 
 }

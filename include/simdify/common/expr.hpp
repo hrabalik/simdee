@@ -25,6 +25,11 @@ namespace simd {
             SIMDIFY_INL bool all() const { return !neg.any(); }
             SIMDIFY_INL typename T::scalar_t first_element() const { return ~neg.first_element(); }
 
+            SIMDIFY_INL const T reduce(typename T::binary_op_t f) {
+                T pos = ~neg;
+                return pos.reduce(f);
+            }
+
             // data
             const T neg;
         };

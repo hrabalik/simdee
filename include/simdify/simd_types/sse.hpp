@@ -189,14 +189,19 @@ namespace simd {
 
         using sse_base::sse_base;
         SIMDIFY_INL explicit sseu(const sses&);
-
+        SIMDIFY_INL sseu(const __m128i r) { *this = r; }
         SIMDIFY_INL sseu(const expr::bit_not<sseu>& r) { *this = r; }
+
+        SIMDIFY_INL sseu& operator=(const __m128i r) {
+            mm = _mm_castsi128_ps(r);
+        }
 
         SIMDIFY_INL sseu& operator=(const expr::bit_not<sseu>& r) {
             mm = _mm_xor_ps(r.neg.mm, sseu(all_bits()).mm);
             return *this;
         }
 
+        SIMDIFY_INL __m128i mmi() const { return _mm_castps_si128(mm); }
         SIMDIFY_INL bit_t front() const { return lsb(mask()); }
         SIMDIFY_INL bit_iterator begin() const { return bit_iterator(mask()); }
         SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
@@ -219,7 +224,14 @@ namespace simd {
         using sse_base::sse_base;
         SIMDIFY_INL explicit sses(const ssef&);
         SIMDIFY_INL explicit sses(const sseu&);
+        SIMDIFY_INL sses(const __m128i& r) { *this = r; }
 
+        SIMDIFY_INL sses& operator=(const __m128i& r) {
+            mm = _mm_castsi128_ps(r);
+            return *this;
+        }
+
+        SIMDIFY_INL __m128i mmi() const { return _mm_castps_si128(mm); }
         SIMDIFY_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(mm)); }
     };
 

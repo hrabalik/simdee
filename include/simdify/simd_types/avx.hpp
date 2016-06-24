@@ -187,14 +187,20 @@ namespace simd {
 
         using avx_base::avx_base;
         SIMDIFY_INL explicit avxu(const avxs&);
-
+        SIMDIFY_INL avxu(const __m256i& r) { *this = r; }
         SIMDIFY_INL avxu(const expr::bit_not<avxu>& r) { *this = r; }
+
+        SIMDIFY_INL avxu& operator=(const __m256i& r) {
+            mm = _mm256_castsi256_ps(r);
+            return *this;
+        }
 
         SIMDIFY_INL avxu& operator=(const expr::bit_not<avxu>& r) {
             mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm);
             return *this;
         }
 
+        SIMDIFY_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
         SIMDIFY_INL bit_t front() const { return lsb(mask()); }
         SIMDIFY_INL bit_iterator begin() const { return bit_iterator(mask()); }
         SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
@@ -217,7 +223,14 @@ namespace simd {
         using avx_base::avx_base;
         SIMDIFY_INL explicit avxs(const avxf&);
         SIMDIFY_INL explicit avxs(const avxu&);
+        SIMDIFY_INL avxs(const __m256i& r) { *this = r; }
 
+        SIMDIFY_INL avxs& operator=(const __m256i& r) {
+            mm = _mm256_castsi256_ps(r);
+            return *this;
+        }
+
+        SIMDIFY_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
         SIMDIFY_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
     };
 

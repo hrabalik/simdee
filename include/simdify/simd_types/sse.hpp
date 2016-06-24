@@ -283,10 +283,10 @@ namespace simd {
 #if defined(SIMDIFY_NEED_INT)
     SIMDIFY_INL const sseu operator<(const sses& l, const sses& r) { return _mm_cmplt_epi32(l.mmi(), r.mmi()); }
     SIMDIFY_INL const sseu operator>(const sses& l, const sses& r) { return _mm_cmpgt_epi32(l.mmi(), r.mmi()); }
-    SIMDIFY_INL const not_sseu operator<=(const sses& l, const sses& r) { return ~_mm_cmpgt_epi32(l.mmi(), r.mmi()); }
-    SIMDIFY_INL const not_sseu operator>=(const sses& l, const sses& r) { return ~_mm_cmplt_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_sseu operator<=(const sses& l, const sses& r) { return not_sseu(_mm_cmpgt_epi32(l.mmi(), r.mmi())); }
+    SIMDIFY_INL const not_sseu operator>=(const sses& l, const sses& r) { return not_sseu(_mm_cmplt_epi32(l.mmi(), r.mmi())); }
     SIMDIFY_INL const sseu operator==(const sses& l, const sses& r) { return _mm_cmpeq_epi32(l.mmi(), r.mmi()); }
-    SIMDIFY_INL const not_sseu operator!=(const sses& l, const sses& r) { return ~_mm_cmpeq_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_sseu operator!=(const sses& l, const sses& r) { return not_sseu(_mm_cmpeq_epi32(l.mmi(), r.mmi())); }
 
     SIMDIFY_INL const sses operator-(const sses& l) { return _mm_sub_epi32(_mm_setzero_si128(), l.mmi()); }
     SIMDIFY_INL const sses operator+(const sses& l, const sses& r) { return _mm_add_epi32(l.mmi(), r.mmi()); }

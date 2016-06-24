@@ -178,6 +178,8 @@ namespace simd {
     struct ssef : sse_base<ssef> {
         using sse_base::sse_base;
 
+        SIMDIFY_INL explicit ssef(const sses&);
+
         SIMDIFY_TRIVIAL_TYPE(ssef);
 
         SIMDIFY_INL scalar_t first_element() const { return _mm_cvtss_f32(mm); }
@@ -207,10 +209,15 @@ namespace simd {
     struct sses : sse_base<sses> {
         using sse_base::sse_base;
 
+        SIMDIFY_INL explicit sses(const ssef&);
+
         SIMDIFY_TRIVIAL_TYPE(sses);
 
         SIMDIFY_INL scalar_t first_element() const { return _mm_cvt_ss2si(mm); }
     };
+
+    SIMDIFY_INL ssef::ssef(const sses& r) { mm = _mm_cvtepi32_ps(_mm_castps_si128(r.mm)); }
+    SIMDIFY_INL sses::sses(const ssef& r) { mm = _mm_castsi128_ps(_mm_cvtps_epi32(r.mm)); }
 
     SIMDIFY_INL const sseu operator&(const sseu& l, const sseu& r) { return _mm_and_ps(l.mm, r.mm); }
     SIMDIFY_INL const sseu operator|(const sseu& l, const sseu& r) { return _mm_or_ps(l.mm, r.mm); }

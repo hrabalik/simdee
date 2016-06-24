@@ -3,6 +3,7 @@
 
 #include "inline.hpp"
 #include <iterator>
+#include <cstdint>
 
 #if defined(__GNUC__) // GCC, Clang
 
@@ -80,6 +81,14 @@ namespace simd {
         SIMDIFY_INL bit_iterator begin() const { return field; }
         SIMDIFY_INL bit_iterator end() const { return 0; }
     };
+
+    // float-to-int rounding conversion
+    SIMDIFY_INL int32_t round_to_int32(double in) {
+        in += double((1LL << 52) + (1LL << 51));
+        int32_t out[2];
+        std::memcpy(out, &in, sizeof(double));
+        return out[0]; // assuming little-endian architecture, use out[1] for big-endian
+    }
 
 }
 

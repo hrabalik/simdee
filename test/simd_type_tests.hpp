@@ -367,6 +367,27 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
     }
 }
 
+TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
+    SECTION("int to float") {
+        simd::storage<F> expected, result;
+        std::transform(begin(bufAS), end(bufAS), begin(expected), [](S::scalar_t a) {
+            return static_cast<F::scalar_t>(a);
+        });
+        S in = simd::aligned(bufAS.data());
+        F(in).aligned_store(result.data());
+        REQUIRE(result == expected);
+    }
+    SECTION("float to int") {
+        simd::storage<S> expected, result;
+        std::transform(begin(bufAF), end(bufAF), begin(expected), [](F::scalar_t a) {
+            return simd::round_to_int32(a);
+        });
+        F in = simd::aligned(bufAF.data());
+        S(in).aligned_store(result.data());
+        REQUIRE(result == expected);
+    }
+}
+
 TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {
     alignas(F)F::array_t r;
     alignas(F)F::array_t e;

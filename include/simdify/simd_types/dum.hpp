@@ -220,6 +220,11 @@ namespace simd {
     SIMDIFY_INL const dumu operator>=(const dums& l, const dums& r) { return (l.mm >= r.mm) ? ~0U : 0U; }
     SIMDIFY_INL const dumu operator==(const dums& l, const dums& r) { return (l.mm == r.mm) ? ~0U : 0U; }
     SIMDIFY_INL const dumu operator!=(const dums& l, const dums& r) { return (l.mm != r.mm) ? ~0U : 0U; }
+
+    SIMDIFY_INL const dums operator-(const dums& in) { return -in.mm; }
+    SIMDIFY_INL const dums operator+(const dums& l, const dums& r) { return l.mm + r.mm; }
+    SIMDIFY_INL const dums operator-(const dums& l, const dums& r) { return l.mm - r.mm; }
+    SIMDIFY_INL const dums operator*(const dums& l, const dums& r) { return l.mm * r.mm; }
 #endif
 
 }

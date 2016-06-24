@@ -406,7 +406,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
     }
 }
 
-TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {
+TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     simd::storage<F> r, e;
     F a = simd::aligned(bufAF.data());
     F b = simd::aligned(bufBF.data());
@@ -477,6 +477,47 @@ TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {
         std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
         r = rsqrt(abs(a));
         for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+    }
+}
+
+TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
+    simd::storage<S> r, e;
+    S a = simd::aligned(bufAS.data());
+    S b = simd::aligned(bufBS.data());
+
+    SECTION("unary plus") {
+        std::transform(begin(bufAS), end(bufAS), begin(e), [](S::scalar_t a) { return +a; });
+        r = +a;
+        REQUIRE(r == e);
+    }
+    SECTION("unary minus") {
+        std::transform(begin(bufAS), end(bufAS), begin(e), std::negate<S::scalar_t>());
+        r = -a;
+        REQUIRE(r == e);
+    }
+    SECTION("plus") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), std::plus<S::scalar_t>());
+        r = a + b;
+        REQUIRE(r == e);
+        a += b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("minus") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), std::minus<S::scalar_t>());
+        r = a - b;
+        REQUIRE(r == e);
+        a -= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("multiplies") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), std::multiplies<S::scalar_t>());
+        r = a * b;
+        REQUIRE(r == e);
+        a *= b;
+        r = a;
+        REQUIRE(r == e);
     }
 }
 

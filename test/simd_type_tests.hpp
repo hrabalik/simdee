@@ -407,181 +407,169 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {
-    alignas(F)F::array_t r;
-    alignas(F)F::array_t e;
+    simd::storage<F> rf, ef;
     F a = simd::aligned(bufAF.data());
     F b = simd::aligned(bufBF.data());
-    auto tor = [&r](const F& t) {
-        t.aligned_store(r.data());
-    };
 
     SECTION("unary plus") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return +a; });
-        tor(+a);
-        REQUIRE(r == e);
+        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return +a; });
+        rf = +a;
+        REQUIRE(rf == ef);
     }
     SECTION("unary minus") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), std::negate<F::scalar_t>());
-        tor(-a);
-        REQUIRE(r == e);
+        std::transform(begin(bufAF), end(bufAF), begin(ef), std::negate<F::scalar_t>());
+        rf = -a;
+        REQUIRE(rf == ef);
     }
     SECTION("plus") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::plus<F::scalar_t>());
-        tor(a + b);
-        REQUIRE(r == e);
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(ef), std::plus<F::scalar_t>());
+        rf = a + b;
+        REQUIRE(rf == ef);
         a += b;
-        tor(a);
-        REQUIRE(r == e);
+        rf = a;
+        REQUIRE(rf == ef);
     }
     SECTION("minus") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::minus<F::scalar_t>());
-        tor(a - b);
-        REQUIRE(r == e);
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(ef), std::minus<F::scalar_t>());
+        rf = a - b;
+        REQUIRE(rf == ef);
         a -= b;
-        tor(a);
-        REQUIRE(r == e);
+        rf = a;
+        REQUIRE(rf == ef);
     }
     SECTION("multiplies") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::multiplies<F::scalar_t>());
-        tor(a * b);
-        REQUIRE(r == e);
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(ef), std::multiplies<F::scalar_t>());
+        rf = a * b;
+        REQUIRE(rf == ef);
         a *= b;
-        tor(a);
-        REQUIRE(r == e);
+        rf = a;
+        REQUIRE(rf == ef);
     }
     SECTION("divides") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::divides<F::scalar_t>());
-        tor(a / b);
-        REQUIRE(r == e);
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(ef), std::divides<F::scalar_t>());
+        rf = a / b;
+        REQUIRE(rf == ef);
         a /= b;
-        tor(a);
-        REQUIRE(r == e);
+        rf = a;
+        REQUIRE(rf == ef);
     }
     SECTION("absolute value") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::abs(a); });
-        tor(abs(a));
-        REQUIRE(r == e);
+        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return std::abs(a); });
+        rf = abs(a);
+        REQUIRE(rf == ef);
     }
     SECTION("signum") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::signbit(a) ? F::scalar_t(-1) : F::scalar_t(1); });
-        tor(signum(a));
-        REQUIRE(r == e);
+        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return std::signbit(a) ? F::scalar_t(-1) : F::scalar_t(1); });
+        rf = signum(a);
+        REQUIRE(rf == ef);
     }
     SECTION("square root") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::sqrt(std::abs(a)); });
-        tor(sqrt(abs(a)));
-        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]));
+        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return std::sqrt(std::abs(a)); });
+        rf = sqrt(abs(a));
+        for (int i = 0; i < F::W; ++i) REQUIRE(rf[i] == Approx(ef[i]));
     }
     SECTION("fast reciprocal") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / a; });
-        tor(rcp(a));
-        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return 1 / a; });
+        rf = rcp(a);
+        for (int i = 0; i < F::W; ++i) REQUIRE(rf[i] == Approx(ef[i]).epsilon(0.001));
     }
     SECTION("fast reciprocal square root") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
-        tor(rsqrt(abs(a)));
-        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
+        rf = rsqrt(abs(a));
+        for (int i = 0; i < F::W; ++i) REQUIRE(rf[i] == Approx(ef[i]).epsilon(0.001));
     }
 }
 
 TEST_CASE(SIMD_TYPE " comparison", SIMD_TEST_TAG) {
     auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
-    alignas(U)U::array_t r;
-    alignas(U)U::array_t e;
+    simd::storage<U> r, e;
     F a = simd::aligned(bufAF.data());
     F b = simd::aligned(bufBF.data());
-    auto tor = [&r](const U& t) {
-        t.aligned_store(r.data());
-    };
 
     SECTION("equal to") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
             return if_(a == b);
         });
-        tor(a == b);
+        r = a == b;
         REQUIRE(r == e);
     }
     SECTION("not equal to") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
             return if_(a != b);
         });
-        tor(a != b);
+        r = a != b;
         REQUIRE(r == e);
     }
     SECTION("greater") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
             return if_(a > b);
         });
-        tor(a > b);
+        r = a > b;
         REQUIRE(r == e);
     }
     SECTION("less") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
             return if_(a < b);
         });
-        tor(a < b);
+        r = a < b;
         REQUIRE(r == e);
     }
     SECTION("greater equal") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
             return if_(a >= b);
         });
-        tor(a >= b);
+        r = a >= b;
         REQUIRE(r == e);
     }
     SECTION("less equal") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
             return if_(a <= b);
         });
-        tor(a <= b);
+        r = a <= b;
         REQUIRE(r == e);
     }
 }
 
 TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
-    alignas(U)U::array_t r;
-    alignas(U)U::array_t e;
+    simd::storage<U> r, e;
     U a = simd::aligned(bufAU.data());
     U b = simd::aligned(bufBU.data());
-    auto tor = [&r](const U& t) {
-        t.aligned_store(r.data());
-    };
 
     SECTION("bit and") {
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
             return simd::tou(a) & simd::tou(b);
         });
-        tor(a & b);
+        r = a & b;
         REQUIRE(r == e);
         a &= b;
-        tor(a);
+        r = a;
         REQUIRE(r == e);
     }
     SECTION("bit or") {
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
             return simd::tou(a) | simd::tou(b);
         });
-        tor(a | b);
+        r = a | b;
         REQUIRE(r == e);
         a |= b;
-        tor(a);
+        r = a;
         REQUIRE(r == e);
     }
     SECTION("bit xor") {
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
             return simd::tou(a) ^ simd::tou(b);
         });
-        tor(a ^ b);
+        r = a ^ b;
         REQUIRE(r == e);
         a ^= b;
-        tor(a);
+        r = a;
         REQUIRE(r == e);
     }
     SECTION("bit not") {
         std::transform(begin(bufAU), end(bufAU), begin(e), [](U::scalar_t a) {
             return ~simd::tou(a);
         });
-        tor(~a);
+        r = ~a;
         REQUIRE(r == e);
     }
     SECTION("complex expr") {
@@ -590,7 +578,7 @@ TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
             auto b = simd::tou(bf);
             return ~((~a & ~b) | (~a ^ ~b));
         });
-        tor(~((~a & ~b) | (~a ^ ~b)));
+        r = ~((~a & ~b) | (~a ^ ~b));
         REQUIRE(r == e);
     }
 }

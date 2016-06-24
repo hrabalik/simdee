@@ -4,6 +4,7 @@
 #include "inline.hpp"
 #include <iterator>
 #include <cstdint>
+#include <cstring>
 
 #if defined(__GNUC__) // GCC, Clang
 

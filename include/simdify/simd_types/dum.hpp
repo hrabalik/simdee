@@ -132,6 +132,8 @@ namespace simd {
     struct dumu : dum_base<dumu> {
         using dum_base::dum_base;
 
+        SIMDIFY_INL explicit dumu(const dums&);
+
         SIMDIFY_TRIVIAL_TYPE(dumu);
 
         SIMDIFY_INL scalar_t first_element() const { return mm; }
@@ -158,6 +160,7 @@ namespace simd {
         using dum_base::dum_base;
 
         SIMDIFY_INL explicit dums(const dumf&);
+        SIMDIFY_INL explicit dums(const dumu&);
 
         SIMDIFY_TRIVIAL_TYPE(dums);
 
@@ -166,6 +169,8 @@ namespace simd {
 
     SIMDIFY_INL dumf::dumf(const dums& r) { mm = static_cast<scalar_t>(r.mm); }
     SIMDIFY_INL dums::dums(const dumf& r) { mm = round_to_int32(r.mm); }
+    SIMDIFY_INL dumu::dumu(const dums& r) { mm = static_cast<scalar_t>(r.mm); }
+    SIMDIFY_INL dums::dums(const dumu& r) { mm = static_cast<scalar_t>(r.mm); }
 
     SIMDIFY_INL const dumu operator&(const dumu& l, const dumu& r) { return uval(tou(l.mm) & tou(r.mm)); }
     SIMDIFY_INL const dumu operator|(const dumu& l, const dumu& r) { return uval(tou(l.mm) | tou(r.mm)); }

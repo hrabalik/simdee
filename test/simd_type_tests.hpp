@@ -386,6 +386,24 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         S(in).aligned_store(result.data());
         REQUIRE(result == expected);
     }
+    SECTION("int to uint") {
+        simd::storage<U> expected, result;
+        std::transform(begin(bufAS), end(bufAS), begin(expected), [](S::scalar_t a) {
+            return static_cast<U::scalar_t>(a);
+        });
+        S in = simd::aligned(bufAS.data());
+        U(in).aligned_store(result.data());
+        REQUIRE(result == expected);
+    }
+    SECTION("uint to int") {
+        simd::storage<S> expected, result;
+        std::transform(begin(bufAU), end(bufAU), begin(expected), [](U::scalar_t a) {
+            return simd::round_to_int32(a);
+        });
+        U in = simd::aligned(bufAU.data());
+        S(in).aligned_store(result.data());
+        REQUIRE(result == expected);
+    }
 }
 
 TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {

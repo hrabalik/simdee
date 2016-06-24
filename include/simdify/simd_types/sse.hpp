@@ -188,6 +188,8 @@ namespace simd {
     struct sseu : sse_base<sseu> {
         using sse_base::sse_base;
 
+        SIMDIFY_INL explicit sseu(const sses&);
+
         SIMDIFY_TRIVIAL_TYPE(sseu);
 
         SIMDIFY_INL sseu(const expr::bit_not<sseu>& r) { *this = r; }
@@ -210,6 +212,7 @@ namespace simd {
         using sse_base::sse_base;
 
         SIMDIFY_INL explicit sses(const ssef&);
+        SIMDIFY_INL explicit sses(const sseu&);
 
         SIMDIFY_TRIVIAL_TYPE(sses);
 
@@ -218,6 +221,8 @@ namespace simd {
 
     SIMDIFY_INL ssef::ssef(const sses& r) { mm = _mm_cvtepi32_ps(_mm_castps_si128(r.mm)); }
     SIMDIFY_INL sses::sses(const ssef& r) { mm = _mm_castsi128_ps(_mm_cvtps_epi32(r.mm)); }
+    SIMDIFY_INL sseu::sseu(const sses& r) { mm = r.mm; }
+    SIMDIFY_INL sses::sses(const sseu& r) { mm = r.mm; }
 
     SIMDIFY_INL const sseu operator&(const sseu& l, const sseu& r) { return _mm_and_ps(l.mm, r.mm); }
     SIMDIFY_INL const sseu operator|(const sseu& l, const sseu& r) { return _mm_or_ps(l.mm, r.mm); }

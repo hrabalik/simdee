@@ -407,76 +407,76 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {
-    simd::storage<F> rf, ef;
+    simd::storage<F> r, e;
     F a = simd::aligned(bufAF.data());
     F b = simd::aligned(bufBF.data());
 
     SECTION("unary plus") {
-        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return +a; });
-        rf = +a;
-        REQUIRE(rf == ef);
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return +a; });
+        r = +a;
+        REQUIRE(r == e);
     }
     SECTION("unary minus") {
-        std::transform(begin(bufAF), end(bufAF), begin(ef), std::negate<F::scalar_t>());
-        rf = -a;
-        REQUIRE(rf == ef);
+        std::transform(begin(bufAF), end(bufAF), begin(e), std::negate<F::scalar_t>());
+        r = -a;
+        REQUIRE(r == e);
     }
     SECTION("plus") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(ef), std::plus<F::scalar_t>());
-        rf = a + b;
-        REQUIRE(rf == ef);
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::plus<F::scalar_t>());
+        r = a + b;
+        REQUIRE(r == e);
         a += b;
-        rf = a;
-        REQUIRE(rf == ef);
+        r = a;
+        REQUIRE(r == e);
     }
     SECTION("minus") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(ef), std::minus<F::scalar_t>());
-        rf = a - b;
-        REQUIRE(rf == ef);
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::minus<F::scalar_t>());
+        r = a - b;
+        REQUIRE(r == e);
         a -= b;
-        rf = a;
-        REQUIRE(rf == ef);
+        r = a;
+        REQUIRE(r == e);
     }
     SECTION("multiplies") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(ef), std::multiplies<F::scalar_t>());
-        rf = a * b;
-        REQUIRE(rf == ef);
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::multiplies<F::scalar_t>());
+        r = a * b;
+        REQUIRE(r == e);
         a *= b;
-        rf = a;
-        REQUIRE(rf == ef);
+        r = a;
+        REQUIRE(r == e);
     }
     SECTION("divides") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(ef), std::divides<F::scalar_t>());
-        rf = a / b;
-        REQUIRE(rf == ef);
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::divides<F::scalar_t>());
+        r = a / b;
+        REQUIRE(r == e);
         a /= b;
-        rf = a;
-        REQUIRE(rf == ef);
+        r = a;
+        REQUIRE(r == e);
     }
     SECTION("absolute value") {
-        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return std::abs(a); });
-        rf = abs(a);
-        REQUIRE(rf == ef);
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::abs(a); });
+        r = abs(a);
+        REQUIRE(r == e);
     }
     SECTION("signum") {
-        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return std::signbit(a) ? F::scalar_t(-1) : F::scalar_t(1); });
-        rf = signum(a);
-        REQUIRE(rf == ef);
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::signbit(a) ? F::scalar_t(-1) : F::scalar_t(1); });
+        r = signum(a);
+        REQUIRE(r == e);
     }
     SECTION("square root") {
-        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return std::sqrt(std::abs(a)); });
-        rf = sqrt(abs(a));
-        for (int i = 0; i < F::W; ++i) REQUIRE(rf[i] == Approx(ef[i]));
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::sqrt(std::abs(a)); });
+        r = sqrt(abs(a));
+        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]));
     }
     SECTION("fast reciprocal") {
-        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return 1 / a; });
-        rf = rcp(a);
-        for (int i = 0; i < F::W; ++i) REQUIRE(rf[i] == Approx(ef[i]).epsilon(0.001));
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / a; });
+        r = rcp(a);
+        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
     SECTION("fast reciprocal square root") {
-        std::transform(begin(bufAF), end(bufAF), begin(ef), [](F::scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
-        rf = rsqrt(abs(a));
-        for (int i = 0; i < F::W; ++i) REQUIRE(rf[i] == Approx(ef[i]).epsilon(0.001));
+        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
+        r = rsqrt(abs(a));
+        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
 }
 

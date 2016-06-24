@@ -453,6 +453,20 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
         r = a;
         REQUIRE(r == e);
     }
+    SECTION("minimum") {
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [](F::scalar_t l, F::scalar_t r) {
+            return std::min(l, r);
+        });
+        r = min(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("maximum") {
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [](F::scalar_t l, F::scalar_t r) {
+            return std::max(l, r);
+        });
+        r = max(a, b);
+        REQUIRE(r == e);
+    }
     SECTION("absolute value") {
         std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::abs(a); });
         r = abs(a);
@@ -517,6 +531,20 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
         a *= b;
         r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("minimum") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [](S::scalar_t l, S::scalar_t r) {
+            return std::min(l, r);
+        });
+        r = min(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("maximum") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [](S::scalar_t l, S::scalar_t r) {
+            return std::max(l, r);
+        });
+        r = max(a, b);
         REQUIRE(r == e);
     }
     SECTION("absolute value") {

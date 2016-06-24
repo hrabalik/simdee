@@ -176,21 +176,19 @@ namespace simd {
     };
 
     struct ssef : sse_base<ssef> {
-        using sse_base::sse_base;
-
-        SIMDIFY_INL explicit ssef(const sses&);
-
         SIMDIFY_TRIVIAL_TYPE(ssef);
+
+        using sse_base::sse_base;
+        SIMDIFY_INL explicit ssef(const sses&);
 
         SIMDIFY_INL scalar_t first_element() const { return _mm_cvtss_f32(mm); }
     };
 
     struct sseu : sse_base<sseu> {
-        using sse_base::sse_base;
-
-        SIMDIFY_INL explicit sseu(const sses&);
-
         SIMDIFY_TRIVIAL_TYPE(sseu);
+
+        using sse_base::sse_base;
+        SIMDIFY_INL explicit sseu(const sses&);
 
         SIMDIFY_INL sseu(const expr::bit_not<sseu>& r) { *this = r; }
 
@@ -209,12 +207,11 @@ namespace simd {
     };
 
     struct sses : sse_base<sses> {
-        using sse_base::sse_base;
+        SIMDIFY_TRIVIAL_TYPE(sses);
 
+        using sse_base::sse_base;
         SIMDIFY_INL explicit sses(const ssef&);
         SIMDIFY_INL explicit sses(const sseu&);
-
-        SIMDIFY_TRIVIAL_TYPE(sses);
 
         SIMDIFY_INL scalar_t first_element() const { return _mm_cvt_ss2si(mm); }
     };

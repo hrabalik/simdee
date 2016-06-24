@@ -120,21 +120,19 @@ namespace simd {
     };
 
     struct dumf : dum_base<dumf> {
-        using dum_base::dum_base;
-
-        SIMDIFY_INL explicit dumf(const dums&);
-
         SIMDIFY_TRIVIAL_TYPE(dumf);
+
+        using dum_base::dum_base;
+        SIMDIFY_INL explicit dumf(const dums&);
 
         SIMDIFY_INL scalar_t first_element() const { return mm; }
     };
 
     struct dumu : dum_base<dumu> {
-        using dum_base::dum_base;
-
-        SIMDIFY_INL explicit dumu(const dums&);
-
         SIMDIFY_TRIVIAL_TYPE(dumu);
+
+        using dum_base::dum_base;
+        SIMDIFY_INL explicit dumu(const dums&);
 
         SIMDIFY_INL scalar_t first_element() const { return mm; }
 
@@ -157,12 +155,12 @@ namespace simd {
     };
 
     struct dums : dum_base<dums> {
+        SIMDIFY_TRIVIAL_TYPE(dums);
+
         using dum_base::dum_base;
 
         SIMDIFY_INL explicit dums(const dumf&);
         SIMDIFY_INL explicit dums(const dumu&);
-
-        SIMDIFY_TRIVIAL_TYPE(dums);
 
         SIMDIFY_INL scalar_t first_element() const { return mm; }
     };

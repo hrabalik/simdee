@@ -174,21 +174,19 @@ namespace simd {
     };
 
     struct avxf : avx_base<avxf> {
-        using avx_base::avx_base;
-
-        SIMDIFY_INL explicit avxf(const avxs&);
-
         SIMDIFY_TRIVIAL_TYPE(avxf);
+
+        using avx_base::avx_base;
+        SIMDIFY_INL explicit avxf(const avxs&);
 
         SIMDIFY_INL scalar_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
     };
 
     struct avxu : avx_base<avxu> {
-        using avx_base::avx_base;
-
-        SIMDIFY_INL explicit avxu(const avxs&);
-
         SIMDIFY_TRIVIAL_TYPE(avxu);
+
+        using avx_base::avx_base;
+        SIMDIFY_INL explicit avxu(const avxs&);
 
         SIMDIFY_INL avxu(const expr::bit_not<avxu>& r) { *this = r; }
 
@@ -207,12 +205,11 @@ namespace simd {
     };
 
     struct avxs : avx_base<avxs> {
-        using avx_base::avx_base;
+        SIMDIFY_TRIVIAL_TYPE(avxs);
 
+        using avx_base::avx_base;
         SIMDIFY_INL explicit avxs(const avxf&);
         SIMDIFY_INL explicit avxs(const avxu&);
-
-        SIMDIFY_TRIVIAL_TYPE(avxs);
 
         SIMDIFY_INL scalar_t first_element() const { return _mm_cvt_ss2si(_mm256_castps256_ps128(mm)); }
     };

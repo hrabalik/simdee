@@ -148,10 +148,13 @@ namespace simd {
         };
 
         SIMDIFY_INL bit_t front() const { return 0; }
-        SIMDIFY_INL iterator begin() const { return iterator((simd::tou(mm) & 0x80000000U) >> 31); }
+        SIMDIFY_INL iterator begin() const { return iterator(mask()); }
         SIMDIFY_INL iterator end() const { return iterator(0); }
-        SIMDIFY_INL bool any() const { return (simd::tou(mm) & 0x80000000U) != 0; }
-        SIMDIFY_INL bool all() const { return (simd::tou(mm) & 0x80000000U) != 0; }
+        SIMDIFY_INL bool any() const { return mask() != 0; }
+        SIMDIFY_INL bool all() const { return mask() != 0; }
+        
+    private:
+        SIMDIFY_INL bit_t mask() const { return simd::tou(mm) & 0x80000000U; }
     };
 
     struct dums : dum_base<dums> {

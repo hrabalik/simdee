@@ -199,11 +199,14 @@ namespace simd {
 
         SIMDIFY_INL scalar_t first_element() const { return _mm_cvt_ss2si(mm); }
 
-        SIMDIFY_INL bit_t front() const { return lsb(bit_t(_mm_movemask_ps(mm)));; }
-        SIMDIFY_INL bit_iterator begin() const { return bit_iterator(_mm_movemask_ps(mm)); }
+        SIMDIFY_INL bit_t front() const { return lsb(mask()); }
+        SIMDIFY_INL bit_iterator begin() const { return bit_iterator(mask()); }
         SIMDIFY_INL bit_iterator end() const { return bit_iterator(0); }
-        SIMDIFY_INL bool any() const { return _mm_movemask_ps(mm) != 0; }
-        SIMDIFY_INL bool all() const { return _mm_movemask_ps(mm) == 0xF; }
+        SIMDIFY_INL bool any() const { return mask() != 0; }
+        SIMDIFY_INL bool all() const { return mask() == 0xF; }
+
+    private:
+        SIMDIFY_INL bit_t mask() const { return bit_t(_mm_movemask_ps(mm)); }
     };
 
     struct sses : sse_base<sses> {

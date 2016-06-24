@@ -134,8 +134,6 @@ namespace simd {
         using dum_base::dum_base;
         SIMDIFY_INL explicit dumu(const dums&);
 
-        SIMDIFY_INL scalar_t first_element() const { return mm; }
-
         struct iterator : std::iterator<std::input_iterator_tag, bit_t> {
             bit_t mask;
 
@@ -152,9 +150,15 @@ namespace simd {
         SIMDIFY_INL iterator end() const { return iterator(0); }
         SIMDIFY_INL bool any() const { return mask() != 0; }
         SIMDIFY_INL bool all() const { return mask() != 0; }
+        SIMDIFY_INL scalar_t first_element() const { return mm; }
         
     private:
+        friend struct expr::bit_not<dumu>;
         SIMDIFY_INL bit_t mask() const { return simd::tou(mm) & 0x80000000U; }
+        SIMDIFY_INL bit_t not_mask() const { return mask() ^ 0x80000000U; }
+        SIMDIFY_INL bit_t not_front() const { return 0; }
+        SIMDIFY_INL iterator not_begin() const { return iterator(not_mask()); }
+        SIMDIFY_INL iterator not_end() const { return iterator(0); }
     };
 
     struct dums : dum_base<dums> {

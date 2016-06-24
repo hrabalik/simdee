@@ -655,3 +655,16 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
         REQUIRE((rs[i]) == (sel0[i] ? bufAS[i] : bufBS[i]));
     }
 }
+
+TEST_CASE(SIMD_TYPE " expression template compatibility", SIMD_TEST_TAG) {
+    U in = simd::aligned(bufAU.data());
+    U vec1 = ~in;
+    auto vec2 = ~in;
+
+    REQUIRE(vec1.front() == vec2.front());
+    REQUIRE(vec1.begin().mask == vec2.begin().mask);
+    REQUIRE(vec1.end().mask == vec2.end().mask);
+    REQUIRE(vec1.any() == vec2.any());
+    REQUIRE(vec1.all() == vec2.all());
+    REQUIRE(vec1.first_element() == vec2.first_element());
+}

@@ -18,6 +18,13 @@ namespace simd {
         struct bit_not {
             SIMDIFY_INL constexpr explicit bit_not(const T& r) : neg(r) {}
 
+            SIMDIFY_INL bit_t front() const { return neg.not_front(); }
+            SIMDIFY_INL decltype(std::declval<T>().begin()) begin() const { return neg.not_begin(); }
+            SIMDIFY_INL decltype(std::declval<T>().end()) end() const { return neg.not_end(); }
+            SIMDIFY_INL bool any() const { return !neg.all(); }
+            SIMDIFY_INL bool all() const { return !neg.any(); }
+            SIMDIFY_INL typename T::scalar_t first_element() const { return ~neg.first_element(); }
+
             // data
             const T neg;
         };

@@ -183,12 +183,12 @@ namespace simd {
     SIMDIFY_INL const dumu operator~(const dumu& l) { return uval(~tou(l.mm)); }
     SIMDIFY_INL const dumu nand(const dumu& l, const dumu& r) { return uval(tou(l.mm) & ~tou(r.mm)); }
 
-    SIMDIFY_INL const dumu operator<(const dumf& l, const dumf& r) { return (l.mm < r.mm) ? 0xffffffffU : 0; }
-    SIMDIFY_INL const dumu operator>(const dumf& l, const dumf& r) { return (l.mm > r.mm) ? 0xffffffffU : 0; }
-    SIMDIFY_INL const dumu operator<=(const dumf& l, const dumf& r) { return (l.mm <= r.mm) ? 0xffffffffU : 0; }
-    SIMDIFY_INL const dumu operator>=(const dumf& l, const dumf& r) { return (l.mm >= r.mm) ? 0xffffffffU : 0; }
-    SIMDIFY_INL const dumu operator==(const dumf& l, const dumf& r) { return (l.mm == r.mm) ? 0xffffffffU : 0; }
-    SIMDIFY_INL const dumu operator!=(const dumf& l, const dumf& r) { return (l.mm != r.mm) ? 0xffffffffU : 0; }
+    SIMDIFY_INL const dumu operator<(const dumf& l, const dumf& r) { return (l.mm < r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator>(const dumf& l, const dumf& r) { return (l.mm > r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator<=(const dumf& l, const dumf& r) { return (l.mm <= r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator>=(const dumf& l, const dumf& r) { return (l.mm >= r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator==(const dumf& l, const dumf& r) { return (l.mm == r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator!=(const dumf& l, const dumf& r) { return (l.mm != r.mm) ? ~0U : 0U; }
 
     SIMDIFY_INL const dumf operator-(const dumf& in) { return -in.mm; }
     SIMDIFY_INL const dumf operator+(const dumf& l, const dumf& r) { return l.mm + r.mm; }
@@ -212,6 +212,16 @@ namespace simd {
     SIMDIFY_INL const dums cond(const dumu& pred, const dums& if_true, const dums& if_false) {
         return pred.any() ? if_true : if_false;
     }
+
+#if defined(SIMDIFY_NEED_INT)
+    SIMDIFY_INL const dumu operator<(const dums& l, const dums& r) { return (l.mm < r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator>(const dums& l, const dums& r) { return (l.mm > r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator<=(const dums& l, const dums& r) { return (l.mm <= r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator>=(const dums& l, const dums& r) { return (l.mm >= r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator==(const dums& l, const dums& r) { return (l.mm == r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator!=(const dums& l, const dums& r) { return (l.mm != r.mm) ? ~0U : 0U; }
+#endif
+
 }
 
 #undef SIMDIFY_DUM_COMMON_DECLARATIONS

@@ -32,6 +32,7 @@ namespace simd {
     struct ssef;
     struct sseu;
     struct sses;
+    using not_sseu = expr::bit_not<sseu>;
 
     template<>
     struct is_simd_type<ssef> : std::integral_constant<bool, true> {};
@@ -190,13 +191,14 @@ namespace simd {
         using sse_base::sse_base;
         SIMDIFY_INL explicit sseu(const sses&);
         SIMDIFY_INL sseu(const __m128i r) { *this = r; }
-        SIMDIFY_INL sseu(const expr::bit_not<sseu>& r) { *this = r; }
+        SIMDIFY_INL sseu(const not_sseu& r) { *this = r; }
 
         SIMDIFY_INL sseu& operator=(const __m128i r) {
             mm = _mm_castsi128_ps(r);
+            return *this;
         }
 
-        SIMDIFY_INL sseu& operator=(const expr::bit_not<sseu>& r) {
+        SIMDIFY_INL sseu& operator=(const not_sseu& r) {
             mm = _mm_xor_ps(r.neg.mm, sseu(all_bits()).mm);
             return *this;
         }
@@ -243,7 +245,7 @@ namespace simd {
     SIMDIFY_INL const sseu operator&(const sseu& l, const sseu& r) { return _mm_and_ps(l.mm, r.mm); }
     SIMDIFY_INL const sseu operator|(const sseu& l, const sseu& r) { return _mm_or_ps(l.mm, r.mm); }
     SIMDIFY_INL const sseu operator^(const sseu& l, const sseu& r) { return _mm_xor_ps(l.mm, r.mm); }
-    SIMDIFY_INL const expr::bit_not<sseu> operator~(const sseu& l) { return expr::bit_not<sseu>(l); }
+    SIMDIFY_INL const not_sseu operator~(const sseu& l) { return not_sseu(l); }
     SIMDIFY_INL const sseu nand(const sseu& l, const sseu& r) { return _mm_andnot_ps(l.mm, r.mm); }
 
     SIMDIFY_INL const sseu operator<(const ssef& l, const ssef& r) { return _mm_cmplt_ps(l.mm, r.mm); }
@@ -277,6 +279,16 @@ namespace simd {
     SIMDIFY_INL const sses cond(const sseu& pred, const sses& if_true, const sses& if_false) {
         return tos((tou(if_true) & pred) | (tou(if_false) & ~pred));
     }
+
+#if defined(SIMDIFY_NEED_INT)
+    SIMDIFY_INL const sseu operator<(const sses& l, const sses& r) { return _mm_cmplt_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const sseu operator>(const sses& l, const sses& r) { return _mm_cmpgt_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_sseu operator<=(const sses& l, const sses& r) { return ~_mm_cmpgt_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_sseu operator>=(const sses& l, const sses& r) { return ~_mm_cmplt_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const sseu operator==(const sses& l, const sses& r) { return _mm_cmpeq_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_sseu operator!=(const sses& l, const sses& r) { return ~_mm_cmpeq_epi32(l.mmi(), r.mmi()); }
+#endif
+
 }
 
 #undef SIMDIFY_SSE_COMMON_DECLARATIONS

@@ -480,7 +480,7 @@ TEST_CASE(SIMD_TYPE " arithmetic", SIMD_TEST_TAG) {
     }
 }
 
-TEST_CASE(SIMD_TYPE " comparison", SIMD_TEST_TAG) {
+TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
     simd::storage<U> r, e;
     F a = simd::aligned(bufAF.data());
@@ -523,6 +523,56 @@ TEST_CASE(SIMD_TYPE " comparison", SIMD_TEST_TAG) {
     }
     SECTION("less equal") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
+            return if_(a <= b);
+        });
+        r = a <= b;
+        REQUIRE(r == e);
+    }
+}
+
+TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
+    auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
+    simd::storage<U> r, e;
+    S a = simd::aligned(bufAS.data());
+    S b = simd::aligned(bufBS.data());
+
+    SECTION("equal to") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
+            return if_(a == b);
+        });
+        r = a == b;
+        REQUIRE(r == e);
+    }
+    SECTION("not equal to") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
+            return if_(a != b);
+        });
+        r = a != b;
+        REQUIRE(r == e);
+    }
+    SECTION("greater") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
+            return if_(a > b);
+        });
+        r = a > b;
+        REQUIRE(r == e);
+    }
+    SECTION("less") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
+            return if_(a < b);
+        });
+        r = a < b;
+        REQUIRE(r == e);
+    }
+    SECTION("greater equal") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
+            return if_(a >= b);
+        });
+        r = a >= b;
+        REQUIRE(r == e);
+    }
+    SECTION("less equal") {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
             return if_(a <= b);
         });
         r = a <= b;

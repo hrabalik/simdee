@@ -21,6 +21,7 @@ namespace simd {
     struct avxf;
     struct avxu;
     struct avxs;
+    using not_avxu = expr::bit_not<avxu>;
 
     template <>
     struct is_simd_type<avxf> : std::integral_constant<bool, true> {};
@@ -188,14 +189,14 @@ namespace simd {
         using avx_base::avx_base;
         SIMDIFY_INL explicit avxu(const avxs&);
         SIMDIFY_INL avxu(const __m256i& r) { *this = r; }
-        SIMDIFY_INL avxu(const expr::bit_not<avxu>& r) { *this = r; }
+        SIMDIFY_INL avxu(const not_avxu& r) { *this = r; }
 
         SIMDIFY_INL avxu& operator=(const __m256i& r) {
             mm = _mm256_castsi256_ps(r);
             return *this;
         }
 
-        SIMDIFY_INL avxu& operator=(const expr::bit_not<avxu>& r) {
+        SIMDIFY_INL avxu& operator=(const not_avxu& r) {
             mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm);
             return *this;
         }
@@ -242,7 +243,7 @@ namespace simd {
     SIMDIFY_INL const avxu operator&(const avxu& l, const avxu& r) { return _mm256_and_ps(l.mm, r.mm); }
     SIMDIFY_INL const avxu operator|(const avxu& l, const avxu& r) { return _mm256_or_ps(l.mm, r.mm); }
     SIMDIFY_INL const avxu operator^(const avxu& l, const avxu& r) { return _mm256_xor_ps(l.mm, r.mm); }
-    SIMDIFY_INL const expr::bit_not<avxu> operator~(const avxu& l) { return expr::bit_not<avxu>(l); }
+    SIMDIFY_INL const not_avxu operator~(const avxu& l) { return not_avxu(l); }
     SIMDIFY_INL const avxu nand(const avxu& l, const avxu& r) { return _mm256_andnot_ps(l.mm, r.mm); }
 
     SIMDIFY_INL const avxu operator<(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_LT_OQ); }
@@ -274,6 +275,16 @@ namespace simd {
     SIMDIFY_INL const avxs cond(const avxu& pred, const avxs& if_true, const avxs& if_false) {
         return _mm256_blendv_ps(if_false.mm, if_true.mm, pred.mm);
     }
+
+#if defined(SIMDIFY_NEED_INT)
+    SIMDIFY_INL const avxu operator<(const avxs& l, const avxs& r) { return _mm256_cmpgt_epi32(r.mmi(), l.mmi()); }
+    SIMDIFY_INL const avxu operator>(const avxs& l, const avxs& r) { return _mm256_cmpgt_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_avxu operator<=(const avxs& l, const avxs& r) { return ~_mm256_cmpgt_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_avxu operator>=(const avxs& l, const avxs& r) { return ~_mm256_cmpgt_epi32(r.mmi(), l.mmi()); }
+    SIMDIFY_INL const avxu operator==(const avxs& l, const avxs& r) { return _mm256_cmpeq_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_avxu operator!=(const avxs& l, const avxs& r) { return ~_mm256_cmpeq_epi32(l.mmi(), r.mmi()); }
+#endif
+
 }
 
 #undef SIMDIFY_AVX_COMMON_DECLARATIONS

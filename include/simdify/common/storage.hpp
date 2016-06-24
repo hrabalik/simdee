@@ -22,6 +22,7 @@ namespace simd {
         using stored_t = Simd_t;
         using scalar_t = typename Simd_t::scalar_t;
         using array_t = std::array<scalar_t, Simd_t::W>;
+        using array_t::data;
 
         SIMDIFY_INL constexpr storage() = default;
         SIMDIFY_INL constexpr storage(const storage&) = default;
@@ -50,11 +51,12 @@ namespace simd {
         using stored_t = Scalar_t;
         using scalar_t = Scalar_t;
         using array_t = std::array<Scalar_t, 1>;
+        using array_t::data;
 
         SIMDIFY_INL constexpr storage() = default;
         SIMDIFY_INL constexpr storage(const storage&) = default;
         SIMDIFY_INL constexpr storage(const array_t& rhs) : array_t{ rhs } {}
-        SIMDIFY_INL constexpr explicit storage(const Scalar_t& rhs) { *data() = rhs; }
+        SIMDIFY_INL explicit storage(const Scalar_t& rhs) { *data() = rhs; }
 
         SIMDIFY_INL storage& operator=(const storage&) = default;
         SIMDIFY_INL storage& operator=(const array_t& rhs) {
@@ -67,7 +69,7 @@ namespace simd {
         }
 
         // implicit conversion to Scalar_t
-        SIMDIFY_INL operator Scalar_t() const { return m_data; }
+        SIMDIFY_INL operator Scalar_t() const { return *data(); }
     };
 
     template <typename T>

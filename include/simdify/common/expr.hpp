@@ -40,11 +40,11 @@ namespace simd {
         }
         template<typename T>
         SIMDIFY_INL const T operator&(const bit_not<T>& l, const T& r) {
-            return nand(l.neg, r);
+            return andnot(r, l.neg);
         }
         template<typename T>
         SIMDIFY_INL const T operator&(const T& l, const bit_not<T>& r) {
-            return nand(r.neg, l);
+            return andnot(l, r.neg);
         }
         template<typename T>
         SIMDIFY_INL const bit_not<T> operator&(const bit_not<T>& l, const bit_not<T>& r) {

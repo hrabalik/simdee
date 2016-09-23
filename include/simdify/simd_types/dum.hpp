@@ -181,7 +181,7 @@ namespace simd {
     SIMDIFY_INL const dumu operator|(const dumu& l, const dumu& r) { return uval(tou(l.mm) | tou(r.mm)); }
     SIMDIFY_INL const dumu operator^(const dumu& l, const dumu& r) { return uval(tou(l.mm) ^ tou(r.mm)); }
     SIMDIFY_INL const dumu operator~(const dumu& l) { return uval(~tou(l.mm)); }
-    SIMDIFY_INL const dumu nand(const dumu& l, const dumu& r) { return uval(tou(l.mm) & ~tou(r.mm)); }
+    SIMDIFY_INL const dumu andnot(const dumu& l, const dumu& r) { return uval(tou(l.mm) & ~tou(r.mm)); }
 
     SIMDIFY_INL const dumu operator<(const dumf& l, const dumf& r) { return (l.mm < r.mm) ? ~0U : 0U; }
     SIMDIFY_INL const dumu operator>(const dumf& l, const dumf& r) { return (l.mm > r.mm) ? ~0U : 0U; }

@@ -244,7 +244,7 @@ namespace simd {
     SIMDIFY_INL const avxu operator|(const avxu& l, const avxu& r) { return _mm256_or_ps(l.mm, r.mm); }
     SIMDIFY_INL const avxu operator^(const avxu& l, const avxu& r) { return _mm256_xor_ps(l.mm, r.mm); }
     SIMDIFY_INL const not_avxu operator~(const avxu& l) { return not_avxu(l); }
-    SIMDIFY_INL const avxu nand(const avxu& l, const avxu& r) { return _mm256_andnot_ps(l.mm, r.mm); }
+    SIMDIFY_INL const avxu andnot(const avxu& l, const avxu& r) { return _mm256_andnot_ps(r.mm, l.mm); }
 
     SIMDIFY_INL const avxu operator<(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_LT_OQ); }
     SIMDIFY_INL const avxu operator>(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_GT_OQ); }

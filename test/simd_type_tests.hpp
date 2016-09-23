@@ -694,6 +694,15 @@ TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
         r = a;
         REQUIRE(r == e);
     }
+	SECTION("bit andnot") {
+		std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
+			return simd::tou(a) & ~simd::tou(b);
+		});
+		r = a & ~b;
+		REQUIRE(r == e);
+		r = andnot(a, b);
+		REQUIRE(r == e);
+	}
     SECTION("bit not") {
         std::transform(begin(bufAU), end(bufAU), begin(e), [](U::scalar_t a) {
             return ~simd::tou(a);

@@ -246,7 +246,7 @@ namespace simd {
     SIMDIFY_INL const sseu operator|(const sseu& l, const sseu& r) { return _mm_or_ps(l.mm, r.mm); }
     SIMDIFY_INL const sseu operator^(const sseu& l, const sseu& r) { return _mm_xor_ps(l.mm, r.mm); }
     SIMDIFY_INL const not_sseu operator~(const sseu& l) { return not_sseu(l); }
-    SIMDIFY_INL const sseu nand(const sseu& l, const sseu& r) { return _mm_andnot_ps(l.mm, r.mm); }
+    SIMDIFY_INL const sseu andnot(const sseu& l, const sseu& r) { return _mm_andnot_ps(r.mm, l.mm); }
 
     SIMDIFY_INL const sseu operator<(const ssef& l, const ssef& r) { return _mm_cmplt_ps(l.mm, r.mm); }
     SIMDIFY_INL const sseu operator>(const ssef& l, const ssef& r) { return _mm_cmpgt_ps(l.mm, r.mm); }

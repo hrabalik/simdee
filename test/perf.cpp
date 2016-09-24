@@ -31,7 +31,7 @@ double benchmark_ms(std::function<void()> func) {
     return best;
 }
 
-TEST_CASE("Ray-box intersection", "[perf]") {
+TEST_CASE("Ray-box intersection", "[!hide][perf]") {
     // allocate data
     struct RayBoxData8 {
         float minx[8];

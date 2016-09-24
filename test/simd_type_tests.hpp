@@ -35,10 +35,9 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     simd::storage<F> rf = bufZF;
     simd::storage<U> ru = bufZU;
     simd::storage<S> rs = bufZS;
+
     auto tor = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
-        tf.aligned_store(rf.data());
-        tu.aligned_store(ru.data());
-        ts.aligned_store(rs.data());
+        rf = tf; ru = tu; rs = ts;
     };
 
     SECTION("from scalar_t") {
@@ -164,10 +163,9 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
     simd::storage<F> rf = bufZF;
     simd::storage<U> ru = bufZU;
     simd::storage<S> rs = bufZS;
+
     auto implicit_test = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
-        tf.aligned_store(rf.data());
-        tu.aligned_store(ru.data());
-        ts.aligned_store(rs.data());
+        rf = tf; ru = tu; rs = ts;
     };
 
     SECTION("from scalar_t") {
@@ -251,13 +249,12 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
     simd::storage<F> rf = bufZF;
     simd::storage<U> ru = bufZU;
     simd::storage<S> rs = bufZS;
-    F tf;
-    U tu;
-    S ts;
+    F tf; U tu; S ts;
+
     auto tor = [&rf, &tf, &ru, &tu, &rs, &ts]() {
-        tf.aligned_store(rf.data());
-        tu.aligned_store(ru.data());
-        ts.aligned_store(rs.data());
+        rf = tf;
+        ru = tu;
+        rs = ts;
     };
 
     SECTION("from scalar_t") {

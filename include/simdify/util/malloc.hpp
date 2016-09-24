@@ -100,24 +100,6 @@ namespace simd {
     template <typename T, typename U, std::size_t TS, std::size_t US>
     bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return false; }
 
-    // allocator that throws when used to construct/destroy anything
-    template <typename T>
-    struct dummy_allocator {
-        using value_type = T;
-
-        T* allocate(std::size_t) const { return nullptr; }
-        void deallocate(T*, std::size_t) const {}
-        void destroy(T*) const { throw std::runtime_error("dummy_allocator::destroy() used"); }
-
-        template <typename... A>
-        void construct(T*, A&&...) const { throw std::runtime_error("dummy_allocator::construct() used"); }
-    };
-
-    template <typename T, typename U>
-    bool operator==(const dummy_allocator<T>&, const dummy_allocator<U>&) { return true; }
-    template <typename T, typename U>
-    bool operator!=(const dummy_allocator<T>&, const dummy_allocator<U>&) { return false; }
-
 }
 
 #endif // SIMDIFY_UTIL_MALLOC_HPP

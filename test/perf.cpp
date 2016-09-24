@@ -18,7 +18,10 @@ TEST_CASE("Ray-box intersection", "[perf]") {
     const size_t numData = 1024;
     using vec_t = std::vector<RayBoxData, simd::aligned_allocator<RayBoxData, sizeof(__m256)>>;
     vec_t data(numData);
-    std::vector<char> results(8 * numData);
+    enum class Result : char { fail = 13, win = 42 };
+    std::vector<Result> resultsNonSimd(8 * numData);
+    std::vector<Result> resultsHandSimd(8 * numData);
+    std::vector<Result> resultsLibSimd(8 * numData);
 
     // fill data
     std::random_device rd;
@@ -37,23 +40,60 @@ TEST_CASE("Ray-box intersection", "[perf]") {
         float eps2 = static_cast<float>(std::numeric_limits<float>::epsilon() * 0.5);
         return (n * eps2) / (1 - n * eps2);
     };
+    struct Vec3f { float x, y, z; };
     const float robustFactor = 1 + 2 * gamma(3);
-    const float invDir[3] = { dist(re), dist(re), dist(re) };
-    const float rayOrigin[3] = { dist(re), dist(re), dist(re) };
+    const Vec3f invDir = { dist(re), dist(re), dist(re) };
+    const Vec3f rayOrigin = { dist(re), dist(re), dist(re) };
     const float rayTMax = 100.f;
-    const int dirIsNeg[3] = { dist(re) > 0, dist(re) > 0, dist(re) > 0 };
+    const int dirIsNeg[3] = { (dist(re) > 0) ? 1 : 0, (dist(re) > 0) ? 1 : 0, (dist(re) > 0) ? 1 : 0 };
 
-    // implementation by hand
-    auto hand_impl = [&]() {
-        auto resIt = results.begin();
+    // non-SIMD implementation (for correctness checking)
+    auto nonSimd = [&]() {
+        auto resIt = resultsNonSimd.begin();
+
+        for (const auto& elem : data) {
+            for (int i = 0; i < 8; ++i) {
+                Vec3f bounds[2] = {
+                    { elem.minx[i], elem.miny[i], elem.minz[i] },
+                    { elem.maxx[i], elem.maxy[i], elem.maxz[i] },
+                };
+                float tmin = (bounds[dirIsNeg[0]].x - rayOrigin.x) * invDir.x;
+                float tmax = (bounds[1 - dirIsNeg[0]].x - rayOrigin.x) * invDir.x;
+                float tminy = (bounds[dirIsNeg[1]].y - rayOrigin.y) * invDir.y;
+                float tmaxy = (bounds[1 - dirIsNeg[1]].y - rayOrigin.y) * invDir.y;
+                tmax *= robustFactor;
+                tmaxy *= robustFactor;
+                if (tmin > tmaxy || tminy > tmax) {
+                    *(resIt++) = Result::fail;
+                    continue;
+                }
+                if (tminy > tmin) tmin = tminy;
+                if (tmaxy < tmax) tmax = tmaxy;
+                float tminz = (bounds[dirIsNeg[2]].z - rayOrigin.z) * invDir.z;
+                float tmaxz = (bounds[1 - dirIsNeg[2]].z - rayOrigin.z) * invDir.z;
+                tmaxz *= robustFactor;
+                if (tmin > tmaxz || tminz > tmax) {
+                    *(resIt++) = Result::fail;
+                    continue;
+                }
+                if (tminz > tmin) tmin = tminz;
+                if (tmaxz < tmax) tmax = tmaxz;
+                *(resIt++) = ((tmin < rayTMax) && (tmax > 0)) ? Result::win : Result::fail;
+            }
+        }
+    };
+
+    // SIMD implementation by hand
+    auto handSimd = [&]() {
+        auto resIt = resultsHandSimd.begin();
 
         for (const auto& elem : data) {
             __m256 tmin, tmax;
             {
                 __m256 minx = _mm256_load_ps(elem.minx);
                 __m256 maxx = _mm256_load_ps(elem.maxx);
-                __m256 idirx = _mm256_broadcast_ss(&invDir[0]);
-                __m256 rayox = _mm256_broadcast_ss(&rayOrigin[0]);
+                __m256 idirx = _mm256_broadcast_ss(&invDir.x);
+                __m256 rayox = _mm256_broadcast_ss(&rayOrigin.x);
                 tmin = _mm256_mul_ps(_mm256_sub_ps(dirIsNeg[0] ? maxx : minx, rayox), idirx);
                 tmax = _mm256_mul_ps(_mm256_sub_ps(dirIsNeg[0] ? minx : maxx, rayox), idirx);
             }
@@ -63,8 +103,8 @@ TEST_CASE("Ray-box intersection", "[perf]") {
                 {
                     __m256 miny = _mm256_load_ps(elem.miny);
                     __m256 maxy = _mm256_load_ps(elem.maxy);
-                    __m256 idiry = _mm256_broadcast_ss(&invDir[1]);
-                    __m256 rayoy = _mm256_broadcast_ss(&rayOrigin[1]);
+                    __m256 idiry = _mm256_broadcast_ss(&invDir.y);
+                    __m256 rayoy = _mm256_broadcast_ss(&rayOrigin.y);
                     tminy = _mm256_mul_ps(_mm256_sub_ps(dirIsNeg[1] ? maxy : miny, rayoy), idiry);
                     tmaxy = _mm256_mul_ps(_mm256_sub_ps(dirIsNeg[1] ? miny : maxy, rayoy), idiry);
                 }
@@ -95,8 +135,8 @@ TEST_CASE("Ray-box intersection", "[perf]") {
                 {
                     __m256 minz = _mm256_load_ps(elem.minz);
                     __m256 maxz = _mm256_load_ps(elem.maxz);
-                    __m256 idirz = _mm256_broadcast_ss(&invDir[2]);
-                    __m256 rayoz = _mm256_broadcast_ss(&rayOrigin[2]);
+                    __m256 idirz = _mm256_broadcast_ss(&invDir.z);
+                    __m256 rayoz = _mm256_broadcast_ss(&rayOrigin.z);
                     tminz = _mm256_mul_ps(_mm256_sub_ps(dirIsNeg[2] ? maxz : minz, rayoz), idirz);
                     tmaxz = _mm256_mul_ps(_mm256_sub_ps(dirIsNeg[2] ? minz : maxz, rayoz), idirz);
                 }
@@ -126,7 +166,7 @@ TEST_CASE("Ray-box intersection", "[perf]") {
             uint32_t uwin[8];
             std::memcpy(uwin, &win, sizeof(__m256));
             for (int i = 0; i < 8; ++i) {
-                *(resIt++) = uwin[i] ? 1 : 0;
+                *(resIt++) = uwin[i] ? Result::win : Result::fail;
             }
         }
     };

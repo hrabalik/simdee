@@ -25,7 +25,7 @@ TEST_CASE("Ray-box intersection", "[perf]") {
 
     // fill data
     std::random_device rd;
-    std::minstd_rand re(rd());
+    std::minstd_rand re(0x8a7ac012);
     std::normal_distribution<float> dist(0, 1);
     auto fill = [&dist, &re](float* data, size_t num) {
         for (size_t i = 0; i < num; ++i) {
@@ -88,6 +88,7 @@ TEST_CASE("Ray-box intersection", "[perf]") {
         auto resIt = resultsHandSimd.begin();
 
         for (const auto& elem : data) {
+            uint32_t fail;
             __m256 tmin, tmax;
             {
                 __m256 minx = _mm256_load_ps(elem.minx);
@@ -114,13 +115,10 @@ TEST_CASE("Ray-box intersection", "[perf]") {
                 tmaxy = _mm256_mul_ps(tmaxy, factor);
 
                 {
-                    __m256 fail = _mm256_or_ps(_mm256_cmp_ps(tmin, tmaxy, _CMP_GT_OQ), _mm256_cmp_ps(tminy, tmax, _CMP_GT_OQ));
-                    fail = _mm256_and_ps(fail, _mm256_permute_ps(fail, _MM_SHUFFLE(2, 3, 0, 1)));
-                    fail = _mm256_and_ps(fail, _mm256_permute_ps(fail, _MM_SHUFFLE(1, 0, 3, 2)));
-                    fail = _mm256_and_ps(fail, _mm256_permute2f128_ps(fail, fail, _MM_SHUFFLE(0, 0, 0, 1)));
-                    float all_failed = _mm_cvtss_f32(_mm256_castps256_ps128(fail));
+                    __m256 failcond = _mm256_or_ps(_mm256_cmp_ps(tmin, tmaxy, _CMP_GT_OQ), _mm256_cmp_ps(tminy, tmax, _CMP_GT_OQ));
+                    fail = uint32_t(_mm256_movemask_ps(failcond));
 
-                    if (simd::tou(all_failed)) {
+                    if (fail == 0xFF) {
                         for (int i = 0; i < 8; ++i) {
                             *(resIt++) = Result::fail;
                         }
@@ -147,13 +145,10 @@ TEST_CASE("Ray-box intersection", "[perf]") {
                 tmaxz = _mm256_mul_ps(tmaxz, factor);
 
                 {
-                    __m256 fail = _mm256_or_ps(_mm256_cmp_ps(tmin, tmaxz, _CMP_GT_OQ), _mm256_cmp_ps(tminz, tmax, _CMP_GT_OQ));
-                    fail = _mm256_and_ps(fail, _mm256_permute_ps(fail, _MM_SHUFFLE(2, 3, 0, 1)));
-                    fail = _mm256_and_ps(fail, _mm256_permute_ps(fail, _MM_SHUFFLE(1, 0, 3, 2)));
-                    fail = _mm256_and_ps(fail, _mm256_permute2f128_ps(fail, fail, _MM_SHUFFLE(0, 0, 0, 1)));
-                    float all_failed = _mm_cvtss_f32(_mm256_castps256_ps128(fail));
+                    __m256 failcond = _mm256_or_ps(_mm256_cmp_ps(tmin, tmaxz, _CMP_GT_OQ), _mm256_cmp_ps(tminz, tmax, _CMP_GT_OQ));
+                    fail = fail | uint32_t(_mm256_movemask_ps(failcond));
 
-                    if (simd::tou(all_failed)) {
+                    if (fail == 0xFF) {
                         for (int i = 0; i < 8; ++i) {
                             *(resIt++) = Result::fail;
                         }
@@ -165,19 +160,16 @@ TEST_CASE("Ray-box intersection", "[perf]") {
                 tmax = _mm256_blendv_ps(tmax, tmaxz, _mm256_cmp_ps(tmaxz, tmax, _CMP_LT_OQ));
             }
 
-            __m256 win = _mm256_and_ps(_mm256_cmp_ps(tmin, _mm256_broadcast_ss(&rayTMax), _CMP_LT_OQ), _mm256_cmp_ps(tmax, _mm256_setzero_ps(), _CMP_GT_OQ));
-            
-            uint32_t uwin[8];
-            std::memcpy(uwin, &win, sizeof(__m256));
+            __m256 wincond = _mm256_and_ps(_mm256_cmp_ps(tmin, _mm256_broadcast_ss(&rayTMax), _CMP_LT_OQ), _mm256_cmp_ps(tmax, _mm256_setzero_ps(), _CMP_GT_OQ));
+            uint32_t win = ~fail & uint32_t(_mm256_movemask_ps(wincond));
+
             for (int i = 0; i < 8; ++i) {
-                *(resIt++) = uwin[i] ? Result::win : Result::fail;
+                *(resIt++) = ((win >> i) & 1) ? Result::win : Result::fail;
             }
         }
     };
 
     nonSimd();
     handSimd();
-    auto cntWin = std::count(resultsNonSimd.begin(), resultsNonSimd.end(), Result::win);
-    auto cntWin2 = std::count(resultsHandSimd.begin(), resultsHandSimd.end(), Result::win);
-    return;
+    REQUIRE(resultsNonSimd == resultsHandSimd);
 }

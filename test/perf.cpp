@@ -121,7 +121,9 @@ TEST_CASE("Ray-box intersection", "[perf]") {
                     float all_failed = _mm_cvtss_f32(_mm256_castps256_ps128(fail));
 
                     if (simd::tou(all_failed)) {
-                        // mark fail
+                        for (int i = 0; i < 8; ++i) {
+                            *(resIt++) = Result::fail;
+                        }
                         continue;
                     }
                 }
@@ -152,7 +154,9 @@ TEST_CASE("Ray-box intersection", "[perf]") {
                     float all_failed = _mm_cvtss_f32(_mm256_castps256_ps128(fail));
 
                     if (simd::tou(all_failed)) {
-                        // mark fail
+                        for (int i = 0; i < 8; ++i) {
+                            *(resIt++) = Result::fail;
+                        }
                         continue;
                     }
                 }
@@ -170,4 +174,10 @@ TEST_CASE("Ray-box intersection", "[perf]") {
             }
         }
     };
+
+    nonSimd();
+    handSimd();
+    auto cntWin = std::count(resultsNonSimd.begin(), resultsNonSimd.end(), Result::win);
+    auto cntWin2 = std::count(resultsHandSimd.begin(), resultsHandSimd.end(), Result::win);
+    return;
 }

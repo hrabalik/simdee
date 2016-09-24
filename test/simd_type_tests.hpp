@@ -17,9 +17,6 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((std::is_same<F::scalar_t, float>::value));
     REQUIRE((std::is_same<U::scalar_t, uint32_t>::value));
     REQUIRE((std::is_same<S::scalar_t, int32_t>::value));
-    REQUIRE((std::is_same<F::array_t, std::array<F::scalar_t, F::W>>::value));
-    REQUIRE((std::is_same<U::array_t, std::array<U::scalar_t, U::W>>::value));
-    REQUIRE((std::is_same<S::array_t, std::array<S::scalar_t, S::W>>::value));
     REQUIRE(sizeof(F) == sizeof(F::vector_t));
     REQUIRE(sizeof(U) == sizeof(U::vector_t));
     REQUIRE(sizeof(S) == sizeof(S::vector_t));
@@ -35,9 +32,9 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
-    alignas(F)F::array_t rf = bufZF;
-    alignas(U)U::array_t ru = bufZU;
-    alignas(S)S::array_t rs = bufZS;
+    simd::storage<F> rf = bufZF;
+    simd::storage<U> ru = bufZU;
+    simd::storage<S> rs = bufZS;
     auto tor = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
         tf.aligned_store(rf.data());
         tu.aligned_store(ru.data());
@@ -164,9 +161,9 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
 
 
 TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
-    alignas(F)F::array_t rf = bufZF;
-    alignas(U)U::array_t ru = bufZU;
-    alignas(S)S::array_t rs = bufZS;
+    simd::storage<F> rf = bufZF;
+    simd::storage<U> ru = bufZU;
+    simd::storage<S> rs = bufZS;
     auto implicit_test = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
         tf.aligned_store(rf.data());
         tu.aligned_store(ru.data());
@@ -251,9 +248,9 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
-    alignas(F)F::array_t rf = bufZF;
-    alignas(U)U::array_t ru = bufZU;
-    alignas(S)S::array_t rs = bufZS;
+    simd::storage<F> rf = bufZF;
+    simd::storage<U> ru = bufZU;
+    simd::storage<S> rs = bufZS;
     F tf;
     U tu;
     S ts;

@@ -31,8 +31,6 @@ namespace simd {
             W = sizeof(vector_t) / sizeof(scalar_t)
         };
 
-        using array_t = std::array<scalar_t, W>;
-
         SIMDIFY_INL Crtp& self() {
             return static_cast<Crtp&>(*this);
         }

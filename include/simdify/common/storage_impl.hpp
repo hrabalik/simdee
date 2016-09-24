@@ -24,18 +24,17 @@ namespace simd {
         SIMDIFY_INL constexpr storage() = default;
         SIMDIFY_INL constexpr storage(const storage&) = default;
         SIMDIFY_INL explicit storage(const Simd_t& rhs) { rhs.aligned_store(data()); }
-
         storage(std::initializer_list<scalar_t> list) {
             std::copy(list.begin(), list.end(), begin());
         }
 
         SIMDIFY_INL storage& operator=(const storage&) = default;
-        SIMDIFY_INL storage& operator=(const array_t& rhs) {
-            static_cast<array_t&>(*this) = rhs;
-            return *this;
-        }
         SIMDIFY_INL storage& operator=(const Simd_t& rhs) {
             rhs.aligned_store(data());
+            return *this;
+        }
+        storage& operator=(std::initializer_list<scalar_t> list) {
+            std::copy(list.begin(), list.end(), begin());
             return *this;
         }
 

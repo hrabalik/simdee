@@ -2,12 +2,38 @@
 #include <limits>
 #include <vector>
 #include <random>
+#include <chrono>
+#include <iostream>
+#include <functional>
+
+#define SIMDIFY_NEED_AVX 1
 #include <simdify/simd_types.hpp>
 #include <simdify/util/malloc.hpp>
 
+auto now = []() {
+    return std::chrono::high_resolution_clock::now();
+};
+
+template <typename Duration>
+double to_ms(Duration dur) {
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count() / 1.e6;
+};
+
+double benchmark_ms(std::function<void()> func) {
+    double best = std::numeric_limits<double>::infinity();
+    for (int i = 0; i < 6; i++) {
+        auto tp1 = now();
+        func();
+        auto tp2 = now();
+        double time = to_ms(tp2 - tp1);
+        best = std::min(best, time);
+    }
+    return best;
+}
+
 TEST_CASE("Ray-box intersection", "[perf]") {
     // allocate data
-    struct RayBoxData {
+    struct RayBoxData8 {
         float minx[8];
         float miny[8];
         float minz[8];
@@ -15,13 +41,24 @@ TEST_CASE("Ray-box intersection", "[perf]") {
         float maxy[8];
         float maxz[8];
     };
-    const size_t numData = 1024;
-    using vec_t = std::vector<RayBoxData, simd::aligned_allocator<RayBoxData, sizeof(__m256)>>;
-    vec_t data(numData);
+    struct RayBoxData1 {
+        float minx;
+        float miny;
+        float minz;
+        float maxx;
+        float maxy;
+        float maxz;
+    };
+    const size_t dataSize8 = 1024 * 1024;
+    const size_t dataSize1 = 8 * dataSize8;
+    using vec8 = std::vector<RayBoxData8, simd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
+    using vec1 = std::vector<RayBoxData1>;
+    vec8 data8(dataSize8);
+    vec1 data1(dataSize1);
     enum class Result : char { fail = 13, win = 42 };
-    std::vector<Result> resultsNonSimd(8 * numData);
-    std::vector<Result> resultsHandSimd(8 * numData);
-    std::vector<Result> resultsLibSimd(8 * numData);
+    std::vector<Result> resultsNonSimd(dataSize1);
+    std::vector<Result> resultsHandSimd(dataSize1);
+    std::vector<Result> resultsLibSimd(dataSize1);
 
     // fill data
     std::random_device rd;
@@ -32,8 +69,23 @@ TEST_CASE("Ray-box intersection", "[perf]") {
             *(data++) = dist(re);
         }
     };
-    const size_t numFloats = (sizeof(RayBoxData) / sizeof(float)) * numData;
-    fill((float*)(data.data()), numFloats);
+    const size_t numFloats = (sizeof(RayBoxData1) / sizeof(float)) * dataSize1;
+    fill((float*)(data8.data()), numFloats);
+    {
+        RayBoxData1* ptr = data1.data();
+        for (int i = 0; i < dataSize8; ++i) {
+            const auto& el = data8[i];
+            for (int j = 0; j < 8; ++j) {
+                ptr->minx = el.minx[j];
+                ptr->miny = el.miny[j];
+                ptr->minz = el.minz[j];
+                ptr->maxx = el.maxx[j];
+                ptr->maxy = el.maxy[j];
+                ptr->maxz = el.maxz[j];
+                ptr++;
+            }
+        }
+    }
 
     // common pre-calculations
     auto gamma = [](int n) {
@@ -51,35 +103,29 @@ TEST_CASE("Ray-box intersection", "[perf]") {
     auto nonSimd = [&]() {
         auto resIt = resultsNonSimd.begin();
 
-        for (const auto& elem : data) {
-            for (int i = 0; i < 8; ++i) {
-                Vec3f bounds[2] = {
-                    { elem.minx[i], elem.miny[i], elem.minz[i] },
-                    { elem.maxx[i], elem.maxy[i], elem.maxz[i] },
-                };
-                float tmin = (bounds[dirIsNeg[0]].x - rayOrigin.x) * invDir.x;
-                float tmax = (bounds[1 - dirIsNeg[0]].x - rayOrigin.x) * invDir.x;
-                float tminy = (bounds[dirIsNeg[1]].y - rayOrigin.y) * invDir.y;
-                float tmaxy = (bounds[1 - dirIsNeg[1]].y - rayOrigin.y) * invDir.y;
-                tmax *= robustFactor;
-                tmaxy *= robustFactor;
-                if (tmin > tmaxy || tminy > tmax) {
-                    *(resIt++) = Result::fail;
-                    continue;
-                }
-                if (tminy > tmin) tmin = tminy;
-                if (tmaxy < tmax) tmax = tmaxy;
-                float tminz = (bounds[dirIsNeg[2]].z - rayOrigin.z) * invDir.z;
-                float tmaxz = (bounds[1 - dirIsNeg[2]].z - rayOrigin.z) * invDir.z;
-                tmaxz *= robustFactor;
-                if (tmin > tmaxz || tminz > tmax) {
-                    *(resIt++) = Result::fail;
-                    continue;
-                }
-                if (tminz > tmin) tmin = tminz;
-                if (tmaxz < tmax) tmax = tmaxz;
-                *(resIt++) = ((tmin < rayTMax) && (tmax > 0)) ? Result::win : Result::fail;
+        for (const auto& elem : data1) {
+            float tmin = ((dirIsNeg[0] ? elem.maxx : elem.minx) - rayOrigin.x) * invDir.x;
+            float tmax = ((dirIsNeg[0] ? elem.minx : elem.maxx) - rayOrigin.x) * invDir.x;
+            float tminy = ((dirIsNeg[1] ? elem.maxy : elem.miny) - rayOrigin.y) * invDir.y;
+            float tmaxy = ((dirIsNeg[1] ? elem.miny : elem.maxy) - rayOrigin.y) * invDir.y;
+            tmax *= robustFactor;
+            tmaxy *= robustFactor;
+            if (tmin > tmaxy || tminy > tmax) {
+                *(resIt++) = Result::fail;
+                continue;
             }
+            if (tminy > tmin) tmin = tminy;
+            if (tmaxy < tmax) tmax = tmaxy;
+            float tminz = ((dirIsNeg[2] ? elem.maxz : elem.minz) - rayOrigin.z) * invDir.z;
+            float tmaxz = ((dirIsNeg[2] ? elem.minz : elem.maxz) - rayOrigin.z) * invDir.z;
+            tmaxz *= robustFactor;
+            if (tmin > tmaxz || tminz > tmax) {
+                *(resIt++) = Result::fail;
+                continue;
+            }
+            if (tminz > tmin) tmin = tminz;
+            if (tmaxz < tmax) tmax = tmaxz;
+            *(resIt++) = ((tmin < rayTMax) && (tmax > 0)) ? Result::win : Result::fail;
         }
     };
 
@@ -87,7 +133,7 @@ TEST_CASE("Ray-box intersection", "[perf]") {
     auto handSimd = [&]() {
         auto resIt = resultsHandSimd.begin();
 
-        for (const auto& elem : data) {
+        for (const auto& elem : data8) {
             uint32_t fail;
             __m256 tmin, tmax;
             {
@@ -169,7 +215,12 @@ TEST_CASE("Ray-box intersection", "[perf]") {
         }
     };
 
-    nonSimd();
-    handSimd();
-    REQUIRE(resultsNonSimd == resultsHandSimd);
+    // check performance
+    auto nonSimdTime = benchmark_ms(nonSimd);
+    auto handSimdTime = benchmark_ms(handSimd);
+    std::cout << "non-SIMD: " << nonSimdTime << " ms\n";
+    std::cout << "hand SIMD: " << handSimdTime << " ms\n";
+
+    // check correctness
+    REQUIRE((resultsNonSimd == resultsHandSimd));
 }

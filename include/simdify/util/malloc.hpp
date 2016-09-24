@@ -10,7 +10,7 @@
 namespace simd {
 
     namespace detail {
-#if defined(__GLIBCXX__) && __GLIBCXX__ <= 20150626
+#if defined(__GLIBCXX__) && (__GLIBCXX__ < 20150422 || __GLIBCXX__ == 20150623 || __GLIBCXX__ == 20150626 || __GLIBCXX__ == 20160803)
         // type_traits is buggered in libstdc++ up until GCC 5
         template <typename T>
         using is_trivially_default_constructible = std::has_trivial_default_constructor<T>;

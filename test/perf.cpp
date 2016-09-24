@@ -10,6 +10,8 @@
 #include <simdify/simd_types.hpp>
 #include <simdify/util/malloc.hpp>
 
+const char* const hline = "===============================================================================\n";
+
 auto now = []() {
     return std::chrono::high_resolution_clock::now();
 };
@@ -32,6 +34,8 @@ double benchmark_ms(std::function<void()> func) {
 }
 
 TEST_CASE("Ray-box intersection", "[!hide][perf]") {
+    std::cout << hline << "Benchmark: Ray-box intersection\n";
+
     // allocate data
     struct RayBoxData8 {
         float minx[8];

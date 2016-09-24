@@ -42,14 +42,6 @@ namespace simd {
         SIMDIFY_INL operator Simd_t() const { Simd_t s; s.aligned_load(data()); return s; }
     };
 
-    template <typename T>
-    SIMDIFY_INL constexpr auto tof(storage<T> r) -> decltype(tof(T(r))) { return tof(T(r)); }
-
-    template <typename T>
-    SIMDIFY_INL constexpr auto tou(storage<T> r) -> decltype(tou(T(r))) { return tou(T(r)); }
-
-    template <typename T>
-    SIMDIFY_INL constexpr auto tos(storage<T> r) -> decltype(tos(T(r))) { return tos(T(r)); }
 }
 
 #endif // SIMDIFY_COMMON_STORAGE_HPP

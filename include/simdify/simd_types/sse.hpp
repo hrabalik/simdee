@@ -243,31 +243,31 @@ namespace simd {
     SIMDIFY_INL sseu::sseu(const sses& r) { mm = r.mm; }
     SIMDIFY_INL sses::sses(const sseu& r) { mm = r.mm; }
 
-    SIMDIFY_INL const sseu operator&(const sseu& l, const sseu& r) { return _mm_and_ps(l.mm, r.mm); }
-    SIMDIFY_INL const sseu operator|(const sseu& l, const sseu& r) { return _mm_or_ps(l.mm, r.mm); }
-    SIMDIFY_INL const sseu operator^(const sseu& l, const sseu& r) { return _mm_xor_ps(l.mm, r.mm); }
+    SIMDIFY_INL const sseu operator&(const sseu& l, const sseu& r) { return _mm_and_ps(l.data(), r.data()); }
+    SIMDIFY_INL const sseu operator|(const sseu& l, const sseu& r) { return _mm_or_ps(l.data(), r.data()); }
+    SIMDIFY_INL const sseu operator^(const sseu& l, const sseu& r) { return _mm_xor_ps(l.data(), r.data()); }
     SIMDIFY_INL const not_sseu operator~(const sseu& l) { return not_sseu(l); }
-    SIMDIFY_INL const sseu andnot(const sseu& l, const sseu& r) { return _mm_andnot_ps(r.mm, l.mm); }
+    SIMDIFY_INL const sseu andnot(const sseu& l, const sseu& r) { return _mm_andnot_ps(r.data(), l.data()); }
 
-    SIMDIFY_INL const sseu operator<(const ssef& l, const ssef& r) { return _mm_cmplt_ps(l.mm, r.mm); }
-    SIMDIFY_INL const sseu operator>(const ssef& l, const ssef& r) { return _mm_cmpgt_ps(l.mm, r.mm); }
-    SIMDIFY_INL const sseu operator<=(const ssef& l, const ssef& r) { return _mm_cmple_ps(l.mm, r.mm); }
-    SIMDIFY_INL const sseu operator>=(const ssef& l, const ssef& r) { return _mm_cmpge_ps(l.mm, r.mm); }
-    SIMDIFY_INL const sseu operator==(const ssef& l, const ssef& r) { return _mm_cmpeq_ps(l.mm, r.mm); }
-    SIMDIFY_INL const sseu operator!=(const ssef& l, const ssef& r) { return _mm_cmpneq_ps(l.mm, r.mm); }
+    SIMDIFY_INL const sseu operator<(const ssef& l, const ssef& r) { return _mm_cmplt_ps(l.data(), r.data()); }
+    SIMDIFY_INL const sseu operator>(const ssef& l, const ssef& r) { return _mm_cmpgt_ps(l.data(), r.data()); }
+    SIMDIFY_INL const sseu operator<=(const ssef& l, const ssef& r) { return _mm_cmple_ps(l.data(), r.data()); }
+    SIMDIFY_INL const sseu operator>=(const ssef& l, const ssef& r) { return _mm_cmpge_ps(l.data(), r.data()); }
+    SIMDIFY_INL const sseu operator==(const ssef& l, const ssef& r) { return _mm_cmpeq_ps(l.data(), r.data()); }
+    SIMDIFY_INL const sseu operator!=(const ssef& l, const ssef& r) { return _mm_cmpneq_ps(l.data(), r.data()); }
 
-    SIMDIFY_INL const ssef operator-(const ssef& l) { return _mm_xor_ps(l.mm, ssef(sign_bit()).mm); }
-    SIMDIFY_INL const ssef operator+(const ssef& l, const ssef& r) { return _mm_add_ps(l.mm, r.mm); }
-    SIMDIFY_INL const ssef operator-(const ssef& l, const ssef& r) { return _mm_sub_ps(l.mm, r.mm); }
-    SIMDIFY_INL const ssef operator*(const ssef& l, const ssef& r) { return _mm_mul_ps(l.mm, r.mm); }
-    SIMDIFY_INL const ssef operator/(const ssef& l, const ssef& r) { return _mm_div_ps(l.mm, r.mm); }
+    SIMDIFY_INL const ssef operator-(const ssef& l) { return _mm_xor_ps(l.data(), ssef(sign_bit()).data()); }
+    SIMDIFY_INL const ssef operator+(const ssef& l, const ssef& r) { return _mm_add_ps(l.data(), r.data()); }
+    SIMDIFY_INL const ssef operator-(const ssef& l, const ssef& r) { return _mm_sub_ps(l.data(), r.data()); }
+    SIMDIFY_INL const ssef operator*(const ssef& l, const ssef& r) { return _mm_mul_ps(l.data(), r.data()); }
+    SIMDIFY_INL const ssef operator/(const ssef& l, const ssef& r) { return _mm_div_ps(l.data(), r.data()); }
 
-    SIMDIFY_INL const ssef min(const ssef& l, const ssef& r) { return _mm_min_ps(l.mm, r.mm); }
-    SIMDIFY_INL const ssef max(const ssef& l, const ssef& r) { return _mm_max_ps(l.mm, r.mm); }
-    SIMDIFY_INL const ssef sqrt(const ssef& l) { return _mm_sqrt_ps(l.mm); }
-    SIMDIFY_INL const ssef rsqrt(const ssef& l) { return _mm_rsqrt_ps(l.mm); }
-    SIMDIFY_INL const ssef rcp(const ssef& l) { return _mm_rcp_ps(l.mm); }
-    SIMDIFY_INL const ssef abs(const ssef& l) { return _mm_and_ps(l.mm, ssef(abs_mask()).mm); }
+    SIMDIFY_INL const ssef min(const ssef& l, const ssef& r) { return _mm_min_ps(l.data(), r.data()); }
+    SIMDIFY_INL const ssef max(const ssef& l, const ssef& r) { return _mm_max_ps(l.data(), r.data()); }
+    SIMDIFY_INL const ssef sqrt(const ssef& l) { return _mm_sqrt_ps(l.data()); }
+    SIMDIFY_INL const ssef rsqrt(const ssef& l) { return _mm_rsqrt_ps(l.data()); }
+    SIMDIFY_INL const ssef rcp(const ssef& l) { return _mm_rcp_ps(l.data()); }
+    SIMDIFY_INL const ssef abs(const ssef& l) { return _mm_and_ps(l.data(), ssef(abs_mask()).data()); }
 
     SIMDIFY_INL const ssef cond(const sseu& pred, const ssef& if_true, const ssef& if_false) {
         return tof((tou(if_true) & pred) | (tou(if_false) & ~pred));

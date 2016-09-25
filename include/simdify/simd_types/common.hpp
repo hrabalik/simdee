@@ -43,6 +43,10 @@ namespace simd {
             return static_cast<const Crtp&>(*this);
         }
 
+        vector_t& data() { return mm; }
+        const vector_t& data() const { return mm; }
+
+    protected:
         // data
         vector_t mm;
     };

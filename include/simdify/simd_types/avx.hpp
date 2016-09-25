@@ -241,31 +241,31 @@ namespace simd {
     SIMDIFY_INL avxu::avxu(const avxs& r) { mm = r.mm; }
     SIMDIFY_INL avxs::avxs(const avxu& r) { mm = r.mm; }
 
-    SIMDIFY_INL const avxu operator&(const avxu& l, const avxu& r) { return _mm256_and_ps(l.mm, r.mm); }
-    SIMDIFY_INL const avxu operator|(const avxu& l, const avxu& r) { return _mm256_or_ps(l.mm, r.mm); }
-    SIMDIFY_INL const avxu operator^(const avxu& l, const avxu& r) { return _mm256_xor_ps(l.mm, r.mm); }
+    SIMDIFY_INL const avxu operator&(const avxu& l, const avxu& r) { return _mm256_and_ps(l.data(), r.data()); }
+    SIMDIFY_INL const avxu operator|(const avxu& l, const avxu& r) { return _mm256_or_ps(l.data(), r.data()); }
+    SIMDIFY_INL const avxu operator^(const avxu& l, const avxu& r) { return _mm256_xor_ps(l.data(), r.data()); }
     SIMDIFY_INL const not_avxu operator~(const avxu& l) { return not_avxu(l); }
-    SIMDIFY_INL const avxu andnot(const avxu& l, const avxu& r) { return _mm256_andnot_ps(r.mm, l.mm); }
+    SIMDIFY_INL const avxu andnot(const avxu& l, const avxu& r) { return _mm256_andnot_ps(r.data(), l.data()); }
 
-    SIMDIFY_INL const avxu operator<(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_LT_OQ); }
-    SIMDIFY_INL const avxu operator>(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_GT_OQ); }
-    SIMDIFY_INL const avxu operator<=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_LE_OQ); }
-    SIMDIFY_INL const avxu operator>=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_GE_OQ); }
-    SIMDIFY_INL const avxu operator==(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_EQ_OQ); }
-    SIMDIFY_INL const avxu operator!=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.mm, r.mm, _CMP_NEQ_OQ); }
+    SIMDIFY_INL const avxu operator<(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_LT_OQ); }
+    SIMDIFY_INL const avxu operator>(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_GT_OQ); }
+    SIMDIFY_INL const avxu operator<=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_LE_OQ); }
+    SIMDIFY_INL const avxu operator>=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_GE_OQ); }
+    SIMDIFY_INL const avxu operator==(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_EQ_OQ); }
+    SIMDIFY_INL const avxu operator!=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_NEQ_OQ); }
 
-    SIMDIFY_INL const avxf operator-(const avxf& l) { return _mm256_xor_ps(l.mm, avxf(sign_bit()).mm); }
-    SIMDIFY_INL const avxf operator+(const avxf& l, const avxf& r) { return _mm256_add_ps(l.mm, r.mm); }
-    SIMDIFY_INL const avxf operator-(const avxf& l, const avxf& r) { return _mm256_sub_ps(l.mm, r.mm); }
-    SIMDIFY_INL const avxf operator*(const avxf& l, const avxf& r) { return _mm256_mul_ps(l.mm, r.mm); }
-    SIMDIFY_INL const avxf operator/(const avxf& l, const avxf& r) { return _mm256_div_ps(l.mm, r.mm); }
+    SIMDIFY_INL const avxf operator-(const avxf& l) { return _mm256_xor_ps(l.data(), avxf(sign_bit()).data()); }
+    SIMDIFY_INL const avxf operator+(const avxf& l, const avxf& r) { return _mm256_add_ps(l.data(), r.data()); }
+    SIMDIFY_INL const avxf operator-(const avxf& l, const avxf& r) { return _mm256_sub_ps(l.data(), r.data()); }
+    SIMDIFY_INL const avxf operator*(const avxf& l, const avxf& r) { return _mm256_mul_ps(l.data(), r.data()); }
+    SIMDIFY_INL const avxf operator/(const avxf& l, const avxf& r) { return _mm256_div_ps(l.data(), r.data()); }
 
-    SIMDIFY_INL const avxf min(const avxf& l, const avxf& r) { return _mm256_min_ps(l.mm, r.mm); }
-    SIMDIFY_INL const avxf max(const avxf& l, const avxf& r) { return _mm256_max_ps(l.mm, r.mm); }
-    SIMDIFY_INL const avxf sqrt(const avxf& l) { return _mm256_sqrt_ps(l.mm); }
-    SIMDIFY_INL const avxf rsqrt(const avxf& l) { return _mm256_rsqrt_ps(l.mm); }
-    SIMDIFY_INL const avxf rcp(const avxf& l) { return _mm256_rcp_ps(l.mm); }
-    SIMDIFY_INL const avxf abs(const avxf& l) { return _mm256_and_ps(l.mm, avxf(abs_mask()).mm); }
+    SIMDIFY_INL const avxf min(const avxf& l, const avxf& r) { return _mm256_min_ps(l.data(), r.data()); }
+    SIMDIFY_INL const avxf max(const avxf& l, const avxf& r) { return _mm256_max_ps(l.data(), r.data()); }
+    SIMDIFY_INL const avxf sqrt(const avxf& l) { return _mm256_sqrt_ps(l.data()); }
+    SIMDIFY_INL const avxf rsqrt(const avxf& l) { return _mm256_rsqrt_ps(l.data()); }
+    SIMDIFY_INL const avxf rcp(const avxf& l) { return _mm256_rcp_ps(l.data()); }
+    SIMDIFY_INL const avxf abs(const avxf& l) { return _mm256_and_ps(l.data(), avxf(abs_mask()).data()); }
 
     SIMDIFY_INL const avxf cond(const avxu& pred, const avxf& if_true, const avxf& if_false) {
         return _mm256_blendv_ps(if_false.mm, if_true.mm, pred.mm);

@@ -1,6 +1,5 @@
 #define SIMDIFY_NEED_DUM 1
 #include <simdify/simd_types.hpp>
-#include <simdify/common/storage.hpp>
 
 #include "catch.hpp"
 #include <array>

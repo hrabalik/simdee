@@ -135,7 +135,7 @@ namespace simd {
         using dum_base::dum_base;
         SIMDIFY_INL explicit dumu(const dums&);
 
-        SIMDIFY_INL mask_t mask() const { return nth_bit(simd::tou(mm), 31); }
+        SIMDIFY_INL mask_t mask() const { return mask_t(simd::tou(mm) >> 31); }
         SIMDIFY_INL scalar_t first_element() const { return mm; }
     };
 

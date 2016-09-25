@@ -13,7 +13,7 @@ namespace simd {
             SIMDIFY_INL mask(const mask&) = default;                                                               \
             SIMDIFY_INL mask& operator=(const mask&) = default;
 
-            SIMDIFY_INL constexpr mask(uint32_t i) : value(i) {}
+            SIMDIFY_INL constexpr explicit mask(uint32_t i) : value(i) {}
 
             SIMDIFY_INL constexpr bool operator[](int i) const { return (value & (1U << i)) != 0; }
             SIMDIFY_INL constexpr mask operator&(mask r) const { return mask(value & r.value); }

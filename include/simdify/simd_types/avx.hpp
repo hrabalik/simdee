@@ -30,24 +30,26 @@ namespace simd {
     template <>
     struct is_simd_type<avxs> : std::integral_constant<bool, true> {};
 
-    template <typename Vector_t, typename Scalar_t>
+    template <typename Simd_t, typename Vector_t, typename Scalar_t>
     struct avx_traits {
+        using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Scalar_t;
         using vec_f = avxf;
         using vec_u = avxu;
         using vec_s = avxs;
         using mask_t = impl::mask<0xffU>;
+        using storage_t = impl::storage<simd_t, scalar_t, alignof(vector_t)>;
     };
 
     template <>
-    struct simd_type_traits<avxf> : avx_traits<__m256, float> {};
+    struct simd_type_traits<avxf> : avx_traits<avxf, __m256, float> {};
 
     template <>
-    struct simd_type_traits<avxu> : avx_traits<__m256, uint32_t> {};
+    struct simd_type_traits<avxu> : avx_traits<avxu, __m256, uint32_t> {};
 
     template <>
-    struct simd_type_traits<avxs> : avx_traits<__m256, int32_t> {};
+    struct simd_type_traits<avxs> : avx_traits<avxs, __m256, int32_t> {};
 
     template <typename Crtp>
     struct avx_base : simd_base<Crtp> {
@@ -55,6 +57,7 @@ namespace simd {
 
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
+        using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::mm;
         using simd_base<Crtp>::W;
         using simd_base<Crtp>::self;
@@ -132,6 +135,15 @@ namespace simd {
         template <typename T>
         SIMDIFY_INL Crtp& operator=(const expr::init<T>& r) {
             *this = r.template to<scalar_t>();
+            return self();
+        }
+
+        SIMDIFY_INL avx_base(const storage_t& r) {
+            aligned_load(r.data());
+        }
+
+        SIMDIFY_INL Crtp& operator=(const storage_t& r) {
+            aligned_load(r.data());
             return self();
         }
 

@@ -1,7 +1,6 @@
 #ifndef SIMDIFY_COMMON_STORAGE_HPP
 #define SIMDIFY_COMMON_STORAGE_HPP
 
-#include "../simd_types/common.hpp"
 #include "../util/inline.hpp"
 #include <array>
 #include <algorithm>
@@ -12,18 +11,19 @@ namespace simd {
         //
         // storage for SIMD types
         //
-        template <typename Simd_t>
-        struct alignas(Simd_t)storage : std::array<typename Simd_t::scalar_t, Simd_t::W> {
+        template <typename Simd_t, typename Scalar_t, std::size_t Align>
+        struct alignas(Align)storage : std::array<Scalar_t, Simd_t::W> {
             using stored_t = Simd_t;
-            using scalar_t = typename Simd_t::scalar_t;
-            using array_t = std::array<scalar_t, Simd_t::W>;
+            using array_t = std::array<Scalar_t, Simd_t::W>;
             using array_t::data;
             using array_t::begin;
 
             SIMDIFY_INL constexpr storage() = default;
             SIMDIFY_INL constexpr storage(const storage&) = default;
-            SIMDIFY_INL explicit storage(const Simd_t& rhs) { rhs.aligned_store(data()); }
-            storage(std::initializer_list<scalar_t> list) {
+            SIMDIFY_INL explicit storage(const Simd_t& rhs) {
+                rhs.aligned_store(data());
+            }
+            storage(std::initializer_list<Scalar_t> list) {
                 std::copy(list.begin(), list.end(), begin());
             }
 
@@ -32,15 +32,15 @@ namespace simd {
                 rhs.aligned_store(data());
                 return *this;
             }
-            storage& operator=(std::initializer_list<scalar_t> list) {
+            storage& operator=(std::initializer_list<Scalar_t> list) {
                 std::copy(list.begin(), list.end(), begin());
                 return *this;
             }
-
-            // implicit conversion to Simd_t
-            SIMDIFY_INL operator Simd_t() const { Simd_t s; s.aligned_load(data()); return s; }
         };
     }
+
+    template <typename T>
+    using storage = typename T::storage_t;
 }
 
 #endif // SIMDIFY_COMMON_STORAGE_HPP

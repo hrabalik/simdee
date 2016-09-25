@@ -7,7 +7,9 @@
 
 namespace simd {
     namespace impl {
+        //
         // result of the mask operation
+        //
         template <uint32_t AllBitsMask>
         struct mask {
             SIMDIFY_INL mask(const mask&) = default;                                                               \

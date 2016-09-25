@@ -21,24 +21,26 @@ namespace simd {
     template<>
     struct is_simd_type<dums> : std::integral_constant<bool, true> {};
 
-    template <typename Vector_t>
+    template <typename Simd_t, typename Vector_t>
     struct dum_traits {
+        using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Vector_t;
         using vec_f = dumf;
         using vec_u = dumu;
         using vec_s = dums;
         using mask_t = impl::mask<1U>;
+        using storage_t = impl::storage<simd_t, scalar_t, alignof(vector_t)>;
     };
 
     template <>
-    struct simd_type_traits<dumf> : dum_traits<float> {};
+    struct simd_type_traits<dumf> : dum_traits<dumf, float> {};
 
     template <>
-    struct simd_type_traits<dumu> : dum_traits<uint32_t> {};
+    struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t> {};
 
     template <>
-    struct simd_type_traits<dums> : dum_traits<int32_t> {};
+    struct simd_type_traits<dums> : dum_traits<dums, int32_t> {};
 
     template <typename Crtp>
     struct dum_base : simd_base<Crtp> {
@@ -46,6 +48,7 @@ namespace simd {
 
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
+        using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::mm;
         using simd_base<Crtp>::W;
         using simd_base<Crtp>::self;
@@ -89,6 +92,15 @@ namespace simd {
         template <typename T>
         SIMDIFY_INL Crtp& operator=(const expr::init<T>& r) {
             *this = r.template to<scalar_t>();
+            return self();
+        }
+
+        SIMDIFY_INL dum_base(const storage_t& r) {
+            aligned_load(r.data());
+        }
+
+        SIMDIFY_INL Crtp& operator=(const storage_t& r) {
+            aligned_load(r.data());
             return self();
         }
 

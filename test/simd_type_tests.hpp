@@ -768,9 +768,9 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     simd::storage<S> rs(cond(sel, as, bs));
 
     for (int i = 0; i < F::W; ++i) {
-        REQUIRE((rf[i]) == (((mask >> i) & 1U) ? bufAF[i] : bufBF[i]));
-        REQUIRE((ru[i]) == (((mask >> i) & 1U) ? bufAU[i] : bufBU[i]));
-        REQUIRE((rs[i]) == (((mask >> i) & 1U) ? bufAS[i] : bufBS[i]));
+        REQUIRE((rf[i]) == (simd::nth_bit(mask, i) ? bufAF[i] : bufBF[i]));
+        REQUIRE((ru[i]) == (simd::nth_bit(mask, i) ? bufAU[i] : bufBU[i]));
+        REQUIRE((rs[i]) == (simd::nth_bit(mask, i) ? bufAS[i] : bufBS[i]));
     }
 }
 

@@ -230,7 +230,7 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
             tmaxy *= factor;
             auto fail = ((tmin > tmaxy) | (tminy > tmax)).mask();
 
-            if (fail == 0xFF) {
+            if (fail.all()) {
                 for (int i = 0; i < 8; ++i) {
                     *(resIt++) = Result::fail;
                 }
@@ -242,9 +242,9 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
             auto tminz = ((dirIsNeg[2] ? elem.maxz : elem.minz) - rayOrigin.z) * invDir.z;
             auto tmaxz = ((dirIsNeg[2] ? elem.minz : elem.maxz) - rayOrigin.z) * invDir.z;
             tmaxz *= factor;
-            fail = fail | ((tmin > tmaxz) | (tminz > tmax)).mask();
+            fail |= ((tmin > tmaxz) | (tminz > tmax)).mask();
 
-            if (fail == 0xFF) {
+            if (fail.all()) {
                 for (int i = 0; i < 8; ++i) {
                     *(resIt++) = Result::fail;
                 }

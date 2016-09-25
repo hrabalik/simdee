@@ -14,7 +14,7 @@ namespace simd {
 
             SIMDIFY_INL constexpr mask(uint32_t i) : value(i) {}
 
-            SIMDIFY_INL constexpr bool operator[](int i) const { return value & (1U << i); }
+            SIMDIFY_INL constexpr bool operator[](int i) const { return (value & (1U << i)) != 0; }
             SIMDIFY_INL constexpr mask operator&(mask r) const { return mask(value & r.value); }
             SIMDIFY_INL constexpr mask operator|(mask r) const { return mask(value | r.value); }
             SIMDIFY_INL constexpr mask operator^(mask r) const { return mask(value ^ r.value); }
@@ -22,6 +22,8 @@ namespace simd {
             SIMDIFY_INL mask& operator|=(mask r) { value |= r.value; return *this; }
             SIMDIFY_INL mask& operator^=(mask r) { value ^= r.value; return *this; }
             SIMDIFY_INL constexpr mask operator~() const { return mask(value ^ AllBitsMask); }
+            SIMDIFY_INL constexpr bool operator==(mask r) const { return value == r.value; }
+            SIMDIFY_INL constexpr bool operator!=(mask r) const { return value != r.value; }
             SIMDIFY_INL constexpr bool any() const { return value != 0; }
             SIMDIFY_INL constexpr bool all() const { return value == AllBitsMask; }
             SIMDIFY_INL constexpr bit_iterator begin() const { return bit_iterator(value); }

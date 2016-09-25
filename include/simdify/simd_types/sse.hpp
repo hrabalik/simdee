@@ -205,12 +205,12 @@ namespace simd {
         }
 
         SIMDIFY_INL __m128i mmi() const { return _mm_castps_si128(mm); }
-        SIMDIFY_INL uint32_t mask() const { return uint32_t(_mm_movemask_ps(mm)); }
+        SIMDIFY_INL mask_t mask() const { return uint32_t(_mm_movemask_ps(mm)); }
         SIMDIFY_INL scalar_t first_element() const { return tou(_mm_cvtss_f32(mm)); }
 
     private:
         friend struct expr::bit_not<sseu>;
-        SIMDIFY_INL uint32_t not_mask() const { return mask() ^ 0xF; }
+        SIMDIFY_INL mask_t not_mask() const { return ~mask(); }
     };
 
     struct sses : sse_base<sses> {

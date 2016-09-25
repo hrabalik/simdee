@@ -256,7 +256,7 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
             auto win = ~fail & ((tmin < rayTMax) & (tmax > simd::zero())).mask();
 
             for (int i = 0; i < 8; ++i) {
-                *(resIt++) = simd::nth_bit(win, i) ? Result::win : Result::fail;
+                *(resIt++) = win[i] ? Result::win : Result::fail;
             }
         }
     };

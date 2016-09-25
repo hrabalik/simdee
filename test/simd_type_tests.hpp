@@ -17,6 +17,7 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((std::is_same<F::scalar_t, float>::value));
     REQUIRE((std::is_same<U::scalar_t, uint32_t>::value));
     REQUIRE((std::is_same<S::scalar_t, int32_t>::value));
+    REQUIRE((std::is_same<U::mask_t, simd::mask<U>>::value));
     REQUIRE(sizeof(F) == sizeof(F::vector_t));
     REQUIRE(sizeof(U) == sizeof(U::vector_t));
     REQUIRE(sizeof(S) == sizeof(S::vector_t));
@@ -29,6 +30,7 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((std::is_trivially_copyable<F>::value));
     REQUIRE((std::is_trivially_copyable<U>::value));
     REQUIRE((std::is_trivially_copyable<S>::value));
+    REQUIRE((std::is_same<decltype(std::declval<U>().mask()), U::mask_t>::value));
     REQUIRE((std::is_same<decltype(std::declval<F>().first_element()), F::scalar_t>::value));
     REQUIRE((std::is_same<decltype(std::declval<U>().first_element()), U::scalar_t>::value));
     REQUIRE((std::is_same<decltype(std::declval<S>().first_element()), S::scalar_t>::value));
@@ -771,9 +773,9 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     simd::storage<S> rs(cond(sel, as, bs));
 
     for (int i = 0; i < F::W; ++i) {
-        REQUIRE((rf[i]) == (simd::nth_bit(mask, i) ? bufAF[i] : bufBF[i]));
-        REQUIRE((ru[i]) == (simd::nth_bit(mask, i) ? bufAU[i] : bufBU[i]));
-        REQUIRE((rs[i]) == (simd::nth_bit(mask, i) ? bufAS[i] : bufBS[i]));
+        REQUIRE((rf[i]) == (mask[i] ? bufAF[i] : bufBF[i]));
+        REQUIRE((ru[i]) == (mask[i] ? bufAU[i] : bufBU[i]));
+        REQUIRE((rs[i]) == (mask[i] ? bufAS[i] : bufBS[i]));
     }
 }
 

@@ -135,12 +135,12 @@ namespace simd {
         using dum_base::dum_base;
         SIMDIFY_INL explicit dumu(const dums&);
 
-        SIMDIFY_INL uint32_t mask() const { return nth_bit(simd::tou(mm), 31); }
+        SIMDIFY_INL mask_t mask() const { return nth_bit(simd::tou(mm), 31); }
         SIMDIFY_INL scalar_t first_element() const { return mm; }
         
     private:
         friend struct expr::bit_not<dumu>;
-        SIMDIFY_INL uint32_t not_mask() const { return mask() ^ 1U; }
+        SIMDIFY_INL mask_t not_mask() const { return ~mask(); }
     };
 
     struct dums : dum_base<dums> {

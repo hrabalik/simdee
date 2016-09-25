@@ -61,15 +61,15 @@ namespace simd {
 
 namespace simd {
     
-    using bit_t = uint32_t;
+    using mask_t = uint32_t;
 
     // provides indices of set (1) bits, ordered from least significant to most significant
-    struct bit_iterator : std::iterator<std::input_iterator_tag, bit_t> {
-        bit_t mask;
+    struct bit_iterator : std::iterator<std::input_iterator_tag, mask_t> {
+        mask_t mask;
 
-        SIMDIFY_INL bit_iterator(bit_t mask_) : mask(mask_) {}
-        SIMDIFY_INL bit_t operator*() const { return bit_t(lsb(mask)); }
-        SIMDIFY_INL bit_t operator->() const { return bit_t(lsb(mask)); }
+        SIMDIFY_INL bit_iterator(mask_t mask_) : mask(mask_) {}
+        SIMDIFY_INL mask_t operator*() const { return mask_t(lsb(mask)); }
+        SIMDIFY_INL mask_t operator->() const { return mask_t(lsb(mask)); }
         SIMDIFY_INL bit_iterator& operator++() { mask = mask & (mask - 1); return *this; }
         SIMDIFY_INL bit_iterator operator++(int) { bit_iterator r = mask; operator++(); return r; }
         SIMDIFY_INL bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }

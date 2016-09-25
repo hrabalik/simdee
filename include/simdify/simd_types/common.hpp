@@ -3,7 +3,6 @@
 
 #include "../util/inline.hpp"
 #include "../util/bitfiddle.hpp"
-#include "../util/integral.hpp"
 #include "../util/trivial_type.hpp"
 #include "../common/expr.hpp"
 #include "../common/mask.hpp"

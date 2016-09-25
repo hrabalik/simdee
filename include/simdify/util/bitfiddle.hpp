@@ -75,14 +75,6 @@ namespace simd {
         SIMDIFY_INL bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }
     };
 
-    struct bit_field {
-        bit_t field;
-
-        SIMDIFY_INL bit_field(bit_t field_) : field(field_) {}
-        SIMDIFY_INL bit_iterator begin() const { return field; }
-        SIMDIFY_INL bit_iterator end() const { return 0; }
-    };
-
     // float-to-int rounding conversion
     SIMDIFY_INL int32_t round_to_int32(double in) {
         in += double((1LL << 52) + (1LL << 51));

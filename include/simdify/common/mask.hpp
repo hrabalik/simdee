@@ -3,6 +3,7 @@
 
 #include "../util/inline.hpp"
 #include "../util/trivial_type.hpp"
+#include "../util/bitfiddle.hpp"
 #include <cstdint>
 
 namespace simd {

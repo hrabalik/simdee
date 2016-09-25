@@ -8,6 +8,7 @@
 
 #define SIMDIFY_NEED_AVX 1
 #include <simdify/simd_types.hpp>
+#include <simdify/storage.hpp>
 #include <simdify/util/allocator.hpp>
 
 const char* const hline = "===============================================================================\n";
@@ -37,32 +38,27 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
     std::cout << hline << "Benchmark: Ray-box intersection\n";
 
     // allocate data
-    struct RayBoxData8 {
-        float minx[8];
-        float miny[8];
-        float minz[8];
-        float maxx[8];
-        float maxy[8];
-        float maxz[8];
-    };
     struct RayBoxData1 {
-        float minx;
-        float miny;
-        float minz;
-        float maxx;
-        float maxy;
-        float maxz;
+        float minx, miny, minz, maxx, maxy, maxz;
+    };
+    struct RayBoxData8 {
+        float minx[8], miny[8], minz[8], maxx[8], maxy[8], maxz[8];
+    };
+    struct RayBoxData8S {
+        simd::storage<simd::avxf> minx, miny, minz, maxx, maxy, maxz;
     };
     const size_t dataSize8 = 1024 * 1024;
     const size_t dataSize1 = 8 * dataSize8;
     using vec8 = std::vector<RayBoxData8, simd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
     using vec1 = std::vector<RayBoxData1>;
+    using vec8S = std::vector<RayBoxData8S, simd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
     vec8 data8(dataSize8);
     vec1 data1(dataSize1);
+    const vec8S& data8S = reinterpret_cast<const vec8S&>(data8);
     enum class Result : char { fail = 13, win = 42 };
     std::vector<Result> resultsNonSimd(dataSize1);
     std::vector<Result> resultsHandSimd(dataSize1);
-    std::vector<Result> resultsLibSimd(dataSize1);
+    std::vector<Result> resultsSimdify(dataSize1);
 
     // fill data
     std::random_device rd;
@@ -219,12 +215,61 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
         }
     };
 
+    // implementation using Simdify
+    auto simdify = [&]() {
+        auto resIt = resultsSimdify.begin();
+
+        for (const auto& elem : data8S) {
+            auto tmin = ((dirIsNeg[0] ? elem.maxx : elem.minx) - rayOrigin.x) * invDir.x;
+            auto tmax = ((dirIsNeg[0] ? elem.minx : elem.maxx) - rayOrigin.x) * invDir.x;
+            auto tminy = ((dirIsNeg[1] ? elem.maxy : elem.miny) - rayOrigin.y) * invDir.y;
+            auto tmaxy = ((dirIsNeg[1] ? elem.miny : elem.maxy) - rayOrigin.y) * invDir.y;
+
+            simd::avxf factor(robustFactor);
+            tmax *= factor;
+            tmaxy *= factor;
+            auto fail = ((tmin > tmaxy) | (tminy > tmax)).mask();
+
+            if (fail == 0xFF) {
+                for (int i = 0; i < 8; ++i) {
+                    *(resIt++) = Result::fail;
+                }
+                continue;
+            }
+
+            tmin = cond(tminy > tmin, tminy, tmin);
+            tmax = cond(tmaxy < tmax, tmaxy, tmax);
+            auto tminz = ((dirIsNeg[2] ? elem.maxz : elem.minz) - rayOrigin.z) * invDir.z;
+            auto tmaxz = ((dirIsNeg[2] ? elem.minz : elem.maxz) - rayOrigin.z) * invDir.z;
+            tmaxz *= factor;
+            fail = fail | ((tmin > tmaxz) | (tminz > tmax)).mask();
+
+            if (fail == 0xFF) {
+                for (int i = 0; i < 8; ++i) {
+                    *(resIt++) = Result::fail;
+                }
+                continue;
+            }
+
+            tmin = cond(tminz > tmin, tminz, tmin);
+            tmax = cond(tmaxz < tmax, tmaxz, tmax);
+            auto win = ~fail & ((tmin < rayTMax) & (tmax > simd::zero())).mask();
+
+            for (int i = 0; i < 8; ++i) {
+                *(resIt++) = simd::nth_bit(win, i) ? Result::win : Result::fail;
+            }
+        }
+    };
+
     // check performance
     auto nonSimdTime = benchmark_ms(nonSimd);
     auto handSimdTime = benchmark_ms(handSimd);
+    auto simdifyTime = benchmark_ms(simdify);
     std::cout << "non-SIMD: " << nonSimdTime << " ms\n";
     std::cout << "hand SIMD: " << handSimdTime << " ms\n";
+    std::cout << "Simdify: " << simdifyTime << " ms\n";
 
     // check correctness
     REQUIRE((resultsNonSimd == resultsHandSimd));
+    REQUIRE((resultsNonSimd == resultsSimdify));
 }

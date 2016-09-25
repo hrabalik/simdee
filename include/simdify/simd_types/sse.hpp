@@ -48,6 +48,7 @@ namespace simd {
         using vec_f = ssef;
         using vec_u = sseu;
         using vec_s = sses;
+        using mask_t = impl::mask<0xfU>;
     };
 
     template <>

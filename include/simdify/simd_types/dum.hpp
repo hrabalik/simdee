@@ -28,6 +28,7 @@ namespace simd {
         using vec_f = dumf;
         using vec_u = dumu;
         using vec_s = dums;
+        using mask_t = impl::mask<1U>;
     };
 
     template <>

@@ -6,6 +6,7 @@
 #include "../util/integral.hpp"
 #include "../util/trivial_type.hpp"
 #include "../common/expr.hpp"
+#include "../common/mask.hpp"
 #include <array>
 #include <type_traits>
 
@@ -27,6 +28,7 @@ namespace simd {
         using traits_t = simd_type_traits<Crtp>;
         using vector_t = typename traits_t::vector_t;
         using scalar_t = typename traits_t::scalar_t;
+        using mask_t = typename traits_t::mask_t;
 
         enum : std::size_t {
             W = sizeof(vector_t) / sizeof(scalar_t)

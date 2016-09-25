@@ -22,7 +22,7 @@ namespace simd {
             SIMDIFY_INL mask& operator^=(mask r) { value ^= r.value; return *this; }
             SIMDIFY_INL constexpr mask operator~() const { return mask(value ^ AllBitsMask); }
             SIMDIFY_INL constexpr bool any() const { return value != 0; }
-            SIMDIFY_INL constexpr bool all() const { return value == AllBitsMaske; }
+            SIMDIFY_INL constexpr bool all() const { return value == AllBitsMask; }
             SIMDIFY_INL constexpr bit_iterator begin() const { return bit_iterator(value); }
             SIMDIFY_INL constexpr bit_iterator end() const { return bit_iterator(value); }
 

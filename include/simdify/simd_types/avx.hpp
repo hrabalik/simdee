@@ -37,6 +37,7 @@ namespace simd {
         using vec_f = avxf;
         using vec_u = avxu;
         using vec_s = avxs;
+        using mask_t = impl::mask<0xffU>;
     };
 
     template <>

@@ -136,8 +136,6 @@ namespace simd {
         SIMDIFY_INL explicit dumu(const dums&);
 
         SIMDIFY_INL uint32_t mask() const { return nth_bit(simd::tou(mm), 31); }
-        SIMDIFY_INL bool any() const { return mask() != 0; }
-        SIMDIFY_INL bool all() const { return mask() != 0; }
         SIMDIFY_INL scalar_t first_element() const { return mm; }
         
     private:
@@ -188,13 +186,13 @@ namespace simd {
     SIMDIFY_INL const dumf abs(const dumf& l) { return std::abs(l.mm); }
 
     SIMDIFY_INL const dumf cond(const dumu& pred, const dumf& if_true, const dumf& if_false) {
-        return pred.any() ? if_true : if_false;
+        return pred.mm ? if_true : if_false;
     }
     SIMDIFY_INL const dumu cond(const dumu& pred, const dumu& if_true, const dumu& if_false) {
-        return pred.any() ? if_true : if_false;
+        return pred.mm ? if_true : if_false;
     }
     SIMDIFY_INL const dums cond(const dumu& pred, const dums& if_true, const dums& if_false) {
-        return pred.any() ? if_true : if_false;
+        return pred.mm ? if_true : if_false;
     }
 
 #if defined(SIMDIFY_NEED_INT)

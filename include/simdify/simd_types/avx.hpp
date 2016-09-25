@@ -202,14 +202,14 @@ namespace simd {
         }
 
         SIMDIFY_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
-        SIMDIFY_INL mask_t mask() const { return mask_t(_mm256_movemask_ps(mm)); }
+        SIMDIFY_INL uint32_t mask() const { return uint32_t(_mm256_movemask_ps(mm)); }
         SIMDIFY_INL bool any() const { return mask() != 0; }
         SIMDIFY_INL bool all() const { return mask() == 0xFF; }
         SIMDIFY_INL scalar_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
 
     private:
         friend struct expr::bit_not<avxu>;
-        SIMDIFY_INL mask_t not_mask() const { return mask() ^ 0xFF; }
+        SIMDIFY_INL uint32_t not_mask() const { return mask() ^ 0xFF; }
     };
 
     struct avxs : avx_base<avxs> {

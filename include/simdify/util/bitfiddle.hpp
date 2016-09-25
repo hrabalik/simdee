@@ -60,16 +60,14 @@ namespace simd {
 #endif
 
 namespace simd {
-    
-    using mask_t = uint32_t;
 
     // provides indices of set (1) bits, ordered from least significant to most significant
-    struct bit_iterator : std::iterator<std::input_iterator_tag, mask_t> {
-        mask_t mask;
+    struct bit_iterator : std::iterator<std::input_iterator_tag, uint32_t> {
+        uint32_t mask;
 
-        SIMDIFY_INL bit_iterator(mask_t mask_) : mask(mask_) {}
-        SIMDIFY_INL mask_t operator*() const { return mask_t(lsb(mask)); }
-        SIMDIFY_INL mask_t operator->() const { return mask_t(lsb(mask)); }
+        SIMDIFY_INL bit_iterator(uint32_t mask_) : mask(mask_) {}
+        SIMDIFY_INL uint32_t operator*() const { return uint32_t(lsb(mask)); }
+        SIMDIFY_INL uint32_t operator->() const { return uint32_t(lsb(mask)); }
         SIMDIFY_INL bit_iterator& operator++() { mask = mask & (mask - 1); return *this; }
         SIMDIFY_INL bit_iterator operator++(int) { bit_iterator r = mask; operator++(); return r; }
         SIMDIFY_INL bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }
@@ -85,8 +83,8 @@ namespace simd {
 
     // get the value of the n-th bit
     template <typename Shift>
-    SIMDIFY_INL constexpr mask_t nth_bit(mask_t value, Shift n) {
-        return (value >> n) & mask_t(1);
+    SIMDIFY_INL constexpr uint32_t nth_bit(uint32_t value, Shift n) {
+        return (value >> n) & uint32_t(1);
     }
 
 }

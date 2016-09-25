@@ -18,7 +18,7 @@ namespace simd {
         struct bit_not {
             SIMDIFY_INL constexpr explicit bit_not(const T& r) : neg(r) {}
 
-            SIMDIFY_INL mask_t mask() const { return neg.not_mask(); }
+            SIMDIFY_INL uint32_t mask() const { return neg.not_mask(); }
             SIMDIFY_INL bool any() const { return !neg.all(); }
             SIMDIFY_INL bool all() const { return !neg.any(); }
             SIMDIFY_INL typename T::scalar_t first_element() const { return ~neg.first_element(); }

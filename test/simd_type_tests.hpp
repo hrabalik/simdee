@@ -761,18 +761,16 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     S bs = simd::aligned(bufBS.data());
 
     U sel = af >= bf;
-    bool sel0[F::W];
-    for (auto& val : sel0) val = false;
-    for (auto idx : sel) sel0[idx] = true;
+    auto mask = sel.mask();
 
     simd::storage<F> rf(cond(sel, af, bf));
     simd::storage<U> ru(cond(sel, au, bu));
     simd::storage<S> rs(cond(sel, as, bs));
 
     for (int i = 0; i < F::W; ++i) {
-        REQUIRE((rf[i]) == (sel0[i] ? bufAF[i] : bufBF[i]));
-        REQUIRE((ru[i]) == (sel0[i] ? bufAU[i] : bufBU[i]));
-        REQUIRE((rs[i]) == (sel0[i] ? bufAS[i] : bufBS[i]));
+        REQUIRE((rf[i]) == (((mask >> i) & 1U) ? bufAF[i] : bufBF[i]));
+        REQUIRE((ru[i]) == (((mask >> i) & 1U) ? bufAU[i] : bufBU[i]));
+        REQUIRE((rs[i]) == (((mask >> i) & 1U) ? bufAS[i] : bufBS[i]));
     }
 }
 
@@ -783,8 +781,6 @@ TEST_CASE(SIMD_TYPE " expression template compatibility", SIMD_TEST_TAG) {
 
     REQUIRE(vec1.mask() == vec2.mask());
     REQUIRE(vec1.front() == vec2.front());
-    REQUIRE(vec1.begin().mask == vec2.begin().mask);
-    REQUIRE(vec1.end().mask == vec2.end().mask);
     REQUIRE(vec1.any() == vec2.any());
     REQUIRE(vec1.all() == vec2.all());
     REQUIRE(vec1.first_element() == vec2.first_element());

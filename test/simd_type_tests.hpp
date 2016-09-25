@@ -276,18 +276,18 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         REQUIRE(rs == bufAS);
     }
     SECTION("from aligned pointer") {
-        tf = simd::aligned(bufAF.data());
-        tu = simd::aligned(bufAU.data());
-        ts = simd::aligned(bufAS.data());
+        tf = bufAF;
+        tu = bufAU;
+        ts = bufAS;
         tor();
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
-        tf = simd::unaligned(bufAF.data());
-        tu = simd::unaligned(bufAU.data());
-        ts = simd::unaligned(bufAS.data());
+        tf = bufAF;
+        tu = bufAU;
+        ts = bufAS;
         tor();
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
@@ -367,8 +367,8 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         std::transform(begin(bufAS), end(bufAS), begin(expected), [](S::scalar_t a) {
             return static_cast<F::scalar_t>(a);
         });
-        S in = simd::aligned(bufAS.data());
-        F(in).aligned_store(result.data());
+        S in = bufAS;
+        result = F(in);
         REQUIRE(result == expected);
     }
     SECTION("float to int") {
@@ -376,8 +376,8 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         std::transform(begin(bufAF), end(bufAF), begin(expected), [](F::scalar_t a) {
             return simd::round_to_int32(a);
         });
-        F in = simd::aligned(bufAF.data());
-        S(in).aligned_store(result.data());
+        F in = bufAF;
+        result = S(in);
         REQUIRE(result == expected);
     }
     SECTION("int to uint") {
@@ -385,8 +385,8 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         std::transform(begin(bufAS), end(bufAS), begin(expected), [](S::scalar_t a) {
             return static_cast<U::scalar_t>(a);
         });
-        S in = simd::aligned(bufAS.data());
-        U(in).aligned_store(result.data());
+        S in = bufAS;
+        result = U(in);
         REQUIRE(result == expected);
     }
     SECTION("uint to int") {
@@ -394,16 +394,16 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         std::transform(begin(bufAU), end(bufAU), begin(expected), [](U::scalar_t a) {
             return simd::round_to_int32(a);
         });
-        U in = simd::aligned(bufAU.data());
-        S(in).aligned_store(result.data());
+        U in = bufAU;
+        result = S(in);
         REQUIRE(result == expected);
     }
 }
 
 TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     simd::storage<F> r, e;
-    F a = simd::aligned(bufAF.data());
-    F b = simd::aligned(bufBF.data());
+    F a = bufAF;
+    F b = bufBF;
 
     SECTION("unary plus") {
         std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return +a; });
@@ -490,8 +490,8 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
     simd::storage<S> r, e;
-    S a = simd::aligned(bufAS.data());
-    S b = simd::aligned(bufBS.data());
+    S a = bufAS;
+    S b = bufBS;
 
     SECTION("unary plus") {
         std::transform(begin(bufAS), end(bufAS), begin(e), [](S::scalar_t a) { return +a; });
@@ -556,8 +556,8 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
 TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
     simd::storage<U> r, e;
-    F a = simd::aligned(bufAF.data());
-    F b = simd::aligned(bufBF.data());
+    F a = bufAF;
+    F b = bufBF;
 
     SECTION("equal to") {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
@@ -606,8 +606,8 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
 TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
     auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
     simd::storage<U> r, e;
-    S a = simd::aligned(bufAS.data());
-    S b = simd::aligned(bufBS.data());
+    S a = bufAS;
+    S b = bufBS;
 
     SECTION("equal to") {
         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
@@ -655,8 +655,8 @@ TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
     simd::storage<U> r, e;
-    U a = simd::aligned(bufAU.data());
-    U b = simd::aligned(bufBU.data());
+    U a = bufAU;
+    U b = bufBU;
 
     SECTION("bit and") {
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
@@ -716,7 +716,7 @@ TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
-    F a = simd::aligned(bufAF.data());
+    F a = bufAF;
     auto max = [](F::scalar_t l, F::scalar_t r) { return std::max(l, r); };
     auto min = [](F::scalar_t l, F::scalar_t r) { return std::min(l, r); };
     F::scalar_t inf = std::numeric_limits<F::scalar_t>::infinity();
@@ -753,12 +753,12 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
-    F af = simd::aligned(bufAF.data());
-    U au = simd::aligned(bufAU.data());
-    S as = simd::aligned(bufAS.data());
-    F bf = simd::aligned(bufBF.data());
-    U bu = simd::aligned(bufBU.data());
-    S bs = simd::aligned(bufBS.data());
+    F af = bufAF;
+    U au = bufAU;
+    S as = bufAS;
+    F bf = bufBF;
+    U bu = bufBU;
+    S bs = bufBS;
 
     U sel = af >= bf;
     auto mask = sel.mask();
@@ -775,7 +775,7 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " expression template compatibility", SIMD_TEST_TAG) {
-    U in = simd::aligned(bufAU.data());
+    U in = bufAU;
     U vec1 = ~in;
     auto vec2 = ~in;
 

@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_SIMD_TYPES_HPP
-#define SIMDIFY_SIMD_TYPES_HPP
+#ifndef SIMDIFY_SIMDIFY_HPP
+#define SIMDIFY_SIMDIFY_HPP
 #define SIMDIFY
 
 //
@@ -106,4 +106,4 @@ namespace simd {
 
 }
 
-#endif // SIMDIFY_SIMD_TYPES_HPP
+#endif // SIMDIFY_SIMDIFY_HPP

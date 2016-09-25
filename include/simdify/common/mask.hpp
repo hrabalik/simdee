@@ -28,7 +28,7 @@ namespace simd {
             SIMDIFY_INL constexpr bool any() const { return value != 0; }
             SIMDIFY_INL constexpr bool all() const { return value == AllBitsMask; }
             SIMDIFY_INL constexpr bit_iterator begin() const { return bit_iterator(value); }
-            SIMDIFY_INL constexpr bit_iterator end() const { return bit_iterator(value); }
+            SIMDIFY_INL constexpr bit_iterator end() const { return bit_iterator(0); }
 
             //data
             uint32_t value;

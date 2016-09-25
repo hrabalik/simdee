@@ -50,7 +50,7 @@ namespace simd {
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::mm;
-        using simd_base<Crtp>::W;
+        using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 
         SIMDIFY_INL dum_base(const scalar_t& r) {

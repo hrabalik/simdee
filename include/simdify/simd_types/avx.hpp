@@ -59,7 +59,7 @@ namespace simd {
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::mm;
-        using simd_base<Crtp>::W;
+        using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 
         SIMDIFY_INL avx_base(const vector_t& r) {
@@ -164,17 +164,17 @@ namespace simd {
         }
 
         void interleaved_load(const scalar_t* r, std::size_t step) {
-            alignas(avx_base)scalar_t temp[W];
-            for (std::size_t i = 0; i < W; ++i, r += step) {
+            alignas(avx_base)scalar_t temp[width];
+            for (std::size_t i = 0; i < width; ++i, r += step) {
                 temp[i] = *r;
             }
             aligned_load(temp);
         }
 
         void interleaved_store(scalar_t* r, std::size_t step) const {
-            alignas(avx_base)scalar_t temp[W];
+            alignas(avx_base)scalar_t temp[width];
             aligned_store(temp);
-            for (std::size_t i = 0; i < W; ++i, r += step) {
+            for (std::size_t i = 0; i < width; ++i, r += step) {
                 *r = temp[i];
             }
         }

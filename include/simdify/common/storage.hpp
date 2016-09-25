@@ -12,9 +12,9 @@ namespace simd {
         // storage for SIMD types
         //
         template <typename Simd_t, typename Scalar_t, std::size_t Align>
-        struct alignas(Align)storage : std::array<Scalar_t, Simd_t::W> {
+        struct alignas(Align)storage : std::array<Scalar_t, Simd_t::width> {
             using stored_t = Simd_t;
-            using array_t = std::array<Scalar_t, Simd_t::W>;
+            using array_t = std::array<Scalar_t, Simd_t::width>;
             using array_t::data;
             using array_t::begin;
 

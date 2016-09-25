@@ -32,7 +32,7 @@ namespace simd {
         using storage_t = typename traits_t::storage_t;
 
         enum : std::size_t {
-            W = sizeof(vector_t) / sizeof(scalar_t)
+            width = sizeof(vector_t) / sizeof(scalar_t)
         };
 
         SIMDIFY_INL Crtp& self() {

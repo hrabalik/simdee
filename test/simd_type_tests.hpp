@@ -4,16 +4,16 @@
 // following macros are expected to be defined
 // SIMD_TYPE -- name of the SIMD type as a string
 // SIMD_TEST_TAG -- catch tests tag(s) as a string
-// SIMD_WIDTH -- expected W
+// SIMD_WIDTH -- expected SIMD width
 // SIMD_LOAD_AF -- expression that extracts vector_t from bufAF
 // SIMD_LOAD_AU -- expression that extracts vector_t from bufAU
 // SIMD_LOAD_AS -- expression that extracts vector_t from bufAS
 //
 
 TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
-    REQUIRE(F::W == SIMD_WIDTH);
-    REQUIRE(U::W == SIMD_WIDTH);
-    REQUIRE(S::W == SIMD_WIDTH);
+    REQUIRE(F::width == SIMD_WIDTH);
+    REQUIRE(U::width == SIMD_WIDTH);
+    REQUIRE(S::width == SIMD_WIDTH);
     REQUIRE((std::is_same<F::scalar_t, float>::value));
     REQUIRE((std::is_same<U::scalar_t, uint32_t>::value));
     REQUIRE((std::is_same<S::scalar_t, int32_t>::value));
@@ -24,9 +24,9 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE(alignof(F) == alignof(F::vector_t));
     REQUIRE(alignof(U) == alignof(U::vector_t));
     REQUIRE(alignof(S) == alignof(S::vector_t));
-    REQUIRE(sizeof(F::scalar_t) * F::W == sizeof(F));
-    REQUIRE(sizeof(U::scalar_t) * U::W == sizeof(U));
-    REQUIRE(sizeof(S::scalar_t) * S::W == sizeof(S));
+    REQUIRE(sizeof(F::scalar_t) * F::width == sizeof(F));
+    REQUIRE(sizeof(U::scalar_t) * U::width == sizeof(U));
+    REQUIRE(sizeof(S::scalar_t) * S::width == sizeof(S));
     REQUIRE((std::is_trivially_copyable<F>::value));
     REQUIRE((std::is_trivially_copyable<U>::value));
     REQUIRE((std::is_trivially_copyable<S>::value));
@@ -479,17 +479,17 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     SECTION("square root") {
         std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::sqrt(std::abs(a)); });
         r = sqrt(abs(a));
-        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]));
+        for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]));
     }
     SECTION("fast reciprocal") {
         std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / a; });
         r = rcp(a);
-        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+        for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
     SECTION("fast reciprocal square root") {
         std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
         r = rsqrt(abs(a));
-        for (int i = 0; i < F::W; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+        for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
 }
 
@@ -772,7 +772,7 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     simd::storage<U> ru(cond(sel, au, bu));
     simd::storage<S> rs(cond(sel, as, bs));
 
-    for (int i = 0; i < F::W; ++i) {
+    for (int i = 0; i < F::width; ++i) {
         REQUIRE((rf[i]) == (mask[i] ? bufAF[i] : bufBF[i]));
         REQUIRE((ru[i]) == (mask[i] ? bufAU[i] : bufBU[i]));
         REQUIRE((rs[i]) == (mask[i] ? bufAS[i] : bufBS[i]));

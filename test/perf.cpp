@@ -47,8 +47,8 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
     struct RayBoxData8S {
         simd::storage<simd::avxf> minx, miny, minz, maxx, maxy, maxz;
     };
-    const size_t dataSize8 = 1024 * 1024;
-    const size_t dataSize1 = 8 * dataSize8;
+    const std::size_t dataSize8 = 1024 * 1024;
+    const std::size_t dataSize1 = 8 * dataSize8;
     using vec8 = std::vector<RayBoxData8, simd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
     using vec1 = std::vector<RayBoxData1>;
     using vec8S = std::vector<RayBoxData8S, simd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
@@ -64,12 +64,12 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
     std::random_device rd;
     std::minstd_rand re(0x8a7ac012);
     std::normal_distribution<float> dist(0, 1);
-    auto fill = [&dist, &re](float* data, size_t num) {
+    auto fill = [&dist, &re](float* data, std::size_t num) {
         for (size_t i = 0; i < num; ++i) {
             *(data++) = dist(re);
         }
     };
-    const size_t numFloats = (sizeof(RayBoxData1) / sizeof(float)) * dataSize1;
+    const std::size_t numFloats = (sizeof(RayBoxData1) / sizeof(float)) * dataSize1;
     fill((float*)(data8.data()), numFloats);
     {
         RayBoxData1* ptr = data1.data();

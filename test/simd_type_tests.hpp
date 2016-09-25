@@ -780,7 +780,6 @@ TEST_CASE(SIMD_TYPE " expression template compatibility", SIMD_TEST_TAG) {
     auto vec2 = ~in;
 
     REQUIRE(vec1.mask() == vec2.mask());
-    REQUIRE(vec1.front() == vec2.front());
     REQUIRE(vec1.any() == vec2.any());
     REQUIRE(vec1.all() == vec2.all());
     REQUIRE(vec1.first_element() == vec2.first_element());

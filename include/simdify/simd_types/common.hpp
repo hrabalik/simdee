@@ -4,6 +4,7 @@
 #include "../util/inline.hpp"
 #include "../util/bitfiddle.hpp"
 #include "../util/integral.hpp"
+#include "../util/trivial_type.hpp"
 #include "../common/expr.hpp"
 #include <array>
 #include <type_traits>
@@ -94,18 +95,5 @@ namespace simd {
     }
 
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDIFY_TRIVIAL_TYPE( CLASS )                                                                    \
-                                                                                                         \
-SIMDIFY_INL ~CLASS() = default;                                                                          \
-                                                                                                         \
-SIMDIFY_INL CLASS() = default;                                                                           \
-                                                                                                         \
-SIMDIFY_INL CLASS(const CLASS&) = default;                                                               \
-                                                                                                         \
-SIMDIFY_INL CLASS& operator=(const CLASS&) = default;                                                    \
-                                                                                                         \
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #endif // SIMDIFY_SIMD_TYPES_COMMON_HPP

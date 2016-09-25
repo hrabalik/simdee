@@ -65,7 +65,7 @@ namespace simd {
     struct bit_iterator : std::iterator<std::input_iterator_tag, uint32_t> {
         uint32_t mask;
 
-        SIMDIFY_INL bit_iterator(uint32_t mask_) : mask(mask_) {}
+        SIMDIFY_INL constexpr bit_iterator(uint32_t mask_) : mask(mask_) {}
         SIMDIFY_INL uint32_t operator*() const { return uint32_t(lsb(mask)); }
         SIMDIFY_INL uint32_t operator->() const { return uint32_t(lsb(mask)); }
         SIMDIFY_INL bit_iterator& operator++() { mask = mask & (mask - 1); return *this; }

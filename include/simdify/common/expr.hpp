@@ -18,6 +18,7 @@ namespace simd {
         struct bit_not {
             SIMDIFY_INL constexpr explicit bit_not(const T& r) : neg(r) {}
 
+            SIMDIFY_INL bit_t mask() const { return neg.not_mask(); }
             SIMDIFY_INL bit_t front() const { return neg.not_front(); }
             SIMDIFY_INL decltype(std::declval<T>().begin()) begin() const { return neg.not_begin(); }
             SIMDIFY_INL decltype(std::declval<T>().end()) end() const { return neg.not_end(); }

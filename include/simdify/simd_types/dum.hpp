@@ -145,6 +145,7 @@ namespace simd {
             SIMDIFY_INL bool operator!=(const iterator& rhs) const { return mask != rhs.mask; }
         };
 
+        SIMDIFY_INL bit_t mask() const { return simd::tou(mm) & 0x80000000U; }
         SIMDIFY_INL bit_t front() const { return 0; }
         SIMDIFY_INL iterator begin() const { return iterator(mask()); }
         SIMDIFY_INL iterator end() const { return iterator(0); }
@@ -154,7 +155,6 @@ namespace simd {
         
     private:
         friend struct expr::bit_not<dumu>;
-        SIMDIFY_INL bit_t mask() const { return simd::tou(mm) & 0x80000000U; }
         SIMDIFY_INL bit_t not_mask() const { return mask() ^ 0x80000000U; }
         SIMDIFY_INL bit_t not_front() const { return 0; }
         SIMDIFY_INL iterator not_begin() const { return iterator(not_mask()); }

@@ -2,7 +2,6 @@
 #define SIMDIFY_COMMON_MASK_HPP
 
 #include "../util/inline.hpp"
-#include "../util/trivial_type.hpp"
 #include "../util/bitfiddle.hpp"
 #include <cstdint>
 
@@ -11,7 +10,8 @@ namespace simd {
         // result of the mask operation
         template <uint32_t AllBitsMask>
         struct mask {
-            SIMDIFY_TRIVIAL_TYPE(mask);
+            SIMDIFY_INL mask(const mask&) = default;                                                               \
+            SIMDIFY_INL mask& operator=(const mask&) = default;
 
             SIMDIFY_INL constexpr mask(uint32_t i) : value(i) {}
 

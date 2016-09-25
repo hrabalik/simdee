@@ -1,8 +1,8 @@
-#ifndef SIMDIFY_STORAGE_HPP
-#define SIMDIFY_STORAGE_HPP
+#ifndef SIMDIFY_COMMON_STORAGE_HPP
+#define SIMDIFY_COMMON_STORAGE_HPP
 
-#include "simd_types/common.hpp"
-#include "util/inline.hpp"
+#include "../simd_types/common.hpp"
+#include "../util/inline.hpp"
 #include <array>
 #include <algorithm>
 #include <initializer_list>
@@ -43,4 +43,4 @@ namespace simd {
 
 }
 
-#endif // SIMDIFY_STORAGE_HPP
+#endif // SIMDIFY_COMMON_STORAGE_HPP

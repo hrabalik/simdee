@@ -41,4 +41,4 @@ const S::storage_t bufZS { 0, 0, 0, 0 };
 #define SIMD_LOAD_AU _mm_load_ps((float*)bufAU.data())
 #define SIMD_LOAD_AS _mm_load_ps((float*)bufAS.data())
 
-#include "simd_type_tests.hpp"
+#include "simd_type.inl"

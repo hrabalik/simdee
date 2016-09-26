@@ -30,6 +30,9 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((std::is_trivially_copyable<F>::value));
     REQUIRE((std::is_trivially_copyable<U>::value));
     REQUIRE((std::is_trivially_copyable<S>::value));
+    REQUIRE((simd::is_simd_type<F>::value));
+    REQUIRE((simd::is_simd_type<U>::value));
+    REQUIRE((simd::is_simd_type<S>::value));
     REQUIRE((std::is_same<decltype(std::declval<U>().mask()), U::mask_t>::value));
     REQUIRE((std::is_same<decltype(std::declval<F>().first_element()), F::scalar_t>::value));
     REQUIRE((std::is_same<decltype(std::declval<U>().first_element()), U::scalar_t>::value));

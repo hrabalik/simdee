@@ -18,6 +18,7 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((std::is_same<U::scalar_t, uint32_t>::value));
     REQUIRE((std::is_same<S::scalar_t, int32_t>::value));
     REQUIRE((std::is_same<U::mask_t, simd::mask<U>>::value));
+    REQUIRE((std::is_same<U::storage_t, simd::storage<U>>::value));
     REQUIRE(sizeof(F) == sizeof(F::vector_t));
     REQUIRE(sizeof(U) == sizeof(U::vector_t));
     REQUIRE(sizeof(S) == sizeof(S::vector_t));

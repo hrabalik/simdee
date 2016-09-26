@@ -30,7 +30,7 @@ namespace simd {
             SIMDIFY_INL constexpr explicit deferred_not(const T& r) : neg(r) {}
 
             template <typename Rhs>
-            SIMDIFY_INL void operator=(const Rhs& r) {
+            void operator=(const Rhs& r) {
                 dont_assign_to_deferred_not<Rhs> fail;
             }
 
@@ -38,7 +38,7 @@ namespace simd {
             SIMDIFY_INL typename T::scalar_t first_element() const { return ~neg.first_element(); }
 
             SIMDIFY_INL const T reduce(typename T::binary_op_t f) {
-                T pos = ~neg;
+                T pos(~neg);
                 return pos.reduce(f);
             }
 

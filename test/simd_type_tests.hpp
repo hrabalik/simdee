@@ -508,6 +508,71 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     }
 }
 
+TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
+    using scalar_t = U::scalar_t;
+    simd::storage<U> r, e;
+    U a = bufAU;
+    U b = bufBU;
+
+    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+        std::transform(begin(bufAU), end(bufAU), begin(e), f);
+    };
+    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
+    };
+
+    SECTION("bit not") {
+        expect1([](scalar_t a) { return ~a; });
+        r = ~a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit and") {
+        expect([](scalar_t a, scalar_t b) { return a & b; });
+        r = a & b;
+        REQUIRE(r == e);
+        a &= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit or") {
+        expect([](scalar_t a, scalar_t b) { return a | b; });
+        r = a | b;
+        REQUIRE(r == e);
+        a |= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit xor") {
+        expect([](scalar_t a, scalar_t b) { return a ^ b; });
+        r = a ^ b;
+        REQUIRE(r == e);
+        a ^= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit andnot") {
+        expect([](scalar_t a, scalar_t b) { return a & ~b; });
+        r = a & ~b;
+        REQUIRE(r == e);
+        r = andnot(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("complex expr") {
+        expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
+        r = ~((~a & ~b) | (~a ^ ~b));
+        REQUIRE(r == e);
+    }
+    SECTION("rhs of compound can be implicitly constructed") {
+        a = b;
+        a &= 0xdeadbeefU; b = b & 0xdeadbeefU;
+        REQUIRE((S(a) == S(b)).mask().all());
+        a |= 0xf0f0f0f0U; b = b | 0xf0f0f0f0U;
+        REQUIRE((S(a) == S(b)).mask().all());
+        a ^= 0x1234abcdU; b = b ^ 0x1234abcdU;
+        REQUIRE((S(a) == S(b)).mask().all());
+    }
+}
+
 TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
     using scalar_t = S::scalar_t;
     simd::storage<S> r, e;
@@ -673,71 +738,6 @@ TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
         expect([](scalar_t a, scalar_t b) { return a <= b; });
         r = a <= b;
         REQUIRE(r == e);
-    }
-}
-
-TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
-    using scalar_t = U::scalar_t;
-    simd::storage<U> r, e;
-    U a = bufAU;
-    U b = bufBU;
-
-    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
-        std::transform(begin(bufAU), end(bufAU), begin(e), f);
-    };
-    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
-        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
-    };
-
-    SECTION("bit not") {
-        expect1([](scalar_t a) { return ~a; });
-        r = ~a;
-        REQUIRE(r == e);
-    }
-    SECTION("bit and") {
-        expect([](scalar_t a, scalar_t b) { return a & b; });
-        r = a & b;
-        REQUIRE(r == e);
-        a &= b;
-        r = a;
-        REQUIRE(r == e);
-    }
-    SECTION("bit or") {
-        expect([](scalar_t a, scalar_t b) { return a | b; });
-        r = a | b;
-        REQUIRE(r == e);
-        a |= b;
-        r = a;
-        REQUIRE(r == e);
-    }
-    SECTION("bit xor") {
-        expect([](scalar_t a, scalar_t b) { return a ^ b; });
-        r = a ^ b;
-        REQUIRE(r == e);
-        a ^= b;
-        r = a;
-        REQUIRE(r == e);
-    }
-    SECTION("bit andnot") {
-        expect([](scalar_t a, scalar_t b) { return a & ~b; });
-        r = a & ~b;
-        REQUIRE(r == e);
-        r = andnot(a, b);
-        REQUIRE(r == e);
-    }
-    SECTION("complex expr") {
-        expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
-        r = ~((~a & ~b) | (~a ^ ~b));
-        REQUIRE(r == e);
-    }
-    SECTION("rhs of compound can be implicitly constructed") {
-        a = b;
-        a &= 0xdeadbeefU; b = b & 0xdeadbeefU;
-        REQUIRE((S(a) == S(b)).mask().all());
-        a |= 0xf0f0f0f0U; b = b | 0xf0f0f0f0U;
-        REQUIRE((S(a) == S(b)).mask().all());
-        a ^= 0x1234abcdU; b = b ^ 0x1234abcdU;
-        REQUIRE((S(a) == S(b)).mask().all());
     }
 }
 

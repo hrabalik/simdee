@@ -882,3 +882,18 @@ TEST_CASE(SIMD_TYPE " expression template compatibility", SIMD_TEST_TAG) {
     REQUIRE(vec1.mask() == vec2.mask());
     REQUIRE(vec1.first_element() == vec2.first_element());
 }
+
+TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
+    auto expected = [](const U::storage_t& s) {
+        U::mask_t res(0U);
+        for (auto i = 0U; i < s.size(); ++i) {
+            if (s[i] & (1U << 31)) {
+                res |= U::mask_t(1U << i);
+            }
+        }
+        return res;
+    };
+
+    REQUIRE(expected(bufAU) == U(bufAU).mask());
+    REQUIRE(expected(bufBU) == U(bufBU).mask());
+}

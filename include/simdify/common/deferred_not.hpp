@@ -42,6 +42,11 @@ namespace simd {
                 return pos.reduce(f);
             }
 
+            SIMDIFY_INL const vector_t data() const {
+                T pos(~neg);
+                return pos.data();
+            }
+
             // data
             const T neg;
         };

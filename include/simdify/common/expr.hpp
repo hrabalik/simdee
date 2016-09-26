@@ -47,12 +47,36 @@ namespace simd {
             return deferred_not<T>(l.neg | r.neg);
         }
         template<typename T>
+        SIMDIFY_INL const deferred_not<T> operator|(const deferred_not<T>& l, const T& r) {
+            return deferred_not<T>(andnot(l.neg, r));
+        }
+        template<typename T>
+        SIMDIFY_INL const deferred_not<T> operator|(const T& l, const deferred_not<T>& r) {
+            return deferred_not<T>(andnot(r.neg, l));
+        }
+        template<typename T>
         SIMDIFY_INL const deferred_not<T> operator|(const deferred_not<T>& l, const deferred_not<T>& r) {
             return deferred_not<T>(l.neg & r.neg);
         }
         template<typename T>
+        SIMDIFY_INL const deferred_not<T> operator^(const deferred_not<T>& l, const T& r) {
+            return deferred_not<T>(l.neg ^ r);
+        }
+        template<typename T>
+        SIMDIFY_INL const deferred_not<T> operator^(const T& l, const deferred_not<T>& r) {
+            return deferred_not<T>(l ^ r.neg);
+        }
+        template<typename T>
         SIMDIFY_INL const T operator^(const deferred_not<T>& l, const deferred_not<T>& r) {
             return l.neg ^ r.neg;
+        }
+        template<typename T>
+        SIMDIFY_INL bool any(const deferred_not<T>& l) {
+            return !l.neg.mask().all();
+        }
+        template<typename T>
+        SIMDIFY_INL bool all(const deferred_not<T>& l) {
+            return !l.neg.mask().any();
         }
 
         template <typename From, typename To>

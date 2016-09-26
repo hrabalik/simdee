@@ -47,6 +47,26 @@ namespace simd {
                 return pos.data();
             }
 
+            template <typename Rhs>
+            void aligned_load(const Rhs& r) {
+                dont_assign_to_deferred_not<Rhs> fail;
+            }
+
+            SIMDIFY_INL void aligned_store(scalar_t* r) const {
+                T pos(~neg);
+                pos.aligned_store(r);
+            }
+
+            template <typename Rhs>
+            void unaligned_load(const Rhs& r) {
+                dont_assign_to_deferred_not<Rhs> fail;
+            }
+
+            SIMDIFY_INL void unaligned_store(scalar_t* r) const {
+                T pos(~neg);
+                pos.unaligned_store(r);
+            }
+
             // data
             const T neg;
         };

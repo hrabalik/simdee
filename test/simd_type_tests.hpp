@@ -884,16 +884,26 @@ TEST_CASE(SIMD_TYPE " expression template compatibility", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
-    auto expected = [](const U::storage_t& s) {
-        U::mask_t res(0U);
-        for (auto i = 0U; i < s.size(); ++i) {
-            if (s[i] & (1U << 31)) {
-                res |= U::mask_t(1U << i);
+    SECTION("mask() itself") {
+        auto expected = [](const U::storage_t& s) {
+            U::mask_t res(0U);
+            for (auto i = 0U; i < s.size(); ++i) {
+                if (s[i] & (1U << 31)) {
+                    res |= U::mask_t(1U << i);
+                }
             }
-        }
-        return res;
-    };
+            return res;
+        };
 
-    REQUIRE(expected(bufAU) == U(bufAU).mask());
-    REQUIRE(expected(bufBU) == U(bufBU).mask());
+        REQUIRE(expected(bufAU) == U(bufAU).mask());
+        REQUIRE(expected(bufBU) == U(bufBU).mask());
+    }
+    SECTION("any, all") {
+        U a = bufAU;
+        U b = bufBU;
+        REQUIRE(any(a) == a.mask().any());
+        REQUIRE(any(b) == b.mask().any());
+        REQUIRE(all(a) == a.mask().all());
+        REQUIRE(all(b) == b.mask().all());
+    }
 }

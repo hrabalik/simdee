@@ -89,11 +89,21 @@ namespace simd {
         l.self() = l.self() / r;
         return l.self();
     }
-    template <typename T> SIMDIFY_INL const T operator+(const simd_base<T>& l) {
+    template <typename Simd_t>
+    SIMDIFY_INL const Simd_t operator+(const simd_base<Simd_t>& l) {
         return l.self();
     }
-    template <typename T> SIMDIFY_INL const T signum(const simd_base<T>& l) {
-        return cond(l.self() > zero(), T(1), T(-1));
+    template <typename Simd_t>
+    SIMDIFY_INL const Simd_t signum(const simd_base<Simd_t>& l) {
+        return cond(l.self() > zero(), Simd_t(1), Simd_t(-1));
+    }
+    template <typename Simd_t>
+    SIMDIFY_INL bool any(const simd_base<Simd_t>& l) {
+        return l.self().mask().any();
+    }
+    template <typename Simd_t>
+    SIMDIFY_INL bool all(const simd_base<Simd_t>& l) {
+        return l.self().mask().all();
     }
 
 }

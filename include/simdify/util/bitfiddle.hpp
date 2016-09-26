@@ -81,12 +81,6 @@ namespace simd {
         return out[0]; // assuming little-endian architecture, use out[1] for big-endian
     }
 
-    // get the value of the n-th bit
-    template <typename Shift>
-    SIMDIFY_INL constexpr uint32_t nth_bit(uint32_t value, Shift n) {
-        return (value >> n) & uint32_t(1);
-    }
-
 }
 
 #endif // SIMDIFY_UTIL_BITFIDDLE_HPP

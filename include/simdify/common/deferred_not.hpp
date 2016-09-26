@@ -23,7 +23,7 @@ namespace simd {
         struct deferred_not {
             using vector_t = typename T::vector_t;
             using scalar_t = typename T::scalar_t;
-            using mask_t = typename T::scalar_t;
+            using mask_t = typename T::mask_t;
             using storage_t = typename T::storage_t;
             enum : std::size_t { width = T::width };
 

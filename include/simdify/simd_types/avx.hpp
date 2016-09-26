@@ -60,6 +60,7 @@ namespace simd {
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
+        using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 
@@ -182,7 +183,6 @@ namespace simd {
             }
         }
 
-        using binary_op_t = const Crtp(*)(const Crtp& l, const Crtp& r);
         SIMDIFY_INL const Crtp reduce(binary_op_t f) const {
             Crtp tmp = f(self(), _mm256_permute_ps(mm, _MM_SHUFFLE(2, 3, 0, 1)));
             tmp = f(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));

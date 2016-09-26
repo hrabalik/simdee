@@ -51,6 +51,7 @@ namespace simd {
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
+        using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 
@@ -131,7 +132,6 @@ namespace simd {
             *r = mm;
         }
 
-        using binary_op_t = const Crtp(*)(const Crtp& l, const Crtp& r);
         SIMDIFY_INL const Crtp reduce(binary_op_t f) const { return self(); }
     };
 

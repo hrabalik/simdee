@@ -10,6 +10,14 @@
 // SIMD_LOAD_AS -- expression that extracts vector_t from bufAS
 //
 
+#define VAL(TYPE) \
+    std::declval< TYPE >()
+
+#define HAS_METHOD(WHO, NAME_ARGS, RETURN_TYPE) \
+    (std::is_same< std::remove_cv<std::remove_reference< \
+    decltype( VAL(WHO) . NAME_ARGS ) >::type>::type, \
+    RETURN_TYPE >::value)
+
 TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE(F::width == SIMD_WIDTH);
     REQUIRE(U::width == SIMD_WIDTH);
@@ -18,7 +26,9 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((std::is_same<U::scalar_t, uint32_t>::value));
     REQUIRE((std::is_same<S::scalar_t, int32_t>::value));
     REQUIRE((std::is_same<U::mask_t, simd::mask<U>>::value));
+    REQUIRE((std::is_same<F::storage_t, simd::storage<F>>::value));
     REQUIRE((std::is_same<U::storage_t, simd::storage<U>>::value));
+    REQUIRE((std::is_same<S::storage_t, simd::storage<S>>::value));
     REQUIRE(sizeof(F) == sizeof(F::vector_t));
     REQUIRE(sizeof(U) == sizeof(U::vector_t));
     REQUIRE(sizeof(S) == sizeof(S::vector_t));
@@ -34,10 +44,37 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
     REQUIRE((simd::is_simd_type<F>::value));
     REQUIRE((simd::is_simd_type<U>::value));
     REQUIRE((simd::is_simd_type<S>::value));
-    REQUIRE((std::is_same<decltype(std::declval<U>().mask()), U::mask_t>::value));
-    REQUIRE((std::is_same<decltype(std::declval<F>().first_element()), F::scalar_t>::value));
-    REQUIRE((std::is_same<decltype(std::declval<U>().first_element()), U::scalar_t>::value));
-    REQUIRE((std::is_same<decltype(std::declval<S>().first_element()), S::scalar_t>::value));
+    REQUIRE(HAS_METHOD(const F, self(), F));
+    REQUIRE(HAS_METHOD(const U, self(), U));
+    REQUIRE(HAS_METHOD(const S, self(), S));
+    REQUIRE(HAS_METHOD(const F, data(), F::vector_t));
+    REQUIRE(HAS_METHOD(const U, data(), U::vector_t));
+    REQUIRE(HAS_METHOD(const S, data(), S::vector_t));
+    REQUIRE(HAS_METHOD(F, aligned_load(VAL(F::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(U, aligned_load(VAL(U::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(S, aligned_load(VAL(S::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(const F, aligned_store(VAL(F::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(const U, aligned_store(VAL(U::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(const S, aligned_store(VAL(S::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(F, unaligned_load(VAL(F::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(U, unaligned_load(VAL(U::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(S, unaligned_load(VAL(S::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(const F, unaligned_store(VAL(F::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(const U, unaligned_store(VAL(U::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(const S, unaligned_store(VAL(S::scalar_t*)), void));
+    REQUIRE(HAS_METHOD(F, interleaved_load(VAL(F::scalar_t*), VAL(std::size_t)), void));
+    REQUIRE(HAS_METHOD(U, interleaved_load(VAL(U::scalar_t*), VAL(std::size_t)), void));
+    REQUIRE(HAS_METHOD(S, interleaved_load(VAL(S::scalar_t*), VAL(std::size_t)), void));
+    REQUIRE(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(std::size_t)), void));
+    REQUIRE(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(std::size_t)), void));
+    REQUIRE(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(std::size_t)), void));
+    REQUIRE(HAS_METHOD(const F, reduce(VAL(F::binary_op_t)), F));
+    REQUIRE(HAS_METHOD(const U, reduce(VAL(U::binary_op_t)), U));
+    REQUIRE(HAS_METHOD(const S, reduce(VAL(S::binary_op_t)), S));
+    REQUIRE(HAS_METHOD(const U, mask(), U::mask_t));
+    REQUIRE(HAS_METHOD(const F, first_element(), F::scalar_t));
+    REQUIRE(HAS_METHOD(const U, first_element(), U::scalar_t));
+    REQUIRE(HAS_METHOD(const S, first_element(), S::scalar_t));
 }
 
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {

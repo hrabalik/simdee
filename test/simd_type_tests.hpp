@@ -657,9 +657,12 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     F a = bufAF;
     F b = bufBF;
 
+    auto expect0 = [&e](bool v) {
+        std::fill(begin(e), end(e), v ? ~0U : 0U);
+    };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? 0xffffffffU : 0x00000000U;
+            return f(a, b) ? ~0U : 0U;
         };
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), f2);
     };
@@ -668,30 +671,48 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
         expect([](scalar_t a, scalar_t b) { return a == b; });
         r = a == b;
         REQUIRE(r == e);
+        expect0(true);
+        r = a == a;
+        REQUIRE(r == e);
     }
     SECTION("not equal to") {
         expect([](scalar_t a, scalar_t b) { return a != b; });
         r = a != b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a != a;
         REQUIRE(r == e);
     }
     SECTION("greater") {
         expect([](scalar_t a, scalar_t b) { return a > b; });
         r = a > b;
         REQUIRE(r == e);
+        expect0(false);
+        r = a > a;
+        REQUIRE(r == e);
     }
     SECTION("less") {
         expect([](scalar_t a, scalar_t b) { return a < b; });
         r = a < b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a < a;
         REQUIRE(r == e);
     }
     SECTION("greater equal") {
         expect([](scalar_t a, scalar_t b) { return a >= b; });
         r = a >= b;
         REQUIRE(r == e);
+        expect0(true);
+        r = a >= a;
+        REQUIRE(r == e);
     }
     SECTION("less equal") {
         expect([](scalar_t a, scalar_t b) { return a <= b; });
         r = a <= b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a <= a;
         REQUIRE(r == e);
     }
 }
@@ -702,9 +723,12 @@ TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
     S a = bufAS;
     S b = bufBS;
 
+    auto expect0 = [&e](bool v) {
+        std::fill(begin(e), end(e), v ? ~0U : 0U);
+    };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? 0xffffffffU : 0x00000000U;
+            return f(a, b) ? ~0U : 0U;
         };
         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f2);
     };
@@ -713,30 +737,48 @@ TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
         expect([](scalar_t a, scalar_t b) { return a == b; });
         r = a == b;
         REQUIRE(r == e);
+        expect0(true);
+        r = a == a;
+        REQUIRE(r == e);
     }
     SECTION("not equal to") {
         expect([](scalar_t a, scalar_t b) { return a != b; });
         r = a != b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a != a;
         REQUIRE(r == e);
     }
     SECTION("greater") {
         expect([](scalar_t a, scalar_t b) { return a > b; });
         r = a > b;
         REQUIRE(r == e);
+        expect0(false);
+        r = a > a;
+        REQUIRE(r == e);
     }
     SECTION("less") {
         expect([](scalar_t a, scalar_t b) { return a < b; });
         r = a < b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a < a;
         REQUIRE(r == e);
     }
     SECTION("greater equal") {
         expect([](scalar_t a, scalar_t b) { return a >= b; });
         r = a >= b;
         REQUIRE(r == e);
+        expect0(true);
+        r = a >= a;
+        REQUIRE(r == e);
     }
     SECTION("less equal") {
         expect([](scalar_t a, scalar_t b) { return a <= b; });
         r = a <= b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a <= a;
         REQUIRE(r == e);
     }
 }

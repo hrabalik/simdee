@@ -54,32 +54,39 @@ namespace simd {
     //
     // meta operations - apply to all SIMD types
     //
-    template <typename T> SIMDIFY_INL T& operator&=(simd_base<T>& l, const simd_base<T>& r) {
-        l.self() = l.self() & r.self();
+    template <typename Simd_t, typename Rhs_t>
+    SIMDIFY_INL Simd_t& operator&=(simd_base<Simd_t>& l, const Rhs_t& r) {
+        l.self() = l.self() & r;
         return l.self();
     }
-    template <typename T> SIMDIFY_INL T& operator|=(simd_base<T>& l, const simd_base<T>& r) {
-        l.self() = l.self() | r.self();
+    template <typename Simd_t, typename Rhs_t>
+    SIMDIFY_INL Simd_t& operator|=(simd_base<Simd_t>& l, const Rhs_t& r) {
+        l.self() = l.self() | r;
         return l.self();
     }
-    template <typename T> SIMDIFY_INL T& operator^=(simd_base<T>& l, const simd_base<T>& r) {
-        l.self() = l.self() ^ r.self();
+    template <typename Simd_t, typename Rhs_t>
+    SIMDIFY_INL Simd_t& operator^=(simd_base<Simd_t>& l, const Rhs_t& r) {
+        l.self() = l.self() ^ r;
         return l.self();
     }
-    template <typename T> SIMDIFY_INL T& operator+=(simd_base<T>& l, const simd_base<T>& r) {
-        l.self() = l.self() + r.self();
+    template <typename Simd_t, typename Rhs_t>
+    SIMDIFY_INL Simd_t& operator+=(simd_base<Simd_t>& l, const Rhs_t& r) {
+        l.self() = l.self() + r;
         return l.self();
     }
-    template <typename T> SIMDIFY_INL T& operator-=(simd_base<T>& l, const simd_base<T>& r) {
-        l.self() = l.self() - r.self();
+    template <typename Simd_t, typename Rhs_t>
+    SIMDIFY_INL Simd_t& operator-=(simd_base<Simd_t>& l, const Rhs_t& r) {
+        l.self() = l.self() - r;
         return l.self();
     }
-    template <typename T> SIMDIFY_INL T& operator*=(simd_base<T>& l, const simd_base<T>& r) {
-        l.self() = l.self() * r.self();
+    template <typename Simd_t, typename Rhs_t>
+    SIMDIFY_INL Simd_t& operator*=(simd_base<Simd_t>& l, const Rhs_t& r) {
+        l.self() = l.self() * r;
         return l.self();
     }
-    template <typename T> SIMDIFY_INL T& operator/=(simd_base<T>& l, const simd_base<T>& r) {
-        l.self() = l.self() / r.self();
+    template <typename Simd_t, typename Rhs_t>
+    SIMDIFY_INL Simd_t& operator/=(simd_base<Simd_t>& l, const Rhs_t& r) {
+        l.self() = l.self() / r;
         return l.self();
     }
     template <typename T> SIMDIFY_INL const T operator+(const simd_base<T>& l) {

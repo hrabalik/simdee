@@ -491,6 +491,17 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
         r = rsqrt(abs(a));
         for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
+    SECTION("rhs of compound can be implicitly constructed") {
+        a = b;
+        a += 1.23f; b = b + 1.23f;
+        REQUIRE((a == b).mask().all());
+        a -= 2.34f; b = b - 2.34f;
+        REQUIRE((a == b).mask().all());
+        a *= 3.45f; b = b * 3.45f;
+        REQUIRE((a == b).mask().all());
+        a /= 4.56f; b = b / 4.56f;
+        REQUIRE((a == b).mask().all());
+    }
 }
 
 TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
@@ -555,6 +566,15 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         std::transform(begin(bufAS), end(bufAS), begin(e), [](S::scalar_t a) { return (a < 0) ? S::scalar_t(-1) : S::scalar_t(1); });
         r = signum(a);
         REQUIRE(r == e);
+    }
+    SECTION("rhs of compound can be implicitly constructed") {
+        a = b;
+        a += 123; b = b + 123;
+        REQUIRE((a == b).mask().all());
+        a -= 234; b = b - 234;
+        REQUIRE((a == b).mask().all());
+        a *= 345; b = b * 345;
+        REQUIRE((a == b).mask().all());
     }
 }
 
@@ -717,6 +737,15 @@ TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
         });
         r = ~((~a & ~b) | (~a ^ ~b));
         REQUIRE(r == e);
+    }
+    SECTION("rhs of compound can be implicitly constructed") {
+        a = b;
+        a &= 0xdeadbeefU; b = b & 0xdeadbeefU;
+        REQUIRE((S(a) == S(b)).mask().all());
+        a |= 0xf0f0f0f0U; b = b | 0xf0f0f0f0U;
+        REQUIRE((S(a) == S(b)).mask().all());
+        a ^= 0x1234abcdU; b = b ^ 0x1234abcdU;
+        REQUIRE((S(a) == S(b)).mask().all());
     }
 }
 

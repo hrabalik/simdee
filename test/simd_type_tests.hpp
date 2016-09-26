@@ -501,13 +501,13 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;
         a += 1.23f; b = b + 1.23f;
-        REQUIRE((a == b).mask().all());
+        REQUIRE(all(a == b));
         a -= 2.34f; b = b - 2.34f;
-        REQUIRE((a == b).mask().all());
+        REQUIRE(all(a == b));
         a *= 3.45f; b = b * 3.45f;
-        REQUIRE((a == b).mask().all());
+        REQUIRE(all(a == b));
         a /= 4.56f; b = b / 4.56f;
-        REQUIRE((a == b).mask().all());
+        REQUIRE(all(a == b));
     }
 }
 
@@ -568,11 +568,11 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;
         a &= 0xdeadbeefU; b = b & 0xdeadbeefU;
-        REQUIRE((S(a) == S(b)).mask().all());
+        REQUIRE(all(a == b));
         a |= 0xf0f0f0f0U; b = b | 0xf0f0f0f0U;
-        REQUIRE((S(a) == S(b)).mask().all());
+        REQUIRE(all(a == b));
         a ^= 0x1234abcdU; b = b ^ 0x1234abcdU;
-        REQUIRE((S(a) == S(b)).mask().all());
+        REQUIRE(all(a == b));
     }
 }
 
@@ -646,11 +646,11 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;
         a += 123; b = b + 123;
-        REQUIRE((a == b).mask().all());
+        REQUIRE(all(a == b));
         a -= 234; b = b - 234;
-        REQUIRE((a == b).mask().all());
+        REQUIRE(all(a == b));
         a *= 345; b = b * 345;
-        REQUIRE((a == b).mask().all());
+        REQUIRE(all(a == b));
     }
 }
 

@@ -165,7 +165,7 @@ namespace simd {
             mm = _mm_loadu_ps((const float*)r);
         }
 
-        SIMDIFY_INL void unaligned_store(scalar_t* r) {
+        SIMDIFY_INL void unaligned_store(scalar_t* r) const {
             _mm_storeu_ps((float*)r, mm);
         }
 

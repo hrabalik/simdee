@@ -119,7 +119,7 @@ namespace simd {
             mm = *r;
         }
 
-        SIMDIFY_INL void unaligned_store(scalar_t* r) {
+        SIMDIFY_INL void unaligned_store(scalar_t* r) const {
             *r = mm;
         }
 

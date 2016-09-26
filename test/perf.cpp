@@ -44,7 +44,7 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
         float minx[8], miny[8], minz[8], maxx[8], maxy[8], maxz[8];
     };
     struct RayBoxData8S {
-        simd::storage<simd::avxf> minx, miny, minz, maxx, maxy, maxz;
+        simd::avxf::storage_t minx, miny, minz, maxx, maxy, maxz;
     };
     const std::size_t dataSize8 = 1024 * 1024;
     const std::size_t dataSize1 = 8 * dataSize8;

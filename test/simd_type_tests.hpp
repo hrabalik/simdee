@@ -40,9 +40,9 @@ TEST_CASE(SIMD_TYPE " basic guarantees", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
-    simd::storage<F> rf = bufZF;
-    simd::storage<U> ru = bufZU;
-    simd::storage<S> rs = bufZS;
+    F::storage_t rf = bufZF;
+    U::storage_t ru = bufZU;
+    S::storage_t rs = bufZS;
 
     auto tor = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
         rf = tf; ru = tu; rs = ts;
@@ -84,10 +84,10 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from simd::storage") {
-        simd::storage<F> storf;
-        simd::storage<U> storu;
-        simd::storage<S> stors;
+    SECTION("from storage_t") {
+        F::storage_t storf;
+        U::storage_t storu;
+        S::storage_t stors;
         storf = bufAF;
         storu = bufAU;
         stors = bufAS;
@@ -168,9 +168,9 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
 
 
 TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
-    simd::storage<F> rf = bufZF;
-    simd::storage<U> ru = bufZU;
-    simd::storage<S> rs = bufZS;
+    F::storage_t rf = bufZF;
+    U::storage_t ru = bufZU;
+    S::storage_t rs = bufZS;
 
     auto implicit_test = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
         rf = tf; ru = tu; rs = ts;
@@ -209,10 +209,10 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from simd::storage") {
-        simd::storage<F> storf;
-        simd::storage<U> storu;
-        simd::storage<S> stors;
+    SECTION("from storage_t") {
+        F::storage_t storf;
+        U::storage_t storu;
+        S::storage_t stors;
         storf = bufAF;
         storu = bufAU;
         stors = bufAS;
@@ -254,9 +254,9 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
-    simd::storage<F> rf = bufZF;
-    simd::storage<U> ru = bufZU;
-    simd::storage<S> rs = bufZS;
+    F::storage_t rf = bufZF;
+    U::storage_t ru = bufZU;
+    S::storage_t rs = bufZS;
     F tf; U tu; S ts;
 
     auto tor = [&rf, &tf, &ru, &tu, &rs, &ts]() {
@@ -301,10 +301,10 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from simd::storage") {
-        simd::storage<F> storf;
-        simd::storage<U> storu;
-        simd::storage<S> stors;
+    SECTION("from storage_t") {
+        F::storage_t storf;
+        U::storage_t storu;
+        S::storage_t stors;
         storf = bufAF;
         storu = bufAU;
         stors = bufAS;
@@ -371,7 +371,7 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
     SECTION("int to float") {
-        simd::storage<F> expected, result;
+        F::storage_t expected, result;
         std::transform(begin(bufAS), end(bufAS), begin(expected), [](S::scalar_t a) {
             return static_cast<F::scalar_t>(a);
         });
@@ -380,7 +380,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         REQUIRE(result == expected);
     }
     SECTION("float to int") {
-        simd::storage<S> expected, result;
+        S::storage_t expected, result;
         std::transform(begin(bufAF), end(bufAF), begin(expected), [](F::scalar_t a) {
             return simd::round_to_int32(a);
         });
@@ -389,7 +389,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         REQUIRE(result == expected);
     }
     SECTION("int to uint") {
-        simd::storage<U> expected, result;
+        U::storage_t expected, result;
         std::transform(begin(bufAS), end(bufAS), begin(expected), [](S::scalar_t a) {
             return static_cast<U::scalar_t>(a);
         });
@@ -398,7 +398,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         REQUIRE(result == expected);
     }
     SECTION("uint to int") {
-        simd::storage<S> expected, result;
+        S::storage_t expected, result;
         std::transform(begin(bufAU), end(bufAU), begin(expected), [](U::scalar_t a) {
             return simd::round_to_int32(a);
         });
@@ -410,7 +410,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     using scalar_t = F::scalar_t;
-    simd::storage<F> r, e;
+    F::storage_t r, e;
     F a = bufAF;
     F b = bufBF;
 
@@ -513,7 +513,7 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
     using scalar_t = U::scalar_t;
-    simd::storage<U> r, e;
+    U::storage_t r, e;
     U a = bufAU;
     U b = bufBU;
 
@@ -578,7 +578,7 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
     using scalar_t = S::scalar_t;
-    simd::storage<S> r, e;
+    S::storage_t r, e;
     S a = bufAS;
     S b = bufBS;
 
@@ -656,7 +656,7 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     using scalar_t = F::scalar_t;
-    simd::storage<U> r, e;
+    U::storage_t r, e;
     F a = bufAF;
     F b = bufBF;
 
@@ -722,7 +722,7 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
     using scalar_t = U::scalar_t;
-    simd::storage<U> r, e;
+    U::storage_t r, e;
     U a = bufAU;
     U b = bufBU;
 
@@ -756,7 +756,7 @@ TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
     using scalar_t = S::scalar_t;
-    simd::storage<U> r, e;
+    U::storage_t r, e;
     S a = bufAS;
     S b = bufBS;
 
@@ -863,9 +863,9 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     U sel = af >= bf;
     auto mask = sel.mask();
 
-    simd::storage<F> rf(cond(sel, af, bf));
-    simd::storage<U> ru(cond(sel, au, bu));
-    simd::storage<S> rs(cond(sel, as, bs));
+    F::storage_t rf(cond(sel, af, bf));
+    U::storage_t ru(cond(sel, au, bu));
+    S::storage_t rs(cond(sel, as, bs));
 
     for (int i = 0; i < F::width; ++i) {
         REQUIRE((rf[i]) == (mask[i] ? bufAF[i] : bufBF[i]));

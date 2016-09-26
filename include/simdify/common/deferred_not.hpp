@@ -25,6 +25,7 @@ namespace simd {
             using scalar_t = typename T::scalar_t;
             using mask_t = typename T::mask_t;
             using storage_t = typename T::storage_t;
+            using binary_op_t = typename T::binary_op_t;
             enum : std::size_t { width = T::width };
 
             SIMDIFY_INL constexpr explicit deferred_not(const T& r) : neg(r) {}
@@ -36,11 +37,6 @@ namespace simd {
 
             SIMDIFY_INL typename T::mask_t mask() const { return ~neg.mask(); }
             SIMDIFY_INL typename T::scalar_t first_element() const { return ~neg.first_element(); }
-
-            SIMDIFY_INL const T reduce(typename T::binary_op_t f) {
-                T pos(~neg);
-                return pos.reduce(f);
-            }
 
             SIMDIFY_INL const vector_t data() const {
                 T pos(~neg);
@@ -65,6 +61,21 @@ namespace simd {
             SIMDIFY_INL void unaligned_store(scalar_t* r) const {
                 T pos(~neg);
                 pos.unaligned_store(r);
+            }
+
+            template <typename Rhs>
+            void interleaved_load(const Rhs& r, std::size_t step) {
+                dont_assign_to_deferred_not<Rhs> fail;
+            }
+
+            SIMDIFY_INL void interleaved_store(scalar_t* r, std::size_t step) const {
+                T pos(~neg);
+                pos.interleaved_store(r, step);
+            }
+
+            SIMDIFY_INL const T reduce(binary_op_t f) const {
+                T pos(~neg);
+                return pos.reduce(f);
             }
 
             // data

@@ -22,13 +22,13 @@ const simd::storage<U> bufAU {
     1753029375U, 1117080442U, 3817141237U, 3761735248U,
 };
 const simd::storage<U> bufBU {
-    1679702461U, 2102346647U, 480083363U, 779803484U,
+    1679702461U, 2102346647U, 480083363U, 3761735248U,
 };
 const simd::storage<S> bufAS {
     -1712190449, -48692967, -214510247, 440646957,
 };
 const simd::storage<S> bufBS {
-    724135231, 56848532, 64122653, 1641874147,
+    724135231, 56848532, 64122653, 440646957,
 };
 const simd::storage<F> bufZF { 0, 0, 0, 0 };
 const simd::storage<U> bufZU { 0, 0, 0, 0 };

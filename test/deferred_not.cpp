@@ -57,4 +57,14 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         auto res_nua = nua.reduce(simd::operator^).first_element();
         REQUIRE(res_ua == res_nua);
     }
+    SECTION("mask") {
+        auto res_ua = ua.mask();
+        auto res_nua = nua.mask();
+        REQUIRE(res_ua == res_nua);
+    }
+    SECTION("first_element") {
+        auto res_ua = ua.first_element();
+        auto res_nua = nua.first_element();
+        REQUIRE(res_ua == res_nua);
+    }
 }

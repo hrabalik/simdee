@@ -35,9 +35,6 @@ namespace simd {
                 dont_change_deferred_not<Rhs> fail;
             }
 
-            SIMDIFY_INL typename T::mask_t mask() const { return ~neg.mask(); }
-            SIMDIFY_INL typename T::scalar_t first_element() const { return ~neg.first_element(); }
-
             SIMDIFY_INL const vector_t data() const {
                 T pos(~neg);
                 return pos.data();
@@ -76,6 +73,14 @@ namespace simd {
             SIMDIFY_INL const T reduce(binary_op_t f) const {
                 T pos(~neg);
                 return pos.reduce(f);
+            }
+
+            SIMDIFY_INL typename T::mask_t mask() const {
+                return ~neg.mask();
+            }
+
+            SIMDIFY_INL typename T::scalar_t first_element() const {
+                return ~neg.first_element();
             }
 
             // data

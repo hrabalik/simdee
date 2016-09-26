@@ -278,6 +278,9 @@ namespace simd {
     }
 
 #if defined(SIMDIFY_NEED_INT)
+    SIMDIFY_INL const avxu operator==(const avxu& l, const avxu& r) { return _mm256_cmpeq_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_avxu operator!=(const avxu& l, const avxu& r) { return not_avxu(_mm256_cmpeq_epi32(l.mmi(), r.mmi())); }
+
     SIMDIFY_INL const avxu operator<(const avxs& l, const avxs& r) { return _mm256_cmpgt_epi32(r.mmi(), l.mmi()); }
     SIMDIFY_INL const avxu operator>(const avxs& l, const avxs& r) { return _mm256_cmpgt_epi32(l.mmi(), r.mmi()); }
     SIMDIFY_INL const not_avxu operator<=(const avxs& l, const avxs& r) { return not_avxu(_mm256_cmpgt_epi32(l.mmi(), r.mmi())); }

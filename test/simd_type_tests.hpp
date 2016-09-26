@@ -717,6 +717,40 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     }
 }
 
+TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
+    using scalar_t = U::scalar_t;
+    simd::storage<U> r, e;
+    U a = bufAU;
+    U b = bufBU;
+
+    auto expect0 = [&e](bool v) {
+        std::fill(begin(e), end(e), v ? ~0U : 0U);
+    };
+    auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
+        auto f2 = [f](scalar_t a, scalar_t b) {
+            return f(a, b) ? ~0U : 0U;
+        };
+        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f2);
+    };
+
+    SECTION("equal to") {
+        expect([](scalar_t a, scalar_t b) { return a == b; });
+        r = a == b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a == a;
+        REQUIRE(r == e);
+    }
+    SECTION("not equal to") {
+        expect([](scalar_t a, scalar_t b) { return a != b; });
+        r = a != b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a != a;
+        REQUIRE(r == e);
+    }
+}
+
 TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
     using scalar_t = S::scalar_t;
     simd::storage<U> r, e;

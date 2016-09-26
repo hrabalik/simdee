@@ -282,6 +282,9 @@ namespace simd {
     }
 
 #if defined(SIMDIFY_NEED_INT)
+    SIMDIFY_INL const sseu operator==(const sseu& l, const sseu& r) { return _mm_cmpeq_epi32(l.mmi(), r.mmi()); }
+    SIMDIFY_INL const not_sseu operator!=(const sseu& l, const sseu& r) { return not_sseu(_mm_cmpeq_epi32(l.mmi(), r.mmi())); }
+
     SIMDIFY_INL const sseu operator<(const sses& l, const sses& r) { return _mm_cmplt_epi32(l.mmi(), r.mmi()); }
     SIMDIFY_INL const sseu operator>(const sses& l, const sses& r) { return _mm_cmpgt_epi32(l.mmi(), r.mmi()); }
     SIMDIFY_INL const not_sseu operator<=(const sses& l, const sses& r) { return not_sseu(_mm_cmpgt_epi32(l.mmi(), r.mmi())); }

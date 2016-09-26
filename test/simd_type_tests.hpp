@@ -406,22 +406,30 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
+    using scalar_t = F::scalar_t;
     simd::storage<F> r, e;
     F a = bufAF;
     F b = bufBF;
 
+    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+        std::transform(begin(bufAF), end(bufAF), begin(e), f);
+    };
+    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), f);
+    };
+
     SECTION("unary plus") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return +a; });
+        expect1([](scalar_t a) { return +a; });
         r = +a;
         REQUIRE(r == e);
     }
     SECTION("unary minus") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), std::negate<F::scalar_t>());
+        expect1([](scalar_t a) { return -a; });
         r = -a;
         REQUIRE(r == e);
     }
     SECTION("plus") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::plus<F::scalar_t>());
+        expect([](scalar_t a, scalar_t b) { return a + b; });
         r = a + b;
         REQUIRE(r == e);
         a += b;
@@ -429,7 +437,7 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("minus") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::minus<F::scalar_t>());
+        expect([](scalar_t a, scalar_t b) { return a - b; });
         r = a - b;
         REQUIRE(r == e);
         a -= b;
@@ -437,7 +445,7 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("multiplies") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::multiplies<F::scalar_t>());
+        expect([](scalar_t a, scalar_t b) { return a * b; });
         r = a * b;
         REQUIRE(r == e);
         a *= b;
@@ -445,7 +453,7 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("divides") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), std::divides<F::scalar_t>());
+        expect([](scalar_t a, scalar_t b) { return a / b; });
         r = a / b;
         REQUIRE(r == e);
         a /= b;
@@ -453,41 +461,37 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("minimum") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [](F::scalar_t l, F::scalar_t r) {
-            return std::min(l, r);
-        });
+        expect([](scalar_t a, scalar_t b) { return std::min(a, b); });
         r = min(a, b);
         REQUIRE(r == e);
     }
     SECTION("maximum") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [](F::scalar_t l, F::scalar_t r) {
-            return std::max(l, r);
-        });
+        expect([](scalar_t a, scalar_t b) { return std::max(a, b); });
         r = max(a, b);
         REQUIRE(r == e);
     }
     SECTION("absolute value") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::abs(a); });
+        expect1([](scalar_t a) { return std::abs(a); });
         r = abs(a);
         REQUIRE(r == e);
     }
     SECTION("signum") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::signbit(a) ? F::scalar_t(-1) : F::scalar_t(1); });
+        expect1([](scalar_t a) { return std::signbit(a) ? scalar_t(-1) : scalar_t(1); });
         r = signum(a);
         REQUIRE(r == e);
     }
     SECTION("square root") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return std::sqrt(std::abs(a)); });
+        expect1([](scalar_t a) { return std::sqrt(std::abs(a)); });
         r = sqrt(abs(a));
         for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]));
     }
     SECTION("fast reciprocal") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / a; });
+        expect1([](scalar_t a) { return 1 / a; });
         r = rcp(a);
         for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
     SECTION("fast reciprocal square root") {
-        std::transform(begin(bufAF), end(bufAF), begin(e), [](F::scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
+        expect1([](scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
         r = rsqrt(abs(a));
         for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
@@ -505,22 +509,30 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
+    using scalar_t = S::scalar_t;
     simd::storage<S> r, e;
     S a = bufAS;
     S b = bufBS;
 
+    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+        std::transform(begin(bufAS), end(bufAS), begin(e), f);
+    };
+    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f);
+    };
+
     SECTION("unary plus") {
-        std::transform(begin(bufAS), end(bufAS), begin(e), [](S::scalar_t a) { return +a; });
+        expect1([](scalar_t a) { return +a; });
         r = +a;
         REQUIRE(r == e);
     }
     SECTION("unary minus") {
-        std::transform(begin(bufAS), end(bufAS), begin(e), std::negate<S::scalar_t>());
+        expect1([](scalar_t a) { return -a; });
         r = -a;
         REQUIRE(r == e);
     }
     SECTION("plus") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), std::plus<S::scalar_t>());
+        expect([](scalar_t a, scalar_t b) { return a + b; });
         r = a + b;
         REQUIRE(r == e);
         a += b;
@@ -528,7 +540,7 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("minus") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), std::minus<S::scalar_t>());
+        expect([](scalar_t a, scalar_t b) { return a - b; });
         r = a - b;
         REQUIRE(r == e);
         a -= b;
@@ -536,7 +548,7 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("multiplies") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), std::multiplies<S::scalar_t>());
+        expect([](scalar_t a, scalar_t b) { return a * b; });
         r = a * b;
         REQUIRE(r == e);
         a *= b;
@@ -544,26 +556,22 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("minimum") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [](S::scalar_t l, S::scalar_t r) {
-            return std::min(l, r);
-        });
+        expect([](scalar_t a, scalar_t b) { return std::min(a, b); });
         r = min(a, b);
         REQUIRE(r == e);
     }
     SECTION("maximum") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [](S::scalar_t l, S::scalar_t r) {
-            return std::max(l, r);
-        });
+        expect([](scalar_t a, scalar_t b) { return std::max(a, b); });
         r = max(a, b);
         REQUIRE(r == e);
     }
     SECTION("absolute value") {
-        std::transform(begin(bufAS), end(bufAS), begin(e), [](S::scalar_t a) { return std::abs(a); });
+        expect1([](scalar_t a) { return std::abs(a); });
         r = abs(a);
         REQUIRE(r == e);
     }
     SECTION("signum") {
-        std::transform(begin(bufAS), end(bufAS), begin(e), [](S::scalar_t a) { return (a < 0) ? S::scalar_t(-1) : S::scalar_t(1); });
+        expect1([](scalar_t a) { return (a < 0) ? scalar_t(-1) : scalar_t(1); });
         r = signum(a);
         REQUIRE(r == e);
     }
@@ -579,114 +587,115 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
-    auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
+    using scalar_t = F::scalar_t;
     simd::storage<U> r, e;
     F a = bufAF;
     F b = bufBF;
 
+    auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
+        auto f2 = [f](scalar_t a, scalar_t b) {
+            return f(a, b) ? 0xffffffffU : 0x00000000U;
+        };
+        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), f2);
+    };
+
     SECTION("equal to") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
-            return if_(a == b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a == b; });
         r = a == b;
         REQUIRE(r == e);
     }
     SECTION("not equal to") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
-            return if_(a != b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a != b; });
         r = a != b;
         REQUIRE(r == e);
     }
     SECTION("greater") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
-            return if_(a > b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a > b; });
         r = a > b;
         REQUIRE(r == e);
     }
     SECTION("less") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
-            return if_(a < b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a < b; });
         r = a < b;
         REQUIRE(r == e);
     }
     SECTION("greater equal") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
-            return if_(a >= b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a >= b; });
         r = a >= b;
         REQUIRE(r == e);
     }
     SECTION("less equal") {
-        std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), [&if_](F::scalar_t a, F::scalar_t b) {
-            return if_(a <= b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a <= b; });
         r = a <= b;
         REQUIRE(r == e);
     }
 }
 
 TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
-    auto if_ = [](bool in) { return in ? 0xffffffffU : 0x00000000U; };
+    using scalar_t = S::scalar_t;
     simd::storage<U> r, e;
     S a = bufAS;
     S b = bufBS;
 
+    auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
+        auto f2 = [f](scalar_t a, scalar_t b) {
+            return f(a, b) ? 0xffffffffU : 0x00000000U;
+        };
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f2);
+    };
+
     SECTION("equal to") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
-            return if_(a == b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a == b; });
         r = a == b;
         REQUIRE(r == e);
     }
     SECTION("not equal to") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
-            return if_(a != b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a != b; });
         r = a != b;
         REQUIRE(r == e);
     }
     SECTION("greater") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
-            return if_(a > b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a > b; });
         r = a > b;
         REQUIRE(r == e);
     }
     SECTION("less") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
-            return if_(a < b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a < b; });
         r = a < b;
         REQUIRE(r == e);
     }
     SECTION("greater equal") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
-            return if_(a >= b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a >= b; });
         r = a >= b;
         REQUIRE(r == e);
     }
     SECTION("less equal") {
-        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), [&if_](S::scalar_t a, S::scalar_t b) {
-            return if_(a <= b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a <= b; });
         r = a <= b;
         REQUIRE(r == e);
     }
 }
 
 TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
+    using scalar_t = U::scalar_t;
     simd::storage<U> r, e;
     U a = bufAU;
     U b = bufBU;
 
+    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+        std::transform(begin(bufAU), end(bufAU), begin(e), f);
+    };
+    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
+    };
+
+    SECTION("bit not") {
+        expect1([](scalar_t a) { return ~a; });
+        r = ~a;
+        REQUIRE(r == e);
+    }
     SECTION("bit and") {
-        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
-            return simd::tou(a) & simd::tou(b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a & b; });
         r = a & b;
         REQUIRE(r == e);
         a &= b;
@@ -694,9 +703,7 @@ TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("bit or") {
-        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
-            return simd::tou(a) | simd::tou(b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a | b; });
         r = a | b;
         REQUIRE(r == e);
         a |= b;
@@ -704,37 +711,22 @@ TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
         REQUIRE(r == e);
     }
     SECTION("bit xor") {
-        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
-            return simd::tou(a) ^ simd::tou(b);
-        });
+        expect([](scalar_t a, scalar_t b) { return a ^ b; });
         r = a ^ b;
         REQUIRE(r == e);
         a ^= b;
         r = a;
         REQUIRE(r == e);
     }
-	SECTION("bit andnot") {
-		std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t a, U::scalar_t b) {
-			return simd::tou(a) & ~simd::tou(b);
-		});
-		r = a & ~b;
-		REQUIRE(r == e);
-		r = andnot(a, b);
-		REQUIRE(r == e);
-	}
-    SECTION("bit not") {
-        std::transform(begin(bufAU), end(bufAU), begin(e), [](U::scalar_t a) {
-            return ~simd::tou(a);
-        });
-        r = ~a;
+    SECTION("bit andnot") {
+        expect([](scalar_t a, scalar_t b) { return a & ~b; });
+        r = a & ~b;
+        REQUIRE(r == e);
+        r = andnot(a, b);
         REQUIRE(r == e);
     }
     SECTION("complex expr") {
-        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), [](U::scalar_t af, U::scalar_t bf) {
-            auto a = simd::tou(af);
-            auto b = simd::tou(bf);
-            return ~((~a & ~b) | (~a ^ ~b));
-        });
+        expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
         r = ~((~a & ~b) | (~a ^ ~b));
         REQUIRE(r == e);
     }
@@ -750,13 +742,13 @@ TEST_CASE(SIMD_TYPE " bitwise", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
+    using scalar_t = F::scalar_t;
     F a = bufAF;
-    auto max = [](F::scalar_t l, F::scalar_t r) { return std::max(l, r); };
-    auto min = [](F::scalar_t l, F::scalar_t r) { return std::min(l, r); };
-    F::scalar_t inf = std::numeric_limits<F::scalar_t>::infinity();
-    F::scalar_t v, v0;
+    scalar_t v, v0;
 
     SECTION("max") {
+        constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
+        auto max = [](scalar_t l, scalar_t r) { return std::max(l, r); };
         v0 = std::accumulate(begin(bufAF), end(bufAF), -inf, max);
         v = a.reduce(simd::max).first_element();
         REQUIRE(v == v0);
@@ -764,6 +756,8 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
         REQUIRE(v == -inf);
     }
     SECTION("min") {
+        constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
+        auto min = [](scalar_t l, scalar_t r) { return std::min(l, r); };
         v0 = std::accumulate(begin(bufAF), end(bufAF), inf, min);
         v = a.reduce(simd::min).first_element();
         REQUIRE(v == v0);
@@ -771,14 +765,14 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
         REQUIRE(v == inf);
     }
     SECTION("sum") {
-        v0 = std::accumulate(begin(bufAF), end(bufAF), F::scalar_t(0));
+        v0 = std::accumulate(begin(bufAF), end(bufAF), scalar_t(0));
         v = a.reduce(simd::operator+).first_element();
         REQUIRE(v == Approx(v0));
         v = sum_mask(a, simd::zero()).reduce(simd::operator+).first_element();
         REQUIRE(v == 0);
     }
     SECTION("product") {
-        v0 = std::accumulate(begin(bufAF), end(bufAF), F::scalar_t(1), std::multiplies<F::scalar_t>());
+        v0 = std::accumulate(begin(bufAF), end(bufAF), scalar_t(1), std::multiplies<scalar_t>());
         v = a.reduce(simd::operator*).first_element();
         REQUIRE(v == Approx(v0));
         v = product_mask(a, simd::zero()).reduce(simd::operator*).first_element();

@@ -62,14 +62,17 @@ namespace simd {
 
     template <typename Crtp>
     struct sse_base : simd_base<Crtp> {
-        SIMDIFY_TRIVIAL_TYPE(sse_base);
+    protected:
+        using simd_base<Crtp>::mm;
 
+    public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
-        using simd_base<Crtp>::mm;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
+
+        SIMDIFY_TRIVIAL_TYPE(sse_base);
 
         SIMDIFY_INL sse_base(const vector_t& r) {
             mm = r;
@@ -238,10 +241,10 @@ namespace simd {
         SIMDIFY_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(mm)); }
     };
 
-    SIMDIFY_INL ssef::ssef(const sses& r) { mm = _mm_cvtepi32_ps(_mm_castps_si128(r.mm)); }
-    SIMDIFY_INL sses::sses(const ssef& r) { mm = _mm_castsi128_ps(_mm_cvtps_epi32(r.mm)); }
-    SIMDIFY_INL sseu::sseu(const sses& r) { mm = r.mm; }
-    SIMDIFY_INL sses::sses(const sseu& r) { mm = r.mm; }
+    SIMDIFY_INL ssef::ssef(const sses& r) { mm = _mm_cvtepi32_ps(_mm_castps_si128(r.data())); }
+    SIMDIFY_INL sses::sses(const ssef& r) { mm = _mm_castsi128_ps(_mm_cvtps_epi32(r.data())); }
+    SIMDIFY_INL sseu::sseu(const sses& r) { mm = r.data(); }
+    SIMDIFY_INL sses::sses(const sseu& r) { mm = r.data(); }
 
     SIMDIFY_INL const sseu operator&(const sseu& l, const sseu& r) { return _mm_and_ps(l.data(), r.data()); }
     SIMDIFY_INL const sseu operator|(const sseu& l, const sseu& r) { return _mm_or_ps(l.data(), r.data()); }

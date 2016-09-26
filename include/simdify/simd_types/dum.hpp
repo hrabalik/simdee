@@ -44,14 +44,17 @@ namespace simd {
 
     template <typename Crtp>
     struct dum_base : simd_base<Crtp> {
-        SIMDIFY_TRIVIAL_TYPE(dum_base);
+    protected:
+        using simd_base<Crtp>::mm;
 
+    public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
-        using simd_base<Crtp>::mm;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
+
+        SIMDIFY_TRIVIAL_TYPE(dum_base);
 
         SIMDIFY_INL dum_base(const scalar_t& r) {
             mm = r;
@@ -162,10 +165,10 @@ namespace simd {
         SIMDIFY_INL scalar_t first_element() const { return mm; }
     };
 
-    SIMDIFY_INL dumf::dumf(const dums& r) { mm = static_cast<scalar_t>(r.mm); }
-    SIMDIFY_INL dums::dums(const dumf& r) { mm = round_to_int32(r.mm); }
-    SIMDIFY_INL dumu::dumu(const dums& r) { mm = static_cast<scalar_t>(r.mm); }
-    SIMDIFY_INL dums::dums(const dumu& r) { mm = static_cast<scalar_t>(r.mm); }
+    SIMDIFY_INL dumf::dumf(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
+    SIMDIFY_INL dums::dums(const dumf& r) { mm = round_to_int32(r.data()); }
+    SIMDIFY_INL dumu::dumu(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
+    SIMDIFY_INL dums::dums(const dumu& r) { mm = static_cast<scalar_t>(r.data()); }
 
     SIMDIFY_INL const dumu operator&(const dumu& l, const dumu& r) { return uval(tou(l.data()) & tou(r.data())); }
     SIMDIFY_INL const dumu operator|(const dumu& l, const dumu& r) { return uval(tou(l.data()) | tou(r.data())); }
@@ -194,34 +197,34 @@ namespace simd {
     SIMDIFY_INL const dumf abs(const dumf& l) { return std::abs(l.data()); }
 
     SIMDIFY_INL const dumf cond(const dumu& pred, const dumf& if_true, const dumf& if_false) {
-        return pred.mm ? if_true : if_false;
+        return pred.data() ? if_true : if_false;
     }
     SIMDIFY_INL const dumu cond(const dumu& pred, const dumu& if_true, const dumu& if_false) {
-        return pred.mm ? if_true : if_false;
+        return pred.data() ? if_true : if_false;
     }
     SIMDIFY_INL const dums cond(const dumu& pred, const dums& if_true, const dums& if_false) {
-        return pred.mm ? if_true : if_false;
+        return pred.data() ? if_true : if_false;
     }
 
 #if defined(SIMDIFY_NEED_INT)
-    SIMDIFY_INL const dumu operator==(const dumu& l, const dumu& r) { return (l.mm == r.mm) ? ~0U : 0U; }
-    SIMDIFY_INL const dumu operator!=(const dumu& l, const dumu& r) { return (l.mm != r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator==(const dumu& l, const dumu& r) { return (l.data() == r.data()) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator!=(const dumu& l, const dumu& r) { return (l.data() != r.data()) ? ~0U : 0U; }
 
-    SIMDIFY_INL const dumu operator<(const dums& l, const dums& r) { return (l.mm < r.mm) ? ~0U : 0U; }
-    SIMDIFY_INL const dumu operator>(const dums& l, const dums& r) { return (l.mm > r.mm) ? ~0U : 0U; }
-    SIMDIFY_INL const dumu operator<=(const dums& l, const dums& r) { return (l.mm <= r.mm) ? ~0U : 0U; }
-    SIMDIFY_INL const dumu operator>=(const dums& l, const dums& r) { return (l.mm >= r.mm) ? ~0U : 0U; }
-    SIMDIFY_INL const dumu operator==(const dums& l, const dums& r) { return (l.mm == r.mm) ? ~0U : 0U; }
-    SIMDIFY_INL const dumu operator!=(const dums& l, const dums& r) { return (l.mm != r.mm) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator<(const dums& l, const dums& r) { return (l.data() < r.data()) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator>(const dums& l, const dums& r) { return (l.data() > r.data()) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator<=(const dums& l, const dums& r) { return (l.data() <= r.data()) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator>=(const dums& l, const dums& r) { return (l.data() >= r.data()) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator==(const dums& l, const dums& r) { return (l.data() == r.data()) ? ~0U : 0U; }
+    SIMDIFY_INL const dumu operator!=(const dums& l, const dums& r) { return (l.data() != r.data()) ? ~0U : 0U; }
 
-    SIMDIFY_INL const dums operator-(const dums& in) { return -in.mm; }
-    SIMDIFY_INL const dums operator+(const dums& l, const dums& r) { return l.mm + r.mm; }
-    SIMDIFY_INL const dums operator-(const dums& l, const dums& r) { return l.mm - r.mm; }
-    SIMDIFY_INL const dums operator*(const dums& l, const dums& r) { return l.mm * r.mm; }
+    SIMDIFY_INL const dums operator-(const dums& in) { return -in.data(); }
+    SIMDIFY_INL const dums operator+(const dums& l, const dums& r) { return l.data() + r.data(); }
+    SIMDIFY_INL const dums operator-(const dums& l, const dums& r) { return l.data() - r.data(); }
+    SIMDIFY_INL const dums operator*(const dums& l, const dums& r) { return l.data() * r.data(); }
 
-    SIMDIFY_INL const dums min(const dums& l, const dums& r) { return std::min(l.mm, r.mm); }
-    SIMDIFY_INL const dums max(const dums& l, const dums& r) { return std::max(l.mm, r.mm); }
-    SIMDIFY_INL const dums abs(const dums& l) { return std::abs(l.mm); }
+    SIMDIFY_INL const dums min(const dums& l, const dums& r) { return std::min(l.data(), r.data()); }
+    SIMDIFY_INL const dums max(const dums& l, const dums& r) { return std::max(l.data(), r.data()); }
+    SIMDIFY_INL const dums abs(const dums& l) { return std::abs(l.data()); }
 #endif
 
 }

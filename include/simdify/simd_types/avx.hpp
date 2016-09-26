@@ -53,14 +53,17 @@ namespace simd {
 
     template <typename Crtp>
     struct avx_base : simd_base<Crtp> {
-        SIMDIFY_TRIVIAL_TYPE(avx_base);
+    protected:
+        using simd_base<Crtp>::mm;
 
+    public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
-        using simd_base<Crtp>::mm;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
+
+        SIMDIFY_TRIVIAL_TYPE(avx_base);
 
         SIMDIFY_INL avx_base(const vector_t& r) {
             mm = r;
@@ -236,10 +239,10 @@ namespace simd {
         SIMDIFY_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
     };
 
-    SIMDIFY_INL avxf::avxf(const avxs& r) { mm = _mm256_cvtepi32_ps(_mm256_castps_si256(r.mm)); }
-    SIMDIFY_INL avxs::avxs(const avxf& r) { mm = _mm256_castsi256_ps(_mm256_cvtps_epi32(r.mm)); }
-    SIMDIFY_INL avxu::avxu(const avxs& r) { mm = r.mm; }
-    SIMDIFY_INL avxs::avxs(const avxu& r) { mm = r.mm; }
+    SIMDIFY_INL avxf::avxf(const avxs& r) { mm = _mm256_cvtepi32_ps(_mm256_castps_si256(r.data())); }
+    SIMDIFY_INL avxs::avxs(const avxf& r) { mm = _mm256_castsi256_ps(_mm256_cvtps_epi32(r.data())); }
+    SIMDIFY_INL avxu::avxu(const avxs& r) { mm = r.data(); }
+    SIMDIFY_INL avxs::avxs(const avxu& r) { mm = r.data(); }
 
     SIMDIFY_INL const avxu operator&(const avxu& l, const avxu& r) { return _mm256_and_ps(l.data(), r.data()); }
     SIMDIFY_INL const avxu operator|(const avxu& l, const avxu& r) { return _mm256_or_ps(l.data(), r.data()); }
@@ -268,13 +271,13 @@ namespace simd {
     SIMDIFY_INL const avxf abs(const avxf& l) { return _mm256_and_ps(l.data(), avxf(abs_mask()).data()); }
 
     SIMDIFY_INL const avxf cond(const avxu& pred, const avxf& if_true, const avxf& if_false) {
-        return _mm256_blendv_ps(if_false.mm, if_true.mm, pred.mm);
+        return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
     }
     SIMDIFY_INL const avxu cond(const avxu& pred, const avxu& if_true, const avxu& if_false) {
-        return _mm256_blendv_ps(if_false.mm, if_true.mm, pred.mm);
+        return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
     }
     SIMDIFY_INL const avxs cond(const avxu& pred, const avxs& if_true, const avxs& if_false) {
-        return _mm256_blendv_ps(if_false.mm, if_true.mm, pred.mm);
+        return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
     }
 
 #if defined(SIMDIFY_NEED_INT)

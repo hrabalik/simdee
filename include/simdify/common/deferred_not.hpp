@@ -7,15 +7,15 @@
 namespace simd {
     namespace expr {
         template <typename T>
-        struct dont_assign_to_deferred_not {
+        struct dont_change_deferred_not {
             template <typename T2>
             struct false_when_instantiated : std::integral_constant<bool, false> {};
 
             static_assert(false_when_instantiated<T>::value,
-                "Hello! You are trying to assign to a varible of type deferred_not<T>. "
+                "Hello! You are trying to change a varible of type deferred_not<T>. "
                 "This is definitely not something you want to do. "
                 "What probably happened is that you used *auto* to store a calculation result, "
-                "but the type of the result is not what you expect. "
+                "but the type of the result is not what you were expecting. "
                 "To solve the problem, don't use *auto* on that particular line.");
         };
 
@@ -32,7 +32,7 @@ namespace simd {
 
             template <typename Rhs>
             void operator=(const Rhs& r) {
-                dont_assign_to_deferred_not<Rhs> fail;
+                dont_change_deferred_not<Rhs> fail;
             }
 
             SIMDIFY_INL typename T::mask_t mask() const { return ~neg.mask(); }
@@ -45,7 +45,7 @@ namespace simd {
 
             template <typename Rhs>
             void aligned_load(const Rhs& r) {
-                dont_assign_to_deferred_not<Rhs> fail;
+                dont_change_deferred_not<Rhs> fail;
             }
 
             SIMDIFY_INL void aligned_store(scalar_t* r) const {
@@ -55,7 +55,7 @@ namespace simd {
 
             template <typename Rhs>
             void unaligned_load(const Rhs& r) {
-                dont_assign_to_deferred_not<Rhs> fail;
+                dont_change_deferred_not<Rhs> fail;
             }
 
             SIMDIFY_INL void unaligned_store(scalar_t* r) const {
@@ -65,7 +65,7 @@ namespace simd {
 
             template <typename Rhs>
             void interleaved_load(const Rhs& r, std::size_t step) {
-                dont_assign_to_deferred_not<Rhs> fail;
+                dont_change_deferred_not<Rhs> fail;
             }
 
             SIMDIFY_INL void interleaved_store(scalar_t* r, std::size_t step) const {
@@ -132,15 +132,15 @@ namespace simd {
         }
         template <typename T, typename Rhs>
         SIMDIFY_INL void operator&=(const deferred_not<T>& l, const Rhs& r) {
-            dont_assign_to_deferred_not<Rhs> fail;
+            dont_change_deferred_not<Rhs> fail;
         }
         template <typename T, typename Rhs>
         SIMDIFY_INL void operator|=(const deferred_not<T>& l, const Rhs& r) {
-            dont_assign_to_deferred_not<Rhs> fail;
+            dont_change_deferred_not<Rhs> fail;
         }
         template <typename T, typename Rhs>
         SIMDIFY_INL void operator^=(const deferred_not<T>& l, const Rhs& r) {
-            dont_assign_to_deferred_not<Rhs> fail;
+            dont_change_deferred_not<Rhs> fail;
         }
     }
 }

@@ -95,18 +95,6 @@ namespace simd {
     template <typename T> SIMDIFY_INL const T signum(const simd_base<T>& l) {
         return cond(l.self() > zero(), T(1), T(-1));
     }
-    template <typename T> SIMDIFY_INL const T max_mask(const simd_base<T>& in, const typename simd_type_traits<T>::vec_u& mask) {
-        return cond(mask, in.self(), simd::ninf());
-    }
-    template <typename T> SIMDIFY_INL const T min_mask(const simd_base<T>& in, const typename simd_type_traits<T>::vec_u& mask) {
-        return cond(mask, in.self(), simd::inf());
-    }
-    template <typename T> SIMDIFY_INL const T sum_mask(const simd_base<T>& in, const typename simd_type_traits<T>::vec_u& mask) {
-        return cond(mask, in.self(), simd::zero());
-    }
-    template <typename T> SIMDIFY_INL const T product_mask(const simd_base<T>& in, const typename simd_type_traits<T>::vec_u& mask) {
-        return cond(mask, in.self(), 1);
-    }
 
 }
 

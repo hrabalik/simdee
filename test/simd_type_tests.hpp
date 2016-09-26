@@ -786,39 +786,32 @@ TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
 TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
     using scalar_t = F::scalar_t;
     F a = bufAF;
-    scalar_t v, v0;
+    scalar_t r, e;
 
     SECTION("max") {
         constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
         auto max = [](scalar_t l, scalar_t r) { return std::max(l, r); };
-        v0 = std::accumulate(begin(bufAF), end(bufAF), -inf, max);
-        v = a.reduce(simd::max).first_element();
-        REQUIRE(v == v0);
-        v = max_mask(a, simd::zero()).reduce(simd::max).first_element();
-        REQUIRE(v == -inf);
+        e = std::accumulate(begin(bufAF), end(bufAF), -inf, max);
+        r = a.reduce(simd::max).first_element();
+        REQUIRE(r == e);
     }
     SECTION("min") {
         constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
         auto min = [](scalar_t l, scalar_t r) { return std::min(l, r); };
-        v0 = std::accumulate(begin(bufAF), end(bufAF), inf, min);
-        v = a.reduce(simd::min).first_element();
-        REQUIRE(v == v0);
-        v = min_mask(a, simd::zero()).reduce(simd::min).first_element();
-        REQUIRE(v == inf);
+        e = std::accumulate(begin(bufAF), end(bufAF), inf, min);
+        r = a.reduce(simd::min).first_element();
+        REQUIRE(r == e);
     }
     SECTION("sum") {
-        v0 = std::accumulate(begin(bufAF), end(bufAF), scalar_t(0));
-        v = a.reduce(simd::operator+).first_element();
-        REQUIRE(v == Approx(v0));
-        v = sum_mask(a, simd::zero()).reduce(simd::operator+).first_element();
-        REQUIRE(v == 0);
+        e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(0));
+        r = a.reduce(simd::operator+).first_element();
+        REQUIRE(r == Approx(e));
     }
     SECTION("product") {
-        v0 = std::accumulate(begin(bufAF), end(bufAF), scalar_t(1), std::multiplies<scalar_t>());
-        v = a.reduce(simd::operator*).first_element();
-        REQUIRE(v == Approx(v0));
-        v = product_mask(a, simd::zero()).reduce(simd::operator*).first_element();
-        REQUIRE(v == 1);
+        auto prod = std::multiplies<scalar_t>();
+        e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(1), prod);
+        r = a.reduce(simd::operator*).first_element();
+        REQUIRE(r == Approx(e));
     }
 }
 

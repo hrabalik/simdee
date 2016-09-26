@@ -19,18 +19,22 @@ TEST_CASE("deferred_not types", "[deferred_not]") {
 }
 
 TEST_CASE("deferred_not arithmetic", "[deferred_not]") {
-    U ua = ~dataA;
-    not_U nua(dataA);
+    const U ua = ~dataA;
+    const not_U nua(dataA);
     SECTION("unary") {
         SECTION("bit not") {
             REQUIRE(all(ua == nua));
             REQUIRE(all(~ua == ~nua));
+            REQUIRE(all(ua == ~~nua));
+            REQUIRE(all(~~ua == nua));
+            REQUIRE(all(~~ua == ~~nua));
+            REQUIRE(all(~~~ua == ~~~nua));
         }
         SECTION("any, all") {
-            U zero = simd::zero();
-            U allb = simd::all_bits();
-            not_U nzero(U(~zero));
-            not_U nallb(U(~allb));
+            const U zero = simd::zero();
+            const U allb = simd::all_bits();
+            const not_U nzero(U(~zero));
+            const not_U nallb(U(~allb));
             REQUIRE(any(ua) == any(nua));
             REQUIRE(all(ua) == all(nua));
             REQUIRE(any(zero) == any(nzero));

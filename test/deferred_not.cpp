@@ -6,6 +6,7 @@
 
 using U = simd::sseu;
 const U::storage_t dataA{ 1753029375U, 1117080442U, 3817141237U, 3761735248U };
+const U::storage_t dataB{ 1679702461U, 2102346647U, 480083363U, 3761735248U };
 
 using not_U = simd::expr::deferred_not<U>;
 
@@ -41,6 +42,28 @@ TEST_CASE("deferred_not arithmetic", "[deferred_not]") {
             REQUIRE(all(zero) == all(nzero));
             REQUIRE(any(allb) == any(nallb));
             REQUIRE(all(allb) == all(nallb));
+        }
+    }
+    SECTION("binary") {
+        const U ub = ~dataB;
+        const not_U nub(dataB);
+        SECTION("bit and") {
+            U expect = ua & ub;
+            REQUIRE(all((ua & nub) == expect));
+            REQUIRE(all((nua & ub) == expect));
+            REQUIRE(all((nua & nub) == expect));
+        }
+        SECTION("bit or") {
+            U expect = ua | ub;
+            REQUIRE(all((ua | nub) == expect));
+            REQUIRE(all((nua | ub) == expect));
+            REQUIRE(all((nua | nub) == expect));
+        }
+        SECTION("bit xor") {
+            U expect = ua ^ ub;
+            REQUIRE(all((ua ^ nub) == expect));
+            REQUIRE(all((nua ^ ub) == expect));
+            REQUIRE(all((nua ^ nub) == expect));
         }
     }
 }

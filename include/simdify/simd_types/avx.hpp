@@ -21,7 +21,7 @@ namespace simd {
     struct avxf;
     struct avxu;
     struct avxs;
-    using not_avxu = expr::bit_not<avxu>;
+    using not_avxu = expr::deferred_not<avxu>;
 
     template <>
     struct is_simd_type<avxf> : std::integral_constant<bool, true> {};

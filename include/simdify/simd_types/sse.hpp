@@ -32,7 +32,7 @@ namespace simd {
     struct ssef;
     struct sseu;
     struct sses;
-    using not_sseu = expr::bit_not<sseu>;
+    using not_sseu = expr::deferred_not<sseu>;
 
     template<>
     struct is_simd_type<ssef> : std::integral_constant<bool, true> {};

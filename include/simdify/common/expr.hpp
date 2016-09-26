@@ -15,8 +15,8 @@ namespace simd {
 
     namespace expr {
         template <typename T>
-        struct bit_not {
-            SIMDIFY_INL constexpr explicit bit_not(const T& r) : neg(r) {}
+        struct deferred_not {
+            SIMDIFY_INL constexpr explicit deferred_not(const T& r) : neg(r) {}
 
             SIMDIFY_INL typename T::mask_t mask() const { return ~neg.mask(); }
             SIMDIFY_INL typename T::scalar_t first_element() const { return ~neg.first_element(); }
@@ -31,27 +31,27 @@ namespace simd {
         };
 
         template<typename T>
-        SIMDIFY_INL constexpr const T operator~(const bit_not<T>& l) {
+        SIMDIFY_INL constexpr const T operator~(const deferred_not<T>& l) {
             return l.neg;
         }
         template<typename T>
-        SIMDIFY_INL const T operator&(const bit_not<T>& l, const T& r) {
+        SIMDIFY_INL const T operator&(const deferred_not<T>& l, const T& r) {
             return andnot(r, l.neg);
         }
         template<typename T>
-        SIMDIFY_INL const T operator&(const T& l, const bit_not<T>& r) {
+        SIMDIFY_INL const T operator&(const T& l, const deferred_not<T>& r) {
             return andnot(l, r.neg);
         }
         template<typename T>
-        SIMDIFY_INL const bit_not<T> operator&(const bit_not<T>& l, const bit_not<T>& r) {
-            return bit_not<T>(l.neg | r.neg);
+        SIMDIFY_INL const deferred_not<T> operator&(const deferred_not<T>& l, const deferred_not<T>& r) {
+            return deferred_not<T>(l.neg | r.neg);
         }
         template<typename T>
-        SIMDIFY_INL const bit_not<T> operator|(const bit_not<T>& l, const bit_not<T>& r) {
-            return bit_not<T>(l.neg & r.neg);
+        SIMDIFY_INL const deferred_not<T> operator|(const deferred_not<T>& l, const deferred_not<T>& r) {
+            return deferred_not<T>(l.neg & r.neg);
         }
         template<typename T>
-        SIMDIFY_INL const T operator^(const bit_not<T>& l, const bit_not<T>& r) {
+        SIMDIFY_INL const T operator^(const deferred_not<T>& l, const deferred_not<T>& r) {
             return l.neg ^ r.neg;
         }
 

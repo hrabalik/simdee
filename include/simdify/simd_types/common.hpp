@@ -7,6 +7,7 @@
 #include "../common/expr.hpp"
 #include "../common/mask.hpp"
 #include "../common/storage.hpp"
+#include "../common/deferred_not.hpp"
 #include <array>
 #include <type_traits>
 

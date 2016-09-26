@@ -875,15 +875,6 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     }
 }
 
-TEST_CASE(SIMD_TYPE " expression template compatibility", SIMD_TEST_TAG) {
-    U in = bufAU;
-    U vec1 = ~in;
-    auto vec2 = ~in;
-
-    REQUIRE(vec1.mask() == vec2.mask());
-    REQUIRE(vec1.first_element() == vec2.first_element());
-}
-
 TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
     SECTION("mask() itself") {
         auto expected = [](const U::storage_t& s) {

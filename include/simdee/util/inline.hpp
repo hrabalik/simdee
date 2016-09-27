@@ -1,17 +1,17 @@
-#ifndef SIMDIFY_UTIL_INLINE_HPP
-#define SIMDIFY_UTIL_INLINE_HPP
+#ifndef SIMDEE_UTIL_INLINE_HPP
+#define SIMDEE_UTIL_INLINE_HPP
 
 #if defined(__clang__)
 
-#define SIMDIFY_INL __inline__ __attribute__((always_inline, nodebug))
+#define SIMDEE_INL __inline__ __attribute__((always_inline, nodebug))
 
 #elif defined(__GNUC__)
 
-#define SIMDIFY_INL __inline__ __attribute__((always_inline))
+#define SIMDEE_INL __inline__ __attribute__((always_inline))
 
 #elif defined(_MSC_VER)
 
-#define SIMDIFY_INL __forceinline
+#define SIMDEE_INL __forceinline
 
 #else
 
@@ -19,4 +19,4 @@
 
 #endif
 
-#endif // SIMDIFY_UTIL_INLINE_HPP
+#endif // SIMDEE_UTIL_INLINE_HPP

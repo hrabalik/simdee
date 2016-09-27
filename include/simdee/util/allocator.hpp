@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_UTIL_MALLOC_HPP
-#define SIMDIFY_UTIL_MALLOC_HPP
+#ifndef SIMDEE_UTIL_MALLOC_HPP
+#define SIMDEE_UTIL_MALLOC_HPP
 
 #include <type_traits>
 #include <exception>
@@ -59,23 +59,23 @@ namespace simd {
         template <typename S>
         aligned_allocator(const aligned_allocator<S, Align>&) {}
 
-        T* allocate(std::size_t count) const SIMDIFY_NOEXCEPT {
+        T* allocate(std::size_t count) const SIMDEE_NOEXCEPT {
             return simd::aligned_malloc<T, Align>(count);
         }
 
-        void deallocate(T* ptr, std::size_t) const SIMDIFY_NOEXCEPT {
+        void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
             simd::aligned_free(ptr);
         }
 
         // destroy is a no-op if possible
-        void destroy(T* ptr) const SIMDIFY_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {
+        void destroy(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {
             if (!std::is_trivially_destructible<T>::value) {
                 ptr->~T();
             }
         }
 
         // construct without arguments is a no-op if possible
-        void construct(T* ptr) const SIMDIFY_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
+        void construct(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
             if (!detail::is_trivially_default_constructible<T>::value) {
                 new (ptr)T;
             }
@@ -102,4 +102,4 @@ namespace simd {
 
 }
 
-#endif // SIMDIFY_UTIL_MALLOC_HPP
+#endif // SIMDEE_UTIL_MALLOC_HPP

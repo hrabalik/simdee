@@ -1,9 +1,9 @@
-#ifndef SIMDIFY_SIMDIFY_HPP
-#define SIMDIFY_SIMDIFY_HPP
-#define SIMDIFY
-#define SIMDIFY_MAJOR 0
-#define SIMDIFY_MINOR 1
-#define SIMDIFY_PATCHLEVEL 0
+#ifndef SIMDEE_SIMDEE_HPP
+#define SIMDEE_SIMDEE_HPP
+#define SIMDEE
+#define SIMDEE_MAJOR 0
+#define SIMDEE_MINOR 1
+#define SIMDEE_PATCHLEVEL 0
 
 //
 // C++, C++11 checks
@@ -23,17 +23,17 @@
 //
 // defaults for feature requests
 //
-#ifndef SIMDIFY_NEED_INT
-#define SIMDIFY_NEED_INT 1 // require integer operations for SIMD types
+#ifndef SIMDEE_NEED_INT
+#define SIMDEE_NEED_INT 1 // require integer operations for SIMD types
 #endif
-#ifndef SIMDIFY_NEED_AVX
-#define SIMDIFY_NEED_AVX 0 // require AVX SIMD types to be declared
+#ifndef SIMDEE_NEED_AVX
+#define SIMDEE_NEED_AVX 0 // require AVX SIMD types to be declared
 #endif
-#ifndef SIMDIFY_NEED_SSE
-#define SIMDIFY_NEED_SSE 0 // require SSE SIMD types to be declared
+#ifndef SIMDEE_NEED_SSE
+#define SIMDEE_NEED_SSE 0 // require SSE SIMD types to be declared
 #endif
-#ifndef SIMDIFY_NEED_DUM
-#define SIMDIFY_NEED_DUM 0 // require dummy SIMD types to be declared
+#ifndef SIMDEE_NEED_DUM
+#define SIMDEE_NEED_DUM 0 // require dummy SIMD types to be declared
 #endif
 
 //
@@ -60,15 +60,15 @@
 
 //
 // include all supported SIMD types
-// use the SIMDIFY_NEED_* macros to force the include
+// use the SIMDEE_NEED_* macros to force the include
 //
-#if SIMDIFY_NEED_AVX || \
-    (!SIMDIFY_NEED_INT && defined(__AVX__)) || \
-    (SIMDIFY_NEED_INT && defined(__AVX2__))
+#if SIMDEE_NEED_AVX || \
+    (!SIMDEE_NEED_INT && defined(__AVX__)) || \
+    (SIMDEE_NEED_INT && defined(__AVX2__))
 #include "simd_types/avx.hpp"
 #endif
 
-#if SIMDIFY_NEED_SSE || defined(__SSE2__)
+#if SIMDEE_NEED_SSE || defined(__SSE2__)
 #include "simd_types/sse.hpp"
 #endif
 
@@ -76,30 +76,30 @@
 
 //
 // set some (successfully loaded) SIMD type as simd_t
-// use SIMDIFY_PREFER_* to use a specific type
+// use SIMDEE_PREFER_* to use a specific type
 //
 namespace simd {
-#if defined(SIMDIFY_PREFER_AVX) && defined(SIMDIFY_HAVE_AVX)
+#if defined(SIMDEE_PREFER_AVX) && defined(SIMDEE_HAVE_AVX)
     using vecf = avxf;
     using vecu = avxu;
     using vecs = avxs;
-#elif defined(SIMDIFY_PREFER_SSE) && defined(SIMDIFY_HAVE_SSE)
+#elif defined(SIMDEE_PREFER_SSE) && defined(SIMDEE_HAVE_SSE)
     using vecf = ssef;
     using vecu = sseu;
     using vecs = sses;
-#elif defined(SIMDIFY_PREFER_DUM) && defined(SIMDIFY_HAVE_DUM)
+#elif defined(SIMDEE_PREFER_DUM) && defined(SIMDEE_HAVE_DUM)
     using vecf = dumf;
     using vecu = dumu;
     using vecs = dums;
-#elif defined(SIMDIFY_HAVE_AVX)
+#elif defined(SIMDEE_HAVE_AVX)
     using vecf = avxf;
     using vecu = avxu;
     using vecs = avxs;
-#elif defined(SIMDIFY_HAVE_SSE)
+#elif defined(SIMDEE_HAVE_SSE)
     using vecf = ssef;
     using vecu = sseu;
     using vecs = sses;
-#elif defined(SIMDIFY_HAVE_DUM)
+#elif defined(SIMDEE_HAVE_DUM)
     using vecf = dumf;
     using vecu = dumu;
     using vecs = dums;
@@ -109,4 +109,4 @@ namespace simd {
 
 }
 
-#endif // SIMDIFY_SIMDIFY_HPP
+#endif // SIMDEE_SIMDEE_HPP

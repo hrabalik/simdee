@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_SIMD_TYPES_COMMON_HPP
-#define SIMDIFY_SIMD_TYPES_COMMON_HPP
+#ifndef SIMDEE_SIMD_TYPES_COMMON_HPP
+#define SIMDEE_SIMD_TYPES_COMMON_HPP
 
 #include "../util/inline.hpp"
 #include "../util/bitfiddle.hpp"
@@ -37,19 +37,19 @@ namespace simd {
             width = sizeof(vector_t) / sizeof(scalar_t)
         };
 
-        SIMDIFY_INL Crtp& self() {
+        SIMDEE_INL Crtp& self() {
             return static_cast<Crtp&>(*this);
         }
 
-        SIMDIFY_INL constexpr const Crtp& self() const {
+        SIMDEE_INL constexpr const Crtp& self() const {
             return static_cast<const Crtp&>(*this);
         }
 
-        SIMDIFY_INL Crtp& eval() {
+        SIMDEE_INL Crtp& eval() {
             return static_cast<Crtp&>(*this);
         }
 
-        SIMDIFY_INL constexpr const Crtp& eval() const {
+        SIMDEE_INL constexpr const Crtp& eval() const {
             return static_cast<const Crtp&>(*this);
         }
 
@@ -65,57 +65,57 @@ namespace simd {
     // meta operations - apply to all SIMD types
     //
     template <typename Simd_t, typename Rhs_t>
-    SIMDIFY_INL Simd_t& operator&=(simd_base<Simd_t>& l, const Rhs_t& r) {
+    SIMDEE_INL Simd_t& operator&=(simd_base<Simd_t>& l, const Rhs_t& r) {
         l.self() = l.self() & r;
         return l.self();
     }
     template <typename Simd_t, typename Rhs_t>
-    SIMDIFY_INL Simd_t& operator|=(simd_base<Simd_t>& l, const Rhs_t& r) {
+    SIMDEE_INL Simd_t& operator|=(simd_base<Simd_t>& l, const Rhs_t& r) {
         l.self() = l.self() | r;
         return l.self();
     }
     template <typename Simd_t, typename Rhs_t>
-    SIMDIFY_INL Simd_t& operator^=(simd_base<Simd_t>& l, const Rhs_t& r) {
+    SIMDEE_INL Simd_t& operator^=(simd_base<Simd_t>& l, const Rhs_t& r) {
         l.self() = l.self() ^ r;
         return l.self();
     }
     template <typename Simd_t, typename Rhs_t>
-    SIMDIFY_INL Simd_t& operator+=(simd_base<Simd_t>& l, const Rhs_t& r) {
+    SIMDEE_INL Simd_t& operator+=(simd_base<Simd_t>& l, const Rhs_t& r) {
         l.self() = l.self() + r;
         return l.self();
     }
     template <typename Simd_t, typename Rhs_t>
-    SIMDIFY_INL Simd_t& operator-=(simd_base<Simd_t>& l, const Rhs_t& r) {
+    SIMDEE_INL Simd_t& operator-=(simd_base<Simd_t>& l, const Rhs_t& r) {
         l.self() = l.self() - r;
         return l.self();
     }
     template <typename Simd_t, typename Rhs_t>
-    SIMDIFY_INL Simd_t& operator*=(simd_base<Simd_t>& l, const Rhs_t& r) {
+    SIMDEE_INL Simd_t& operator*=(simd_base<Simd_t>& l, const Rhs_t& r) {
         l.self() = l.self() * r;
         return l.self();
     }
     template <typename Simd_t, typename Rhs_t>
-    SIMDIFY_INL Simd_t& operator/=(simd_base<Simd_t>& l, const Rhs_t& r) {
+    SIMDEE_INL Simd_t& operator/=(simd_base<Simd_t>& l, const Rhs_t& r) {
         l.self() = l.self() / r;
         return l.self();
     }
     template <typename Simd_t>
-    SIMDIFY_INL const Simd_t operator+(const simd_base<Simd_t>& l) {
+    SIMDEE_INL const Simd_t operator+(const simd_base<Simd_t>& l) {
         return l.self();
     }
     template <typename Simd_t>
-    SIMDIFY_INL const Simd_t signum(const simd_base<Simd_t>& l) {
+    SIMDEE_INL const Simd_t signum(const simd_base<Simd_t>& l) {
         return cond(l.self() > zero(), Simd_t(1), Simd_t(-1));
     }
     template <typename Simd_t>
-    SIMDIFY_INL bool any(const simd_base<Simd_t>& l) {
+    SIMDEE_INL bool any(const simd_base<Simd_t>& l) {
         return l.self().mask().any();
     }
     template <typename Simd_t>
-    SIMDIFY_INL bool all(const simd_base<Simd_t>& l) {
+    SIMDEE_INL bool all(const simd_base<Simd_t>& l) {
         return l.self().mask().all();
     }
 
 }
 
-#endif // SIMDIFY_SIMD_TYPES_COMMON_HPP
+#endif // SIMDEE_SIMD_TYPES_COMMON_HPP

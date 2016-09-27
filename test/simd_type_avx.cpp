@@ -1,4 +1,4 @@
-#define SIMDIFY_NEED_AVX 1
+#define SIMDEE_NEED_AVX 1
 #include <simdee/simdee.hpp>
 
 #include "catch.hpp"

@@ -1,4 +1,4 @@
-#define SIMDIFY_NEED_SSE 1
+#define SIMDEE_NEED_SSE 1
 #include <simdee/simdee.hpp>
 
 #include "catch.hpp"

@@ -1,6 +1,6 @@
-file(GLOB_RECURSE SIMDIFY_HEADERS "${CMAKE_SOURCE_DIR}/include/*.hpp")
-file(GLOB_RECURSE SIMDIFY_TEST_SOURCES "*.hpp" "*.cpp" "*.inl")
-add_executable(simdify_test ${SIMDIFY_HEADERS} ${SIMDIFY_TEST_SOURCES})
+file(GLOB_RECURSE SIMDEE_HEADERS "${CMAKE_SOURCE_DIR}/include/*.hpp")
+file(GLOB_RECURSE SIMDEE_TEST_SOURCES "*.hpp" "*.cpp" "*.inl")
+add_executable(simdify_test ${SIMDEE_HEADERS} ${SIMDEE_TEST_SOURCES})
 target_include_directories(simdify_test PUBLIC ${CMAKE_SOURCE_DIR}/include)
 set_property(TARGET simdify_test PROPERTY CXX_STANDARD 11)
 

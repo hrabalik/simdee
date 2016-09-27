@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_COMMON_MASK_HPP
-#define SIMDIFY_COMMON_MASK_HPP
+#ifndef SIMDEE_COMMON_MASK_HPP
+#define SIMDEE_COMMON_MASK_HPP
 
 #include "../util/inline.hpp"
 #include "../util/bitfiddle.hpp"
@@ -12,25 +12,25 @@ namespace simd {
         //
         template <uint32_t AllBitsMask>
         struct mask {
-            SIMDIFY_INL mask(const mask&) = default;                                                               \
-            SIMDIFY_INL mask& operator=(const mask&) = default;
+            SIMDEE_INL mask(const mask&) = default;                                                               \
+            SIMDEE_INL mask& operator=(const mask&) = default;
 
-            SIMDIFY_INL constexpr explicit mask(uint32_t i) : value(i) {}
+            SIMDEE_INL constexpr explicit mask(uint32_t i) : value(i) {}
 
-            SIMDIFY_INL constexpr bool operator[](int i) const { return (value & (1U << i)) != 0; }
-            SIMDIFY_INL constexpr mask operator&(mask r) const { return mask(value & r.value); }
-            SIMDIFY_INL constexpr mask operator|(mask r) const { return mask(value | r.value); }
-            SIMDIFY_INL constexpr mask operator^(mask r) const { return mask(value ^ r.value); }
-            SIMDIFY_INL mask& operator&=(mask r) { value &= r.value; return *this; }
-            SIMDIFY_INL mask& operator|=(mask r) { value |= r.value; return *this; }
-            SIMDIFY_INL mask& operator^=(mask r) { value ^= r.value; return *this; }
-            SIMDIFY_INL constexpr mask operator~() const { return mask(value ^ AllBitsMask); }
-            SIMDIFY_INL constexpr bool operator==(mask r) const { return value == r.value; }
-            SIMDIFY_INL constexpr bool operator!=(mask r) const { return value != r.value; }
-            SIMDIFY_INL constexpr bool any() const { return value != 0; }
-            SIMDIFY_INL constexpr bool all() const { return value == AllBitsMask; }
-            SIMDIFY_INL constexpr bit_iterator begin() const { return bit_iterator(value); }
-            SIMDIFY_INL constexpr bit_iterator end() const { return bit_iterator(0); }
+            SIMDEE_INL constexpr bool operator[](int i) const { return (value & (1U << i)) != 0; }
+            SIMDEE_INL constexpr mask operator&(mask r) const { return mask(value & r.value); }
+            SIMDEE_INL constexpr mask operator|(mask r) const { return mask(value | r.value); }
+            SIMDEE_INL constexpr mask operator^(mask r) const { return mask(value ^ r.value); }
+            SIMDEE_INL mask& operator&=(mask r) { value &= r.value; return *this; }
+            SIMDEE_INL mask& operator|=(mask r) { value |= r.value; return *this; }
+            SIMDEE_INL mask& operator^=(mask r) { value ^= r.value; return *this; }
+            SIMDEE_INL constexpr mask operator~() const { return mask(value ^ AllBitsMask); }
+            SIMDEE_INL constexpr bool operator==(mask r) const { return value == r.value; }
+            SIMDEE_INL constexpr bool operator!=(mask r) const { return value != r.value; }
+            SIMDEE_INL constexpr bool any() const { return value != 0; }
+            SIMDEE_INL constexpr bool all() const { return value == AllBitsMask; }
+            SIMDEE_INL constexpr bit_iterator begin() const { return bit_iterator(value); }
+            SIMDEE_INL constexpr bit_iterator end() const { return bit_iterator(0); }
 
             //data
             uint32_t value;
@@ -41,4 +41,4 @@ namespace simd {
     using mask = typename T::mask_t;
 }
 
-#endif // SIMDIFY_COMMON_MASK_HPP
+#endif // SIMDEE_COMMON_MASK_HPP

@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_COMMON_STORAGE_HPP
-#define SIMDIFY_COMMON_STORAGE_HPP
+#ifndef SIMDEE_COMMON_STORAGE_HPP
+#define SIMDEE_COMMON_STORAGE_HPP
 
 #include "../util/inline.hpp"
 #include <array>
@@ -18,17 +18,17 @@ namespace simd {
             using array_t::data;
             using array_t::begin;
 
-            SIMDIFY_INL constexpr storage() = default;
-            SIMDIFY_INL constexpr storage(const storage&) = default;
-            SIMDIFY_INL explicit storage(const Simd_t& rhs) {
+            SIMDEE_INL constexpr storage() = default;
+            SIMDEE_INL constexpr storage(const storage&) = default;
+            SIMDEE_INL explicit storage(const Simd_t& rhs) {
                 rhs.aligned_store(data());
             }
             storage(std::initializer_list<Scalar_t> list) {
                 std::copy(list.begin(), list.end(), begin());
             }
 
-            SIMDIFY_INL storage& operator=(const storage&) = default;
-            SIMDIFY_INL storage& operator=(const Simd_t& rhs) {
+            SIMDEE_INL storage& operator=(const storage&) = default;
+            SIMDEE_INL storage& operator=(const Simd_t& rhs) {
                 rhs.aligned_store(data());
                 return *this;
             }
@@ -43,4 +43,4 @@ namespace simd {
     using storage = typename T::storage_t;
 }
 
-#endif // SIMDIFY_COMMON_STORAGE_HPP
+#endif // SIMDEE_COMMON_STORAGE_HPP

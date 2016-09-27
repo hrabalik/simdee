@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_UTIL_INTEGRAL_HPP
-#define SIMDIFY_UTIL_INTEGRAL_HPP
+#ifndef SIMDEE_UTIL_INTEGRAL_HPP
+#define SIMDEE_UTIL_INTEGRAL_HPP
 
 #include "inline.hpp"
 #include <cstdint>
@@ -47,13 +47,13 @@ namespace simd {
     struct is_power_of_2 : std::integral_constant < bool, x && (x & (x - 1)) == 0 > {};
 
     template <std::size_t b>
-    SIMDIFY_INL std::size_t div_floor(std::size_t a) { return a / b; }
+    SIMDEE_INL std::size_t div_floor(std::size_t a) { return a / b; }
 
     template <std::size_t b>
-    SIMDIFY_INL std::size_t div_ceil(std::size_t a) { return (a + (b - 1)) / b; }
+    SIMDEE_INL std::size_t div_ceil(std::size_t a) { return (a + (b - 1)) / b; }
 
     template <std::size_t b>
-    SIMDIFY_INL std::size_t div_floor_mult(std::size_t a) {
+    SIMDEE_INL std::size_t div_floor_mult(std::size_t a) {
         if (is_power_of_2<b>::value)
             return a & ~(b - 1);
         else
@@ -61,7 +61,7 @@ namespace simd {
     }
 
     template <std::size_t b>
-    SIMDIFY_INL std::size_t div_ceil_mult(std::size_t a) {
+    SIMDEE_INL std::size_t div_ceil_mult(std::size_t a) {
         if (is_power_of_2<b>::value)
             return (a + (b - 1)) & ~(b - 1);
         else
@@ -69,7 +69,7 @@ namespace simd {
     }
 
     template <std::size_t b>
-    SIMDIFY_INL std::size_t mod(std::size_t a) {
+    SIMDEE_INL std::size_t mod(std::size_t a) {
         if (is_power_of_2<b>::value)
             return a & (b - 1);
         else
@@ -104,4 +104,4 @@ namespace simd {
 
 }
 
-#endif // SIMDIFY_UTIL_INTEGRAL_HPP
+#endif // SIMDEE_UTIL_INTEGRAL_HPP

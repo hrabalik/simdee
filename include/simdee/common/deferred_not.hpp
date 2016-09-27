@@ -1,5 +1,5 @@
-#ifndef SIMDIFY_COMMON_DEFERRED_NOT_HPP
-#define SIMDIFY_COMMON_DEFERRED_NOT_HPP
+#ifndef SIMDEE_COMMON_DEFERRED_NOT_HPP
+#define SIMDEE_COMMON_DEFERRED_NOT_HPP
 
 #include "../util/inline.hpp"
 #include <type_traits>
@@ -30,19 +30,19 @@ namespace simd {
             using binary_op_t = typename T::binary_op_t;
             enum : std::size_t { width = T::width };
 
-            SIMDIFY_INL constexpr explicit deferred_not(const T& r) : neg(r) {}
+            SIMDEE_INL constexpr explicit deferred_not(const T& r) : neg(r) {}
 
             template <typename Rhs>
             void operator=(const Rhs& r) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
-            SIMDIFY_INL const T eval() const {
+            SIMDEE_INL const T eval() const {
                 T pos(~neg);
                 return pos;
             }
 
-            SIMDIFY_INL const vector_t data() const {
+            SIMDEE_INL const vector_t data() const {
                 T pos(~neg);
                 return pos.data();
             }
@@ -52,7 +52,7 @@ namespace simd {
                 dont_change_deferred_not<Rhs> fail;
             }
 
-            SIMDIFY_INL void aligned_store(scalar_t* r) const {
+            SIMDEE_INL void aligned_store(scalar_t* r) const {
                 T pos(~neg);
                 pos.aligned_store(r);
             }
@@ -62,7 +62,7 @@ namespace simd {
                 dont_change_deferred_not<Rhs> fail;
             }
 
-            SIMDIFY_INL void unaligned_store(scalar_t* r) const {
+            SIMDEE_INL void unaligned_store(scalar_t* r) const {
                 T pos(~neg);
                 pos.unaligned_store(r);
             }
@@ -72,21 +72,21 @@ namespace simd {
                 dont_change_deferred_not<Rhs> fail;
             }
 
-            SIMDIFY_INL void interleaved_store(scalar_t* r, std::size_t step) const {
+            SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const {
                 T pos(~neg);
                 pos.interleaved_store(r, step);
             }
 
-            SIMDIFY_INL const T reduce(binary_op_t f) const {
+            SIMDEE_INL const T reduce(binary_op_t f) const {
                 T pos(~neg);
                 return pos.reduce(f);
             }
 
-            SIMDIFY_INL typename T::mask_t mask() const {
+            SIMDEE_INL typename T::mask_t mask() const {
                 return ~neg.mask();
             }
 
-            SIMDIFY_INL typename T::scalar_t first_element() const {
+            SIMDEE_INL typename T::scalar_t first_element() const {
                 return ~neg.first_element();
             }
 
@@ -95,66 +95,66 @@ namespace simd {
         };
 
         template<typename T>
-        SIMDIFY_INL constexpr const T operator~(const deferred_not<T>& l) {
+        SIMDEE_INL constexpr const T operator~(const deferred_not<T>& l) {
             return l.neg;
         }
         template<typename T>
-        SIMDIFY_INL const T operator&(const deferred_not<T>& l, const T& r) {
+        SIMDEE_INL const T operator&(const deferred_not<T>& l, const T& r) {
             return andnot(r, l.neg);
         }
         template<typename T>
-        SIMDIFY_INL const T operator&(const T& l, const deferred_not<T>& r) {
+        SIMDEE_INL const T operator&(const T& l, const deferred_not<T>& r) {
             return andnot(l, r.neg);
         }
         template<typename T>
-        SIMDIFY_INL const deferred_not<T> operator&(const deferred_not<T>& l, const deferred_not<T>& r) {
+        SIMDEE_INL const deferred_not<T> operator&(const deferred_not<T>& l, const deferred_not<T>& r) {
             return deferred_not<T>(l.neg | r.neg);
         }
         template<typename T>
-        SIMDIFY_INL const deferred_not<T> operator|(const deferred_not<T>& l, const T& r) {
+        SIMDEE_INL const deferred_not<T> operator|(const deferred_not<T>& l, const T& r) {
             return deferred_not<T>(andnot(l.neg, r));
         }
         template<typename T>
-        SIMDIFY_INL const deferred_not<T> operator|(const T& l, const deferred_not<T>& r) {
+        SIMDEE_INL const deferred_not<T> operator|(const T& l, const deferred_not<T>& r) {
             return deferred_not<T>(andnot(r.neg, l));
         }
         template<typename T>
-        SIMDIFY_INL const deferred_not<T> operator|(const deferred_not<T>& l, const deferred_not<T>& r) {
+        SIMDEE_INL const deferred_not<T> operator|(const deferred_not<T>& l, const deferred_not<T>& r) {
             return deferred_not<T>(l.neg & r.neg);
         }
         template<typename T>
-        SIMDIFY_INL const deferred_not<T> operator^(const deferred_not<T>& l, const T& r) {
+        SIMDEE_INL const deferred_not<T> operator^(const deferred_not<T>& l, const T& r) {
             return deferred_not<T>(l.neg ^ r);
         }
         template<typename T>
-        SIMDIFY_INL const deferred_not<T> operator^(const T& l, const deferred_not<T>& r) {
+        SIMDEE_INL const deferred_not<T> operator^(const T& l, const deferred_not<T>& r) {
             return deferred_not<T>(l ^ r.neg);
         }
         template<typename T>
-        SIMDIFY_INL const T operator^(const deferred_not<T>& l, const deferred_not<T>& r) {
+        SIMDEE_INL const T operator^(const deferred_not<T>& l, const deferred_not<T>& r) {
             return l.neg ^ r.neg;
         }
         template<typename T>
-        SIMDIFY_INL bool any(const deferred_not<T>& l) {
+        SIMDEE_INL bool any(const deferred_not<T>& l) {
             return !l.neg.mask().all();
         }
         template<typename T>
-        SIMDIFY_INL bool all(const deferred_not<T>& l) {
+        SIMDEE_INL bool all(const deferred_not<T>& l) {
             return !l.neg.mask().any();
         }
         template <typename T, typename Rhs>
-        SIMDIFY_INL void operator&=(const deferred_not<T>& l, const Rhs& r) {
+        SIMDEE_INL void operator&=(const deferred_not<T>& l, const Rhs& r) {
             dont_change_deferred_not<Rhs> fail;
         }
         template <typename T, typename Rhs>
-        SIMDIFY_INL void operator|=(const deferred_not<T>& l, const Rhs& r) {
+        SIMDEE_INL void operator|=(const deferred_not<T>& l, const Rhs& r) {
             dont_change_deferred_not<Rhs> fail;
         }
         template <typename T, typename Rhs>
-        SIMDIFY_INL void operator^=(const deferred_not<T>& l, const Rhs& r) {
+        SIMDEE_INL void operator^=(const deferred_not<T>& l, const Rhs& r) {
             dont_change_deferred_not<Rhs> fail;
         }
     }
 }
 
-#endif // SIMDIFY_COMMON_DEFERRED_NOT_HPP
+#endif // SIMDEE_COMMON_DEFERRED_NOT_HPP

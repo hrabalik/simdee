@@ -44,13 +44,13 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
         float minx[8], miny[8], minz[8], maxx[8], maxy[8], maxz[8];
     };
     struct RayBoxData8S {
-        simd::avxf::storage_t minx, miny, minz, maxx, maxy, maxz;
+        sd::avxf::storage_t minx, miny, minz, maxx, maxy, maxz;
     };
     const std::size_t dataSize8 = 1024 * 1024;
     const std::size_t dataSize1 = 8 * dataSize8;
-    using vec8 = std::vector<RayBoxData8, simd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
+    using vec8 = std::vector<RayBoxData8, sd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
     using vec1 = std::vector<RayBoxData1>;
-    using vec8S = std::vector<RayBoxData8S, simd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
+    using vec8S = std::vector<RayBoxData8S, sd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
     vec8 data8(dataSize8);
     vec1 data1(dataSize1);
     const vec8S& data8S = reinterpret_cast<const vec8S&>(data8);
@@ -224,7 +224,7 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
             auto tminy = ((dirIsNeg[1] ? elem.maxy : elem.miny) - rayOrigin.y) * invDir.y;
             auto tmaxy = ((dirIsNeg[1] ? elem.miny : elem.maxy) - rayOrigin.y) * invDir.y;
 
-            simd::avxf factor(robustFactor);
+            sd::avxf factor(robustFactor);
             tmax *= factor;
             tmaxy *= factor;
             auto fail = ((tmin > tmaxy) | (tminy > tmax)).mask();
@@ -252,7 +252,7 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
 
             tmin = cond(tminz > tmin, tminz, tmin);
             tmax = cond(tmaxz < tmax, tmaxz, tmax);
-            auto win = ~fail & ((tmin < rayTMax) & (tmax > simd::zero())).mask();
+            auto win = ~fail & ((tmin < rayTMax) & (tmax > sd::zero())).mask();
 
             for (int i = 0; i < 8; ++i) {
                 *(resIt++) = win[i] ? Result::win : Result::fail;

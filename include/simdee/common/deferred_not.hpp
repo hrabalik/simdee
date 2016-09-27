@@ -4,7 +4,7 @@
 #include "../util/inline.hpp"
 #include <type_traits>
 
-namespace simd {
+namespace sd {
     namespace expr {
         template <typename T>
         struct dont_change_deferred_not {

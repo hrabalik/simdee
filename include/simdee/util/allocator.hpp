@@ -7,7 +7,7 @@
 #include <cstdint>
 #include "noexcept.hpp"
 
-namespace simd {
+namespace sd {
 
     namespace detail {
 #if defined(__GLIBCXX__) && (__GLIBCXX__ < 20150422 || __GLIBCXX__ == 20150623 || __GLIBCXX__ == 20150626 || __GLIBCXX__ == 20160803)
@@ -46,7 +46,7 @@ namespace simd {
     struct aligned_deleter {
         template <typename T>
         void operator()(T* ptr) {
-            simd::aligned_free(ptr);
+            sd::aligned_free(ptr);
         }
     };
 
@@ -60,11 +60,11 @@ namespace simd {
         aligned_allocator(const aligned_allocator<S, Align>&) {}
 
         T* allocate(std::size_t count) const SIMDEE_NOEXCEPT {
-            return simd::aligned_malloc<T, Align>(count);
+            return sd::aligned_malloc<T, Align>(count);
         }
 
         void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
-            simd::aligned_free(ptr);
+            sd::aligned_free(ptr);
         }
 
         // destroy is a no-op if possible

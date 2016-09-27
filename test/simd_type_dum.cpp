@@ -8,9 +8,9 @@
 #include <numeric>
 #include <functional>
 
-using F = simd::dumf;
-using U = simd::dumu;
-using S = simd::dums;
+using F = sd::dumf;
+using U = sd::dumu;
+using S = sd::dums;
 
 const F::storage_t bufAF {
     -0.27787193f,

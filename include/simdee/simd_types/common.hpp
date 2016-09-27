@@ -11,7 +11,7 @@
 #include <array>
 #include <type_traits>
 
-namespace simd {
+namespace sd {
 
     //
     // forward declarations

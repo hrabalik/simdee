@@ -8,7 +8,7 @@
 
 #if defined(__GNUC__) // GCC, Clang
 
-namespace simd {
+namespace sd {
     // least significant "1" bit index; result undefined if in == 0
     SIMDEE_INL int lsb(unsigned int in) { return __builtin_ctz(in); }
     // most significant "1" bit index; result undefined if in == 0
@@ -33,7 +33,7 @@ namespace simd {
 
 #include <intrin.h>
 
-namespace simd {
+namespace sd {
     // least significant "1" bit index; result undefined if in == 0
     SIMDEE_INL unsigned long lsb(unsigned __int32 in) { unsigned long res; _BitScanForward(&res, in); return res; }
     // most significant "1" bit index; result undefined if in == 0
@@ -59,7 +59,7 @@ namespace simd {
 
 #endif
 
-namespace simd {
+namespace sd {
 
     // provides indices of set (1) bits, ordered from least significant to most significant
     struct bit_iterator : std::iterator<std::input_iterator_tag, uint32_t> {

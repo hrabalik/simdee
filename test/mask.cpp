@@ -4,7 +4,7 @@
 #include <vector>
 
 constexpr uint32_t activeBits = 0x77777777U;
-using mask_t = simd::impl::mask<activeBits>;
+using mask_t = sd::impl::mask<activeBits>;
 constexpr uint32_t u1 = 0xdeadbeefU & activeBits;
 constexpr uint32_t u2 = 0xabcd1234U & activeBits;
 

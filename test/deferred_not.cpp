@@ -4,11 +4,11 @@
 #include "catch.hpp"
 #include <type_traits>
 
-using U = simd::sseu;
+using U = sd::sseu;
 const U::storage_t dataA{ 1753029375U, 1117080442U, 3817141237U, 3761735248U };
 const U::storage_t dataB{ 1679702461U, 2102346647U, 480083363U, 3761735248U };
 
-using not_U = simd::expr::deferred_not<U>;
+using not_U = sd::expr::deferred_not<U>;
 
 TEST_CASE("deferred_not types", "[deferred_not]") {
     REQUIRE((std::is_same<U::vector_t, not_U::vector_t>::value));
@@ -32,8 +32,8 @@ TEST_CASE("deferred_not arithmetic", "[deferred_not]") {
             REQUIRE(all(~~~ua == ~~~nua));
         }
         SECTION("any, all") {
-            const U zero = simd::zero();
-            const U allb = simd::all_bits();
+            const U zero = sd::zero();
+            const U allb = sd::all_bits();
             const not_U nzero(U(~zero));
             const not_U nallb(U(~allb));
             REQUIRE(any(ua) == any(nua));
@@ -103,8 +103,8 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         }
     }
     SECTION("reduce") {
-        auto res_ua = ua.reduce(simd::operator^).first_element();
-        auto res_nua = nua.reduce(simd::operator^).first_element();
+        auto res_ua = ua.reduce(sd::operator^).first_element();
+        auto res_nua = nua.reduce(sd::operator^).first_element();
         REQUIRE(res_ua == res_nua);
     }
     SECTION("mask") {

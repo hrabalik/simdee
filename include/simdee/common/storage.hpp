@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <initializer_list>
 
-namespace simd {
+namespace sd {
     namespace impl {
         //
         // storage for SIMD types

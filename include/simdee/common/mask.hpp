@@ -5,7 +5,7 @@
 #include "../util/bitfiddle.hpp"
 #include <cstdint>
 
-namespace simd {
+namespace sd {
     namespace impl {
         //
         // result of the mask operation

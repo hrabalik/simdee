@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace simd {
+namespace sd {
 
     template <std::size_t Size>
     struct select_sint;

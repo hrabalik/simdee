@@ -7,7 +7,7 @@
 #include <limits>
 #include <utility>
 
-namespace simd {
+namespace sd {
     template <typename T>
     struct is_simd_type;
     template <typename T>

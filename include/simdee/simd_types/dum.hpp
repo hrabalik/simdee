@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-namespace simd {
+namespace sd {
 
     struct dumf;
     struct dumu;
@@ -150,7 +150,7 @@ namespace simd {
         using dum_base::dum_base;
         SIMDEE_INL explicit dumu(const dums&);
 
-        SIMDEE_INL mask_t mask() const { return mask_t(simd::tou(mm) >> 31); }
+        SIMDEE_INL mask_t mask() const { return mask_t(sd::tou(mm) >> 31); }
         SIMDEE_INL scalar_t first_element() const { return mm; }
     };
 

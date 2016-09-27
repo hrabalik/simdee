@@ -27,10 +27,10 @@ ASSERT(S::width == SIMD_WIDTH);
 ASSERT((std::is_same<F::scalar_t, float>::value));
 ASSERT((std::is_same<U::scalar_t, uint32_t>::value));
 ASSERT((std::is_same<S::scalar_t, int32_t>::value));
-ASSERT((std::is_same<U::mask_t, simd::mask<U>>::value));
-ASSERT((std::is_same<F::storage_t, simd::storage<F>>::value));
-ASSERT((std::is_same<U::storage_t, simd::storage<U>>::value));
-ASSERT((std::is_same<S::storage_t, simd::storage<S>>::value));
+ASSERT((std::is_same<U::mask_t, sd::mask<U>>::value));
+ASSERT((std::is_same<F::storage_t, sd::storage<F>>::value));
+ASSERT((std::is_same<U::storage_t, sd::storage<U>>::value));
+ASSERT((std::is_same<S::storage_t, sd::storage<S>>::value));
 ASSERT(sizeof(F) == sizeof(F::vector_t));
 ASSERT(sizeof(U) == sizeof(U::vector_t));
 ASSERT(sizeof(S) == sizeof(S::vector_t));
@@ -43,9 +43,9 @@ ASSERT(sizeof(S::scalar_t) * S::width == sizeof(S));
 ASSERT((std::is_trivially_copyable<F>::value));
 ASSERT((std::is_trivially_copyable<U>::value));
 ASSERT((std::is_trivially_copyable<S>::value));
-ASSERT((simd::is_simd_type<F>::value));
-ASSERT((simd::is_simd_type<U>::value));
-ASSERT((simd::is_simd_type<S>::value));
+ASSERT((sd::is_simd_type<F>::value));
+ASSERT((sd::is_simd_type<U>::value));
+ASSERT((sd::is_simd_type<S>::value));
 ASSERT(HAS_METHOD(const F, self(), F));
 ASSERT(HAS_METHOD(const U, self(), U));
 ASSERT(HAS_METHOD(const S, self(), S));
@@ -109,18 +109,18 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         REQUIRE(rs == bufAS);
     }
     SECTION("from aligned pointer") {
-        F tf(simd::aligned(bufAF.data()));
-        U tu(simd::aligned(bufAU.data()));
-        S ts(simd::aligned(bufAS.data()));
+        F tf(sd::aligned(bufAF.data()));
+        U tu(sd::aligned(bufAU.data()));
+        S ts(sd::aligned(bufAS.data()));
         tor(tf, tu, ts);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
-        F tf(simd::unaligned(bufAF.data()));
-        U tu(simd::unaligned(bufAU.data()));
-        S ts(simd::unaligned(bufAS.data()));
+        F tf(sd::unaligned(bufAF.data()));
+        U tu(sd::unaligned(bufAU.data()));
+        S ts(sd::unaligned(bufAS.data()));
         tor(tf, tu, ts);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
@@ -141,69 +141,69 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from uval, sval, zero, etc. (simd::init family)") {
+    SECTION("from uval, sval, zero, etc. (sd::init family)") {
         {
-            F tf(simd::fval(1.2345678f));
-            U tu(simd::fval(1.2345678f));
-            S ts(simd::fval(1.2345678f));
+            F tf(sd::fval(1.2345678f));
+            U tu(sd::fval(1.2345678f));
+            S ts(sd::fval(1.2345678f));
             tor(tf, tu, ts);
-            for (auto val : rf) REQUIRE(simd::tof(val) == 1.2345678f);
-            for (auto val : ru) REQUIRE(simd::tof(val) == 1.2345678f);
-            for (auto val : rs) REQUIRE(simd::tof(val) == 1.2345678f);
+            for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
+            for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
+            for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
         }
         {
-            F tf(simd::uval(0xdeadbeef));
-            U tu(simd::uval(0xdeadbeef));
-            S ts(simd::uval(0xdeadbeef));
+            F tf(sd::uval(0xdeadbeef));
+            U tu(sd::uval(0xdeadbeef));
+            S ts(sd::uval(0xdeadbeef));
             tor(tf, tu, ts);
-            for (auto val : rf) REQUIRE(simd::tou(val) == 0xdeadbeef);
-            for (auto val : ru) REQUIRE(simd::tou(val) == 0xdeadbeef);
-            for (auto val : rs) REQUIRE(simd::tou(val) == 0xdeadbeef);
+            for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
+            for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
+            for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
         }
         {
-            F tf(simd::sval(-123456789));
-            U tu(simd::sval(-123456789));
-            S ts(simd::sval(-123456789));
+            F tf(sd::sval(-123456789));
+            U tu(sd::sval(-123456789));
+            S ts(sd::sval(-123456789));
             tor(tf, tu, ts);
-            for (auto val : rf) REQUIRE(simd::tos(val) == -123456789);
-            for (auto val : ru) REQUIRE(simd::tos(val) == -123456789);
-            for (auto val : rs) REQUIRE(simd::tos(val) == -123456789);
+            for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
+            for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
+            for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
         }
         {
-            F tf(simd::zero());
-            U tu(simd::zero());
-            S ts(simd::zero());
+            F tf(sd::zero());
+            U tu(sd::zero());
+            S ts(sd::zero());
             tor(tf, tu, ts);
-            for (auto val : rf) REQUIRE(simd::tou(val) == 0x00000000);
-            for (auto val : ru) REQUIRE(simd::tou(val) == 0x00000000);
-            for (auto val : rs) REQUIRE(simd::tou(val) == 0x00000000);
+            for (auto val : rf) REQUIRE(sd::tou(val) == 0x00000000);
+            for (auto val : ru) REQUIRE(sd::tou(val) == 0x00000000);
+            for (auto val : rs) REQUIRE(sd::tou(val) == 0x00000000);
         }
         {
-            F tf(simd::all_bits());
-            U tu(simd::all_bits());
-            S ts(simd::all_bits());
+            F tf(sd::all_bits());
+            U tu(sd::all_bits());
+            S ts(sd::all_bits());
             tor(tf, tu, ts);
-            for (auto val : rf) REQUIRE(simd::tou(val) == 0xffffffff);
-            for (auto val : ru) REQUIRE(simd::tou(val) == 0xffffffff);
-            for (auto val : rs) REQUIRE(simd::tou(val) == 0xffffffff);
+            for (auto val : rf) REQUIRE(sd::tou(val) == 0xffffffff);
+            for (auto val : ru) REQUIRE(sd::tou(val) == 0xffffffff);
+            for (auto val : rs) REQUIRE(sd::tou(val) == 0xffffffff);
         }
         {
-            F tf(simd::sign_bit());
-            U tu(simd::sign_bit());
-            S ts(simd::sign_bit());
+            F tf(sd::sign_bit());
+            U tu(sd::sign_bit());
+            S ts(sd::sign_bit());
             tor(tf, tu, ts);
-            for (auto val : rf) REQUIRE(simd::tou(val) == 0x80000000);
-            for (auto val : ru) REQUIRE(simd::tou(val) == 0x80000000);
-            for (auto val : rs) REQUIRE(simd::tou(val) == 0x80000000);
+            for (auto val : rf) REQUIRE(sd::tou(val) == 0x80000000);
+            for (auto val : ru) REQUIRE(sd::tou(val) == 0x80000000);
+            for (auto val : rs) REQUIRE(sd::tou(val) == 0x80000000);
         }
         {
-            F tf(simd::abs_mask());
-            U tu(simd::abs_mask());
-            S ts(simd::abs_mask());
+            F tf(sd::abs_mask());
+            U tu(sd::abs_mask());
+            S ts(sd::abs_mask());
             tor(tf, tu, ts);
-            for (auto val : rf) REQUIRE(simd::tou(val) == 0x7fffffff);
-            for (auto val : ru) REQUIRE(simd::tou(val) == 0x7fffffff);
-            for (auto val : rs) REQUIRE(simd::tou(val) == 0x7fffffff);
+            for (auto val : rf) REQUIRE(sd::tou(val) == 0x7fffffff);
+            for (auto val : ru) REQUIRE(sd::tou(val) == 0x7fffffff);
+            for (auto val : rs) REQUIRE(sd::tou(val) == 0x7fffffff);
         }
     }
 }
@@ -235,18 +235,18 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
     }
     SECTION("from aligned pointer") {
         implicit_test(
-            simd::aligned(bufAF.data()),
-            simd::aligned(bufAU.data()),
-            simd::aligned(bufAS.data()));
+            sd::aligned(bufAF.data()),
+            sd::aligned(bufAU.data()),
+            sd::aligned(bufAS.data()));
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
         implicit_test(
-            simd::unaligned(bufAF.data()),
-            simd::unaligned(bufAU.data()),
-            simd::unaligned(bufAS.data()));
+            sd::unaligned(bufAF.data()),
+            sd::unaligned(bufAU.data()),
+            sd::unaligned(bufAS.data()));
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
@@ -263,35 +263,35 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from uval, sval, zero, etc. (simd::init family)") {
-        implicit_test(simd::fval(1.2345678f), simd::fval(1.2345678f), simd::fval(1.2345678f));
-        for (auto val : rf) REQUIRE(simd::tof(val) == 1.2345678f);
-        for (auto val : ru) REQUIRE(simd::tof(val) == 1.2345678f);
-        for (auto val : rs) REQUIRE(simd::tof(val) == 1.2345678f);
-        implicit_test(simd::uval(0xdeadbeef), simd::uval(0xdeadbeef), simd::uval(0xdeadbeef));
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0xdeadbeef);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0xdeadbeef);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0xdeadbeef);
-        implicit_test(simd::sval(-123456789), simd::sval(-123456789), simd::sval(-123456789));
-        for (auto val : rf) REQUIRE(simd::tos(val) == -123456789);
-        for (auto val : ru) REQUIRE(simd::tos(val) == -123456789);
-        for (auto val : rs) REQUIRE(simd::tos(val) == -123456789);
-        implicit_test(simd::zero(), simd::zero(), simd::zero());
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0x00000000);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0x00000000);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0x00000000);
-        implicit_test(simd::all_bits(), simd::all_bits(), simd::all_bits());
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0xffffffff);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0xffffffff);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0xffffffff);
-        implicit_test(simd::sign_bit(), simd::sign_bit(), simd::sign_bit());
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0x80000000);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0x80000000);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0x80000000);
-        implicit_test(simd::abs_mask(), simd::abs_mask(), simd::abs_mask());
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0x7fffffff);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0x7fffffff);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0x7fffffff);
+    SECTION("from uval, sval, zero, etc. (sd::init family)") {
+        implicit_test(sd::fval(1.2345678f), sd::fval(1.2345678f), sd::fval(1.2345678f));
+        for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
+        for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
+        for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
+        implicit_test(sd::uval(0xdeadbeef), sd::uval(0xdeadbeef), sd::uval(0xdeadbeef));
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
+        implicit_test(sd::sval(-123456789), sd::sval(-123456789), sd::sval(-123456789));
+        for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
+        for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
+        for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
+        implicit_test(sd::zero(), sd::zero(), sd::zero());
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0x00000000);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0x00000000);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0x00000000);
+        implicit_test(sd::all_bits(), sd::all_bits(), sd::all_bits());
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0xffffffff);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0xffffffff);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0xffffffff);
+        implicit_test(sd::sign_bit(), sd::sign_bit(), sd::sign_bit());
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0x80000000);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0x80000000);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0x80000000);
+        implicit_test(sd::abs_mask(), sd::abs_mask(), sd::abs_mask());
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0x7fffffff);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0x7fffffff);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0x7fffffff);
     }
 }
 
@@ -358,56 +358,56 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from uval, sval, zero, etc. (simd::init family)") {
-        tf = simd::fval(1.2345678f);
-        tu = simd::fval(1.2345678f);
-        ts = simd::fval(1.2345678f);
+    SECTION("from uval, sval, zero, etc. (sd::init family)") {
+        tf = sd::fval(1.2345678f);
+        tu = sd::fval(1.2345678f);
+        ts = sd::fval(1.2345678f);
         tor();
-        for (auto val : rf) REQUIRE(simd::tof(val) == 1.2345678f);
-        for (auto val : ru) REQUIRE(simd::tof(val) == 1.2345678f);
-        for (auto val : rs) REQUIRE(simd::tof(val) == 1.2345678f);
-        tf = simd::uval(0xdeadbeef);
-        tu = simd::uval(0xdeadbeef);
-        ts = simd::uval(0xdeadbeef);
+        for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
+        for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
+        for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
+        tf = sd::uval(0xdeadbeef);
+        tu = sd::uval(0xdeadbeef);
+        ts = sd::uval(0xdeadbeef);
         tor();
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0xdeadbeef);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0xdeadbeef);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0xdeadbeef);
-        tf = simd::sval(-123456789);
-        tu = simd::sval(-123456789);
-        ts = simd::sval(-123456789);
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
+        tf = sd::sval(-123456789);
+        tu = sd::sval(-123456789);
+        ts = sd::sval(-123456789);
         tor();
-        for (auto val : rf) REQUIRE(simd::tos(val) == -123456789);
-        for (auto val : ru) REQUIRE(simd::tos(val) == -123456789);
-        for (auto val : rs) REQUIRE(simd::tos(val) == -123456789);
-        tf = simd::zero();
-        tu = simd::zero();
-        ts = simd::zero();
+        for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
+        for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
+        for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
+        tf = sd::zero();
+        tu = sd::zero();
+        ts = sd::zero();
         tor();
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0x00000000);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0x00000000);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0x00000000);
-        tf = simd::all_bits();
-        tu = simd::all_bits();
-        ts = simd::all_bits();
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0x00000000);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0x00000000);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0x00000000);
+        tf = sd::all_bits();
+        tu = sd::all_bits();
+        ts = sd::all_bits();
         tor();
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0xffffffff);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0xffffffff);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0xffffffff);
-        tf = simd::sign_bit();
-        tu = simd::sign_bit();
-        ts = simd::sign_bit();
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0xffffffff);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0xffffffff);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0xffffffff);
+        tf = sd::sign_bit();
+        tu = sd::sign_bit();
+        ts = sd::sign_bit();
         tor();
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0x80000000);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0x80000000);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0x80000000);
-        tf = simd::abs_mask();
-        tu = simd::abs_mask();
-        ts = simd::abs_mask();
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0x80000000);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0x80000000);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0x80000000);
+        tf = sd::abs_mask();
+        tu = sd::abs_mask();
+        ts = sd::abs_mask();
         tor();
-        for (auto val : rf) REQUIRE(simd::tou(val) == 0x7fffffff);
-        for (auto val : ru) REQUIRE(simd::tou(val) == 0x7fffffff);
-        for (auto val : rs) REQUIRE(simd::tou(val) == 0x7fffffff);
+        for (auto val : rf) REQUIRE(sd::tou(val) == 0x7fffffff);
+        for (auto val : ru) REQUIRE(sd::tou(val) == 0x7fffffff);
+        for (auto val : rs) REQUIRE(sd::tou(val) == 0x7fffffff);
     }
 }
 
@@ -424,7 +424,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
     SECTION("float to int") {
         S::storage_t expected, result;
         std::transform(begin(bufAF), end(bufAF), begin(expected), [](F::scalar_t a) {
-            return simd::round_to_int32(a);
+            return sd::round_to_int32(a);
         });
         F in = bufAF;
         result = S(in);
@@ -442,7 +442,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
     SECTION("uint to int") {
         S::storage_t expected, result;
         std::transform(begin(bufAU), end(bufAU), begin(expected), [](U::scalar_t a) {
-            return simd::round_to_int32(a);
+            return sd::round_to_int32(a);
         });
         U in = bufAU;
         result = S(in);
@@ -871,25 +871,25 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
         constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
         auto max = [](scalar_t l, scalar_t r) { return std::max(l, r); };
         e = std::accumulate(begin(bufAF), end(bufAF), -inf, max);
-        r = a.reduce(simd::max).first_element();
+        r = a.reduce(sd::max).first_element();
         REQUIRE(r == e);
     }
     SECTION("min") {
         constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
         auto min = [](scalar_t l, scalar_t r) { return std::min(l, r); };
         e = std::accumulate(begin(bufAF), end(bufAF), inf, min);
-        r = a.reduce(simd::min).first_element();
+        r = a.reduce(sd::min).first_element();
         REQUIRE(r == e);
     }
     SECTION("sum") {
         e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(0));
-        r = a.reduce(simd::operator+).first_element();
+        r = a.reduce(sd::operator+).first_element();
         REQUIRE(r == Approx(e));
     }
     SECTION("product") {
         auto prod = std::multiplies<scalar_t>();
         e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(1), prod);
-        r = a.reduce(simd::operator*).first_element();
+        r = a.reduce(sd::operator*).first_element();
         REQUIRE(r == Approx(e));
     }
 }

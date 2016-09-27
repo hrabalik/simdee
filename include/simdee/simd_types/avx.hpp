@@ -16,7 +16,7 @@
 
 #include <immintrin.h>
 
-namespace simd {
+namespace sd {
 
     struct avxf;
     struct avxu;

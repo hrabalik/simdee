@@ -27,7 +27,7 @@
 #include <nmmintrin.h>
 #endif
 
-namespace simd {
+namespace sd {
 
     struct ssef;
     struct sseu;

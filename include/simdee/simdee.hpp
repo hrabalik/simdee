@@ -78,7 +78,7 @@
 // set some (successfully loaded) SIMD type as simd_t
 // use SIMDEE_PREFER_* to use a specific type
 //
-namespace simd {
+namespace sd {
 #if defined(SIMDEE_PREFER_AVX) && defined(SIMDEE_HAVE_AVX)
     using vecf = avxf;
     using vecu = avxu;

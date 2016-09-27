@@ -8,9 +8,9 @@
 #include <numeric>
 #include <functional>
 
-using F = simd::avxf;
-using U = simd::avxu;
-using S = simd::avxs;
+using F = sd::avxf;
+using U = sd::avxu;
+using S = sd::avxs;
 
 const F::storage_t bufAF {
     -0.27787193f, +0.70154146f, -2.05181630f, +2.22944568f,

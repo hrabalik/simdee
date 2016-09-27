@@ -186,7 +186,7 @@ namespace simd {
             }
         }
 
-        SIMDIFY_INL const Crtp reduce(binary_op_t f) const {
+        const Crtp reduce(binary_op_t f) const {
             Crtp tmp = f(self(), _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(mm), _MM_SHUFFLE(2, 3, 0, 1))));
             return f(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm), _MM_SHUFFLE(1, 0, 3, 2))));
         }

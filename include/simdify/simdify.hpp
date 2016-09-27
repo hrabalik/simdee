@@ -1,6 +1,9 @@
 #ifndef SIMDIFY_SIMDIFY_HPP
 #define SIMDIFY_SIMDIFY_HPP
 #define SIMDIFY
+#define SIMDIFY_MAJOR 0
+#define SIMDIFY_MINOR 1
+#define SIMDIFY_PATCHLEVEL 0
 
 //
 // C++, C++11 checks

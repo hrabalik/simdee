@@ -71,6 +71,12 @@ TEST_CASE("deferred_not arithmetic", "[deferred_not]") {
 TEST_CASE("deferred_not methods", "[deferred_not]") {
     const U ua = ~dataA;
     const not_U nua(dataA);
+    SECTION("eval") {
+        auto res_ua = ua.eval();
+        auto res_nua = nua.eval();
+        REQUIRE((std::is_same<decltype(res_ua), decltype(res_nua)>::value));
+        REQUIRE(all(res_ua == res_nua));
+    }
     SECTION("data") {
         REQUIRE(all(U(ua.data()) == U(nua.data())));
     }

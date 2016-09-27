@@ -16,7 +16,9 @@ namespace simd {
                 "This is definitely not something you want to do. "
                 "What probably happened is that you used *auto* to store a calculation result, "
                 "but the type of the result is not what you were expecting. "
-                "To solve the problem, don't use *auto* on that particular line.");
+                "To solve the problem, you have to modify the calculation; "
+                "either use the .eval() method to force evaluation to the desired type, "
+                "or don't use *auto* on that particular line.");
         };
 
         template <typename T>
@@ -33,6 +35,11 @@ namespace simd {
             template <typename Rhs>
             void operator=(const Rhs& r) {
                 dont_change_deferred_not<Rhs> fail;
+            }
+
+            SIMDIFY_INL const T eval() const {
+                T pos(~neg);
+                return pos;
             }
 
             SIMDIFY_INL const vector_t data() const {

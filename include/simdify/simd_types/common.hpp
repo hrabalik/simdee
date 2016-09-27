@@ -45,6 +45,14 @@ namespace simd {
             return static_cast<const Crtp&>(*this);
         }
 
+        SIMDIFY_INL Crtp& eval() {
+            return static_cast<Crtp&>(*this);
+        }
+
+        SIMDIFY_INL constexpr const Crtp& eval() const {
+            return static_cast<const Crtp&>(*this);
+        }
+
         vector_t& data() { return mm; }
         const vector_t& data() const { return mm; }
 

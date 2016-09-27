@@ -1,8 +1,8 @@
 file(GLOB_RECURSE SIMDEE_HEADERS "${CMAKE_SOURCE_DIR}/include/*.hpp")
 file(GLOB_RECURSE SIMDEE_TEST_SOURCES "*.hpp" "*.cpp" "*.inl")
-add_executable(simdify_test ${SIMDEE_HEADERS} ${SIMDEE_TEST_SOURCES})
-target_include_directories(simdify_test PUBLIC ${CMAKE_SOURCE_DIR}/include)
-set_property(TARGET simdify_test PROPERTY CXX_STANDARD 11)
+add_executable(simdee_test ${SIMDEE_HEADERS} ${SIMDEE_TEST_SOURCES})
+target_include_directories(simdee_test PUBLIC ${CMAKE_SOURCE_DIR}/include)
+set_property(TARGET simdee_test PROPERTY CXX_STANDARD 11)
 
 if(MSVC)
     SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /arch:AVX2")

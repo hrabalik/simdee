@@ -57,7 +57,7 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
     enum class Result : char { fail = 13, win = 42 };
     std::vector<Result> resultsNonSimd(dataSize1);
     std::vector<Result> resultsHandSimd(dataSize1);
-    std::vector<Result> resultsSimdify(dataSize1);
+    std::vector<Result> resultsSimdee(dataSize1);
 
     // fill data
     std::random_device rd;
@@ -214,9 +214,9 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
         }
     };
 
-    // implementation using Simdify
-    auto simdify = [&]() {
-        auto resIt = resultsSimdify.begin();
+    // implementation using Simdee
+    auto simdee = [&]() {
+        auto resIt = resultsSimdee.begin();
 
         for (const auto& elem : data8S) {
             auto tmin = ((dirIsNeg[0] ? elem.maxx : elem.minx) - rayOrigin.x) * invDir.x;
@@ -263,12 +263,12 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
     // check performance
     auto nonSimdTime = benchmark_ms(nonSimd);
     auto handSimdTime = benchmark_ms(handSimd);
-    auto simdifyTime = benchmark_ms(simdify);
+    auto simdeeTime = benchmark_ms(simdee);
     std::cout << "non-SIMD: " << nonSimdTime << " ms\n";
     std::cout << "hand SIMD: " << handSimdTime << " ms\n";
-    std::cout << "Simdify: " << simdifyTime << " ms\n";
+    std::cout << "Simdee: " << simdeeTime << " ms\n";
 
     // check correctness
     REQUIRE((resultsNonSimd == resultsHandSimd));
-    REQUIRE((resultsNonSimd == resultsSimdify));
+    REQUIRE((resultsNonSimd == resultsSimdee));
 }

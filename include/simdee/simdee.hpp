@@ -9,15 +9,15 @@
 // C++, C++11 checks
 //
 #ifndef __cplusplus
-#error "Simdify requires C++."
+#error "Simdee requires C++."
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER < 1900
-#error "Simdify requires Visual Studio 2015."
+#error "Simdee requires Visual Studio 2015."
 #endif
 
 #if !defined(_MSC_VER) && __cplusplus < 201103L && !defined(__GXX_EXPERIMENTAL_CXX0X__)
-#error "Simdify requires C++11. Please use the setting '-std=c++0x' or '-std=c++11'."
+#error "Simdee requires C++11. Please use the setting '-std=c++0x' or '-std=c++11'."
 #endif
 
 //
@@ -104,7 +104,7 @@ namespace simd {
     using vecu = dumu;
     using vecs = dums;
 #else
-#error "Simdify could not determine a suitable SIMD type as simd_t."
+#error "Simdee could not determine a suitable SIMD type as simd_t."
 #endif
 
 }

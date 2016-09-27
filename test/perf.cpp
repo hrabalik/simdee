@@ -7,8 +7,8 @@
 #include <functional>
 
 #define SIMDIFY_NEED_AVX 1
-#include <simdify/simdify.hpp>
-#include <simdify/util/allocator.hpp>
+#include <simdee/simdee.hpp>
+#include <simdee/util/allocator.hpp>
 
 const char* const hline = "===============================================================================\n";
 

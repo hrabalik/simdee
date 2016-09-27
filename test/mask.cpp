@@ -1,6 +1,6 @@
 #include "catch.hpp"
 
-#include <simdify/common/mask.hpp>
+#include <simdee/common/mask.hpp>
 #include <vector>
 
 constexpr uint32_t activeBits = 0x77777777U;

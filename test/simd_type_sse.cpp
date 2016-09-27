@@ -1,5 +1,5 @@
 #define SIMDIFY_NEED_SSE 1
-#include <simdify/simdify.hpp>
+#include <simdee/simdee.hpp>
 
 #include "catch.hpp"
 #include <array>

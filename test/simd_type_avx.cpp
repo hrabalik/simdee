@@ -1,5 +1,5 @@
 #define SIMDIFY_NEED_AVX 1
-#include <simdify/simdify.hpp>
+#include <simdee/simdee.hpp>
 
 #include "catch.hpp"
 #include <array>

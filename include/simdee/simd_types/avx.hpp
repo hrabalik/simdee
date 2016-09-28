@@ -70,6 +70,10 @@ namespace sd {
         SIMDEE_BASE_CTOR(avx_base, vector_t, mm = r);
         SIMDEE_BASE_CTOR(avx_base, scalar_t, mm = _mm256_broadcast_ss((float*)&r));
         SIMDEE_BASE_CTOR(avx_base, expr::zero, mm = _mm256_setzero_ps());
+        SIMDEE_BASE_CTOR_TPL(avx_base, expr::aligned<T>, aligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(avx_base, expr::unaligned<T>, unaligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(avx_base, expr::init<T>, *this = r.template to<scalar_t>());
+        SIMDEE_BASE_CTOR(avx_base, storage_t, aligned_load(r.data()));
 
         SIMDEE_BASE_CTOR_COMPLEX(avx_base, expr::all_bits) {
 #       if defined(__AVX2__)
@@ -82,11 +86,6 @@ namespace sd {
 #       endif
             return self();
         }
-
-        SIMDEE_BASE_CTOR_TPL(avx_base, expr::aligned<T>, aligned_load(r.ptr));
-        SIMDEE_BASE_CTOR_TPL(avx_base, expr::unaligned<T>, unaligned_load(r.ptr));
-        SIMDEE_BASE_CTOR_TPL(avx_base, expr::init<T>, *this = r.template to<scalar_t>());
-        SIMDEE_BASE_CTOR(avx_base, storage_t, aligned_load(r.data()));
 
         SIMDEE_INL void aligned_load(const scalar_t* r) {
             mm = _mm256_load_ps((const float*)r);

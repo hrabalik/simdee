@@ -1,73 +1,36 @@
-# simdify
+# Simdee
 
 ## Overview
 
 - Header-only SIMD abstraction library.
-- C++11 is required (GCC 4.7, Clang 3.2, Visual Studio 2015).
+- Handles SSE and AVX instruction sets.
 - Open-source, distributed under the MIT license.
 
-## Basic usage
+## Supported compilers
 
-    #include <simdify/simdify.hpp>
-    #include <simdify/storage.hpp>
-    #include <iostream>
-    
-    int main() {
-        // gather some data
-        simd::storage<simd::ssef> stor;
-        stor[0] = 1.0f;
-        stor[1] = 2.0f;
-        stor[2] = 3.0f;
-        stor[3] = 4.0f;
+- Clang, currently tested under 3.8.0
+- GCC, currently tested under 5.4.0
+- MSVC, currrently tested under 14.0 (Visual Studio 2015)
 
-        // load from memory into a SSE register
-        simd::ssef reg = stor;
-        
-        // do some math
-        reg = reg * reg + reg;
+## Installing
 
-        // store back into memory
-        stor = reg;
-        
-        // print the results
-        std::cout << stor[0] << std::endl; // 2
-        std::cout << stor[1] << std::endl; // 6
-        std::cout << stor[2] << std::endl; // 12
-        std::cout << stor[3] << std::endl; // 20
-    }
+- Add the headers from the `include` directory into your include path.
+- Set up your compiler to support C++11 or newer.
+- Set up your compiler to emit the desired instruction set.
 
-## Basic usage - with `vecf`
+The table below lists which compiler flag to use to enable a modern C++ standard.
 
-    #include <simdify/simdify.hpp>
-    #include <simdify/storage.hpp>
-    #include <iostream>
+Language standard  | Clang        | GCC          | MSVC
+-------------------|--------------|--------------|--------------
+C++11              | -std=c++11   | -std=c++11   | no flag
+C++14              | -std=c++14   | -std=c++14   | N/A
 
-    int main() {
-        // gather some data
-        // simd::vecf is:
-        // - simd::avxf, if AVX is available
-        // - simd::ssef, if SSE is available
-        // - simd::dumf otherwise
-        // simd::vecf::W (SIMD width) is:
-        // - 8, if AVX is available
-        // - 4, if SSE is available
-        // - 1 otherwise
-        simd::storage<simd::vecf> stor;
-        for (int i = 0; i < simd::vecf::W; ++i) {
-            stor[i] = i + 1.f;
-        }
+The table below lists which compiler flag to use to enable the desired instruction set.
 
-        // load from memory into a register -- as before
-        simd::vecf reg = stor;
+Instruction set    | Clang        | GCC          | MSVC
+-------------------|--------------|--------------|--------------
+SSE2               | -msse2       | -msse2       | /arch:SSE2
+AVX                | -mavx        | -mavx        | /arch:AVX
+AVX2               | -mavx2       | -mavx2       | /arch:AVX2
 
-        // do some math -- as before
-        reg = reg * reg + reg;
-
-        // store back into memory -- as before
-        stor = reg;
-
-        // print the results
-        for (int i = 0; i < simd::vecf::W; ++i) {
-            std::cout << stor[i] << std::endl;
-        }
-    }
+No compiler flag is needed when you want to target SSE2 on a x86-64 architecture.

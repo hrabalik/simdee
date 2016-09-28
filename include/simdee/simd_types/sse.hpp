@@ -102,11 +102,7 @@ namespace sd {
             return self();
         }
 
-        SIMDEE_INL sse_base(const expr::all_bits& r) {
-            operator=(r);
-        }
-
-        Crtp& operator=(const expr::all_bits& r) {
+        SIMDEE_BASE_CTOR_COMPLEX(sse_base, expr::all_bits) {
             mm = _mm_setzero_ps();
             mm = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(mm), _mm_castps_si128(mm)));
             return self();

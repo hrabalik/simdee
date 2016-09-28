@@ -6,17 +6,14 @@
 
 #include "common.hpp"
 
-// set feature flag
 #define SIMDEE_HAVE_SSE
 
-// ensure that intrinsics are available
 #ifndef __SSE2__
 #error "The macro '__SSE2__' is not set. SSE2 intrinsics are required to use the SSE SIMD type. Please check your build options."
 #endif
 
 #include <emmintrin.h>
 
-// additional includes for extra instruction sets
 #if defined(__SSE3__)
 #include <pmmintrin.h>
 #endif

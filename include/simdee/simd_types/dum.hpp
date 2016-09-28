@@ -6,7 +6,6 @@
 
 #include "common.hpp"
 
-// set feature flag
 #define SIMDEE_HAVE_DUM
 
 #include <cmath>

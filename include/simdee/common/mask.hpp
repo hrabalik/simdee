@@ -10,9 +10,6 @@
 
 namespace sd {
     namespace impl {
-        //
-        // result of the mask operation
-        //
         template <uint32_t AllBitsMask>
         struct mask {
             SIMDEE_INL mask(const mask&) = default;                                                               \

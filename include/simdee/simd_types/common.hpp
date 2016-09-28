@@ -16,17 +16,11 @@
 
 namespace sd {
 
-    //
-    // forward declarations
-    //
     template <typename T>
     struct is_simd_type : std::integral_constant<bool, false> {};
     template <typename T>
     struct simd_type_traits;
 
-    //
-    // SIMD type base class (with derived class as Crtp, CRTP-style)
-    //
     template <typename Crtp>
     struct simd_base {
         using traits_t = simd_type_traits<Crtp>;
@@ -64,9 +58,6 @@ namespace sd {
         vector_t mm;
     };
 
-    //
-    // meta operations - apply to all SIMD types
-    //
     template <typename Simd_t, typename Rhs_t>
     SIMDEE_INL Simd_t& operator&=(simd_base<Simd_t>& l, const Rhs_t& r) {
         l.self() = l.self() & r;

@@ -11,9 +11,6 @@
 
 namespace sd {
     namespace impl {
-        //
-        // storage for SIMD types
-        //
         template <typename Simd_t, typename Scalar_t, std::size_t Align>
         struct alignas(Align)storage : std::array<Scalar_t, Simd_t::width> {
             using stored_t = Simd_t;

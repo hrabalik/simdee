@@ -53,7 +53,6 @@ namespace sd {
         }
     };
 
-    // aligned allocator
     template <typename T, std::size_t Align>
     struct aligned_allocator {
         using value_type = T;
@@ -70,21 +69,18 @@ namespace sd {
             sd::aligned_free(ptr);
         }
 
-        // destroy is a no-op if possible
         void destroy(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {
             if (!std::is_trivially_destructible<T>::value) {
                 ptr->~T();
             }
         }
 
-        // construct without arguments is a no-op if possible
         void construct(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
             if (!detail::is_trivially_default_constructible<T>::value) {
                 new (ptr)T;
             }
         }
 
-        // construct with arguments forwarded to placement new
         template <typename A1, typename... A>
         void construct(T* ptr, A1&& a1, A&&... a2) const {
             new (ptr)T(std::forward<A1>(a1), std::forward<A...>(a2)...);
@@ -97,7 +93,6 @@ namespace sd {
         };
     };
 
-    // allocator equality
     template <typename T, typename U, std::size_t TS, std::size_t US>
     bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return true; }
     template <typename T, typename U, std::size_t TS, std::size_t US>

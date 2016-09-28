@@ -7,15 +7,15 @@
 #include "inline.hpp"
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-#define SIMDEE_TRIVIAL_TYPE( CLASS )                                                                    \
+#define SIMDEE_TRIVIAL_TYPE( CLASS )                                                                     \
                                                                                                          \
-SIMDEE_INL ~CLASS() = default;                                                                          \
+SIMDEE_INL ~CLASS() = default;                                                                           \
                                                                                                          \
-SIMDEE_INL CLASS() = default;                                                                           \
+SIMDEE_INL CLASS() = default;                                                                            \
                                                                                                          \
-SIMDEE_INL CLASS(const CLASS&) = default;                                                               \
+SIMDEE_INL CLASS(const CLASS&) = default;                                                                \
                                                                                                          \
-SIMDEE_INL CLASS& operator=(const CLASS&) = default;                                                    \
+SIMDEE_INL CLASS& operator=(const CLASS&) = default;                                                     \
                                                                                                          \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 

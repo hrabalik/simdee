@@ -64,30 +64,12 @@ namespace sd {
         SIMDEE_BASE_CTOR_TPL(dum_base, expr::init<T>, *this = r.template to<scalar_t>());
         SIMDEE_BASE_CTOR(dum_base, storage_t, aligned_load(r.data()));
 
-        SIMDEE_INL void aligned_load(const scalar_t* r) {
-            mm = *r;
-        }
-
-        SIMDEE_INL void aligned_store(scalar_t* r) const {
-            *r = mm;
-        }
-
-        SIMDEE_INL void unaligned_load(const scalar_t* r) {
-            mm = *r;
-        }
-
-        SIMDEE_INL void unaligned_store(scalar_t* r) const {
-            *r = mm;
-        }
-
-        void interleaved_load(const scalar_t* r, std::size_t step) {
-            mm = *r;
-        }
-
-        void interleaved_store(scalar_t* r, std::size_t step) const {
-            *r = mm;
-        }
-
+        SIMDEE_INL void aligned_load(const scalar_t* r) { mm = *r; }
+        SIMDEE_INL void aligned_store(scalar_t* r) const { *r = mm; }
+        SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = *r; }
+        SIMDEE_INL void unaligned_store(scalar_t* r) const { *r = mm; }
+        SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) { mm = *r; }
+        SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const { *r = mm; }
         SIMDEE_INL const Crtp reduce(binary_op_t f) const { return self(); }
     };
 

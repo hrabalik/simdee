@@ -129,18 +129,8 @@ namespace sd {
 
         using avx_base::avx_base;
         SIMDEE_INL explicit avxu(const avxs&);
-        SIMDEE_INL avxu(const __m256i& r) { *this = r; }
-        SIMDEE_INL avxu(const not_avxu& r) { *this = r; }
-
-        SIMDEE_INL avxu& operator=(const __m256i& r) {
-            mm = _mm256_castsi256_ps(r);
-            return *this;
-        }
-
-        SIMDEE_INL avxu& operator=(const not_avxu& r) {
-            mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm);
-            return *this;
-        }
+        SIMDEE_CTOR(avxu, __m256i, mm = _mm256_castsi256_ps(r));
+        SIMDEE_CTOR(avxu, not_avxu, mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm));
 
         SIMDEE_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
         SIMDEE_INL mask_t mask() const { return mask_t(uint32_t(_mm256_movemask_ps(mm))); }
@@ -153,12 +143,7 @@ namespace sd {
         using avx_base::avx_base;
         SIMDEE_INL explicit avxs(const avxf&);
         SIMDEE_INL explicit avxs(const avxu&);
-        SIMDEE_INL avxs(const __m256i& r) { *this = r; }
-
-        SIMDEE_INL avxs& operator=(const __m256i& r) {
-            mm = _mm256_castsi256_ps(r);
-            return *this;
-        }
+        SIMDEE_CTOR(avxs, __m256i, mm = _mm256_castsi256_ps(r));
 
         SIMDEE_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
         SIMDEE_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }

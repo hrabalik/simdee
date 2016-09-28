@@ -130,18 +130,8 @@ namespace sd {
 
         using sse_base::sse_base;
         SIMDEE_INL explicit sseu(const sses&);
-        SIMDEE_INL sseu(const __m128i r) { *this = r; }
-        SIMDEE_INL sseu(const not_sseu& r) { *this = r; }
-
-        SIMDEE_INL sseu& operator=(const __m128i r) {
-            mm = _mm_castsi128_ps(r);
-            return *this;
-        }
-
-        SIMDEE_INL sseu& operator=(const not_sseu& r) {
-            mm = _mm_xor_ps(r.neg.mm, sseu(all_bits()).mm);
-            return *this;
-        }
+        SIMDEE_CTOR(sseu, __m128i, mm = _mm_castsi128_ps(r));
+        SIMDEE_CTOR(sseu, not_sseu, mm = _mm_xor_ps(r.neg.mm, sseu(all_bits()).mm));
 
         SIMDEE_INL __m128i mmi() const { return _mm_castps_si128(mm); }
         SIMDEE_INL mask_t mask() const { return mask_t(uint32_t(_mm_movemask_ps(mm))); }
@@ -154,12 +144,7 @@ namespace sd {
         using sse_base::sse_base;
         SIMDEE_INL explicit sses(const ssef&);
         SIMDEE_INL explicit sses(const sseu&);
-        SIMDEE_INL sses(const __m128i& r) { *this = r; }
-
-        SIMDEE_INL sses& operator=(const __m128i& r) {
-            mm = _mm_castsi128_ps(r);
-            return *this;
-        }
+        SIMDEE_CTOR(sses, __m128i, mm = _mm_castsi128_ps(r));
 
         SIMDEE_INL __m128i mmi() const { return _mm_castps_si128(mm); }
         SIMDEE_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(mm)); }

@@ -60,7 +60,7 @@ namespace sd {
         SIMDEE_INL bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }
     };
 
-    SIMDEE_INL int32_t round_to_int32(double in) {
+    inline int32_t round_to_int32(double in) {
         in += double((1LL << 52) + (1LL << 51));
         int32_t out[2];
         std::memcpy(out, &in, sizeof(double));

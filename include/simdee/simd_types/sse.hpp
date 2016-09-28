@@ -106,7 +106,7 @@ namespace sd {
             operator=(r);
         }
 
-        SIMDEE_INL Crtp& operator=(const expr::all_bits& r) {
+        Crtp& operator=(const expr::all_bits& r) {
             mm = _mm_setzero_ps();
             mm = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(mm), _mm_castps_si128(mm)));
             return self();

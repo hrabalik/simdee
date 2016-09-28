@@ -98,7 +98,7 @@ namespace sd {
             operator=(r);
         }
 
-        SIMDEE_INL Crtp& operator=(const expr::all_bits& r) {
+        Crtp& operator=(const expr::all_bits& r) {
 #if defined(__AVX2__)
             mm = _mm256_setzero_ps();
             mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));

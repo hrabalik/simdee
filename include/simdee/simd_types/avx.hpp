@@ -83,39 +83,9 @@ namespace sd {
             return self();
         }
 
-        template <typename T>
-        SIMDEE_INL avx_base(const expr::aligned<T>& r) {
-            aligned_load(r.ptr);
-        }
-
-        template <typename T>
-        SIMDEE_INL Crtp& operator=(const expr::aligned<T>& r) {
-            aligned_load(r.ptr);
-            return self();
-        }
-
-        template <typename T>
-        SIMDEE_INL avx_base(const expr::unaligned<T>& r) {
-            unaligned_load(r.ptr);
-        }
-
-        template <typename T>
-        SIMDEE_INL Crtp& operator=(const expr::unaligned<T>& r) {
-            unaligned_load(r.ptr);
-            return self();
-        }
-
-        template <typename T>
-        SIMDEE_INL avx_base(const expr::init<T>& r) {
-            *this = r.template to<scalar_t>();
-        }
-
-        template <typename T>
-        SIMDEE_INL Crtp& operator=(const expr::init<T>& r) {
-            *this = r.template to<scalar_t>();
-            return self();
-        }
-
+        SIMDEE_BASE_CTOR_TPL(avx_base, expr::aligned<T>, aligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(avx_base, expr::unaligned<T>, unaligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(avx_base, expr::init<T>, *this = r.template to<scalar_t>());
         SIMDEE_BASE_CTOR(avx_base, storage_t, aligned_load(r.data()));
 
         SIMDEE_INL void aligned_load(const scalar_t* r) {

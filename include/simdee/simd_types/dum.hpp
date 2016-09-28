@@ -59,14 +59,7 @@ namespace sd {
 
         SIMDEE_TRIVIAL_TYPE(dum_base);
 
-        SIMDEE_INL dum_base(const scalar_t& r) {
-            mm = r;
-        }
-
-        SIMDEE_INL Crtp& operator=(const scalar_t& r) {
-            mm = r;
-            return self();
-        }
+        SIMDEE_BASE_CTOR(dum_base, scalar_t, mm = r);
 
         template <typename T>
         SIMDEE_INL dum_base(const expr::aligned<T>& r) {
@@ -101,14 +94,7 @@ namespace sd {
             return self();
         }
 
-        SIMDEE_INL dum_base(const storage_t& r) {
-            aligned_load(r.data());
-        }
-
-        SIMDEE_INL Crtp& operator=(const storage_t& r) {
-            aligned_load(r.data());
-            return self();
-        }
+        SIMDEE_BASE_CTOR(dum_base, storage_t, aligned_load(r.data()));
 
         SIMDEE_INL void aligned_load(const scalar_t* r) {
             mm = *r;

@@ -67,32 +67,9 @@ namespace sd {
 
         SIMDEE_TRIVIAL_TYPE(avx_base);
 
-        SIMDEE_INL avx_base(const vector_t& r) {
-            mm = r;
-        }
-
-        SIMDEE_INL Crtp& operator=(const vector_t& r) {
-            mm = r;
-            return self();
-        }
-
-        SIMDEE_INL avx_base(scalar_t r) {
-            mm = _mm256_broadcast_ss((float*)&r);
-        }
-
-        SIMDEE_INL Crtp& operator=(scalar_t r) {
-            mm = _mm256_broadcast_ss((float*)&r);
-            return self();
-        }
-
-        SIMDEE_INL avx_base(const expr::zero& r) {
-            mm = _mm256_setzero_ps();
-        }
-
-        SIMDEE_INL Crtp& operator=(const expr::zero& r) {
-            mm = _mm256_setzero_ps();
-            return self();
-        }
+        SIMDEE_BASE_CTOR(avx_base, vector_t, mm = r);
+        SIMDEE_BASE_CTOR(avx_base, scalar_t, mm = _mm256_broadcast_ss((float*)&r));
+        SIMDEE_BASE_CTOR(avx_base, expr::zero, mm = _mm256_setzero_ps());
 
         SIMDEE_BASE_CTOR_COMPLEX(avx_base, expr::all_bits) {
 #       if defined(__AVX2__)
@@ -139,14 +116,7 @@ namespace sd {
             return self();
         }
 
-        SIMDEE_INL avx_base(const storage_t& r) {
-            aligned_load(r.data());
-        }
-
-        SIMDEE_INL Crtp& operator=(const storage_t& r) {
-            aligned_load(r.data());
-            return self();
-        }
+        SIMDEE_BASE_CTOR(avx_base, storage_t, aligned_load(r.data()));
 
         SIMDEE_INL void aligned_load(const scalar_t* r) {
             mm = _mm256_load_ps((const float*)r);

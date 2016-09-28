@@ -20,6 +20,19 @@ SIMDEE_INL CLASS& operator=(const CLASS&) = default;                            
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDEE_BASE_CTOR( CLASS, ARGTYPE, IMPL )                                                         \
+                                                                                                         \
+SIMDEE_INL CLASS (const ARGTYPE & r) {                                                                   \
+    IMPL ;                                                                                               \
+}                                                                                                        \
+                                                                                                         \
+SIMDEE_INL Crtp& operator=(const ARGTYPE & r) {                                                          \
+    IMPL ;                                                                                               \
+    return self();                                                                                       \
+}                                                                                                        \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDEE_BASE_CTOR_COMPLEX( CLASS, ARGTYPE )                                                       \
                                                                                                          \
 SIMDEE_INL CLASS (const ARGTYPE & r) {                                                                   \

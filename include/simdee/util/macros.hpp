@@ -1,8 +1,8 @@
 // This file is a part of Simdee, see homepage at http://github.com/tufak/simdee
 // This file is distributed under the MIT license.
 
-#ifndef SIMDEE_UTIL_TRIVIAL_TYPE_HPP
-#define SIMDEE_UTIL_TRIVIAL_TYPE_HPP
+#ifndef SIMDEE_UTIL_MACROS_HPP
+#define SIMDEE_UTIL_MACROS_HPP
 
 #include "inline.hpp"
 
@@ -19,4 +19,4 @@ SIMDEE_INL CLASS& operator=(const CLASS&) = default;                            
                                                                                                          \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-#endif // SIMDEE_UTIL_TRIVIAL_TYPE_HPP
+#endif // SIMDEE_UTIL_MACROS_HPP

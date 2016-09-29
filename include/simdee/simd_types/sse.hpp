@@ -155,31 +155,31 @@ namespace sd {
     SIMDEE_INL sseu::sseu(const sses& r) { mm = r.data(); }
     SIMDEE_INL sses::sses(const sseu& r) { mm = r.data(); }
 
-    SIMDEE_INL const sseu operator&(const sseu& l, const sseu& r) { return _mm_and_ps(l.data(), r.data()); }
-    SIMDEE_INL const sseu operator|(const sseu& l, const sseu& r) { return _mm_or_ps(l.data(), r.data()); }
-    SIMDEE_INL const sseu operator^(const sseu& l, const sseu& r) { return _mm_xor_ps(l.data(), r.data()); }
-    SIMDEE_INL const not_sseu operator~(const sseu& l) { return not_sseu(l); }
-    SIMDEE_INL const sseu andnot(const sseu& l, const sseu& r) { return _mm_andnot_ps(r.data(), l.data()); }
+    SIMDEE_BINOP(sseu, sseu, operator&, _mm_and_ps(l.data(), r.data()));
+    SIMDEE_BINOP(sseu, sseu, operator|, _mm_or_ps(l.data(), r.data()));
+    SIMDEE_BINOP(sseu, sseu, operator^, _mm_xor_ps(l.data(), r.data()));
+    SIMDEE_UNOP(sseu, not_sseu, operator~, not_sseu(l));
+    SIMDEE_BINOP(sseu, sseu, andnot, _mm_andnot_ps(r.data(), l.data()));
 
-    SIMDEE_INL const sseu operator<(const ssef& l, const ssef& r) { return _mm_cmplt_ps(l.data(), r.data()); }
-    SIMDEE_INL const sseu operator>(const ssef& l, const ssef& r) { return _mm_cmpgt_ps(l.data(), r.data()); }
-    SIMDEE_INL const sseu operator<=(const ssef& l, const ssef& r) { return _mm_cmple_ps(l.data(), r.data()); }
-    SIMDEE_INL const sseu operator>=(const ssef& l, const ssef& r) { return _mm_cmpge_ps(l.data(), r.data()); }
-    SIMDEE_INL const sseu operator==(const ssef& l, const ssef& r) { return _mm_cmpeq_ps(l.data(), r.data()); }
-    SIMDEE_INL const sseu operator!=(const ssef& l, const ssef& r) { return _mm_cmpneq_ps(l.data(), r.data()); }
+    SIMDEE_BINOP(ssef, sseu, operator<, _mm_cmplt_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, sseu, operator>, _mm_cmpgt_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, sseu, operator<=, _mm_cmple_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, sseu, operator>=, _mm_cmpge_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, sseu, operator==, _mm_cmpeq_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, sseu, operator!=, _mm_cmpneq_ps(l.data(), r.data()));
 
-    SIMDEE_INL const ssef operator-(const ssef& l) { return _mm_xor_ps(l.data(), ssef(sign_bit()).data()); }
-    SIMDEE_INL const ssef operator+(const ssef& l, const ssef& r) { return _mm_add_ps(l.data(), r.data()); }
-    SIMDEE_INL const ssef operator-(const ssef& l, const ssef& r) { return _mm_sub_ps(l.data(), r.data()); }
-    SIMDEE_INL const ssef operator*(const ssef& l, const ssef& r) { return _mm_mul_ps(l.data(), r.data()); }
-    SIMDEE_INL const ssef operator/(const ssef& l, const ssef& r) { return _mm_div_ps(l.data(), r.data()); }
+    SIMDEE_UNOP(ssef, ssef, operator-, _mm_xor_ps(l.data(), ssef(sign_bit()).data()));
+    SIMDEE_BINOP(ssef, ssef, operator+, _mm_add_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, ssef, operator-, _mm_sub_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, ssef, operator*, _mm_mul_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, ssef, operator/, _mm_div_ps(l.data(), r.data()));
 
-    SIMDEE_INL const ssef min(const ssef& l, const ssef& r) { return _mm_min_ps(l.data(), r.data()); }
-    SIMDEE_INL const ssef max(const ssef& l, const ssef& r) { return _mm_max_ps(l.data(), r.data()); }
-    SIMDEE_INL const ssef sqrt(const ssef& l) { return _mm_sqrt_ps(l.data()); }
-    SIMDEE_INL const ssef rsqrt(const ssef& l) { return _mm_rsqrt_ps(l.data()); }
-    SIMDEE_INL const ssef rcp(const ssef& l) { return _mm_rcp_ps(l.data()); }
-    SIMDEE_INL const ssef abs(const ssef& l) { return _mm_and_ps(l.data(), ssef(abs_mask()).data()); }
+    SIMDEE_BINOP(ssef, ssef, min, _mm_min_ps(l.data(), r.data()));
+    SIMDEE_BINOP(ssef, ssef, max, _mm_max_ps(l.data(), r.data()));
+    SIMDEE_UNOP(ssef, ssef, sqrt, _mm_sqrt_ps(l.data()));
+    SIMDEE_UNOP(ssef, ssef, rsqrt, _mm_rsqrt_ps(l.data()));
+    SIMDEE_UNOP(ssef, ssef, rcp, _mm_rcp_ps(l.data()));
+    SIMDEE_UNOP(ssef, ssef, abs, _mm_and_ps(l.data(), ssef(abs_mask()).data()));
 
     SIMDEE_INL const ssef cond(const sseu& pred, const ssef& if_true, const ssef& if_false) {
         return tof((tou(if_true) & pred) | (tou(if_false) & ~pred));
@@ -194,24 +194,24 @@ namespace sd {
     }
 
 #if defined(SIMDEE_NEED_INT)
-    SIMDEE_INL const sseu operator==(const sseu& l, const sseu& r) { return _mm_cmpeq_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const not_sseu operator!=(const sseu& l, const sseu& r) { return not_sseu(_mm_cmpeq_epi32(l.mmi(), r.mmi())); }
+    SIMDEE_BINOP(sseu, sseu, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(sseu, not_sseu, operator!=, not_sseu(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
 
-    SIMDEE_INL const sseu operator<(const sses& l, const sses& r) { return _mm_cmplt_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const sseu operator>(const sses& l, const sses& r) { return _mm_cmpgt_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const not_sseu operator<=(const sses& l, const sses& r) { return not_sseu(_mm_cmpgt_epi32(l.mmi(), r.mmi())); }
-    SIMDEE_INL const not_sseu operator>=(const sses& l, const sses& r) { return not_sseu(_mm_cmplt_epi32(l.mmi(), r.mmi())); }
-    SIMDEE_INL const sseu operator==(const sses& l, const sses& r) { return _mm_cmpeq_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const not_sseu operator!=(const sses& l, const sses& r) { return not_sseu(_mm_cmpeq_epi32(l.mmi(), r.mmi())); }
+    SIMDEE_BINOP(sses, sseu, operator<, _mm_cmplt_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(sses, sseu, operator>, _mm_cmpgt_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(sses, not_sseu, operator<=, not_sseu(_mm_cmpgt_epi32(l.mmi(), r.mmi())));
+    SIMDEE_BINOP(sses, not_sseu, operator>=, not_sseu(_mm_cmplt_epi32(l.mmi(), r.mmi())));
+    SIMDEE_BINOP(sses, sseu, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(sses, not_sseu, operator!=, not_sseu(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
 
-    SIMDEE_INL const sses operator-(const sses& l) { return _mm_sub_epi32(_mm_setzero_si128(), l.mmi()); }
-    SIMDEE_INL const sses operator+(const sses& l, const sses& r) { return _mm_add_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const sses operator-(const sses& l, const sses& r) { return _mm_sub_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const sses operator*(const sses& l, const sses& r) { return _mm_mullo_epi32(l.mmi(), r.mmi()); }
+    SIMDEE_UNOP(sses, sses, operator-, _mm_sub_epi32(_mm_setzero_si128(), l.mmi()));
+    SIMDEE_BINOP(sses, sses, operator+, _mm_add_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(sses, sses, operator-, _mm_sub_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(sses, sses, operator*, _mm_mullo_epi32(l.mmi(), r.mmi()));
 
-    SIMDEE_INL const sses min(const sses& l, const sses& r) { return _mm_min_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const sses max(const sses& l, const sses& r) { return _mm_max_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const sses abs(const sses& l) { return _mm_abs_epi32(l.mmi()); }
+    SIMDEE_BINOP(sses, sses, min, _mm_min_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(sses, sses, max, _mm_max_epi32(l.mmi(), r.mmi()));
+    SIMDEE_UNOP(sses, sses, abs, _mm_abs_epi32(l.mmi()));
 #endif
 
 }

@@ -154,31 +154,31 @@ namespace sd {
     SIMDEE_INL avxu::avxu(const avxs& r) { mm = r.data(); }
     SIMDEE_INL avxs::avxs(const avxu& r) { mm = r.data(); }
 
-    SIMDEE_INL const avxu operator&(const avxu& l, const avxu& r) { return _mm256_and_ps(l.data(), r.data()); }
-    SIMDEE_INL const avxu operator|(const avxu& l, const avxu& r) { return _mm256_or_ps(l.data(), r.data()); }
-    SIMDEE_INL const avxu operator^(const avxu& l, const avxu& r) { return _mm256_xor_ps(l.data(), r.data()); }
-    SIMDEE_INL const not_avxu operator~(const avxu& l) { return not_avxu(l); }
-    SIMDEE_INL const avxu andnot(const avxu& l, const avxu& r) { return _mm256_andnot_ps(r.data(), l.data()); }
+    SIMDEE_BINOP(avxu, avxu, operator&, _mm256_and_ps(l.data(), r.data()));
+    SIMDEE_BINOP(avxu, avxu, operator|, _mm256_or_ps(l.data(), r.data()));
+    SIMDEE_BINOP(avxu, avxu, operator^, _mm256_xor_ps(l.data(), r.data()));
+    SIMDEE_UNOP(avxu, not_avxu, operator~, not_avxu(l));
+    SIMDEE_BINOP(avxu, avxu, andnot, _mm256_andnot_ps(r.data(), l.data()));
 
-    SIMDEE_INL const avxu operator<(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_LT_OQ); }
-    SIMDEE_INL const avxu operator>(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_GT_OQ); }
-    SIMDEE_INL const avxu operator<=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_LE_OQ); }
-    SIMDEE_INL const avxu operator>=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_GE_OQ); }
-    SIMDEE_INL const avxu operator==(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_EQ_OQ); }
-    SIMDEE_INL const avxu operator!=(const avxf& l, const avxf& r) { return _mm256_cmp_ps(l.data(), r.data(), _CMP_NEQ_OQ); }
+    SIMDEE_BINOP(avxf, avxu, operator<, _mm256_cmp_ps(l.data(), r.data(), _CMP_LT_OQ));
+    SIMDEE_BINOP(avxf, avxu, operator>, _mm256_cmp_ps(l.data(), r.data(), _CMP_GT_OQ));
+    SIMDEE_BINOP(avxf, avxu, operator<=, _mm256_cmp_ps(l.data(), r.data(), _CMP_LE_OQ));
+    SIMDEE_BINOP(avxf, avxu, operator>=, _mm256_cmp_ps(l.data(), r.data(), _CMP_GE_OQ));
+    SIMDEE_BINOP(avxf, avxu, operator==, _mm256_cmp_ps(l.data(), r.data(), _CMP_EQ_OQ));
+    SIMDEE_BINOP(avxf, avxu, operator!=, _mm256_cmp_ps(l.data(), r.data(), _CMP_NEQ_OQ));
 
-    SIMDEE_INL const avxf operator-(const avxf& l) { return _mm256_xor_ps(l.data(), avxf(sign_bit()).data()); }
-    SIMDEE_INL const avxf operator+(const avxf& l, const avxf& r) { return _mm256_add_ps(l.data(), r.data()); }
-    SIMDEE_INL const avxf operator-(const avxf& l, const avxf& r) { return _mm256_sub_ps(l.data(), r.data()); }
-    SIMDEE_INL const avxf operator*(const avxf& l, const avxf& r) { return _mm256_mul_ps(l.data(), r.data()); }
-    SIMDEE_INL const avxf operator/(const avxf& l, const avxf& r) { return _mm256_div_ps(l.data(), r.data()); }
+    SIMDEE_UNOP(avxf, avxf, operator-, _mm256_xor_ps(l.data(), avxf(sign_bit()).data()));
+    SIMDEE_BINOP(avxf, avxf, operator+, _mm256_add_ps(l.data(), r.data()));
+    SIMDEE_BINOP(avxf, avxf, operator-, _mm256_sub_ps(l.data(), r.data()));
+    SIMDEE_BINOP(avxf, avxf, operator*, _mm256_mul_ps(l.data(), r.data()));
+    SIMDEE_BINOP(avxf, avxf, operator/, _mm256_div_ps(l.data(), r.data()));
 
-    SIMDEE_INL const avxf min(const avxf& l, const avxf& r) { return _mm256_min_ps(l.data(), r.data()); }
-    SIMDEE_INL const avxf max(const avxf& l, const avxf& r) { return _mm256_max_ps(l.data(), r.data()); }
-    SIMDEE_INL const avxf sqrt(const avxf& l) { return _mm256_sqrt_ps(l.data()); }
-    SIMDEE_INL const avxf rsqrt(const avxf& l) { return _mm256_rsqrt_ps(l.data()); }
-    SIMDEE_INL const avxf rcp(const avxf& l) { return _mm256_rcp_ps(l.data()); }
-    SIMDEE_INL const avxf abs(const avxf& l) { return _mm256_and_ps(l.data(), avxf(abs_mask()).data()); }
+    SIMDEE_BINOP(avxf, avxf, min, _mm256_min_ps(l.data(), r.data()));
+    SIMDEE_BINOP(avxf, avxf, max, _mm256_max_ps(l.data(), r.data()));
+    SIMDEE_UNOP(avxf, avxf, sqrt, _mm256_sqrt_ps(l.data()));
+    SIMDEE_UNOP(avxf, avxf, rsqrt, _mm256_rsqrt_ps(l.data()));
+    SIMDEE_UNOP(avxf, avxf, rcp, _mm256_rcp_ps(l.data()));
+    SIMDEE_UNOP(avxf, avxf, abs, _mm256_and_ps(l.data(), avxf(abs_mask()).data()));
 
     SIMDEE_INL const avxf cond(const avxu& pred, const avxf& if_true, const avxf& if_false) {
         return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
@@ -191,24 +191,24 @@ namespace sd {
     }
 
 #if defined(SIMDEE_NEED_INT)
-    SIMDEE_INL const avxu operator==(const avxu& l, const avxu& r) { return _mm256_cmpeq_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const not_avxu operator!=(const avxu& l, const avxu& r) { return not_avxu(_mm256_cmpeq_epi32(l.mmi(), r.mmi())); }
+    SIMDEE_BINOP(avxu, avxu, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxu, not_avxu, operator!=, not_avxu(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
 
-    SIMDEE_INL const avxu operator<(const avxs& l, const avxs& r) { return _mm256_cmpgt_epi32(r.mmi(), l.mmi()); }
-    SIMDEE_INL const avxu operator>(const avxs& l, const avxs& r) { return _mm256_cmpgt_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const not_avxu operator<=(const avxs& l, const avxs& r) { return not_avxu(_mm256_cmpgt_epi32(l.mmi(), r.mmi())); }
-    SIMDEE_INL const not_avxu operator>=(const avxs& l, const avxs& r) { return not_avxu(_mm256_cmpgt_epi32(r.mmi(), l.mmi())); }
-    SIMDEE_INL const avxu operator==(const avxs& l, const avxs& r) { return _mm256_cmpeq_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const not_avxu operator!=(const avxs& l, const avxs& r) { return not_avxu(_mm256_cmpeq_epi32(l.mmi(), r.mmi())); }
+    SIMDEE_BINOP(avxs, avxu, operator<, _mm256_cmpgt_epi32(r.mmi(), l.mmi()));
+    SIMDEE_BINOP(avxs, avxu, operator>, _mm256_cmpgt_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxs, not_avxu, operator<=, not_avxu(_mm256_cmpgt_epi32(l.mmi(), r.mmi())));
+    SIMDEE_BINOP(avxs, not_avxu, operator>=, not_avxu(_mm256_cmpgt_epi32(r.mmi(), l.mmi())));
+    SIMDEE_BINOP(avxs, avxu, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxs, not_avxu, operator!=, not_avxu(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
 
-    SIMDEE_INL const avxs operator-(const avxs& l) { return _mm256_sub_epi32(_mm256_setzero_si256(), l.mmi()); }
-    SIMDEE_INL const avxs operator+(const avxs& l, const avxs& r) { return _mm256_add_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const avxs operator-(const avxs& l, const avxs& r) { return _mm256_sub_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const avxs operator*(const avxs& l, const avxs& r) { return _mm256_mullo_epi32(l.mmi(), r.mmi()); }
+    SIMDEE_UNOP(avxs, avxs, operator-, _mm256_sub_epi32(_mm256_setzero_si256(), l.mmi()));
+    SIMDEE_BINOP(avxs, avxs, operator+, _mm256_add_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxs, avxs, operator-, _mm256_sub_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxs, avxs, operator*, _mm256_mullo_epi32(l.mmi(), r.mmi()));
 
-    SIMDEE_INL const avxs min(const avxs& l, const avxs& r) { return _mm256_min_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const avxs max(const avxs& l, const avxs& r) { return _mm256_max_epi32(l.mmi(), r.mmi()); }
-    SIMDEE_INL const avxs abs(const avxs& l) { return _mm256_abs_epi32(l.mmi()); }
+    SIMDEE_BINOP(avxs, avxs, min, _mm256_min_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxs, avxs, max, _mm256_max_epi32(l.mmi(), r.mmi()));
+    SIMDEE_UNOP(avxs, avxs, abs, _mm256_abs_epi32(l.mmi()));
 #endif
 
 }

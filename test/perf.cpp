@@ -23,7 +23,7 @@ double to_ms(Duration dur) {
 
 double benchmark_ms(std::function<void()> func) {
     double best = std::numeric_limits<double>::infinity();
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 24; i++) {
         auto tp1 = now();
         func();
         auto tp2 = now();
@@ -33,7 +33,7 @@ double benchmark_ms(std::function<void()> func) {
     return best;
 }
 
-TEST_CASE("Ray-box intersection", "[!hide][perf]") {
+TEST_CASE("bench_ray_box", "[!hide][perf]") {
     std::cout << hline << "Benchmark: Ray-box intersection\n";
 
     // allocate data
@@ -261,12 +261,9 @@ TEST_CASE("Ray-box intersection", "[!hide][perf]") {
     };
 
     // check performance
-    auto nonSimdTime = benchmark_ms(nonSimd);
-    auto handSimdTime = benchmark_ms(handSimd);
-    auto simdeeTime = benchmark_ms(simdee);
-    std::cout << "non-SIMD: " << nonSimdTime << " ms\n";
-    std::cout << "hand SIMD: " << handSimdTime << " ms\n";
-    std::cout << "Simdee: " << simdeeTime << " ms\n";
+    std::cout << "non-SIMD: "  << benchmark_ms(nonSimd) << " ms\n";
+    std::cout << "hand SIMD: " << benchmark_ms(handSimd) << " ms\n";
+    std::cout << "Simdee: "    << benchmark_ms(simdee) << " ms\n";
 
     // check correctness
     REQUIRE((resultsNonSimd == resultsHandSimd));

@@ -58,82 +58,18 @@ namespace sd {
         using simd_base<Crtp>::self;
 
         SIMDEE_TRIVIAL_TYPE(dum_base);
+        SIMDEE_BASE_CTOR(dum_base, scalar_t, mm = r);
+        SIMDEE_BASE_CTOR_TPL(dum_base, expr::aligned<T>, aligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(dum_base, expr::unaligned<T>, unaligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(dum_base, expr::init<T>, *this = r.template to<scalar_t>());
+        SIMDEE_BASE_CTOR(dum_base, storage_t, aligned_load(r.data()));
 
-        SIMDEE_INL dum_base(const scalar_t& r) {
-            mm = r;
-        }
-
-        SIMDEE_INL Crtp& operator=(const scalar_t& r) {
-            mm = r;
-            return self();
-        }
-
-        template <typename T>
-        SIMDEE_INL dum_base(const expr::aligned<T>& r) {
-            aligned_load(r.ptr);
-        }
-
-        template <typename T>
-        SIMDEE_INL Crtp& operator=(const expr::aligned<T>& r) {
-            aligned_load(r.ptr);
-            return self();
-        }
-
-        template <typename T>
-        SIMDEE_INL dum_base(const expr::unaligned<T>& r) {
-            unaligned_load(r.ptr);
-        }
-
-        template <typename T>
-        SIMDEE_INL Crtp& operator=(const expr::unaligned<T>& r) {
-            unaligned_load(r.ptr);
-            return self();
-        }
-
-        template <typename T>
-        SIMDEE_INL dum_base(const expr::init<T>& r) {
-            *this = r.template to<scalar_t>();
-        }
-
-        template <typename T>
-        SIMDEE_INL Crtp& operator=(const expr::init<T>& r) {
-            *this = r.template to<scalar_t>();
-            return self();
-        }
-
-        SIMDEE_INL dum_base(const storage_t& r) {
-            aligned_load(r.data());
-        }
-
-        SIMDEE_INL Crtp& operator=(const storage_t& r) {
-            aligned_load(r.data());
-            return self();
-        }
-
-        SIMDEE_INL void aligned_load(const scalar_t* r) {
-            mm = *r;
-        }
-
-        SIMDEE_INL void aligned_store(scalar_t* r) const {
-            *r = mm;
-        }
-
-        SIMDEE_INL void unaligned_load(const scalar_t* r) {
-            mm = *r;
-        }
-
-        SIMDEE_INL void unaligned_store(scalar_t* r) const {
-            *r = mm;
-        }
-
-        void interleaved_load(const scalar_t* r, std::size_t step) {
-            mm = *r;
-        }
-
-        void interleaved_store(scalar_t* r, std::size_t step) const {
-            *r = mm;
-        }
-
+        SIMDEE_INL void aligned_load(const scalar_t* r) { mm = *r; }
+        SIMDEE_INL void aligned_store(scalar_t* r) const { *r = mm; }
+        SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = *r; }
+        SIMDEE_INL void unaligned_store(scalar_t* r) const { *r = mm; }
+        SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) { mm = *r; }
+        SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const { *r = mm; }
         SIMDEE_INL const Crtp reduce(binary_op_t f) const { return self(); }
     };
 
@@ -172,31 +108,31 @@ namespace sd {
     SIMDEE_INL dumu::dumu(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dums::dums(const dumu& r) { mm = static_cast<scalar_t>(r.data()); }
 
-    SIMDEE_INL const dumu operator&(const dumu& l, const dumu& r) { return uval(tou(l.data()) & tou(r.data())); }
-    SIMDEE_INL const dumu operator|(const dumu& l, const dumu& r) { return uval(tou(l.data()) | tou(r.data())); }
-    SIMDEE_INL const dumu operator^(const dumu& l, const dumu& r) { return uval(tou(l.data()) ^ tou(r.data())); }
-    SIMDEE_INL const dumu operator~(const dumu& l) { return uval(~tou(l.data())); }
-    SIMDEE_INL const dumu andnot(const dumu& l, const dumu& r) { return uval(tou(l.data()) & ~tou(r.data())); }
+    SIMDEE_BINOP(dumu, dumu, operator&, uval(tou(l.data()) & tou(r.data())));
+    SIMDEE_BINOP(dumu, dumu, operator|, uval(tou(l.data()) | tou(r.data())));
+    SIMDEE_BINOP(dumu, dumu, operator^, uval(tou(l.data()) ^ tou(r.data())));
+    SIMDEE_UNOP(dumu, dumu, operator~, uval(~tou(l.data())));
+    SIMDEE_BINOP(dumu, dumu, andnot, uval(tou(l.data()) & ~tou(r.data())));
 
-    SIMDEE_INL const dumu operator<(const dumf& l, const dumf& r) { return (l.data() < r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator>(const dumf& l, const dumf& r) { return (l.data() > r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator<=(const dumf& l, const dumf& r) { return (l.data() <= r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator>=(const dumf& l, const dumf& r) { return (l.data() >= r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator==(const dumf& l, const dumf& r) { return (l.data() == r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator!=(const dumf& l, const dumf& r) { return (l.data() != r.data()) ? ~0U : 0U; }
+    SIMDEE_BINOP(dumf, dumu, operator<, (l.data() < r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dumf, dumu, operator>, (l.data() > r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dumf, dumu, operator<=, (l.data() <= r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dumf, dumu, operator>=, (l.data() >= r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dumf, dumu, operator==, (l.data() == r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dumf, dumu, operator!=, (l.data() != r.data()) ? ~0U : 0U);
 
-    SIMDEE_INL const dumf operator-(const dumf& in) { return -in.data(); }
-    SIMDEE_INL const dumf operator+(const dumf& l, const dumf& r) { return l.data() + r.data(); }
-    SIMDEE_INL const dumf operator-(const dumf& l, const dumf& r) { return l.data() - r.data(); }
-    SIMDEE_INL const dumf operator*(const dumf& l, const dumf& r) { return l.data() * r.data(); }
-    SIMDEE_INL const dumf operator/(const dumf& l, const dumf& r) { return l.data() / r.data(); }
+    SIMDEE_UNOP(dumf, dumf, operator-, -l.data());
+    SIMDEE_BINOP(dumf, dumf, operator+, l.data() + r.data());
+    SIMDEE_BINOP(dumf, dumf, operator-, l.data() - r.data());
+    SIMDEE_BINOP(dumf, dumf, operator*, l.data() * r.data());
+    SIMDEE_BINOP(dumf, dumf, operator/, l.data() / r.data());
 
-    SIMDEE_INL const dumf min(const dumf& l, const dumf& r) { return std::min(l.data(), r.data()); }
-    SIMDEE_INL const dumf max(const dumf& l, const dumf& r) { return std::max(l.data(), r.data()); }
-    SIMDEE_INL const dumf sqrt(const dumf& l) { return std::sqrt(l.data()); }
-    SIMDEE_INL const dumf rsqrt(const dumf& l) { return 1 / std::sqrt(l.data()); }
-    SIMDEE_INL const dumf rcp(const dumf& l) { return 1 / l.data(); }
-    SIMDEE_INL const dumf abs(const dumf& l) { return std::abs(l.data()); }
+    SIMDEE_BINOP(dumf, dumf, min, std::min(l.data(), r.data()));
+    SIMDEE_BINOP(dumf, dumf, max, std::max(l.data(), r.data()));
+    SIMDEE_UNOP(dumf, dumf, sqrt, std::sqrt(l.data()));
+    SIMDEE_UNOP(dumf, dumf, rsqrt, 1 / std::sqrt(l.data()));
+    SIMDEE_UNOP(dumf, dumf, rcp, 1 / l.data());
+    SIMDEE_UNOP(dumf, dumf, abs, std::abs(l.data()));
 
     SIMDEE_INL const dumf cond(const dumu& pred, const dumf& if_true, const dumf& if_false) {
         return pred.data() ? if_true : if_false;
@@ -209,24 +145,24 @@ namespace sd {
     }
 
 #if defined(SIMDEE_NEED_INT)
-    SIMDEE_INL const dumu operator==(const dumu& l, const dumu& r) { return (l.data() == r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator!=(const dumu& l, const dumu& r) { return (l.data() != r.data()) ? ~0U : 0U; }
+    SIMDEE_BINOP(dumu, dumu, operator==, (l.data() == r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dumu, dumu, operator!=, (l.data() != r.data()) ? ~0U : 0U);
 
-    SIMDEE_INL const dumu operator<(const dums& l, const dums& r) { return (l.data() < r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator>(const dums& l, const dums& r) { return (l.data() > r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator<=(const dums& l, const dums& r) { return (l.data() <= r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator>=(const dums& l, const dums& r) { return (l.data() >= r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator==(const dums& l, const dums& r) { return (l.data() == r.data()) ? ~0U : 0U; }
-    SIMDEE_INL const dumu operator!=(const dums& l, const dums& r) { return (l.data() != r.data()) ? ~0U : 0U; }
+    SIMDEE_BINOP(dums, dumu, operator<, (l.data() < r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dums, dumu, operator>, (l.data() > r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dums, dumu, operator<=, (l.data() <= r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dums, dumu, operator>=, (l.data() >= r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dums, dumu, operator==, (l.data() == r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dums, dumu, operator!=, (l.data() != r.data()) ? ~0U : 0U);
 
-    SIMDEE_INL const dums operator-(const dums& in) { return -in.data(); }
-    SIMDEE_INL const dums operator+(const dums& l, const dums& r) { return l.data() + r.data(); }
-    SIMDEE_INL const dums operator-(const dums& l, const dums& r) { return l.data() - r.data(); }
-    SIMDEE_INL const dums operator*(const dums& l, const dums& r) { return l.data() * r.data(); }
+    SIMDEE_UNOP(dums, dums, operator-, -l.data());
+    SIMDEE_BINOP(dums, dums, operator+, l.data() + r.data());
+    SIMDEE_BINOP(dums, dums, operator-, l.data() - r.data());
+    SIMDEE_BINOP(dums, dums, operator*, l.data() * r.data());
 
-    SIMDEE_INL const dums min(const dums& l, const dums& r) { return std::min(l.data(), r.data()); }
-    SIMDEE_INL const dums max(const dums& l, const dums& r) { return std::max(l.data(), r.data()); }
-    SIMDEE_INL const dums abs(const dums& l) { return std::abs(l.data()); }
+    SIMDEE_BINOP(dums, dums, min, std::min(l.data(), r.data()));
+    SIMDEE_BINOP(dums, dums, max, std::max(l.data(), r.data()));
+    SIMDEE_UNOP(dums, dums, abs, std::abs(l.data()));
 #endif
 
 }

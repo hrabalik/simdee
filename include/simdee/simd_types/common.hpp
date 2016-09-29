@@ -6,7 +6,7 @@
 
 #include "../util/inline.hpp"
 #include "../util/bitfiddle.hpp"
-#include "../util/trivial_type.hpp"
+#include "../util/macros.hpp"
 #include "../common/expr.hpp"
 #include "../common/mask.hpp"
 #include "../common/storage.hpp"

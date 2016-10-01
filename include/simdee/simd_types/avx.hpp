@@ -77,10 +77,9 @@ namespace sd {
 
         SIMDEE_BASE_CTOR_COMPLEX(avx_base, expr::all_bits) {
 #       if defined(__AVX2__)
-            mm = _mm256_setzero_ps();
             mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
 #       else
-            __m128 temp = _mm_setzero_ps();
+            __m128 temp;
             temp = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(temp), _mm_castps_si128(temp)));
             mm = _mm256_set_m128(temp, temp);
 #       endif

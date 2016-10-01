@@ -10,6 +10,23 @@
 
 namespace sd {
 
+    enum class bool8_t : uint8_t {
+        F = uint8_t(0),
+        T = uint8_t(-1),
+    };
+    enum class bool16_t : uint16_t {
+        F = uint16_t(0),
+        T = uint16_t(-1),
+    };
+    enum class bool32_t : uint32_t {
+        F = uint32_t(0),
+        T = uint32_t(-1),
+    };
+    enum class bool64_t : uint64_t {
+        F = uint64_t(0),
+        T = uint64_t(-1),
+    };
+
     template <std::size_t Size>
     struct select_sint;
     template <>

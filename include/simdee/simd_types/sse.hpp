@@ -44,11 +44,12 @@ namespace sd {
     template<>
     struct is_simd_type<sses> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename Scalar_t>
+    template <typename Simd_t, typename Vector_t, typename Scalar_t, typename Element_t>
     struct sse_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Scalar_t;
+        using element_t = Element_t;
         using vec_f = ssef;
         using vec_u = sseu;
         using vec_s = sses;
@@ -57,13 +58,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<sseb> : sse_traits<sseb, __m128, bool32_t> {};
+    struct simd_type_traits<sseb> : sse_traits<sseb, __m128, bool32_t, bool> {};
     template <>
-    struct simd_type_traits<ssef> : sse_traits<ssef, __m128, float> {};
+    struct simd_type_traits<ssef> : sse_traits<ssef, __m128, float, float> {};
     template <>
-    struct simd_type_traits<sseu> : sse_traits<sseu, __m128, uint32_t> {};
+    struct simd_type_traits<sseu> : sse_traits<sseu, __m128, uint32_t, uint32_t> {};
     template <>
-    struct simd_type_traits<sses> : sse_traits<sses, __m128, int32_t> {};
+    struct simd_type_traits<sses> : sse_traits<sses, __m128, int32_t, int32_t> {};
 
     template <typename Crtp>
     struct sse_base : simd_base<Crtp> {
@@ -73,6 +74,7 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
+        using element_t = typename simd_base<Crtp>::element_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
@@ -124,6 +126,8 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(sseb);
 
         using sse_base::sse_base;
+
+        SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(mm)) != 0; }
     };
 
     struct ssef : sse_base<ssef> {
@@ -132,7 +136,7 @@ namespace sd {
         using sse_base::sse_base;
         SIMDEE_INL explicit ssef(const sses&);
 
-        SIMDEE_INL scalar_t first_element() const { return _mm_cvtss_f32(mm); }
+        SIMDEE_INL element_t first_element() const { return _mm_cvtss_f32(mm); }
     };
 
     struct sseu : sse_base<sseu> {
@@ -145,7 +149,7 @@ namespace sd {
 
         SIMDEE_INL __m128i mmi() const { return _mm_castps_si128(mm); }
         SIMDEE_INL mask_t mask() const { return mask_t(uint32_t(_mm_movemask_ps(mm))); }
-        SIMDEE_INL scalar_t first_element() const { return tou(_mm_cvtss_f32(mm)); }
+        SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(mm)); }
     };
 
     struct sses : sse_base<sses> {
@@ -157,7 +161,7 @@ namespace sd {
         SIMDEE_CTOR(sses, __m128i, mm = _mm_castsi128_ps(r));
 
         SIMDEE_INL __m128i mmi() const { return _mm_castps_si128(mm); }
-        SIMDEE_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(mm)); }
+        SIMDEE_INL element_t first_element() const { return tos(_mm_cvtss_f32(mm)); }
     };
 
     SIMDEE_INL ssef::ssef(const sses& r) { mm = _mm_cvtepi32_ps(_mm_castps_si128(r.data())); }

@@ -29,6 +29,10 @@ ASSERT((std::is_same<B::scalar_t, sd::bool32_t>::value));
 ASSERT((std::is_same<F::scalar_t, float>::value));
 ASSERT((std::is_same<U::scalar_t, uint32_t>::value));
 ASSERT((std::is_same<S::scalar_t, int32_t>::value));
+ASSERT((std::is_same<B::element_t, bool>::value));
+ASSERT((std::is_same<F::element_t, float>::value));
+ASSERT((std::is_same<U::element_t, uint32_t>::value));
+ASSERT((std::is_same<S::element_t, int32_t>::value));
 ASSERT((std::is_same<B::mask_t, sd::mask<B>>::value));
 ASSERT((std::is_same<B::storage_t, sd::storage<B>>::value));
 ASSERT((std::is_same<F::storage_t, sd::storage<F>>::value));
@@ -95,9 +99,10 @@ ASSERT(HAS_METHOD(const F, reduce(VAL(F::binary_op_t)), F));
 ASSERT(HAS_METHOD(const U, reduce(VAL(U::binary_op_t)), U));
 ASSERT(HAS_METHOD(const S, reduce(VAL(S::binary_op_t)), S));
 ASSERT(HAS_METHOD(const U, mask(), U::mask_t));
-ASSERT(HAS_METHOD(const F, first_element(), F::scalar_t));
-ASSERT(HAS_METHOD(const U, first_element(), U::scalar_t));
-ASSERT(HAS_METHOD(const S, first_element(), S::scalar_t));
+ASSERT(HAS_METHOD(const B, first_element(), B::element_t));
+ASSERT(HAS_METHOD(const F, first_element(), F::element_t));
+ASSERT(HAS_METHOD(const U, first_element(), U::element_t));
+ASSERT(HAS_METHOD(const S, first_element(), S::element_t));
 
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     F::storage_t rf = bufZF;

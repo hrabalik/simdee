@@ -34,11 +34,12 @@ namespace sd {
     template <>
     struct is_simd_type<avxs> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename Scalar_t>
+    template <typename Simd_t, typename Vector_t, typename Scalar_t, typename Element_t>
     struct avx_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Scalar_t;
+        using element_t = Element_t;
         using vec_f = avxf;
         using vec_u = avxu;
         using vec_s = avxs;
@@ -47,13 +48,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<avxb> : avx_traits<avxb, __m256, bool32_t> {};
+    struct simd_type_traits<avxb> : avx_traits<avxb, __m256, bool32_t, bool> {};
     template <>
-    struct simd_type_traits<avxf> : avx_traits<avxf, __m256, float> {};
+    struct simd_type_traits<avxf> : avx_traits<avxf, __m256, float, float> {};
     template <>
-    struct simd_type_traits<avxu> : avx_traits<avxu, __m256, uint32_t> {};
+    struct simd_type_traits<avxu> : avx_traits<avxu, __m256, uint32_t, uint32_t> {};
     template <>
-    struct simd_type_traits<avxs> : avx_traits<avxs, __m256, int32_t> {};
+    struct simd_type_traits<avxs> : avx_traits<avxs, __m256, int32_t, int32_t> {};
 
     template <typename Crtp>
     struct avx_base : simd_base<Crtp> {
@@ -63,6 +64,7 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
+        using element_t = typename simd_base<Crtp>::element_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
@@ -121,6 +123,8 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(avxb);
 
         using avx_base::avx_base;
+
+        SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))) != 0; }
     };
 
     struct avxf : avx_base<avxf> {
@@ -129,7 +133,7 @@ namespace sd {
         using avx_base::avx_base;
         SIMDEE_INL explicit avxf(const avxs&);
 
-        SIMDEE_INL scalar_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
+        SIMDEE_INL element_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
     };
 
     struct avxu : avx_base<avxu> {
@@ -142,7 +146,7 @@ namespace sd {
 
         SIMDEE_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
         SIMDEE_INL mask_t mask() const { return mask_t(uint32_t(_mm256_movemask_ps(mm))); }
-        SIMDEE_INL scalar_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
+        SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
     };
 
     struct avxs : avx_base<avxs> {
@@ -154,7 +158,7 @@ namespace sd {
         SIMDEE_CTOR(avxs, __m256i, mm = _mm256_castsi256_ps(r));
 
         SIMDEE_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
-        SIMDEE_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
+        SIMDEE_INL element_t first_element() const { return tos(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
     };
 
     SIMDEE_INL avxf::avxf(const avxs& r) { mm = _mm256_cvtepi32_ps(_mm256_castps_si256(r.data())); }

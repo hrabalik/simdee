@@ -26,11 +26,12 @@ namespace sd {
     template<>
     struct is_simd_type<dums> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t>
+    template <typename Simd_t, typename Vector_t, typename Element_t>
     struct dum_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Vector_t;
+        using element_t = Element_t;
         using vec_f = dumf;
         using vec_u = dumu;
         using vec_s = dums;
@@ -39,13 +40,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<dumb> : dum_traits<dumb, bool32_t> {};
+    struct simd_type_traits<dumb> : dum_traits<dumb, bool32_t, bool> {};
     template <>
-    struct simd_type_traits<dumf> : dum_traits<dumf, float> {};
+    struct simd_type_traits<dumf> : dum_traits<dumf, float, float> {};
     template <>
-    struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t> {};
+    struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t, uint32_t> {};
     template <>
-    struct simd_type_traits<dums> : dum_traits<dums, int32_t> {};
+    struct simd_type_traits<dums> : dum_traits<dums, int32_t, int32_t> {};
 
     template <typename Crtp>
     struct dum_base : simd_base<Crtp> {
@@ -55,6 +56,7 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
+        using element_t = typename simd_base<Crtp>::element_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
@@ -80,6 +82,8 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(dumb);
 
         using dum_base::dum_base;
+
+        SIMDEE_INL element_t first_element() const { return mm != scalar_t::F; }
     };
 
     struct dumf : dum_base<dumf> {
@@ -88,7 +92,7 @@ namespace sd {
         using dum_base::dum_base;
         SIMDEE_INL explicit dumf(const dums&);
 
-        SIMDEE_INL scalar_t first_element() const { return mm; }
+        SIMDEE_INL element_t first_element() const { return mm; }
     };
 
     struct dumu : dum_base<dumu> {
@@ -98,7 +102,7 @@ namespace sd {
         SIMDEE_INL explicit dumu(const dums&);
 
         SIMDEE_INL mask_t mask() const { return mask_t(sd::tou(mm) >> 31); }
-        SIMDEE_INL scalar_t first_element() const { return mm; }
+        SIMDEE_INL element_t first_element() const { return mm; }
     };
 
     struct dums : dum_base<dums> {
@@ -109,7 +113,7 @@ namespace sd {
         SIMDEE_INL explicit dums(const dumf&);
         SIMDEE_INL explicit dums(const dumu&);
 
-        SIMDEE_INL scalar_t first_element() const { return mm; }
+        SIMDEE_INL element_t first_element() const { return mm; }
     };
 
     SIMDEE_INL dumf::dumf(const dums& r) { mm = static_cast<scalar_t>(r.data()); }

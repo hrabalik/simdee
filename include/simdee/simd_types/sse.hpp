@@ -126,6 +126,7 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(sseb);
 
         using sse_base::sse_base;
+        SIMDEE_CTOR(sseb, element_t, mm = r ? sseb(all_bits()).mm : sseb(zero()).mm);
 
         SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(mm)) != 0; }
     };

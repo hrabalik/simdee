@@ -123,6 +123,7 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(avxb);
 
         using avx_base::avx_base;
+        SIMDEE_CTOR(avxb, element_t, mm = r ? avxb(all_bits()).mm : avxb(zero()).mm);
 
         SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))) != 0; }
     };

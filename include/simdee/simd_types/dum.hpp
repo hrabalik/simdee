@@ -82,6 +82,7 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(dumb);
 
         using dum_base::dum_base;
+        SIMDEE_CTOR(dumb, element_t, mm = r ? scalar_t::T : scalar_t::F);
 
         SIMDEE_INL element_t first_element() const { return mm != scalar_t::F; }
     };

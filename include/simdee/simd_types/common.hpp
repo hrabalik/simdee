@@ -110,6 +110,11 @@ namespace sd {
         return l.self().mask().all();
     }
 
+    enum class bool32_t : uint32_t {
+        false32 = uint32_t(0),
+        true32 = ~uint32_t(0),
+    };
+
 }
 
 #endif // SIMDEE_SIMD_TYPES_COMMON_HPP

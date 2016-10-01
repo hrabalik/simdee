@@ -8,6 +8,7 @@
 #include <numeric>
 #include <functional>
 
+using B = sd::sseb;
 using F = sd::ssef;
 using U = sd::sseu;
 using S = sd::sses;

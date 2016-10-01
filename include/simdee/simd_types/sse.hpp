@@ -29,11 +29,14 @@
 
 namespace sd {
 
+    struct sseb;
     struct ssef;
     struct sseu;
     struct sses;
     using not_sseu = expr::deferred_not<sseu>;
 
+    template<>
+    struct is_simd_type<sseb> : std::integral_constant<bool, true> {};
     template<>
     struct is_simd_type<ssef> : std::integral_constant<bool, true> {};
     template<>
@@ -53,6 +56,8 @@ namespace sd {
         using storage_t = impl::storage<simd_t, scalar_t, alignof(vector_t)>;
     };
 
+    template <>
+    struct simd_type_traits<sseb> : sse_traits<sseb, __m128, bool32_t> {};
     template <>
     struct simd_type_traits<ssef> : sse_traits<ssef, __m128, float> {};
     template <>
@@ -113,6 +118,12 @@ namespace sd {
             Crtp tmp = f(self(), _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(mm), _MM_SHUFFLE(2, 3, 0, 1))));
             return f(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm), _MM_SHUFFLE(1, 0, 3, 2))));
         }
+    };
+
+    struct sseb : sse_base<sseb> {
+        SIMDEE_TRIVIAL_TYPE(sseb);
+
+        using sse_base::sse_base;
     };
 
     struct ssef : sse_base<ssef> {

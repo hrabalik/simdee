@@ -19,11 +19,14 @@
 
 namespace sd {
 
+    struct avxb;
     struct avxf;
     struct avxu;
     struct avxs;
     using not_avxu = expr::deferred_not<avxu>;
 
+    template <>
+    struct is_simd_type<avxb> : std::integral_constant<bool, true> {};
     template <>
     struct is_simd_type<avxf> : std::integral_constant<bool, true> {};
     template <>
@@ -44,11 +47,11 @@ namespace sd {
     };
 
     template <>
+    struct simd_type_traits<avxb> : avx_traits<avxb, __m256, bool32_t> {};
+    template <>
     struct simd_type_traits<avxf> : avx_traits<avxf, __m256, float> {};
-
     template <>
     struct simd_type_traits<avxu> : avx_traits<avxu, __m256, uint32_t> {};
-
     template <>
     struct simd_type_traits<avxs> : avx_traits<avxs, __m256, int32_t> {};
 
@@ -112,6 +115,12 @@ namespace sd {
             tmp = f(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));
             return f(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));
         }
+    };
+
+    struct avxb : avx_base<avxb> {
+        SIMDEE_TRIVIAL_TYPE(avxb);
+
+        using avx_base::avx_base;
     };
 
     struct avxf : avx_base<avxf> {

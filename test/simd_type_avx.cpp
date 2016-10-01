@@ -8,6 +8,7 @@
 #include <numeric>
 #include <functional>
 
+using B = sd::avxb;
 using F = sd::avxf;
 using U = sd::avxu;
 using S = sd::avxs;

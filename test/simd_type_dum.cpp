@@ -8,6 +8,7 @@
 #include <numeric>
 #include <functional>
 
+using B = sd::dumb;
 using F = sd::dumf;
 using U = sd::dumu;
 using S = sd::dums;

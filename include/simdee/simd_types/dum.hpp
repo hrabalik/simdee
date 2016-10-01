@@ -12,10 +12,13 @@
 
 namespace sd {
 
+    struct dumb;
     struct dumf;
     struct dumu;
     struct dums;
 
+    template<>
+    struct is_simd_type<dumb> : std::integral_constant<bool, true> {};
     template<>
     struct is_simd_type<dumf> : std::integral_constant<bool, true> {};
     template<>
@@ -36,11 +39,11 @@ namespace sd {
     };
 
     template <>
+    struct simd_type_traits<dumb> : dum_traits<dumb, bool32_t> {};
+    template <>
     struct simd_type_traits<dumf> : dum_traits<dumf, float> {};
-
     template <>
     struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t> {};
-
     template <>
     struct simd_type_traits<dums> : dum_traits<dums, int32_t> {};
 
@@ -71,6 +74,12 @@ namespace sd {
         SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) { mm = *r; }
         SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const { *r = mm; }
         SIMDEE_INL const Crtp reduce(binary_op_t f) const { return self(); }
+    };
+
+    struct dumb : dum_base<dumb> {
+        SIMDEE_TRIVIAL_TYPE(dumb);
+
+        using dum_base::dum_base;
     };
 
     struct dumf : dum_base<dumf> {

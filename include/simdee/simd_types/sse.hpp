@@ -84,7 +84,6 @@ namespace sd {
         SIMDEE_BASE_CTOR(sse_base, storage_t, aligned_load(r.data()));
 
         SIMDEE_BASE_CTOR_COMPLEX(sse_base, expr::all_bits) {
-            mm = _mm_setzero_ps();
             mm = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(mm), _mm_castps_si128(mm)));
             return self();
         }

@@ -13,6 +13,12 @@ using F = sd::dumf;
 using U = sd::dumu;
 using S = sd::dums;
 
+const B::storage_t bufAB{
+    B::scalar_t::T,
+};
+const B::storage_t bufBB{
+    B::scalar_t::F,
+};
 const F::storage_t bufAF {
     -0.27787193f,
 };

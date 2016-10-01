@@ -98,7 +98,7 @@ ASSERT(HAS_METHOD(const B, reduce(VAL(B::binary_op_t)), B));
 ASSERT(HAS_METHOD(const F, reduce(VAL(F::binary_op_t)), F));
 ASSERT(HAS_METHOD(const U, reduce(VAL(U::binary_op_t)), U));
 ASSERT(HAS_METHOD(const S, reduce(VAL(S::binary_op_t)), S));
-ASSERT(HAS_METHOD(const U, mask(), U::mask_t));
+ASSERT(HAS_METHOD(const B, mask(), B::mask_t));
 ASSERT(HAS_METHOD(const B, first_element(), B::element_t));
 ASSERT(HAS_METHOD(const F, first_element(), F::element_t));
 ASSERT(HAS_METHOD(const U, first_element(), U::element_t));
@@ -721,16 +721,16 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     using scalar_t = F::scalar_t;
-    U::storage_t r, e;
+    B::storage_t r, e;
     F a = bufAF;
     F b = bufBF;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? ~0U : 0U);
+        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? ~0U : 0U;
+            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
         };
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), f2);
     };
@@ -787,16 +787,16 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
     using scalar_t = U::scalar_t;
-    U::storage_t r, e;
+    B::storage_t r, e;
     U a = bufAU;
     U b = bufBU;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? ~0U : 0U);
+        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? ~0U : 0U;
+            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
         };
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f2);
     };
@@ -821,16 +821,16 @@ TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
     using scalar_t = S::scalar_t;
-    U::storage_t r, e;
+    B::storage_t r, e;
     S a = bufAS;
     S b = bufBS;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? ~0U : 0U);
+        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? ~0U : 0U;
+            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
         };
         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f2);
     };
@@ -925,7 +925,7 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     U bu = bufBU;
     S bs = bufBS;
 
-    U sel = af >= bf;
+    B sel = af >= bf;
     auto mask = sel.mask();
 
     F::storage_t rf(cond(sel, af, bf));
@@ -941,22 +941,22 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
     SECTION("mask() itself") {
-        auto expected = [](const U::storage_t& s) {
-            U::mask_t res(0U);
+        auto expected = [](const B::storage_t& s) {
+            B::mask_t res(0U);
             for (auto i = 0U; i < s.size(); ++i) {
-                if (s[i] & (1U << 31)) {
-                    res |= U::mask_t(1U << i);
+                if (uint32_t(s[i]) & (1U << 31)) {
+                    res |= B::mask_t(1U << i);
                 }
             }
             return res;
         };
 
-        REQUIRE(expected(bufAU) == U(bufAU).mask());
-        REQUIRE(expected(bufBU) == U(bufBU).mask());
+        REQUIRE(expected(bufAB) == B(bufAB).mask());
+        REQUIRE(expected(bufBB) == B(bufBB).mask());
     }
     SECTION("any, all") {
-        U a = bufAU;
-        U b = bufBU;
+        B a = bufAB;
+        B b = bufBB;
         REQUIRE(any(a) == a.mask().any());
         REQUIRE(any(b) == b.mask().any());
         REQUIRE(all(a) == a.mask().all());

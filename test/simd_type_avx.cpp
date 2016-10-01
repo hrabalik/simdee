@@ -13,6 +13,14 @@ using F = sd::avxf;
 using U = sd::avxu;
 using S = sd::avxs;
 
+const B::storage_t bufAB{
+    B::scalar_t::T, B::scalar_t::F, B::scalar_t::T, B::scalar_t::T,
+    B::scalar_t::F, B::scalar_t::T, B::scalar_t::F, B::scalar_t::T,
+};
+const B::storage_t bufBB{
+    B::scalar_t::F, B::scalar_t::T, B::scalar_t::F, B::scalar_t::T,
+    B::scalar_t::T, B::scalar_t::F, B::scalar_t::F, B::scalar_t::F,
+};
 const F::storage_t bufAF {
     -0.27787193f, +0.70154146f, -2.05181630f, +2.22944568f,
     -0.82358653f, -1.57705702f, +0.50797465f, -0.59003456f,

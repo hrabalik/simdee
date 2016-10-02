@@ -45,6 +45,10 @@ const S::storage_t bufBS {
     724135231, 56848532, 64122653, 440646957,
     -899302812, -2112882416, 77287484, 1066617619,
 };
+const B::storage_t bufZB{
+    B::scalar_t::F, B::scalar_t::F, B::scalar_t::F, B::scalar_t::F,
+    B::scalar_t::F, B::scalar_t::F, B::scalar_t::F, B::scalar_t::F,
+};
 const F::storage_t bufZF { 0, 0, 0, 0, 0, 0, 0, 0 };
 const U::storage_t bufZU { 0, 0, 0, 0, 0, 0, 0, 0 };
 const S::storage_t bufZS { 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -52,6 +56,7 @@ const S::storage_t bufZS { 0, 0, 0, 0, 0, 0, 0, 0 };
 #define SIMD_TYPE "AVX"
 #define SIMD_TEST_TAG "[simd_types][avx]"
 #define SIMD_WIDTH 8
+#define SIMD_LOAD_AB _mm256_load_ps((float*)bufAB.data())
 #define SIMD_LOAD_AF _mm256_load_ps(bufAF.data())
 #define SIMD_LOAD_AU _mm256_load_ps((float*)bufAU.data())
 #define SIMD_LOAD_AS _mm256_load_ps((float*)bufAS.data())

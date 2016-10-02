@@ -101,6 +101,7 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(dumu);
 
         using dum_base::dum_base;
+        SIMDEE_INL explicit dumu(const dumb&);
         SIMDEE_INL explicit dumu(const dums&);
 
         SIMDEE_INL element_t first_element() const { return mm; }
@@ -119,6 +120,7 @@ namespace sd {
 
     SIMDEE_INL dumf::dumf(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dums::dums(const dumf& r) { mm = round_to_int32(r.data()); }
+    SIMDEE_INL dumu::dumu(const dumb& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dumu::dumu(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dums::dums(const dumu& r) { mm = static_cast<scalar_t>(r.data()); }
 

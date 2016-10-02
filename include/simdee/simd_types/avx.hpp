@@ -146,6 +146,7 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(avxu);
 
         using avx_base::avx_base;
+        SIMDEE_INL explicit avxu(const avxb&);
         SIMDEE_INL explicit avxu(const avxs&);
         SIMDEE_CTOR(avxu, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxu, not_avxu, mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm));
@@ -168,6 +169,7 @@ namespace sd {
 
     SIMDEE_INL avxf::avxf(const avxs& r) { mm = _mm256_cvtepi32_ps(_mm256_castps_si256(r.data())); }
     SIMDEE_INL avxs::avxs(const avxf& r) { mm = _mm256_castsi256_ps(_mm256_cvtps_epi32(r.data())); }
+    SIMDEE_INL avxu::avxu(const avxb& r) { mm = r.data(); }
     SIMDEE_INL avxu::avxu(const avxs& r) { mm = r.data(); }
     SIMDEE_INL avxs::avxs(const avxu& r) { mm = r.data(); }
 

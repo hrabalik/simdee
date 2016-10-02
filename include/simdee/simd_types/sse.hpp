@@ -149,6 +149,7 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(sseu);
 
         using sse_base::sse_base;
+        SIMDEE_INL explicit sseu(const sseb&);
         SIMDEE_INL explicit sseu(const sses&);
         SIMDEE_CTOR(sseu, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseu, not_sseu, mm = _mm_xor_ps(r.neg.mm, sseu(all_bits()).mm));
@@ -171,6 +172,7 @@ namespace sd {
 
     SIMDEE_INL ssef::ssef(const sses& r) { mm = _mm_cvtepi32_ps(_mm_castps_si128(r.data())); }
     SIMDEE_INL sses::sses(const ssef& r) { mm = _mm_castsi128_ps(_mm_cvtps_epi32(r.data())); }
+    SIMDEE_INL sseu::sseu(const sseb& r) { mm = r.data(); }
     SIMDEE_INL sseu::sseu(const sses& r) { mm = r.data(); }
     SIMDEE_INL sses::sses(const sseu& r) { mm = r.data(); }
 

@@ -194,8 +194,6 @@ namespace sd {
         SIMDEE_BINOP(avxu, avxu, operator^, _mm256_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(avxu, not_avxu, operator~, not_avxu(l));
         SIMDEE_BINOP(avxu, avxu, andnot, _mm256_andnot_ps(r.mm, l.mm));
-
-    private:
     };
 
     struct avxs : avx_base<avxs> {

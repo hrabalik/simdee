@@ -87,8 +87,8 @@ namespace sd {
         SIMDEE_INL mask_t mask() const { return mask_t(tou(mm) & 1U); }
         SIMDEE_INL element_t first_element() const { return mm != scalar_t::F; }
 
-        SIMDEE_BINOP(dumb, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dumb, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumb, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumb, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
         SIMDEE_BINOP(dumb, dumb, operator&&, l.first_element() && r.first_element());
         SIMDEE_BINOP(dumb, dumb, operator||, l.first_element() || r.first_element());
         SIMDEE_UNOP(dumb, dumb, operator!, !l.first_element());
@@ -103,25 +103,25 @@ namespace sd {
 
         SIMDEE_INL element_t first_element() const { return mm; }
 
-        SIMDEE_BINOP(dumf, dumb, operator<, (l.data() < r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dumf, dumb, operator>, (l.data() > r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dumf, dumb, operator<=, (l.data() <= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dumf, dumb, operator>=, (l.data() >= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dumf, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dumf, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumf, dumb, operator<, (l.mm < r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumf, dumb, operator>, (l.mm > r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumf, dumb, operator<=, (l.mm <= r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumf, dumb, operator>=, (l.mm >= r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumf, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumf, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
-        SIMDEE_UNOP(dumf, dumf, operator-, -l.data());
-        SIMDEE_BINOP(dumf, dumf, operator+, l.data() + r.data());
-        SIMDEE_BINOP(dumf, dumf, operator-, l.data() - r.data());
-        SIMDEE_BINOP(dumf, dumf, operator*, l.data() * r.data());
-        SIMDEE_BINOP(dumf, dumf, operator/, l.data() / r.data());
+        SIMDEE_UNOP(dumf, dumf, operator-, -l.mm);
+        SIMDEE_BINOP(dumf, dumf, operator+, l.mm + r.mm);
+        SIMDEE_BINOP(dumf, dumf, operator-, l.mm - r.mm);
+        SIMDEE_BINOP(dumf, dumf, operator*, l.mm * r.mm);
+        SIMDEE_BINOP(dumf, dumf, operator/, l.mm / r.mm);
 
-        SIMDEE_BINOP(dumf, dumf, min, std::min(l.data(), r.data()));
-        SIMDEE_BINOP(dumf, dumf, max, std::max(l.data(), r.data()));
-        SIMDEE_UNOP(dumf, dumf, sqrt, std::sqrt(l.data()));
-        SIMDEE_UNOP(dumf, dumf, rsqrt, 1 / std::sqrt(l.data()));
-        SIMDEE_UNOP(dumf, dumf, rcp, 1 / l.data());
-        SIMDEE_UNOP(dumf, dumf, abs, std::abs(l.data()));
+        SIMDEE_BINOP(dumf, dumf, min, std::min(l.mm, r.mm));
+        SIMDEE_BINOP(dumf, dumf, max, std::max(l.mm, r.mm));
+        SIMDEE_UNOP(dumf, dumf, sqrt, std::sqrt(l.mm));
+        SIMDEE_UNOP(dumf, dumf, rsqrt, 1 / std::sqrt(l.mm));
+        SIMDEE_UNOP(dumf, dumf, rcp, 1 / l.mm);
+        SIMDEE_UNOP(dumf, dumf, abs, std::abs(l.mm));
     };
 
     struct dumu : dum_base<dumu> {
@@ -134,14 +134,14 @@ namespace sd {
         SIMDEE_INL element_t first_element() const { return mm; }
 
 #   if defined(SIMDEE_NEED_INT)
-        SIMDEE_BINOP(dumu, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dumu, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumu, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dumu, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
 #   endif
-        SIMDEE_BINOP(dumu, dumu, operator&, uval(tou(l.data()) & tou(r.data())));
-        SIMDEE_BINOP(dumu, dumu, operator|, uval(tou(l.data()) | tou(r.data())));
-        SIMDEE_BINOP(dumu, dumu, operator^, uval(tou(l.data()) ^ tou(r.data())));
-        SIMDEE_UNOP(dumu, dumu, operator~, uval(~tou(l.data())));
-        SIMDEE_BINOP(dumu, dumu, andnot, uval(tou(l.data()) & ~tou(r.data())));
+        SIMDEE_BINOP(dumu, dumu, operator&, uval(tou(l.mm) & tou(r.mm)));
+        SIMDEE_BINOP(dumu, dumu, operator|, uval(tou(l.mm) | tou(r.mm)));
+        SIMDEE_BINOP(dumu, dumu, operator^, uval(tou(l.mm) ^ tou(r.mm)));
+        SIMDEE_UNOP(dumu, dumu, operator~, uval(~tou(l.mm)));
+        SIMDEE_BINOP(dumu, dumu, andnot, uval(tou(l.mm) & ~tou(r.mm)));
     };
 
     struct dums : dum_base<dums> {
@@ -155,21 +155,21 @@ namespace sd {
         SIMDEE_INL element_t first_element() const { return mm; }
 
 #   if defined(SIMDEE_NEED_INT)
-        SIMDEE_BINOP(dums, dumb, operator<, (l.data() < r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dums, dumb, operator>, (l.data() > r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dums, dumb, operator<=, (l.data() <= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dums, dumb, operator>=, (l.data() >= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dums, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dums, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dums, dumb, operator<, (l.mm < r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dums, dumb, operator>, (l.mm > r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dums, dumb, operator<=, (l.mm <= r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dums, dumb, operator>=, (l.mm >= r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dums, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
+        SIMDEE_BINOP(dums, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
-        SIMDEE_UNOP(dums, dums, operator-, -l.data());
-        SIMDEE_BINOP(dums, dums, operator+, l.data() + r.data());
-        SIMDEE_BINOP(dums, dums, operator-, l.data() - r.data());
-        SIMDEE_BINOP(dums, dums, operator*, l.data() * r.data());
+        SIMDEE_UNOP(dums, dums, operator-, -l.mm);
+        SIMDEE_BINOP(dums, dums, operator+, l.mm + r.mm);
+        SIMDEE_BINOP(dums, dums, operator-, l.mm - r.mm);
+        SIMDEE_BINOP(dums, dums, operator*, l.mm * r.mm);
 
-        SIMDEE_BINOP(dums, dums, min, std::min(l.data(), r.data()));
-        SIMDEE_BINOP(dums, dums, max, std::max(l.data(), r.data()));
-        SIMDEE_UNOP(dums, dums, abs, std::abs(l.data()));
+        SIMDEE_BINOP(dums, dums, min, std::min(l.mm, r.mm));
+        SIMDEE_BINOP(dums, dums, max, std::max(l.mm, r.mm));
+        SIMDEE_UNOP(dums, dums, abs, std::abs(l.mm));
 #   endif
     };
 

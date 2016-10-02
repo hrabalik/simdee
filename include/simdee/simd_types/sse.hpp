@@ -136,11 +136,11 @@ namespace sd {
         SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(mm)) != 0; }
 
         SIMDEE_BINOP(sseb, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
-        SIMDEE_BINOP(sseb, sseb, operator!=, _mm_xor_ps(l.data(), r.data()));
-        SIMDEE_BINOP(sseb, sseb, operator&&, _mm_and_ps(l.data(), r.data()));
-        SIMDEE_BINOP(sseb, sseb, operator||, _mm_or_ps(l.data(), r.data()));
+        SIMDEE_BINOP(sseb, sseb, operator!=, _mm_xor_ps(l.mm, r.mm));
+        SIMDEE_BINOP(sseb, sseb, operator&&, _mm_and_ps(l.mm, r.mm));
+        SIMDEE_BINOP(sseb, sseb, operator||, _mm_or_ps(l.mm, r.mm));
         SIMDEE_UNOP(sseb, not_sseb, operator!, not_sseb(l));
-        SIMDEE_BINOP(sseb, sseb, andnot, _mm_andnot_ps(r.data(), l.data()));
+        SIMDEE_BINOP(sseb, sseb, andnot, _mm_andnot_ps(r.mm, l.mm));
     };
 
     struct ssef : sse_base<ssef> {
@@ -151,25 +151,25 @@ namespace sd {
 
         SIMDEE_INL element_t first_element() const { return _mm_cvtss_f32(mm); }
 
-        SIMDEE_BINOP(ssef, sseb, operator<, _mm_cmplt_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, sseb, operator>, _mm_cmpgt_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, sseb, operator<=, _mm_cmple_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, sseb, operator>=, _mm_cmpge_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, sseb, operator==, _mm_cmpeq_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, sseb, operator!=, _mm_cmpneq_ps(l.data(), r.data()));
+        SIMDEE_BINOP(ssef, sseb, operator<, _mm_cmplt_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, sseb, operator>, _mm_cmpgt_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, sseb, operator<=, _mm_cmple_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, sseb, operator>=, _mm_cmpge_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, sseb, operator==, _mm_cmpeq_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, sseb, operator!=, _mm_cmpneq_ps(l.mm, r.mm));
 
-        SIMDEE_UNOP(ssef, ssef, operator-, _mm_xor_ps(l.data(), ssef(sign_bit()).data()));
-        SIMDEE_BINOP(ssef, ssef, operator+, _mm_add_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, ssef, operator-, _mm_sub_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, ssef, operator*, _mm_mul_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, ssef, operator/, _mm_div_ps(l.data(), r.data()));
+        SIMDEE_UNOP(ssef, ssef, operator-, _mm_xor_ps(l.mm, ssef(sign_bit()).mm));
+        SIMDEE_BINOP(ssef, ssef, operator+, _mm_add_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, ssef, operator-, _mm_sub_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, ssef, operator*, _mm_mul_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, ssef, operator/, _mm_div_ps(l.mm, r.mm));
 
-        SIMDEE_BINOP(ssef, ssef, min, _mm_min_ps(l.data(), r.data()));
-        SIMDEE_BINOP(ssef, ssef, max, _mm_max_ps(l.data(), r.data()));
-        SIMDEE_UNOP(ssef, ssef, sqrt, _mm_sqrt_ps(l.data()));
-        SIMDEE_UNOP(ssef, ssef, rsqrt, _mm_rsqrt_ps(l.data()));
-        SIMDEE_UNOP(ssef, ssef, rcp, _mm_rcp_ps(l.data()));
-        SIMDEE_UNOP(ssef, ssef, abs, _mm_and_ps(l.data(), ssef(abs_mask()).data()));
+        SIMDEE_BINOP(ssef, ssef, min, _mm_min_ps(l.mm, r.mm));
+        SIMDEE_BINOP(ssef, ssef, max, _mm_max_ps(l.mm, r.mm));
+        SIMDEE_UNOP(ssef, ssef, sqrt, _mm_sqrt_ps(l.mm));
+        SIMDEE_UNOP(ssef, ssef, rsqrt, _mm_rsqrt_ps(l.mm));
+        SIMDEE_UNOP(ssef, ssef, rcp, _mm_rcp_ps(l.mm));
+        SIMDEE_UNOP(ssef, ssef, abs, _mm_and_ps(l.mm, ssef(abs_mask()).mm));
     };
 
     struct sseu : sse_base<sseu> {
@@ -188,11 +188,11 @@ namespace sd {
         SIMDEE_BINOP(sseu, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseu, not_sseb, operator!=, not_sseb(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
 #   endif
-        SIMDEE_BINOP(sseu, sseu, operator&, _mm_and_ps(l.data(), r.data()));
-        SIMDEE_BINOP(sseu, sseu, operator|, _mm_or_ps(l.data(), r.data()));
-        SIMDEE_BINOP(sseu, sseu, operator^, _mm_xor_ps(l.data(), r.data()));
+        SIMDEE_BINOP(sseu, sseu, operator&, _mm_and_ps(l.mm, r.mm));
+        SIMDEE_BINOP(sseu, sseu, operator|, _mm_or_ps(l.mm, r.mm));
+        SIMDEE_BINOP(sseu, sseu, operator^, _mm_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(sseu, not_sseu, operator~, not_sseu(l));
-        SIMDEE_BINOP(sseu, sseu, andnot, _mm_andnot_ps(r.data(), l.data()));
+        SIMDEE_BINOP(sseu, sseu, andnot, _mm_andnot_ps(r.mm, l.mm));
     };
 
     struct sses : sse_base<sses> {

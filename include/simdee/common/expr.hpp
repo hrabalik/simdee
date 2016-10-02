@@ -77,7 +77,7 @@ namespace sd {
 
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
-                static_assert(std::is_arithmetic<Target>::value, "init::to<Target>():: Target must be an arithmetic type");
+                static_assert(is_extended_arithmetic_type<Target>::value, "init::to<Target>():: Target must be an arithmetic type");
                 return self().template to<Target>();
             }
         };
@@ -185,7 +185,7 @@ namespace sd {
         struct tof;
 
         template <typename T>
-        struct tof<T, typename std::enable_if<std::is_arithmetic<typename std::decay<T>::type>::value>::type> {
+        struct tof<T, typename std::enable_if<is_extended_arithmetic_type<typename std::decay<T>::type>::value>::type> {
             using Source = typename std::decay<T>::type;
             using Target = select_float_t<sizeof(Source)>;
 
@@ -218,9 +218,7 @@ namespace sd {
         struct tou;
 
         template <typename T>
-        struct tou<T, typename std::enable_if<std::is_arithmetic<typename std::decay<T>::type>::value
-            || is_bool_type<typename std::decay<T>::type>::value>::type> {
-
+        struct tou<T, typename std::enable_if<is_extended_arithmetic_type<typename std::decay<T>::type>::value>::type> {
             using Source = typename std::decay<T>::type;
             using Target = select_uint_t<sizeof(Source)>;
 
@@ -253,10 +251,9 @@ namespace sd {
         struct tos;
 
         template <typename T>
-        struct tos<T, typename std::enable_if<std::is_arithmetic<typename std::decay<T>::type>::value>::type> {
+        struct tos<T, typename std::enable_if<is_extended_arithmetic_type<typename std::decay<T>::type>::value>::type> {
             using Source = typename std::decay<T>::type;
             using Target = select_sint_t<sizeof(Source)>;
-            static_assert(std::is_arithmetic<Source>::value, "tos() must be used to convert from an arithmetic type");
 
             SIMDEE_INL constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
 

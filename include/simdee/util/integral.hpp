@@ -35,6 +35,12 @@ namespace sd {
         || std::is_same<T, bool64_t>::value
     > {};
 
+    template <typename T>
+    struct is_extended_arithmetic_type : std::integral_constant<bool, false
+        || std::is_arithmetic<T>::value
+        || is_bool_type<T>::value
+    > {};
+
     template <std::size_t Size>
     struct select_sint;
     template <>

@@ -155,6 +155,9 @@ namespace sd {
     SIMDEE_UNOP(dumf, dumf, rcp, 1 / l.data());
     SIMDEE_UNOP(dumf, dumf, abs, std::abs(l.data()));
 
+    SIMDEE_INL const dumb cond(const dumb& pred, const dumb& if_true, const dumb& if_false) {
+        return pred.first_element() ? if_true : if_false;
+    }
     SIMDEE_INL const dumf cond(const dumb& pred, const dumf& if_true, const dumf& if_false) {
         return pred.first_element() ? if_true : if_false;
     }

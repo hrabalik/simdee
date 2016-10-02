@@ -207,6 +207,12 @@ namespace sd {
     SIMDEE_UNOP(ssef, ssef, rcp, _mm_rcp_ps(l.data()));
     SIMDEE_UNOP(ssef, ssef, abs, _mm_and_ps(l.data(), ssef(abs_mask()).data()));
 
+    SIMDEE_INL const sseb cond(const sseb& pred, const sseb& if_true, const sseb& if_false) {
+        __m128 t = _mm_and_ps(pred.data(), if_true.data());
+        __m128 f = _mm_andnot_ps(pred.data(), if_false.data());
+        return _mm_or_ps(t, f);
+    }
+
     SIMDEE_INL const ssef cond(const sseb& pred, const ssef& if_true, const ssef& if_false) {
         __m128 t = _mm_and_ps(pred.data(), if_true.data());
         __m128 f = _mm_andnot_ps(pred.data(), if_false.data());

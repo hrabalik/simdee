@@ -204,6 +204,9 @@ namespace sd {
     SIMDEE_UNOP(avxf, avxf, rcp, _mm256_rcp_ps(l.data()));
     SIMDEE_UNOP(avxf, avxf, abs, _mm256_and_ps(l.data(), avxf(abs_mask()).data()));
 
+    SIMDEE_INL const avxb cond(const avxb& pred, const avxb& if_true, const avxb& if_false) {
+        return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
+    }
     SIMDEE_INL const avxf cond(const avxb& pred, const avxf& if_true, const avxf& if_false) {
         return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
     }

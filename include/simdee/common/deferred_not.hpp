@@ -231,6 +231,34 @@ namespace sd {
         SIMDEE_INL bool all(const deferred_lognot<T>& l) {
             return !l.neg.mask().any();
         }
+        template<typename T>
+        SIMDEE_INL constexpr const T operator!(const deferred_lognot<T>& l) {
+            return l.neg;
+        }
+        template<typename T>
+        SIMDEE_INL const T operator&&(const deferred_lognot<T>& l, const T& r) {
+            return andnot(r, l.neg);
+        }
+        template<typename T>
+        SIMDEE_INL const T operator&&(const T& l, const deferred_lognot<T>& r) {
+            return andnot(l, r.neg);
+        }
+        template<typename T>
+        SIMDEE_INL const deferred_lognot<T> operator&&(const deferred_lognot<T>& l, const deferred_lognot<T>& r) {
+            return deferred_lognot<T>(l.neg || r.neg);
+        }
+        template<typename T>
+        SIMDEE_INL const deferred_lognot<T> operator||(const deferred_lognot<T>& l, const T& r) {
+            return deferred_lognot<T>(andnot(l.neg, r));
+        }
+        template<typename T>
+        SIMDEE_INL const deferred_lognot<T> operator||(const T& l, const deferred_lognot<T>& r) {
+            return deferred_lognot<T>(andnot(r.neg, l));
+        }
+        template<typename T>
+        SIMDEE_INL const deferred_lognot<T> operator||(const deferred_lognot<T>& l, const deferred_lognot<T>& r) {
+            return deferred_lognot<T>(l.neg && r.neg);
+        }
     }
 }
 

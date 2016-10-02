@@ -1050,27 +1050,27 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
 
     SECTION("max") {
         constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
-        auto max = [](scalar_t l, scalar_t r) { return std::max(l, r); };
-        e = std::accumulate(begin(bufAF), end(bufAF), -inf, max);
-        r = a.reduce(sd::max).first_element();
+        auto max_ = [](scalar_t l, scalar_t r) { return std::max(l, r); };
+        e = std::accumulate(begin(bufAF), end(bufAF), -inf, max_);
+        r = a.reduce([](F a, F b) { return max(a, b); }).first_element();
         REQUIRE(r == e);
     }
     SECTION("min") {
         constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
-        auto min = [](scalar_t l, scalar_t r) { return std::min(l, r); };
-        e = std::accumulate(begin(bufAF), end(bufAF), inf, min);
-        r = a.reduce(sd::min).first_element();
+        auto min_ = [](scalar_t l, scalar_t r) { return std::min(l, r); };
+        e = std::accumulate(begin(bufAF), end(bufAF), inf, min_);
+        r = a.reduce([](F a, F b) { return min(a, b); }).first_element();
         REQUIRE(r == e);
     }
     SECTION("sum") {
         e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(0));
-        r = a.reduce(sd::operator+).first_element();
+        r = a.reduce([](F a, F b) { return a + b; }).first_element();
         REQUIRE(r == Approx(e));
     }
     SECTION("product") {
         auto prod = std::multiplies<scalar_t>();
         e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(1), prod);
-        r = a.reduce(sd::operator*).first_element();
+        r = a.reduce([](F a, F b) { return a * b; }).first_element();
         REQUIRE(r == Approx(e));
     }
 }

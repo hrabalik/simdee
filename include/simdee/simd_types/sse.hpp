@@ -180,6 +180,8 @@ namespace sd {
     SIMDEE_BINOP(sseb, sseb, operator||, _mm_or_ps(l.data(), r.data()));
     SIMDEE_UNOP(sseb, not_sseb, operator!, not_sseb(l));
     SIMDEE_BINOP(sseb, sseb, andnot, _mm_andnot_ps(r.data(), l.data()));
+    SIMDEE_BINOP(sseb, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(sseb, sseb, operator!=, _mm_xor_ps(l.data(), r.data()));
 
     SIMDEE_BINOP(sseu, sseu, operator&, _mm_and_ps(l.data(), r.data()));
     SIMDEE_BINOP(sseu, sseu, operator|, _mm_or_ps(l.data(), r.data()));
@@ -232,9 +234,6 @@ namespace sd {
     }
 
 #if defined(SIMDEE_NEED_INT)
-    SIMDEE_BINOP(sseb, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
-    SIMDEE_BINOP(sseb, not_sseb, operator!=, not_sseb(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
-
     SIMDEE_BINOP(sseu, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
     SIMDEE_BINOP(sseu, not_sseb, operator!=, not_sseb(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
 

@@ -29,6 +29,11 @@ TEST_CASE("expr::tou", "[expr]") {
         REQUIRE(sd::tou(2.0) == 0x4000000000000000ULL);
         REQUIRE(sd::tou(-6.2598534e18f) == 0xdeadbeefU);
         REQUIRE(sd::tou(-1.1885959257070704e+148) == 0xdeadbeefdeadbeefULL);
+        REQUIRE(sd::tou(sd::bool8_t::F) == 0);
+        REQUIRE(sd::tou(sd::bool8_t::T) == uint8_t(-1));
+        REQUIRE(sd::tou(sd::bool16_t::T) == uint16_t(-1));
+        REQUIRE(sd::tou(sd::bool32_t::T) == uint32_t(-1));
+        REQUIRE(sd::tou(sd::bool64_t::T) == uint64_t(-1));
     }
     SECTION("lvalues") {
         float f = 2;

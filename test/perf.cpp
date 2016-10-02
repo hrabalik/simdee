@@ -227,7 +227,7 @@ TEST_CASE("bench_ray_box", "[!hide][perf]") {
             sd::avxf factor(robustFactor);
             tmax *= factor;
             tmaxy *= factor;
-            auto fail = ((tmin > tmaxy) | (tminy > tmax)).mask();
+            auto fail = ((tmin > tmaxy) || (tminy > tmax)).mask();
 
             if (fail.all()) {
                 for (int i = 0; i < 8; ++i) {
@@ -241,7 +241,7 @@ TEST_CASE("bench_ray_box", "[!hide][perf]") {
             auto tminz = ((dirIsNeg[2] ? elem.maxz : elem.minz) - rayOrigin.z) * invDir.z;
             auto tmaxz = ((dirIsNeg[2] ? elem.minz : elem.maxz) - rayOrigin.z) * invDir.z;
             tmaxz *= factor;
-            fail |= ((tmin > tmaxz) | (tminz > tmax)).mask();
+            fail |= ((tmin > tmaxz) || (tminz > tmax)).mask();
 
             if (fail.all()) {
                 for (int i = 0; i < 8; ++i) {
@@ -252,7 +252,7 @@ TEST_CASE("bench_ray_box", "[!hide][perf]") {
 
             tmin = cond(tminz > tmin, tminz, tmin);
             tmax = cond(tmaxz < tmax, tmaxz, tmax);
-            auto win = ~fail & ((tmin < rayTMax) & (tmax > sd::zero())).mask();
+            auto win = ~fail & ((tmin < rayTMax) && (tmax > sd::zero())).mask();
 
             for (int i = 0; i < 8; ++i) {
                 *(resIt++) = win[i] ? Result::win : Result::fail;

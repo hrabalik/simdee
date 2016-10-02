@@ -19,11 +19,15 @@
 
 namespace sd {
 
+    struct avxb;
     struct avxf;
     struct avxu;
     struct avxs;
-    using not_avxu = expr::deferred_not<avxu>;
+    using not_avxb = expr::deferred_lognot<avxb>;
+    using not_avxu = expr::deferred_bitnot<avxu>;
 
+    template <>
+    struct is_simd_type<avxb> : std::integral_constant<bool, true> {};
     template <>
     struct is_simd_type<avxf> : std::integral_constant<bool, true> {};
     template <>
@@ -31,11 +35,12 @@ namespace sd {
     template <>
     struct is_simd_type<avxs> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename Scalar_t>
+    template <typename Simd_t, typename Vector_t, typename Scalar_t, typename Element_t>
     struct avx_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Scalar_t;
+        using element_t = Element_t;
         using vec_f = avxf;
         using vec_u = avxu;
         using vec_s = avxs;
@@ -44,13 +49,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<avxf> : avx_traits<avxf, __m256, float> {};
-
+    struct simd_type_traits<avxb> : avx_traits<avxb, __m256, bool32_t, bool> {};
     template <>
-    struct simd_type_traits<avxu> : avx_traits<avxu, __m256, uint32_t> {};
-
+    struct simd_type_traits<avxf> : avx_traits<avxf, __m256, float, float> {};
     template <>
-    struct simd_type_traits<avxs> : avx_traits<avxs, __m256, int32_t> {};
+    struct simd_type_traits<avxu> : avx_traits<avxu, __m256, uint32_t, uint32_t> {};
+    template <>
+    struct simd_type_traits<avxs> : avx_traits<avxs, __m256, int32_t, int32_t> {};
 
     template <typename Crtp>
     struct avx_base : simd_base<Crtp> {
@@ -60,6 +65,7 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
+        using element_t = typename simd_base<Crtp>::element_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
@@ -114,26 +120,39 @@ namespace sd {
         }
     };
 
+    struct avxb : avx_base<avxb> {
+        SIMDEE_TRIVIAL_TYPE(avxb);
+
+        using avx_base::avx_base;
+        SIMDEE_CTOR(avxb, element_t, mm = r ? avxb(all_bits()).mm : avxb(zero()).mm);
+        SIMDEE_CTOR(avxb, __m256i, mm = _mm256_castsi256_ps(r));
+        SIMDEE_CTOR(avxb, not_avxb, mm = _mm256_xor_ps(r.neg.mm, avxb(all_bits()).mm));
+
+        SIMDEE_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
+        SIMDEE_INL mask_t mask() const { return mask_t(tou(_mm256_movemask_ps(mm))); }
+        SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))) != 0; }
+    };
+
     struct avxf : avx_base<avxf> {
         SIMDEE_TRIVIAL_TYPE(avxf);
 
         using avx_base::avx_base;
         SIMDEE_INL explicit avxf(const avxs&);
 
-        SIMDEE_INL scalar_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
+        SIMDEE_INL element_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
     };
 
     struct avxu : avx_base<avxu> {
         SIMDEE_TRIVIAL_TYPE(avxu);
 
         using avx_base::avx_base;
+        SIMDEE_INL explicit avxu(const avxb&);
         SIMDEE_INL explicit avxu(const avxs&);
         SIMDEE_CTOR(avxu, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxu, not_avxu, mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm));
 
         SIMDEE_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
-        SIMDEE_INL mask_t mask() const { return mask_t(uint32_t(_mm256_movemask_ps(mm))); }
-        SIMDEE_INL scalar_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
+        SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
     };
 
     struct avxs : avx_base<avxs> {
@@ -145,13 +164,25 @@ namespace sd {
         SIMDEE_CTOR(avxs, __m256i, mm = _mm256_castsi256_ps(r));
 
         SIMDEE_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
-        SIMDEE_INL scalar_t first_element() const { return tos(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
+        SIMDEE_INL element_t first_element() const { return tos(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
     };
 
     SIMDEE_INL avxf::avxf(const avxs& r) { mm = _mm256_cvtepi32_ps(_mm256_castps_si256(r.data())); }
     SIMDEE_INL avxs::avxs(const avxf& r) { mm = _mm256_castsi256_ps(_mm256_cvtps_epi32(r.data())); }
+    SIMDEE_INL avxu::avxu(const avxb& r) { mm = r.data(); }
     SIMDEE_INL avxu::avxu(const avxs& r) { mm = r.data(); }
     SIMDEE_INL avxs::avxs(const avxu& r) { mm = r.data(); }
+
+    SIMDEE_BINOP(avxb, avxb, operator&&, _mm256_and_ps(l.data(), r.data()));
+    SIMDEE_BINOP(avxb, avxb, operator||, _mm256_or_ps(l.data(), r.data()));
+    SIMDEE_UNOP(avxb, not_avxb, operator!, not_avxb(l));
+    SIMDEE_BINOP(avxb, avxb, andnot, _mm256_andnot_ps(r.data(), l.data()));
+#if defined(__AVX2__)
+    SIMDEE_BINOP(avxb, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
+#else
+    SIMDEE_BINOP(avxb, not_avxb, operator==, not_avxb(_mm256_xor_ps(l.data(), r.data())));
+#endif
+    SIMDEE_BINOP(avxb, avxb, operator!=, _mm256_xor_ps(l.data(), r.data()));
 
     SIMDEE_BINOP(avxu, avxu, operator&, _mm256_and_ps(l.data(), r.data()));
     SIMDEE_BINOP(avxu, avxu, operator|, _mm256_or_ps(l.data(), r.data()));
@@ -159,12 +190,12 @@ namespace sd {
     SIMDEE_UNOP(avxu, not_avxu, operator~, not_avxu(l));
     SIMDEE_BINOP(avxu, avxu, andnot, _mm256_andnot_ps(r.data(), l.data()));
 
-    SIMDEE_BINOP(avxf, avxu, operator<, _mm256_cmp_ps(l.data(), r.data(), _CMP_LT_OQ));
-    SIMDEE_BINOP(avxf, avxu, operator>, _mm256_cmp_ps(l.data(), r.data(), _CMP_GT_OQ));
-    SIMDEE_BINOP(avxf, avxu, operator<=, _mm256_cmp_ps(l.data(), r.data(), _CMP_LE_OQ));
-    SIMDEE_BINOP(avxf, avxu, operator>=, _mm256_cmp_ps(l.data(), r.data(), _CMP_GE_OQ));
-    SIMDEE_BINOP(avxf, avxu, operator==, _mm256_cmp_ps(l.data(), r.data(), _CMP_EQ_OQ));
-    SIMDEE_BINOP(avxf, avxu, operator!=, _mm256_cmp_ps(l.data(), r.data(), _CMP_NEQ_OQ));
+    SIMDEE_BINOP(avxf, avxb, operator<, _mm256_cmp_ps(l.data(), r.data(), _CMP_LT_OQ));
+    SIMDEE_BINOP(avxf, avxb, operator>, _mm256_cmp_ps(l.data(), r.data(), _CMP_GT_OQ));
+    SIMDEE_BINOP(avxf, avxb, operator<=, _mm256_cmp_ps(l.data(), r.data(), _CMP_LE_OQ));
+    SIMDEE_BINOP(avxf, avxb, operator>=, _mm256_cmp_ps(l.data(), r.data(), _CMP_GE_OQ));
+    SIMDEE_BINOP(avxf, avxb, operator==, _mm256_cmp_ps(l.data(), r.data(), _CMP_EQ_OQ));
+    SIMDEE_BINOP(avxf, avxb, operator!=, _mm256_cmp_ps(l.data(), r.data(), _CMP_NEQ_OQ));
 
     SIMDEE_UNOP(avxf, avxf, operator-, _mm256_xor_ps(l.data(), avxf(sign_bit()).data()));
     SIMDEE_BINOP(avxf, avxf, operator+, _mm256_add_ps(l.data(), r.data()));
@@ -179,26 +210,29 @@ namespace sd {
     SIMDEE_UNOP(avxf, avxf, rcp, _mm256_rcp_ps(l.data()));
     SIMDEE_UNOP(avxf, avxf, abs, _mm256_and_ps(l.data(), avxf(abs_mask()).data()));
 
-    SIMDEE_INL const avxf cond(const avxu& pred, const avxf& if_true, const avxf& if_false) {
+    SIMDEE_INL const avxb cond(const avxb& pred, const avxb& if_true, const avxb& if_false) {
         return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
     }
-    SIMDEE_INL const avxu cond(const avxu& pred, const avxu& if_true, const avxu& if_false) {
+    SIMDEE_INL const avxf cond(const avxb& pred, const avxf& if_true, const avxf& if_false) {
         return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
     }
-    SIMDEE_INL const avxs cond(const avxu& pred, const avxs& if_true, const avxs& if_false) {
+    SIMDEE_INL const avxu cond(const avxb& pred, const avxu& if_true, const avxu& if_false) {
+        return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
+    }
+    SIMDEE_INL const avxs cond(const avxb& pred, const avxs& if_true, const avxs& if_false) {
         return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
     }
 
 #if defined(SIMDEE_NEED_INT)
-    SIMDEE_BINOP(avxu, avxu, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
-    SIMDEE_BINOP(avxu, not_avxu, operator!=, not_avxu(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
+    SIMDEE_BINOP(avxu, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxu, not_avxb, operator!=, not_avxb(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
 
-    SIMDEE_BINOP(avxs, avxu, operator<, _mm256_cmpgt_epi32(r.mmi(), l.mmi()));
-    SIMDEE_BINOP(avxs, avxu, operator>, _mm256_cmpgt_epi32(l.mmi(), r.mmi()));
-    SIMDEE_BINOP(avxs, not_avxu, operator<=, not_avxu(_mm256_cmpgt_epi32(l.mmi(), r.mmi())));
-    SIMDEE_BINOP(avxs, not_avxu, operator>=, not_avxu(_mm256_cmpgt_epi32(r.mmi(), l.mmi())));
-    SIMDEE_BINOP(avxs, avxu, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
-    SIMDEE_BINOP(avxs, not_avxu, operator!=, not_avxu(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
+    SIMDEE_BINOP(avxs, avxb, operator<, _mm256_cmpgt_epi32(r.mmi(), l.mmi()));
+    SIMDEE_BINOP(avxs, avxb, operator>, _mm256_cmpgt_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxs, not_avxb, operator<=, not_avxb(_mm256_cmpgt_epi32(l.mmi(), r.mmi())));
+    SIMDEE_BINOP(avxs, not_avxb, operator>=, not_avxb(_mm256_cmpgt_epi32(r.mmi(), l.mmi())));
+    SIMDEE_BINOP(avxs, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
+    SIMDEE_BINOP(avxs, not_avxb, operator!=, not_avxb(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
 
     SIMDEE_UNOP(avxs, avxs, operator-, _mm256_sub_epi32(_mm256_setzero_si256(), l.mmi()));
     SIMDEE_BINOP(avxs, avxs, operator+, _mm256_add_epi32(l.mmi(), r.mmi()));

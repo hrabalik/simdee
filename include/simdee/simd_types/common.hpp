@@ -26,6 +26,7 @@ namespace sd {
         using traits_t = simd_type_traits<Crtp>;
         using vector_t = typename traits_t::vector_t;
         using scalar_t = typename traits_t::scalar_t;
+        using element_t = typename traits_t::element_t;
         using mask_t = typename traits_t::mask_t;
         using storage_t = typename traits_t::storage_t;
         using binary_op_t = const Crtp(*)(const Crtp& l, const Crtp& r);

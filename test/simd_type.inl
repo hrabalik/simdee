@@ -21,186 +21,236 @@
 #define ASSERT(COND) \
     static_assert( COND , SIMD_TYPE " compile-time check" )
 
+ASSERT(B::width == SIMD_WIDTH);
 ASSERT(F::width == SIMD_WIDTH);
 ASSERT(U::width == SIMD_WIDTH);
 ASSERT(S::width == SIMD_WIDTH);
+ASSERT((std::is_same<B::scalar_t, sd::bool32_t>::value));
 ASSERT((std::is_same<F::scalar_t, float>::value));
 ASSERT((std::is_same<U::scalar_t, uint32_t>::value));
 ASSERT((std::is_same<S::scalar_t, int32_t>::value));
-ASSERT((std::is_same<U::mask_t, sd::mask<U>>::value));
+ASSERT((std::is_same<B::element_t, bool>::value));
+ASSERT((std::is_same<F::element_t, float>::value));
+ASSERT((std::is_same<U::element_t, uint32_t>::value));
+ASSERT((std::is_same<S::element_t, int32_t>::value));
+ASSERT((std::is_same<B::mask_t, sd::mask<B>>::value));
+ASSERT((std::is_same<B::storage_t, sd::storage<B>>::value));
 ASSERT((std::is_same<F::storage_t, sd::storage<F>>::value));
 ASSERT((std::is_same<U::storage_t, sd::storage<U>>::value));
 ASSERT((std::is_same<S::storage_t, sd::storage<S>>::value));
+ASSERT(sizeof(B) == sizeof(B::vector_t));
 ASSERT(sizeof(F) == sizeof(F::vector_t));
 ASSERT(sizeof(U) == sizeof(U::vector_t));
 ASSERT(sizeof(S) == sizeof(S::vector_t));
+ASSERT(alignof(B) == alignof(B::vector_t));
 ASSERT(alignof(F) == alignof(F::vector_t));
 ASSERT(alignof(U) == alignof(U::vector_t));
 ASSERT(alignof(S) == alignof(S::vector_t));
+ASSERT(sizeof(B::scalar_t) * B::width == sizeof(B));
 ASSERT(sizeof(F::scalar_t) * F::width == sizeof(F));
 ASSERT(sizeof(U::scalar_t) * U::width == sizeof(U));
 ASSERT(sizeof(S::scalar_t) * S::width == sizeof(S));
+ASSERT((std::is_trivially_copyable<B>::value));
 ASSERT((std::is_trivially_copyable<F>::value));
 ASSERT((std::is_trivially_copyable<U>::value));
 ASSERT((std::is_trivially_copyable<S>::value));
+ASSERT((sd::is_simd_type<B>::value));
 ASSERT((sd::is_simd_type<F>::value));
 ASSERT((sd::is_simd_type<U>::value));
 ASSERT((sd::is_simd_type<S>::value));
+ASSERT(HAS_METHOD(const B, self(), B));
 ASSERT(HAS_METHOD(const F, self(), F));
 ASSERT(HAS_METHOD(const U, self(), U));
 ASSERT(HAS_METHOD(const S, self(), S));
+ASSERT(HAS_METHOD(const B, eval(), B));
 ASSERT(HAS_METHOD(const F, eval(), F));
 ASSERT(HAS_METHOD(const U, eval(), U));
 ASSERT(HAS_METHOD(const S, eval(), S));
+ASSERT(HAS_METHOD(const B, data(), B::vector_t));
 ASSERT(HAS_METHOD(const F, data(), F::vector_t));
 ASSERT(HAS_METHOD(const U, data(), U::vector_t));
 ASSERT(HAS_METHOD(const S, data(), S::vector_t));
+ASSERT(HAS_METHOD(B, aligned_load(VAL(B::scalar_t*)), void));
 ASSERT(HAS_METHOD(F, aligned_load(VAL(F::scalar_t*)), void));
 ASSERT(HAS_METHOD(U, aligned_load(VAL(U::scalar_t*)), void));
 ASSERT(HAS_METHOD(S, aligned_load(VAL(S::scalar_t*)), void));
+ASSERT(HAS_METHOD(const B, aligned_store(VAL(B::scalar_t*)), void));
 ASSERT(HAS_METHOD(const F, aligned_store(VAL(F::scalar_t*)), void));
 ASSERT(HAS_METHOD(const U, aligned_store(VAL(U::scalar_t*)), void));
 ASSERT(HAS_METHOD(const S, aligned_store(VAL(S::scalar_t*)), void));
+ASSERT(HAS_METHOD(B, unaligned_load(VAL(B::scalar_t*)), void));
 ASSERT(HAS_METHOD(F, unaligned_load(VAL(F::scalar_t*)), void));
 ASSERT(HAS_METHOD(U, unaligned_load(VAL(U::scalar_t*)), void));
 ASSERT(HAS_METHOD(S, unaligned_load(VAL(S::scalar_t*)), void));
+ASSERT(HAS_METHOD(const B, unaligned_store(VAL(B::scalar_t*)), void));
 ASSERT(HAS_METHOD(const F, unaligned_store(VAL(F::scalar_t*)), void));
 ASSERT(HAS_METHOD(const U, unaligned_store(VAL(U::scalar_t*)), void));
 ASSERT(HAS_METHOD(const S, unaligned_store(VAL(S::scalar_t*)), void));
+ASSERT(HAS_METHOD(B, interleaved_load(VAL(B::scalar_t*), VAL(std::size_t)), void));
 ASSERT(HAS_METHOD(F, interleaved_load(VAL(F::scalar_t*), VAL(std::size_t)), void));
 ASSERT(HAS_METHOD(U, interleaved_load(VAL(U::scalar_t*), VAL(std::size_t)), void));
 ASSERT(HAS_METHOD(S, interleaved_load(VAL(S::scalar_t*), VAL(std::size_t)), void));
+ASSERT(HAS_METHOD(const B, interleaved_store(VAL(B::scalar_t*), VAL(std::size_t)), void));
 ASSERT(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(std::size_t)), void));
 ASSERT(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(std::size_t)), void));
 ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(std::size_t)), void));
+ASSERT(HAS_METHOD(const B, reduce(VAL(B::binary_op_t)), B));
 ASSERT(HAS_METHOD(const F, reduce(VAL(F::binary_op_t)), F));
 ASSERT(HAS_METHOD(const U, reduce(VAL(U::binary_op_t)), U));
 ASSERT(HAS_METHOD(const S, reduce(VAL(S::binary_op_t)), S));
-ASSERT(HAS_METHOD(const U, mask(), U::mask_t));
-ASSERT(HAS_METHOD(const F, first_element(), F::scalar_t));
-ASSERT(HAS_METHOD(const U, first_element(), U::scalar_t));
-ASSERT(HAS_METHOD(const S, first_element(), S::scalar_t));
+ASSERT(HAS_METHOD(const B, mask(), B::mask_t));
+ASSERT(HAS_METHOD(const B, first_element(), B::element_t));
+ASSERT(HAS_METHOD(const F, first_element(), F::element_t));
+ASSERT(HAS_METHOD(const U, first_element(), U::element_t));
+ASSERT(HAS_METHOD(const S, first_element(), S::element_t));
 
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
+    B::storage_t rb = bufZB;
     F::storage_t rf = bufZF;
     U::storage_t ru = bufZU;
     S::storage_t rs = bufZS;
 
-    auto tor = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
-        rf = tf; ru = tu; rs = ts;
+    auto tor = [&rb, &rf, &ru, &rs](const B& tb, const F& tf, const U& tu, const S& ts) {
+        rb = tb; rf = tf; ru = tu; rs = ts;
     };
 
     SECTION("from scalar_t") {
+        B tb(B::scalar_t::T);
         F tf(1.2345678f);
         U tu(123456789U);
         S ts(-123456789);
-        tor(tf, tu, ts);
+        tor(tb, tf, tu, ts);
+        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
         for (auto val : rf) REQUIRE(val == 1.2345678f);
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
     SECTION("from vector_t") {
+        B tb(SIMD_LOAD_AB);
         F tf(SIMD_LOAD_AF);
         U tu(SIMD_LOAD_AU);
         S ts(SIMD_LOAD_AS);
-        tor(tf, tu, ts);
+        tor(tb, tf, tu, ts);
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from aligned pointer") {
+        B tb(sd::aligned(bufAB.data()));
         F tf(sd::aligned(bufAF.data()));
         U tu(sd::aligned(bufAU.data()));
         S ts(sd::aligned(bufAS.data()));
-        tor(tf, tu, ts);
+        tor(tb, tf, tu, ts);
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
+        B tb(sd::unaligned(bufAB.data()));
         F tf(sd::unaligned(bufAF.data()));
         U tu(sd::unaligned(bufAU.data()));
         S ts(sd::unaligned(bufAS.data()));
-        tor(tf, tu, ts);
+        tor(tb, tf, tu, ts);
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from storage_t") {
+        B::storage_t storb;
         F::storage_t storf;
         U::storage_t storu;
         S::storage_t stors;
+        storb = bufAB;
         storf = bufAF;
         storu = bufAU;
         stors = bufAS;
+        B tb(storb);
         F tf(storf);
         U tu(storu);
         S ts(stors);
-        tor(tf, tu, ts);
+        tor(tb, tf, tu, ts);
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from uval, sval, zero, etc. (sd::init family)") {
         {
+            B tb(sd::fval(1.2345678f));
             F tf(sd::fval(1.2345678f));
             U tu(sd::fval(1.2345678f));
             S ts(sd::fval(1.2345678f));
-            tor(tf, tu, ts);
+            tor(tb, tf, tu, ts);
+            for (auto val : rb) REQUIRE(sd::tof(val) == 1.2345678f);
             for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
             for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
             for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
         }
         {
+            B tb(sd::uval(0xdeadbeef));
             F tf(sd::uval(0xdeadbeef));
             U tu(sd::uval(0xdeadbeef));
             S ts(sd::uval(0xdeadbeef));
-            tor(tf, tu, ts);
+            tor(tb, tf, tu, ts);
+            for (auto val : rb) REQUIRE(sd::tou(val) == 0xdeadbeef);
             for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
             for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
             for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
         }
         {
+            B tb(sd::sval(-123456789));
             F tf(sd::sval(-123456789));
             U tu(sd::sval(-123456789));
             S ts(sd::sval(-123456789));
-            tor(tf, tu, ts);
+            tor(tb, tf, tu, ts);
+            for (auto val : rb) REQUIRE(sd::tos(val) == -123456789);
             for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
             for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
             for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
         }
         {
+            B tb(sd::zero());
             F tf(sd::zero());
             U tu(sd::zero());
             S ts(sd::zero());
-            tor(tf, tu, ts);
+            tor(tb, tf, tu, ts);
+            for (auto val : rb) REQUIRE(sd::tou(val) == 0x00000000);
             for (auto val : rf) REQUIRE(sd::tou(val) == 0x00000000);
             for (auto val : ru) REQUIRE(sd::tou(val) == 0x00000000);
             for (auto val : rs) REQUIRE(sd::tou(val) == 0x00000000);
         }
         {
+            B tb(sd::all_bits());
             F tf(sd::all_bits());
             U tu(sd::all_bits());
             S ts(sd::all_bits());
-            tor(tf, tu, ts);
+            tor(tb, tf, tu, ts);
+            for (auto val : rb) REQUIRE(sd::tou(val) == 0xffffffff);
             for (auto val : rf) REQUIRE(sd::tou(val) == 0xffffffff);
             for (auto val : ru) REQUIRE(sd::tou(val) == 0xffffffff);
             for (auto val : rs) REQUIRE(sd::tou(val) == 0xffffffff);
         }
         {
+            B tb(sd::sign_bit());
             F tf(sd::sign_bit());
             U tu(sd::sign_bit());
             S ts(sd::sign_bit());
-            tor(tf, tu, ts);
+            tor(tb, tf, tu, ts);
+            for (auto val : rb) REQUIRE(sd::tou(val) == 0x80000000);
             for (auto val : rf) REQUIRE(sd::tou(val) == 0x80000000);
             for (auto val : ru) REQUIRE(sd::tou(val) == 0x80000000);
             for (auto val : rs) REQUIRE(sd::tou(val) == 0x80000000);
         }
         {
+            B tb(sd::abs_mask());
             F tf(sd::abs_mask());
             U tu(sd::abs_mask());
             S ts(sd::abs_mask());
-            tor(tf, tu, ts);
+            tor(tb, tf, tu, ts);
+            for (auto val : rb) REQUIRE(sd::tou(val) == 0x7fffffff);
             for (auto val : rf) REQUIRE(sd::tou(val) == 0x7fffffff);
             for (auto val : ru) REQUIRE(sd::tou(val) == 0x7fffffff);
             for (auto val : rs) REQUIRE(sd::tou(val) == 0x7fffffff);
@@ -210,85 +260,103 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
 
 
 TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
+    B::storage_t rb = bufZB;
     F::storage_t rf = bufZF;
     U::storage_t ru = bufZU;
     S::storage_t rs = bufZS;
 
-    auto implicit_test = [&rf, &ru, &rs](const F& tf, const U& tu, const S& ts) {
-        rf = tf; ru = tu; rs = ts;
+    auto implicit_test = [&rb, &rf, &ru, &rs](const B& tb, const F& tf, const U& tu, const S& ts) {
+        rb = tb; rf = tf; ru = tu; rs = ts;
     };
 
     SECTION("from scalar_t") {
-        implicit_test(1.2345678f, 123456789U, -123456789);
+        implicit_test(B::scalar_t::T, 1.2345678f, 123456789U, -123456789);
+        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
         for (auto val : rf) REQUIRE(val == 1.2345678f);
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
     SECTION("from vector_t") {
         implicit_test(
+            SIMD_LOAD_AB,
             SIMD_LOAD_AF,
             SIMD_LOAD_AU,
             SIMD_LOAD_AS);
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from aligned pointer") {
         implicit_test(
+            sd::aligned(bufAB.data()),
             sd::aligned(bufAF.data()),
             sd::aligned(bufAU.data()),
             sd::aligned(bufAS.data()));
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
         implicit_test(
+            sd::unaligned(bufAB.data()),
             sd::unaligned(bufAF.data()),
             sd::unaligned(bufAU.data()),
             sd::unaligned(bufAS.data()));
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from storage_t") {
+        B::storage_t storb;
         F::storage_t storf;
         U::storage_t storu;
         S::storage_t stors;
+        storb = bufAB;
         storf = bufAF;
         storu = bufAU;
         stors = bufAS;
-        implicit_test(storf, storu, stors);
+        implicit_test(storb, storf, storu, stors);
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from uval, sval, zero, etc. (sd::init family)") {
-        implicit_test(sd::fval(1.2345678f), sd::fval(1.2345678f), sd::fval(1.2345678f));
+        implicit_test(sd::fval(1.2345678f), sd::fval(1.2345678f), sd::fval(1.2345678f), sd::fval(1.2345678f));
+        for (auto val : rb) REQUIRE(sd::tof(val) == 1.2345678f);
         for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
         for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
         for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
-        implicit_test(sd::uval(0xdeadbeef), sd::uval(0xdeadbeef), sd::uval(0xdeadbeef));
+        implicit_test(sd::uval(0xdeadbeef), sd::uval(0xdeadbeef), sd::uval(0xdeadbeef), sd::uval(0xdeadbeef));
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0xdeadbeef);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        implicit_test(sd::sval(-123456789), sd::sval(-123456789), sd::sval(-123456789));
+        implicit_test(sd::sval(-123456789), sd::sval(-123456789), sd::sval(-123456789), sd::sval(-123456789));
+        for (auto val : rb) REQUIRE(sd::tos(val) == -123456789);
         for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
         for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
         for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
-        implicit_test(sd::zero(), sd::zero(), sd::zero());
+        implicit_test(sd::zero(), sd::zero(), sd::zero(), sd::zero());
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0x00000000);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0x00000000);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0x00000000);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0x00000000);
-        implicit_test(sd::all_bits(), sd::all_bits(), sd::all_bits());
+        implicit_test(sd::all_bits(), sd::all_bits(), sd::all_bits(), sd::all_bits());
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0xffffffff);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0xffffffff);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0xffffffff);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0xffffffff);
-        implicit_test(sd::sign_bit(), sd::sign_bit(), sd::sign_bit());
+        implicit_test(sd::sign_bit(), sd::sign_bit(), sd::sign_bit(), sd::sign_bit());
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0x80000000);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0x80000000);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0x80000000);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0x80000000);
-        implicit_test(sd::abs_mask(), sd::abs_mask(), sd::abs_mask());
+        implicit_test(sd::abs_mask(), sd::abs_mask(), sd::abs_mask(), sd::abs_mask());
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0x7fffffff);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0x7fffffff);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0x7fffffff);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0x7fffffff);
@@ -296,115 +364,143 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
+    B::storage_t rb = bufZB;
     F::storage_t rf = bufZF;
     U::storage_t ru = bufZU;
     S::storage_t rs = bufZS;
-    F tf; U tu; S ts;
+    B tb; F tf; U tu; S ts;
 
-    auto tor = [&rf, &tf, &ru, &tu, &rs, &ts]() {
+    auto tor = [&rb, &tb, &rf, &tf, &ru, &tu, &rs, &ts]() {
+        rb = tb;
         rf = tf;
         ru = tu;
         rs = ts;
     };
 
     SECTION("from scalar_t") {
+        tb = B::scalar_t::T;
         tf = 1.2345678f;
         tu = 123456789U;
         ts = -123456789;
         tor();
+        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
         for (auto val : rf) REQUIRE(val == 1.2345678f);
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
     SECTION("from vector_t") {
+        tb = SIMD_LOAD_AB;
         tf = SIMD_LOAD_AF;
         tu = SIMD_LOAD_AU;
         ts = SIMD_LOAD_AS;
         tor();
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from aligned pointer") {
+        tb = bufAB;
         tf = bufAF;
         tu = bufAU;
         ts = bufAS;
         tor();
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
+        tb = bufAB;
         tf = bufAF;
         tu = bufAU;
         ts = bufAS;
         tor();
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from storage_t") {
+        B::storage_t storb;
         F::storage_t storf;
         U::storage_t storu;
         S::storage_t stors;
+        storb = bufAB;
         storf = bufAF;
         storu = bufAU;
         stors = bufAS;
+        tb = storb;
         tf = storf;
         tu = storu;
         ts = stors;
         tor();
+        REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from uval, sval, zero, etc. (sd::init family)") {
+        tb = sd::fval(1.2345678f);
         tf = sd::fval(1.2345678f);
         tu = sd::fval(1.2345678f);
         ts = sd::fval(1.2345678f);
         tor();
+        for (auto val : rb) REQUIRE(sd::tof(val) == 1.2345678f);
         for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
         for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
         for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
+        tb = sd::uval(0xdeadbeef);
         tf = sd::uval(0xdeadbeef);
         tu = sd::uval(0xdeadbeef);
         ts = sd::uval(0xdeadbeef);
         tor();
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0xdeadbeef);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
+        tb = sd::sval(-123456789);
         tf = sd::sval(-123456789);
         tu = sd::sval(-123456789);
         ts = sd::sval(-123456789);
         tor();
+        for (auto val : rb) REQUIRE(sd::tos(val) == -123456789);
         for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
         for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
         for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
+        tb = sd::zero();
         tf = sd::zero();
         tu = sd::zero();
         ts = sd::zero();
         tor();
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0x00000000);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0x00000000);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0x00000000);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0x00000000);
+        tb = sd::all_bits();
         tf = sd::all_bits();
         tu = sd::all_bits();
         ts = sd::all_bits();
         tor();
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0xffffffff);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0xffffffff);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0xffffffff);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0xffffffff);
+        tb = sd::sign_bit();
         tf = sd::sign_bit();
         tu = sd::sign_bit();
         ts = sd::sign_bit();
         tor();
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0x80000000);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0x80000000);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0x80000000);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0x80000000);
+        tb = sd::abs_mask();
         tf = sd::abs_mask();
         tu = sd::abs_mask();
         ts = sd::abs_mask();
         tor();
+        for (auto val : rb) REQUIRE(sd::tou(val) == 0x7fffffff);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0x7fffffff);
         for (auto val : ru) REQUIRE(sd::tou(val) == 0x7fffffff);
         for (auto val : rs) REQUIRE(sd::tou(val) == 0x7fffffff);
@@ -447,6 +543,57 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
         U in = bufAU;
         result = S(in);
         REQUIRE(result == expected);
+    }
+    SECTION("bool to uint") {
+        U::storage_t expected, result;
+        std::transform(begin(bufAB), end(bufAB), begin(expected), [](B::scalar_t a) {
+            return static_cast<U::scalar_t>(a);
+        });
+        B in = bufAB;
+        result = U(in);
+        REQUIRE(result == expected);
+    }
+}
+
+TEST_CASE(SIMD_TYPE " bool arithmetic", SIMD_TEST_TAG) {
+    using scalar_t = B::scalar_t;
+    B::storage_t r, e;
+    B a = bufAB;
+    B b = bufBB;
+
+    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+        std::transform(begin(bufAB), end(bufAB), begin(e), f);
+    };
+    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f);
+    };
+
+    SECTION("log not") {
+        expect1([](scalar_t a) { return !a; });
+        r = !a;
+        REQUIRE(r == e);
+    }
+    SECTION("log and") {
+        expect([](scalar_t a, scalar_t b) { return a && b; });
+        r = a && b;
+        REQUIRE(r == e);
+    }
+    SECTION("log or") {
+        expect([](scalar_t a, scalar_t b) { return a || b; });
+        r = a || b;
+        REQUIRE(r == e);
+    }
+    SECTION("log andnot") {
+        expect([](scalar_t a, scalar_t b) { return a && !b; });
+        r = a && !b;
+        REQUIRE(r == e);
+        r = andnot(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("complex expr") {
+        expect([](scalar_t a, scalar_t b) { return !((!a && !b) || (!a || !b)); });
+        r = !((!a && !b) || (!a || !b));
+        REQUIRE(r == e);
     }
 }
 
@@ -696,18 +843,52 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
     }
 }
 
+TEST_CASE(SIMD_TYPE " bool comparison", SIMD_TEST_TAG) {
+    using scalar_t = B::scalar_t;
+    B::storage_t r, e;
+    B a = bufAB;
+    B b = bufBB;
+
+    auto expect0 = [&e](bool v) {
+        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
+    };
+    auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
+        auto f2 = [f](scalar_t a, scalar_t b) {
+            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
+        };
+        std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f2);
+    };
+
+    SECTION("equal to") {
+        expect([](scalar_t a, scalar_t b) { return a == b; });
+        r = a == b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a == a;
+        REQUIRE(r == e);
+    }
+    SECTION("not equal to") {
+        expect([](scalar_t a, scalar_t b) { return a != b; });
+        r = a != b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a != a;
+        REQUIRE(r == e);
+    }
+}
+
 TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     using scalar_t = F::scalar_t;
-    U::storage_t r, e;
+    B::storage_t r, e;
     F a = bufAF;
     F b = bufBF;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? ~0U : 0U);
+        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? ~0U : 0U;
+            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
         };
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), f2);
     };
@@ -764,16 +945,16 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
     using scalar_t = U::scalar_t;
-    U::storage_t r, e;
+    B::storage_t r, e;
     U a = bufAU;
     U b = bufBU;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? ~0U : 0U);
+        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? ~0U : 0U;
+            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
         };
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f2);
     };
@@ -798,16 +979,16 @@ TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
     using scalar_t = S::scalar_t;
-    U::storage_t r, e;
+    B::storage_t r, e;
     S a = bufAS;
     S b = bufBS;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? ~0U : 0U);
+        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? ~0U : 0U;
+            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
         };
         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f2);
     };
@@ -895,21 +1076,25 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
+    B ab = bufAB;
     F af = bufAF;
     U au = bufAU;
     S as = bufAS;
+    B bb = bufBB;
     F bf = bufBF;
     U bu = bufBU;
     S bs = bufBS;
 
-    U sel = af >= bf;
+    B sel = af >= bf;
     auto mask = sel.mask();
 
+    B::storage_t rb(cond(sel, ab, bb));
     F::storage_t rf(cond(sel, af, bf));
     U::storage_t ru(cond(sel, au, bu));
     S::storage_t rs(cond(sel, as, bs));
 
     for (int i = 0; i < F::width; ++i) {
+        REQUIRE((rb[i]) == (mask[i] ? bufAB[i] : bufBB[i]));
         REQUIRE((rf[i]) == (mask[i] ? bufAF[i] : bufBF[i]));
         REQUIRE((ru[i]) == (mask[i] ? bufAU[i] : bufBU[i]));
         REQUIRE((rs[i]) == (mask[i] ? bufAS[i] : bufBS[i]));
@@ -918,22 +1103,22 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
 
 TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
     SECTION("mask() itself") {
-        auto expected = [](const U::storage_t& s) {
-            U::mask_t res(0U);
+        auto expected = [](const B::storage_t& s) {
+            B::mask_t res(0U);
             for (auto i = 0U; i < s.size(); ++i) {
-                if (s[i] & (1U << 31)) {
-                    res |= U::mask_t(1U << i);
+                if (sd::tou(s[i]) & (1U << 31)) {
+                    res |= B::mask_t(1U << i);
                 }
             }
             return res;
         };
 
-        REQUIRE(expected(bufAU) == U(bufAU).mask());
-        REQUIRE(expected(bufBU) == U(bufBU).mask());
+        REQUIRE(expected(bufAB) == B(bufAB).mask());
+        REQUIRE(expected(bufBB) == B(bufBB).mask());
     }
     SECTION("any, all") {
-        U a = bufAU;
-        U b = bufBU;
+        B a = bufAB;
+        B b = bufBB;
         REQUIRE(any(a) == a.mask().any());
         REQUIRE(any(b) == b.mask().any());
         REQUIRE(all(a) == a.mask().all());

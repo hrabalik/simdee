@@ -12,10 +12,13 @@
 
 namespace sd {
 
+    struct dumb;
     struct dumf;
     struct dumu;
     struct dums;
 
+    template<>
+    struct is_simd_type<dumb> : std::integral_constant<bool, true> {};
     template<>
     struct is_simd_type<dumf> : std::integral_constant<bool, true> {};
     template<>
@@ -23,11 +26,12 @@ namespace sd {
     template<>
     struct is_simd_type<dums> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t>
+    template <typename Simd_t, typename Vector_t, typename Element_t>
     struct dum_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Vector_t;
+        using element_t = Element_t;
         using vec_f = dumf;
         using vec_u = dumu;
         using vec_s = dums;
@@ -36,13 +40,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<dumf> : dum_traits<dumf, float> {};
-
+    struct simd_type_traits<dumb> : dum_traits<dumb, bool32_t, bool> {};
     template <>
-    struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t> {};
-
+    struct simd_type_traits<dumf> : dum_traits<dumf, float, float> {};
     template <>
-    struct simd_type_traits<dums> : dum_traits<dums, int32_t> {};
+    struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t, uint32_t> {};
+    template <>
+    struct simd_type_traits<dums> : dum_traits<dums, int32_t, int32_t> {};
 
     template <typename Crtp>
     struct dum_base : simd_base<Crtp> {
@@ -52,6 +56,7 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
+        using element_t = typename simd_base<Crtp>::element_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
@@ -73,23 +78,33 @@ namespace sd {
         SIMDEE_INL const Crtp reduce(binary_op_t f) const { return self(); }
     };
 
+    struct dumb : dum_base<dumb> {
+        SIMDEE_TRIVIAL_TYPE(dumb);
+
+        using dum_base::dum_base;
+        SIMDEE_CTOR(dumb, element_t, mm = r ? scalar_t::T : scalar_t::F);
+
+        SIMDEE_INL mask_t mask() const { return mask_t(tou(mm) & 1U); }
+        SIMDEE_INL element_t first_element() const { return mm != scalar_t::F; }
+    };
+
     struct dumf : dum_base<dumf> {
         SIMDEE_TRIVIAL_TYPE(dumf);
 
         using dum_base::dum_base;
         SIMDEE_INL explicit dumf(const dums&);
 
-        SIMDEE_INL scalar_t first_element() const { return mm; }
+        SIMDEE_INL element_t first_element() const { return mm; }
     };
 
     struct dumu : dum_base<dumu> {
         SIMDEE_TRIVIAL_TYPE(dumu);
 
         using dum_base::dum_base;
+        SIMDEE_INL explicit dumu(const dumb&);
         SIMDEE_INL explicit dumu(const dums&);
 
-        SIMDEE_INL mask_t mask() const { return mask_t(sd::tou(mm) >> 31); }
-        SIMDEE_INL scalar_t first_element() const { return mm; }
+        SIMDEE_INL element_t first_element() const { return mm; }
     };
 
     struct dums : dum_base<dums> {
@@ -100,13 +115,21 @@ namespace sd {
         SIMDEE_INL explicit dums(const dumf&);
         SIMDEE_INL explicit dums(const dumu&);
 
-        SIMDEE_INL scalar_t first_element() const { return mm; }
+        SIMDEE_INL element_t first_element() const { return mm; }
     };
 
     SIMDEE_INL dumf::dumf(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dums::dums(const dumf& r) { mm = round_to_int32(r.data()); }
+    SIMDEE_INL dumu::dumu(const dumb& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dumu::dumu(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dums::dums(const dumu& r) { mm = static_cast<scalar_t>(r.data()); }
+
+    SIMDEE_BINOP(dumb, dumb, operator&&, l.first_element() && r.first_element());
+    SIMDEE_BINOP(dumb, dumb, operator||, l.first_element() || r.first_element());
+    SIMDEE_UNOP(dumb, dumb, operator!, !l.first_element());
+    SIMDEE_BINOP(dumb, dumb, andnot, l.first_element() && !r.first_element());
+    SIMDEE_BINOP(dumb, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumb, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
     SIMDEE_BINOP(dumu, dumu, operator&, uval(tou(l.data()) & tou(r.data())));
     SIMDEE_BINOP(dumu, dumu, operator|, uval(tou(l.data()) | tou(r.data())));
@@ -114,12 +137,12 @@ namespace sd {
     SIMDEE_UNOP(dumu, dumu, operator~, uval(~tou(l.data())));
     SIMDEE_BINOP(dumu, dumu, andnot, uval(tou(l.data()) & ~tou(r.data())));
 
-    SIMDEE_BINOP(dumf, dumu, operator<, (l.data() < r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dumf, dumu, operator>, (l.data() > r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dumf, dumu, operator<=, (l.data() <= r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dumf, dumu, operator>=, (l.data() >= r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dumf, dumu, operator==, (l.data() == r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dumf, dumu, operator!=, (l.data() != r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dumf, dumb, operator<, (l.data() < r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator>, (l.data() > r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator<=, (l.data() <= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator>=, (l.data() >= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
     SIMDEE_UNOP(dumf, dumf, operator-, -l.data());
     SIMDEE_BINOP(dumf, dumf, operator+, l.data() + r.data());
@@ -134,26 +157,29 @@ namespace sd {
     SIMDEE_UNOP(dumf, dumf, rcp, 1 / l.data());
     SIMDEE_UNOP(dumf, dumf, abs, std::abs(l.data()));
 
-    SIMDEE_INL const dumf cond(const dumu& pred, const dumf& if_true, const dumf& if_false) {
-        return pred.data() ? if_true : if_false;
+    SIMDEE_INL const dumb cond(const dumb& pred, const dumb& if_true, const dumb& if_false) {
+        return pred.first_element() ? if_true : if_false;
     }
-    SIMDEE_INL const dumu cond(const dumu& pred, const dumu& if_true, const dumu& if_false) {
-        return pred.data() ? if_true : if_false;
+    SIMDEE_INL const dumf cond(const dumb& pred, const dumf& if_true, const dumf& if_false) {
+        return pred.first_element() ? if_true : if_false;
     }
-    SIMDEE_INL const dums cond(const dumu& pred, const dums& if_true, const dums& if_false) {
-        return pred.data() ? if_true : if_false;
+    SIMDEE_INL const dumu cond(const dumb& pred, const dumu& if_true, const dumu& if_false) {
+        return pred.first_element() ? if_true : if_false;
+    }
+    SIMDEE_INL const dums cond(const dumb& pred, const dums& if_true, const dums& if_false) {
+        return pred.first_element() ? if_true : if_false;
     }
 
 #if defined(SIMDEE_NEED_INT)
-    SIMDEE_BINOP(dumu, dumu, operator==, (l.data() == r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dumu, dumu, operator!=, (l.data() != r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dumu, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumu, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
-    SIMDEE_BINOP(dums, dumu, operator<, (l.data() < r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dums, dumu, operator>, (l.data() > r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dums, dumu, operator<=, (l.data() <= r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dums, dumu, operator>=, (l.data() >= r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dums, dumu, operator==, (l.data() == r.data()) ? ~0U : 0U);
-    SIMDEE_BINOP(dums, dumu, operator!=, (l.data() != r.data()) ? ~0U : 0U);
+    SIMDEE_BINOP(dums, dumb, operator<, (l.data() < r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator>, (l.data() > r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator<=, (l.data() <= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator>=, (l.data() >= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
     SIMDEE_UNOP(dums, dums, operator-, -l.data());
     SIMDEE_BINOP(dums, dums, operator+, l.data() + r.data());

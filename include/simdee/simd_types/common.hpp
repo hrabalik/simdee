@@ -29,7 +29,7 @@ namespace sd {
         using element_t = typename traits_t::element_t;
         using mask_t = typename traits_t::mask_t;
         using storage_t = typename traits_t::storage_t;
-        using binary_op_t = const Crtp(*)(const Crtp& l, const Crtp& r);
+        using binary_op_t = Crtp(*)(Crtp l, Crtp r);
 
         enum : std::size_t {
             width = sizeof(vector_t) / sizeof(scalar_t)

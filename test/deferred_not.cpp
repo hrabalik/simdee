@@ -158,8 +158,8 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         }
     }
     SECTION("reduce") {
-        auto res_ba = ba.reduce(sd::operator&&).first_element();
-        auto res_nba = nba.reduce(sd::operator&&).first_element();
+        auto res_ba = ba.reduce([](B a, B b) { return a && b; }).first_element();
+        auto res_nba = nba.reduce([](B a, B b) { return a && b; }).first_element();
         REQUIRE(res_ba == res_nba);
     }
     SECTION("mask") {

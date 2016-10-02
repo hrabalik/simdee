@@ -133,12 +133,12 @@ namespace sd {
     SIMDEE_UNOP(dumu, dumu, operator~, uval(~tou(l.data())));
     SIMDEE_BINOP(dumu, dumu, andnot, uval(tou(l.data()) & ~tou(r.data())));
 
-    SIMDEE_BINOP(dumf, dumb, operator<, (l.data() < r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dumf, dumb, operator>, (l.data() > r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dumf, dumb, operator<=, (l.data() <= r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dumf, dumb, operator>=, (l.data() >= r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dumf, dumb, operator==, (l.data() == r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dumf, dumb, operator!=, (l.data() != r.data()) ? bool32_t::T : bool32_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator<, (l.data() < r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator>, (l.data() > r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator<=, (l.data() <= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator>=, (l.data() >= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumf, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
     SIMDEE_UNOP(dumf, dumf, operator-, -l.data());
     SIMDEE_BINOP(dumf, dumf, operator+, l.data() + r.data());
@@ -164,18 +164,18 @@ namespace sd {
     }
 
 #if defined(SIMDEE_NEED_INT)
-    SIMDEE_BINOP(dumb, dumb, operator==, (l.data() == r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dumb, dumb, operator!=, (l.data() != r.data()) ? bool32_t::T : bool32_t::F);
+    SIMDEE_BINOP(dumb, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumb, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
-    SIMDEE_BINOP(dumu, dumb, operator==, (l.data() == r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dumu, dumb, operator!=, (l.data() != r.data()) ? bool32_t::T : bool32_t::F);
+    SIMDEE_BINOP(dumu, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dumu, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
-    SIMDEE_BINOP(dums, dumb, operator<, (l.data() < r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dums, dumb, operator>, (l.data() > r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dums, dumb, operator<=, (l.data() <= r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dums, dumb, operator>=, (l.data() >= r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dums, dumb, operator==, (l.data() == r.data()) ? bool32_t::T : bool32_t::F);
-    SIMDEE_BINOP(dums, dumb, operator!=, (l.data() != r.data()) ? bool32_t::T : bool32_t::F);
+    SIMDEE_BINOP(dums, dumb, operator<, (l.data() < r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator>, (l.data() > r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator<=, (l.data() <= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator>=, (l.data() >= r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator==, (l.data() == r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
+    SIMDEE_BINOP(dums, dumb, operator!=, (l.data() != r.data()) ? dumb::scalar_t::T : dumb::scalar_t::F);
 
     SIMDEE_UNOP(dums, dums, operator-, -l.data());
     SIMDEE_BINOP(dums, dums, operator+, l.data() + r.data());

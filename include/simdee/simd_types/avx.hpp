@@ -129,7 +129,7 @@ namespace sd {
         SIMDEE_CTOR(avxb, not_avxb, mm = _mm256_xor_ps(r.neg.mm, avxb(all_bits()).mm));
 
         SIMDEE_INL __m256i mmi() const { return _mm256_castps_si256(mm); }
-        SIMDEE_INL mask_t mask() const { return mask_t(uint32_t(_mm256_movemask_ps(mm))); }
+        SIMDEE_INL mask_t mask() const { return mask_t(tou(_mm256_movemask_ps(mm))); }
         SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))) != 0; }
     };
 

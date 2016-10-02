@@ -84,7 +84,7 @@ namespace sd {
         using dum_base::dum_base;
         SIMDEE_CTOR(dumb, element_t, mm = r ? scalar_t::T : scalar_t::F);
 
-        SIMDEE_INL mask_t mask() const { return mask_t(uint32_t(mm) >> 31); }
+        SIMDEE_INL mask_t mask() const { return mask_t(tou(mm) & 1U); }
         SIMDEE_INL element_t first_element() const { return mm != scalar_t::F; }
     };
 

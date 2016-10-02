@@ -71,6 +71,12 @@ TEST_CASE("deferred_not bool arithmetic", "[deferred_not]") {
             REQUIRE(all((nba || bb) == expect));
             REQUIRE(all((nba || nbb) == expect));
         }
+        SECTION("log andnot") {
+            B expect = andnot(ba, bb);
+            REQUIRE(all(andnot(ba, nbb) == expect));
+            REQUIRE(all(andnot(nba, bb) == expect));
+            REQUIRE(all(andnot(nba, nbb) == expect));
+        }
     }
 }
 
@@ -107,6 +113,12 @@ TEST_CASE("deferred_not uint arithmetic", "[deferred_not]") {
             REQUIRE(all((ua ^ nub) == expect));
             REQUIRE(all((nua ^ ub) == expect));
             REQUIRE(all((nua ^ nub) == expect));
+        }
+        SECTION("bit andnot") {
+            U expect = andnot(ua, ub);
+            REQUIRE(all(andnot(ua, nub) == expect));
+            REQUIRE(all(andnot(nua, ub) == expect));
+            REQUIRE(all(andnot(nua, nub) == expect));
         }
     }
 }

@@ -137,6 +137,18 @@ namespace sd {
         SIMDEE_INL const T operator^(const deferred_bitnot<T>& l, const deferred_bitnot<T>& r) {
             return l.neg ^ r.neg;
         }
+        template<typename T>
+        SIMDEE_INL const deferred_bitnot<T> andnot(const deferred_bitnot<T>& l, const T& r) {
+            return deferred_bitnot<T>(l.neg | r);
+        }
+        template<typename T>
+        SIMDEE_INL const T andnot(const T& l, const deferred_bitnot<T>& r) {
+            return l & r.neg;
+        }
+        template<typename T>
+        SIMDEE_INL const T andnot(const deferred_bitnot<T>& l, const deferred_bitnot<T>& r) {
+            return andnot(r.neg, l.neg);
+        }
         template <typename T, typename Rhs>
         SIMDEE_INL void operator&=(const deferred_bitnot<T>& l, const Rhs& r) {
             dont_change_deferred_not<Rhs> fail;
@@ -258,6 +270,18 @@ namespace sd {
         template<typename T>
         SIMDEE_INL const deferred_lognot<T> operator||(const deferred_lognot<T>& l, const deferred_lognot<T>& r) {
             return deferred_lognot<T>(l.neg && r.neg);
+        }
+        template<typename T>
+        SIMDEE_INL const deferred_lognot<T> andnot(const deferred_lognot<T>& l, const T& r) {
+            return deferred_lognot<T>(l.neg || r);
+        }
+        template<typename T>
+        SIMDEE_INL const T andnot(const T& l, const deferred_lognot<T>& r) {
+            return l && r.neg;
+        }
+        template<typename T>
+        SIMDEE_INL const T andnot(const deferred_lognot<T>& l, const deferred_lognot<T>& r) {
+            return andnot(r.neg, l.neg);
         }
     }
 }

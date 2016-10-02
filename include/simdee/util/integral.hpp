@@ -27,6 +27,14 @@ namespace sd {
         T = uint64_t(-1),
     };
 
+    template <typename T>
+    struct is_bool_type : std::integral_constant<bool, false
+        || std::is_same<T, bool8_t>::value
+        || std::is_same<T, bool16_t>::value
+        || std::is_same<T, bool32_t>::value
+        || std::is_same<T, bool64_t>::value
+    > {};
+
     template <std::size_t Size>
     struct select_sint;
     template <>

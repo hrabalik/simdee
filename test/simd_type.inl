@@ -944,7 +944,7 @@ TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
         auto expected = [](const B::storage_t& s) {
             B::mask_t res(0U);
             for (auto i = 0U; i < s.size(); ++i) {
-                if (uint32_t(s[i]) & (1U << 31)) {
+                if (sd::tou(s[i]) & (1U << 31)) {
                     res |= B::mask_t(1U << i);
                 }
             }

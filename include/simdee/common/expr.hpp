@@ -218,7 +218,9 @@ namespace sd {
         struct tou;
 
         template <typename T>
-        struct tou<T, typename std::enable_if<std::is_arithmetic<typename std::decay<T>::type>::value>::type> {
+        struct tou<T, typename std::enable_if<std::is_arithmetic<typename std::decay<T>::type>::value
+            || is_bool_type<typename std::decay<T>::type>::value>::type> {
+
             using Source = typename std::decay<T>::type;
             using Target = select_uint_t<sizeof(Source)>;
 

@@ -27,6 +27,43 @@ namespace sd {
         T = uint64_t(-1),
     };
 
+    SIMDEE_INL constexpr bool8_t operator!(bool8_t l) {
+        return (l == bool8_t::F) ? bool8_t::T : bool8_t::F;
+    }
+    SIMDEE_INL constexpr bool8_t operator&&(bool8_t l, bool8_t r) {
+        return (l != bool8_t::F && r != bool8_t::F) ? bool8_t::T : bool8_t::F;
+    }
+    SIMDEE_INL constexpr bool8_t operator||(bool8_t l, bool8_t r) {
+        return (l != bool8_t::F || r != bool8_t::F) ? bool8_t::T : bool8_t::F;
+    }
+    SIMDEE_INL constexpr bool16_t operator!(bool16_t l) {
+        return (l == bool16_t::F) ? bool16_t::T : bool16_t::F;
+    }
+    SIMDEE_INL constexpr bool16_t operator&&(bool16_t l, bool16_t r) {
+        return (l != bool16_t::F && r != bool16_t::F) ? bool16_t::T : bool16_t::F;
+    }
+    SIMDEE_INL constexpr bool16_t operator||(bool16_t l, bool16_t r) {
+        return (l != bool16_t::F || r != bool16_t::F) ? bool16_t::T : bool16_t::F;
+    }
+    SIMDEE_INL constexpr bool32_t operator!(bool32_t l) {
+        return (l == bool32_t::F) ? bool32_t::T : bool32_t::F;
+    }
+    SIMDEE_INL constexpr bool32_t operator&&(bool32_t l, bool32_t r) {
+        return (l != bool32_t::F && r != bool32_t::F) ? bool32_t::T : bool32_t::F;
+    }
+    SIMDEE_INL constexpr bool32_t operator||(bool32_t l, bool32_t r) {
+        return (l != bool32_t::F || r != bool32_t::F) ? bool32_t::T : bool32_t::F;
+    }
+    SIMDEE_INL constexpr bool64_t operator!(bool64_t l) {
+        return (l == bool64_t::F) ? bool64_t::T : bool64_t::F;
+    }
+    SIMDEE_INL constexpr bool64_t operator&&(bool64_t l, bool64_t r) {
+        return (l != bool64_t::F && r != bool64_t::F) ? bool64_t::T : bool64_t::F;
+    }
+    SIMDEE_INL constexpr bool64_t operator||(bool64_t l, bool64_t r) {
+        return (l != bool64_t::F || r != bool64_t::F) ? bool64_t::T : bool64_t::F;
+    }
+
     template <typename T>
     struct is_bool_type : std::integral_constant<bool, false
         || std::is_same<T, bool8_t>::value

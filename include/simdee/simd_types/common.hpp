@@ -28,6 +28,10 @@ namespace sd {
         using vector_t = typename traits_t::vector_t;
         using scalar_t = typename traits_t::scalar_t;
         using element_t = typename traits_t::element_t;
+        using vec_b = typename traits_t::vec_b;
+        using vec_f = typename traits_t::vec_f;
+        using vec_u = typename traits_t::vec_u;
+        using vec_s = typename traits_t::vec_s;
         using mask_t = typename traits_t::mask_t;
         using storage_t = typename traits_t::storage_t;
         using binary_op_t = Crtp(*)(Crtp l, Crtp r);

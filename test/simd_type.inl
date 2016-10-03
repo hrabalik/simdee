@@ -184,10 +184,10 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
             U tu(sd::zero());
             S ts(sd::zero());
             tor(tb, tf, tu, ts);
-            for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-            for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-            for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-            for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x00000000);
+            for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+            for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+            for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+            for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
         }
         {
             B tb(sd::all_bits());
@@ -195,10 +195,10 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
             U tu(sd::all_bits());
             S ts(sd::all_bits());
             tor(tb, tf, tu, ts);
-            for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-            for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-            for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-            for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
+            for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+            for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+            for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+            for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
         }
         {
             B tb(sd::sign_bit());
@@ -206,10 +206,10 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
             U tu(sd::sign_bit());
             S ts(sd::sign_bit());
             tor(tb, tf, tu, ts);
-            for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-            for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-            for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-            for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x80000000);
+            for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+            for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+            for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+            for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
         }
         {
             B tb(sd::abs_mask());
@@ -217,10 +217,10 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
             U tu(sd::abs_mask());
             S ts(sd::abs_mask());
             tor(tb, tf, tu, ts);
-            for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-            for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-            for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-            for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
+            for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+            for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+            for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+            for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
         }
     }
 }
@@ -293,25 +293,25 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
     }
     SECTION("from zero, all_bits, sign_bit, etc. (sd::init family)") {
         implicit_test(sd::zero(), sd::zero(), sd::zero(), sd::zero());
-        for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-        for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-        for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-        for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x00000000);
+        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
         implicit_test(sd::all_bits(), sd::all_bits(), sd::all_bits(), sd::all_bits());
-        for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-        for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-        for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-        for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
+        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
         implicit_test(sd::sign_bit(), sd::sign_bit(), sd::sign_bit(), sd::sign_bit());
-        for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-        for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-        for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-        for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x80000000);
+        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
         implicit_test(sd::abs_mask(), sd::abs_mask(), sd::abs_mask(), sd::abs_mask());
-        for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-        for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-        for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-        for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
+        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
     }
 }
 
@@ -398,37 +398,37 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         tu = sd::zero();
         ts = sd::zero();
         tor();
-        for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-        for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-        for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x00000000);
-        for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x00000000);
+        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
         tb = sd::all_bits();
         tf = sd::all_bits();
         tu = sd::all_bits();
         ts = sd::all_bits();
         tor();
-        for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-        for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-        for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
-        for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0xffffffff);
+        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
         tb = sd::sign_bit();
         tf = sd::sign_bit();
         tu = sd::sign_bit();
         ts = sd::sign_bit();
         tor();
-        for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-        for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-        for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x80000000);
-        for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x80000000);
+        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
         tb = sd::abs_mask();
         tf = sd::abs_mask();
         tu = sd::abs_mask();
         ts = sd::abs_mask();
         tor();
-        for (auto val : rb) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-        for (auto val : rf) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-        for (auto val : ru) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
-        for (auto val : rs) REQUIRE(sd::dirty::tou(val) == 0x7fffffff);
+        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
     }
 }
 
@@ -1031,7 +1031,7 @@ TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
         auto expected = [](const B::storage_t& s) {
             B::mask_t res(0U);
             for (auto i = 0U; i < s.size(); ++i) {
-                if (sd::dirty::tou(s[i]) & (1U << 31)) {
+                if (sd::dirty::as_u(s[i]) & (1U << 31)) {
                     res |= B::mask_t(1U << i);
                 }
             }

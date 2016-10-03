@@ -43,12 +43,12 @@ namespace sd {
 
         namespace expr {
             template <typename T>
-            struct tof {
+            struct as_f {
                 using Source = typename std::decay<T>::type;
                 using Target = select_float_t<sizeof(Source)>;
-                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::tof(): source isn't arithmetic");
+                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::as_f(): source isn't arithmetic");
 
-                SIMDEE_INL constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
+                SIMDEE_INL constexpr explicit as_f(T&& r) : ref(std::forward<T>(r)) {}
 
                 SIMDEE_INL constexpr operator Target() const {
                     return dirty::cast<Source, Target>(std::forward<T>(ref));
@@ -59,12 +59,12 @@ namespace sd {
             };
 
             template <typename T>
-            struct tou {
+            struct as_u {
                 using Source = typename std::decay<T>::type;
                 using Target = select_uint_t<sizeof(Source)>;
-                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::tou(): source isn't arithmetic");
+                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::as_u(): source isn't arithmetic");
 
-                SIMDEE_INL constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
+                SIMDEE_INL constexpr explicit as_u(T&& r) : ref(std::forward<T>(r)) {}
 
                 SIMDEE_INL constexpr operator Target() const {
                     return dirty::cast<Source, Target>(std::forward<T>(ref));
@@ -75,12 +75,12 @@ namespace sd {
             };
 
             template <typename T>
-            struct tos {
+            struct as_s {
                 using Source = typename std::decay<T>::type;
                 using Target = select_sint_t<sizeof(Source)>;
-                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::tos(): source isn't arithmetic");
+                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::as_s(): source isn't arithmetic");
 
-                SIMDEE_INL constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
+                SIMDEE_INL constexpr explicit as_s(T&& r) : ref(std::forward<T>(r)) {}
 
                 SIMDEE_INL constexpr operator Target() const {
                     return dirty::cast<Source, Target>(std::forward<T>(ref));
@@ -92,11 +92,11 @@ namespace sd {
         }
 
         template <typename T>
-        SIMDEE_INL constexpr expr::tof<T&&> tof(T&& r) { return expr::tof<T&&>(std::forward<T>(r)); }
+        SIMDEE_INL constexpr expr::as_f<T&&> as_f(T&& r) { return expr::as_f<T&&>(std::forward<T>(r)); }
         template <typename T>
-        SIMDEE_INL constexpr expr::tou<T&&> tou(T&& r) { return expr::tou<T&&>(std::forward<T>(r)); }
+        SIMDEE_INL constexpr expr::as_u<T&&> as_u(T&& r) { return expr::as_u<T&&>(std::forward<T>(r)); }
         template <typename T>
-        SIMDEE_INL constexpr expr::tos<T&&> tos(T&& r) { return expr::tos<T&&>(std::forward<T>(r)); }
+        SIMDEE_INL constexpr expr::as_s<T&&> as_s(T&& r) { return expr::as_s<T&&>(std::forward<T>(r)); }
     }
 
     namespace expr {

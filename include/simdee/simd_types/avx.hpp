@@ -129,7 +129,7 @@ namespace sd {
         SIMDEE_CTOR(avxb, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxb, not_avxb, mm = _mm256_xor_ps(r.neg.mm, avxb(all_bits()).mm));
 
-        SIMDEE_INL mask_t mask() const { return mask_t(dirty::tou(_mm256_movemask_ps(mm))); }
+        SIMDEE_INL mask_t mask() const { return mask_t(dirty::as_u(_mm256_movemask_ps(mm))); }
         SIMDEE_INL element_t first_element() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)) != 0; }
 
 #   if defined(__AVX2__)
@@ -183,7 +183,7 @@ namespace sd {
         SIMDEE_CTOR(avxu, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxu, not_avxu, mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm));
 
-        SIMDEE_INL element_t first_element() const { return dirty::tou(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
+        SIMDEE_INL element_t first_element() const { return dirty::as_u(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(avxu, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
@@ -204,7 +204,7 @@ namespace sd {
         SIMDEE_INL explicit avxs(const avxu&);
         SIMDEE_CTOR(avxs, __m256i, mm = _mm256_castsi256_ps(r));
 
-        SIMDEE_INL element_t first_element() const { return dirty::tos(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
+        SIMDEE_INL element_t first_element() const { return dirty::as_s(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(avxs, avxb, operator<, _mm256_cmpgt_epi32(r.mmi(), l.mmi()));

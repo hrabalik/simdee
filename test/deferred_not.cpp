@@ -36,12 +36,12 @@ TEST_CASE("deferred_not bool arithmetic", "[deferred_not]") {
     const not_B nba(dataAB);
     SECTION("unary") {
         SECTION("log not") {
-            REQUIRE(all(ba == nba));
-            REQUIRE(all(!ba == !nba));
-            REQUIRE(all(ba == !!nba));
-            REQUIRE(all(!!ba == nba));
-            REQUIRE(all(!!ba == !!nba));
-            REQUIRE(all(!!!ba == !!!nba));
+            REQUIRE(all((ba) == (nba)));
+            REQUIRE(all((!ba) == (!nba)));
+            REQUIRE(all((ba) == (!!nba)));
+            REQUIRE(all((!!ba) == nba));
+            REQUIRE(all((!!ba) == (!!nba)));
+            REQUIRE(all((!!!ba) == (!!!nba)));
         }
         SECTION("any, all") {
             const B zero = sd::zero();

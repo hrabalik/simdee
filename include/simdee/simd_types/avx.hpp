@@ -41,6 +41,7 @@ namespace sd {
         using vector_t = Vector_t;
         using scalar_t = Scalar_t;
         using element_t = Element_t;
+        using vec_b = avxb;
         using vec_f = avxf;
         using vec_u = avxu;
         using vec_s = avxs;

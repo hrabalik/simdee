@@ -51,6 +51,7 @@ namespace sd {
         using vector_t = Vector_t;
         using scalar_t = Scalar_t;
         using element_t = Element_t;
+        using vec_b = sseb;
         using vec_f = ssef;
         using vec_u = sseu;
         using vec_s = sses;

@@ -32,6 +32,7 @@ namespace sd {
         using vector_t = Vector_t;
         using scalar_t = Vector_t;
         using element_t = Element_t;
+        using vec_b = dumb;
         using vec_f = dumf;
         using vec_u = dumu;
         using vec_s = dums;

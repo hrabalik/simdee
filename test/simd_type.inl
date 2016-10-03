@@ -600,17 +600,17 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     SECTION("square root") {
         expect1([](scalar_t a) { return std::sqrt(std::abs(a)); });
         r = sqrt(abs(a));
-        for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]));
+        for (auto i = 0U; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]));
     }
     SECTION("fast reciprocal") {
         expect1([](scalar_t a) { return 1 / a; });
         r = rcp(a);
-        for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+        for (auto i = 0U; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
     SECTION("fast reciprocal square root") {
         expect1([](scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
         r = rsqrt(abs(a));
-        for (int i = 0; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+        for (auto i = 0U; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;
@@ -1018,7 +1018,7 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     U::storage_t ru(cond(sel, au, bu));
     S::storage_t rs(cond(sel, as, bs));
 
-    for (int i = 0; i < F::width; ++i) {
+    for (auto i = 0U; i < F::width; ++i) {
         REQUIRE((rb[i]) == (mask[i] ? bufAB[i] : bufBB[i]));
         REQUIRE((rf[i]) == (mask[i] ? bufAF[i] : bufBF[i]));
         REQUIRE((ru[i]) == (mask[i] ? bufAU[i] : bufBU[i]));

@@ -72,7 +72,7 @@ TEST_CASE("bench_ray_box", "[!hide][perf]") {
     fill((float*)(data8.data()), numFloats);
     {
         RayBoxData1* ptr = data1.data();
-        for (int i = 0; i < dataSize8; ++i) {
+        for (auto i = 0U; i < dataSize8; ++i) {
             const auto& el = data8[i];
             for (int j = 0; j < 8; ++j) {
                 ptr->minx = el.minx[j];

@@ -16,6 +16,29 @@ namespace sd {
     template <typename T>
     struct simd_type_traits;
 
+    namespace impl {
+        template <typename T>
+        struct util_f {
+            using source_t = typename std::decay<T>::type;
+            using target_t = select_float_t<sizeof(source_t)>;
+            static_assert(is_extended_arithmetic_type<source_t>::value, "as_f(): source isn't arithmetic");
+        };
+
+        template <typename T>
+        struct util_u {
+            using source_t = typename std::decay<T>::type;
+            using target_t = select_uint_t<sizeof(source_t)>;
+            static_assert(is_extended_arithmetic_type<source_t>::value, "as_u(): source isn't arithmetic");
+        };
+
+        template <typename T>
+        struct util_s {
+            using source_t = typename std::decay<T>::type;
+            using target_t = select_sint_t<sizeof(source_t)>;
+            static_assert(is_extended_arithmetic_type<source_t>::value, "as_s(): source isn't arithmetic");
+        };
+    }
+
     namespace dirty {
         template <typename From, typename To>
         constexpr To&& cast(From&& from) {
@@ -41,62 +64,18 @@ namespace sd {
             return *reinterpret_cast<const To*>(&from);
         }
 
-        namespace expr {
-            template <typename T>
-            struct as_f {
-                using Source = typename std::decay<T>::type;
-                using Target = select_float_t<sizeof(Source)>;
-                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::as_f(): source isn't arithmetic");
-
-                SIMDEE_INL constexpr explicit as_f(T&& r) : ref(std::forward<T>(r)) {}
-
-                SIMDEE_INL constexpr operator Target() const {
-                    return dirty::cast<Source, Target>(std::forward<T>(ref));
-                }
-
-                // data
-                T&& ref;
-            };
-
-            template <typename T>
-            struct as_u {
-                using Source = typename std::decay<T>::type;
-                using Target = select_uint_t<sizeof(Source)>;
-                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::as_u(): source isn't arithmetic");
-
-                SIMDEE_INL constexpr explicit as_u(T&& r) : ref(std::forward<T>(r)) {}
-
-                SIMDEE_INL constexpr operator Target() const {
-                    return dirty::cast<Source, Target>(std::forward<T>(ref));
-                }
-
-                // data
-                T&& ref;
-            };
-
-            template <typename T>
-            struct as_s {
-                using Source = typename std::decay<T>::type;
-                using Target = select_sint_t<sizeof(Source)>;
-                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::as_s(): source isn't arithmetic");
-
-                SIMDEE_INL constexpr explicit as_s(T&& r) : ref(std::forward<T>(r)) {}
-
-                SIMDEE_INL constexpr operator Target() const {
-                    return dirty::cast<Source, Target>(std::forward<T>(ref));
-                }
-
-                // data
-                T&& ref;
-            };
+        template <typename T>
+        SIMDEE_INL constexpr typename impl::util_f<T>::target_t as_f(T r) {
+            return dirty::cast<typename impl::util_f<T>::source_t, typename impl::util_f<T>::target_t>(r);
         }
-
         template <typename T>
-        SIMDEE_INL constexpr expr::as_f<T&&> as_f(T&& r) { return expr::as_f<T&&>(std::forward<T>(r)); }
+        SIMDEE_INL constexpr typename impl::util_u<T>::target_t as_u(T r) {
+            return dirty::cast<typename impl::util_u<T>::source_t, typename impl::util_u<T>::target_t>(r);
+        }
         template <typename T>
-        SIMDEE_INL constexpr expr::as_u<T&&> as_u(T&& r) { return expr::as_u<T&&>(std::forward<T>(r)); }
-        template <typename T>
-        SIMDEE_INL constexpr expr::as_s<T&&> as_s(T&& r) { return expr::as_s<T&&>(std::forward<T>(r)); }
+        SIMDEE_INL constexpr typename impl::util_s<T>::target_t as_s(T r) {
+            return dirty::cast<typename impl::util_s<T>::source_t, typename impl::util_s<T>::target_t>(r);
+        }
     }
 
     namespace expr {

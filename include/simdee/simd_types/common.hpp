@@ -7,6 +7,7 @@
 #include "../util/inline.hpp"
 #include "../util/bitfiddle.hpp"
 #include "../util/macros.hpp"
+#include "../common/casts.hpp"
 #include "../common/expr.hpp"
 #include "../common/mask.hpp"
 #include "../common/storage.hpp"

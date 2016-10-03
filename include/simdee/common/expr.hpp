@@ -42,13 +42,11 @@ namespace sd {
         }
 
         namespace expr {
-            template <typename T, typename Enable = void>
-            struct tof;
-
             template <typename T>
-            struct tof<T, typename std::enable_if<is_extended_arithmetic_type<typename std::decay<T>::type>::value>::type> {
+            struct tof {
                 using Source = typename std::decay<T>::type;
                 using Target = select_float_t<sizeof(Source)>;
+                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::tof(): source isn't arithmetic");
 
                 SIMDEE_INL constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
 
@@ -61,27 +59,10 @@ namespace sd {
             };
 
             template <typename T>
-            struct tof<T, typename std::enable_if<is_simd_type<typename std::decay<T>::type>::value>::type> {
-                using Source = typename std::decay<T>::type;
-                using Target = typename simd_type_traits<Source>::vec_f;
-
-                SIMDEE_INL constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
-
-                SIMDEE_INL constexpr operator Target() const {
-                    return dirty::cast<Source, Target>(std::forward<T>(ref));
-                }
-
-                // data
-                T&& ref;
-            };
-
-            template <typename T, typename Enable = void>
-            struct tou;
-
-            template <typename T>
-            struct tou<T, typename std::enable_if<is_extended_arithmetic_type<typename std::decay<T>::type>::value>::type> {
+            struct tou {
                 using Source = typename std::decay<T>::type;
                 using Target = select_uint_t<sizeof(Source)>;
+                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::tou(): source isn't arithmetic");
 
                 SIMDEE_INL constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
 
@@ -94,42 +75,10 @@ namespace sd {
             };
 
             template <typename T>
-            struct tou<T, typename std::enable_if<is_simd_type<typename std::decay<T>::type>::value>::type> {
-                using Source = typename std::decay<T>::type;
-                using Target = typename simd_type_traits<Source>::vec_u;
-
-                SIMDEE_INL constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
-
-                SIMDEE_INL constexpr operator Target() const {
-                    return dirty::cast<Source, Target>(std::forward<T>(ref));
-                }
-
-                // data
-                T&& ref;
-            };
-
-            template <typename T, typename Enable = void>
-            struct tos;
-
-            template <typename T>
-            struct tos<T, typename std::enable_if<is_extended_arithmetic_type<typename std::decay<T>::type>::value>::type> {
+            struct tos {
                 using Source = typename std::decay<T>::type;
                 using Target = select_sint_t<sizeof(Source)>;
-
-                SIMDEE_INL constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
-
-                SIMDEE_INL constexpr operator Target() const {
-                    return dirty::cast<Source, Target>(std::forward<T>(ref));
-                }
-
-                // data
-                T&& ref;
-            };
-
-            template <typename T>
-            struct tos<T, typename std::enable_if<is_simd_type<typename std::decay<T>::type>::value>::type> {
-                using Source = typename std::decay<T>::type;
-                using Target = typename simd_type_traits<Source>::vec_s;
+                static_assert(is_extended_arithmetic_type<Source>::value, "dirty::tos(): source isn't arithmetic");
 
                 SIMDEE_INL constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
 

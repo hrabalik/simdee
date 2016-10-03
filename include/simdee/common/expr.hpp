@@ -39,6 +39,19 @@ namespace sd {
         };
     }
 
+    template <typename T>
+    SIMDEE_INL constexpr typename impl::util_f<T>::target_t cast_f(T r) {
+        return static_cast<typename impl::util_f<T>::target_t>(r);
+    }
+    template <typename T>
+    SIMDEE_INL constexpr typename impl::util_u<T>::target_t cast_u(T r) {
+        return static_cast<typename impl::util_u<T>::target_t>(r);
+    }
+    template <typename T>
+    SIMDEE_INL constexpr typename impl::util_s<T>::target_t cast_s(T r) {
+        return static_cast<typename impl::util_s<T>::target_t>(r);
+    }
+
     namespace dirty {
         template <typename From, typename To>
         constexpr To&& cast(From&& from) {

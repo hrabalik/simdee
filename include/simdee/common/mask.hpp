@@ -12,6 +12,8 @@ namespace sd {
     namespace impl {
         template <uint32_t AllBitsMask>
         struct mask {
+            enum : uint32_t { all_bits = AllBitsMask };
+
             SIMDEE_INL mask(const mask&) = default;                                                               \
             SIMDEE_INL mask& operator=(const mask&) = default;
 
@@ -24,11 +26,11 @@ namespace sd {
             SIMDEE_INL mask& operator&=(mask r) { value &= r.value; return *this; }
             SIMDEE_INL mask& operator|=(mask r) { value |= r.value; return *this; }
             SIMDEE_INL mask& operator^=(mask r) { value ^= r.value; return *this; }
-            SIMDEE_INL constexpr mask operator~() const { return mask(value ^ AllBitsMask); }
+            SIMDEE_INL constexpr mask operator~() const { return mask(value ^ all_bits); }
             SIMDEE_INL constexpr bool operator==(mask r) const { return value == r.value; }
             SIMDEE_INL constexpr bool operator!=(mask r) const { return value != r.value; }
             SIMDEE_INL constexpr bool any() const { return value != 0; }
-            SIMDEE_INL constexpr bool all() const { return value == AllBitsMask; }
+            SIMDEE_INL constexpr bool all() const { return value == all_bits; }
             SIMDEE_INL constexpr bit_iterator begin() const { return bit_iterator(value); }
             SIMDEE_INL constexpr bit_iterator end() const { return bit_iterator(0); }
 

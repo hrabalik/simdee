@@ -75,7 +75,7 @@ namespace sd {
         SIMDEE_INL void unaligned_store(scalar_t* r) const { *r = mm; }
         SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) { mm = *r; }
         SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const { *r = mm; }
-        SIMDEE_INL const Crtp reduce(binary_op_t f) const { return self(); }
+        SIMDEE_INL const Crtp reduce(binary_op_t) const { return self(); }
     };
 
     struct dumb : dum_base<dumb> {

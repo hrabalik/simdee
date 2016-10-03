@@ -73,7 +73,12 @@ namespace sd {
             if (!std::is_trivially_destructible<T>::value) {
                 ptr->~T();
             }
+            else {
+                no_op(ptr); // just to suppress MSVC warning "ptr not referenced"
+            }
         }
+
+        static void no_op(T*) {}
 
         void construct(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
             if (!detail::is_trivially_default_constructible<T>::value) {

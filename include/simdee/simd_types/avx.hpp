@@ -76,13 +76,13 @@ namespace sd {
 
         SIMDEE_BASE_CTOR(avx_base, vector_t, mm = r);
         SIMDEE_BASE_CTOR(avx_base, scalar_t, mm = _mm256_broadcast_ss((float*)&r));
-        SIMDEE_BASE_CTOR(avx_base, expr::zero, mm = _mm256_setzero_ps());
+        SIMDEE_BASE_CTOR_FLAG(avx_base, expr::zero, mm = _mm256_setzero_ps());
         SIMDEE_BASE_CTOR_TPL(avx_base, expr::aligned<T>, aligned_load(r.ptr));
         SIMDEE_BASE_CTOR_TPL(avx_base, expr::unaligned<T>, unaligned_load(r.ptr));
         SIMDEE_BASE_CTOR_TPL(avx_base, expr::init<T>, *this = r.template to<scalar_t>());
         SIMDEE_BASE_CTOR(avx_base, storage_t, aligned_load(r.data()));
 
-        SIMDEE_BASE_CTOR_COMPLEX(avx_base, expr::all_bits) {
+        SIMDEE_BASE_CTOR_COMPLEX_FLAG(avx_base, expr::all_bits) {
 #       if defined(__AVX2__)
             mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
 #       else

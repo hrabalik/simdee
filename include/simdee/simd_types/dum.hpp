@@ -84,7 +84,7 @@ namespace sd {
         using dum_base::dum_base;
         SIMDEE_CTOR(dumb, element_t, mm = r ? scalar_t::T : scalar_t::F);
 
-        SIMDEE_INL mask_t mask() const { return mask_t(tou(mm) & 1U); }
+        SIMDEE_INL mask_t mask() const { return mask_t(cast_u(mm) & 1U); }
         SIMDEE_INL element_t first_element() const { return mm != scalar_t::F; }
 
         SIMDEE_BINOP(dumb, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
@@ -137,11 +137,11 @@ namespace sd {
         SIMDEE_BINOP(dumu, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
         SIMDEE_BINOP(dumu, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
 #   endif
-        SIMDEE_BINOP(dumu, dumu, operator&, uval(tou(l.mm) & tou(r.mm)));
-        SIMDEE_BINOP(dumu, dumu, operator|, uval(tou(l.mm) | tou(r.mm)));
-        SIMDEE_BINOP(dumu, dumu, operator^, uval(tou(l.mm) ^ tou(r.mm)));
-        SIMDEE_UNOP(dumu, dumu, operator~, uval(~tou(l.mm)));
-        SIMDEE_BINOP(dumu, dumu, andnot, uval(tou(l.mm) & ~tou(r.mm)));
+        SIMDEE_BINOP(dumu, dumu, operator&, l.mm & r.mm);
+        SIMDEE_BINOP(dumu, dumu, operator|, l.mm | r.mm);
+        SIMDEE_BINOP(dumu, dumu, operator^, l.mm ^ r.mm);
+        SIMDEE_UNOP(dumu, dumu, operator~, ~l.mm);
+        SIMDEE_BINOP(dumu, dumu, andnot, l.mm & ~r.mm);
     };
 
     struct dums : dum_base<dums> {

@@ -2,6 +2,47 @@
 
 #include <simdee/common/casts.hpp>
 
+TEST_CASE("cast_b", "[casts]") {
+    auto b8 = sd::bool8_t::T;
+    auto u8 = uint8_t(-1);
+    auto s8 = int8_t(-1);
+    auto b16 = sd::bool16_t::T;
+    auto u16 = uint16_t(-1);
+    auto s16 = int16_t(-1);
+    auto b32 = sd::bool32_t::T;
+    auto u32 = uint32_t(-1);
+    auto s32 = int32_t(-1);
+    auto b64 = sd::bool64_t::T;
+    auto u64 = uint64_t(-1);
+    auto s64 = int64_t(-1);
+
+    static_assert(std::is_same<decltype(sd::cast_b(b8)), sd::bool8_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(u8)), sd::bool8_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(s8)), sd::bool8_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(b16)), sd::bool16_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(u16)), sd::bool16_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(s16)), sd::bool16_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(b32)), sd::bool32_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(u32)), sd::bool32_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(s32)), sd::bool32_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(b64)), sd::bool64_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(u64)), sd::bool64_t>::value, "");
+    static_assert(std::is_same<decltype(sd::cast_b(s64)), sd::bool64_t>::value, "");
+
+    REQUIRE(sd::cast_b(b8) == sd::bool8_t::T);
+    REQUIRE(sd::cast_b(u8) == sd::bool8_t::T);
+    REQUIRE(sd::cast_b(s8) == sd::bool8_t::T);
+    REQUIRE(sd::cast_b(b16) == sd::bool16_t::T);
+    REQUIRE(sd::cast_b(u16) == sd::bool16_t::T);
+    REQUIRE(sd::cast_b(s16) == sd::bool16_t::T);
+    REQUIRE(sd::cast_b(b32) == sd::bool32_t::T);
+    REQUIRE(sd::cast_b(u32) == sd::bool32_t::T);
+    REQUIRE(sd::cast_b(s32) == sd::bool32_t::T);
+    REQUIRE(sd::cast_b(b64) == sd::bool64_t::T);
+    REQUIRE(sd::cast_b(u64) == sd::bool64_t::T);
+    REQUIRE(sd::cast_b(s64) == sd::bool64_t::T);
+}
+
 TEST_CASE("cast_f", "[casts]") {
     auto b32 = sd::bool32_t::F;
     auto f32 = float(123);
@@ -123,6 +164,31 @@ TEST_CASE("cast_s", "[casts]") {
     REQUIRE(sd::cast_s(f64) == -1);
     REQUIRE(sd::cast_s(u64) == -1);
     REQUIRE(sd::cast_s(s64) == -1);
+}
+
+TEST_CASE("dirty::as_b", "[casts]") {
+    SECTION("rvalues") {
+        REQUIRE(sd::dirty::as_b(uint16_t(-1)) == sd::bool16_t::T);
+        REQUIRE(sd::dirty::as_b(uint32_t(-1)) == sd::bool32_t::T);
+        REQUIRE(sd::dirty::as_b(int16_t(-1)) == sd::bool16_t::T);
+        REQUIRE(sd::dirty::as_b(int32_t(-1)) == sd::bool32_t::T);
+        REQUIRE(sd::dirty::as_b(0.f) == sd::bool32_t::F);
+        REQUIRE(sd::dirty::as_b(0.) == sd::bool64_t::F);
+    }
+    SECTION("lvalues") {
+        auto a1 = uint16_t(-1);
+        auto a2 = uint32_t(-1);
+        auto a3 = int16_t(-1);
+        auto a4 = int32_t(-1);
+        auto a5 = 0.f;
+        auto a6 = 0.;
+        REQUIRE(sd::dirty::as_b(a1) == sd::bool16_t::T);
+        REQUIRE(sd::dirty::as_b(a2) == sd::bool32_t::T);
+        REQUIRE(sd::dirty::as_b(a3) == sd::bool16_t::T);
+        REQUIRE(sd::dirty::as_b(a4) == sd::bool32_t::T);
+        REQUIRE(sd::dirty::as_b(a5) == sd::bool32_t::F);
+        REQUIRE(sd::dirty::as_b(a6) == sd::bool64_t::F);
+    }
 }
 
 TEST_CASE("dirty::as_f", "[casts]") {

@@ -79,6 +79,17 @@ namespace sd {
     > {};
 
     template <std::size_t Size>
+    struct select_bool;
+    template <>
+    struct select_bool<1> { using type = bool8_t; };
+    template <>
+    struct select_bool<2> { using type = bool16_t; };
+    template <>
+    struct select_bool<4> { using type = bool32_t; };
+    template <>
+    struct select_bool<8> { using type = bool64_t; };
+
+    template <std::size_t Size>
     struct select_sint;
     template <>
     struct select_sint<1> { using type = int8_t; };
@@ -107,6 +118,8 @@ namespace sd {
     template <>
     struct select_float<sizeof(double)> { using type = double; };
 
+    template <std::size_t Size>
+    using select_bool_t = typename select_bool<Size>::type;
     template <std::size_t Size>
     using select_sint_t = typename select_sint<Size>::type;
     template <std::size_t Size>

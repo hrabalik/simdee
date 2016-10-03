@@ -11,6 +11,13 @@
 namespace sd {
     namespace impl {
         template <typename T>
+        struct util_b {
+            using source_t = typename std::decay<T>::type;
+            using target_t = select_bool_t<sizeof(source_t)>;
+            static_assert(is_extended_arithmetic_type<source_t>::value, "as_f(): source isn't arithmetic");
+        };
+
+        template <typename T>
         struct util_f {
             using source_t = typename std::decay<T>::type;
             using target_t = select_float_t<sizeof(source_t)>;
@@ -32,6 +39,10 @@ namespace sd {
         };
     }
 
+    template <typename T>
+    SIMDEE_INL constexpr typename impl::util_b<T>::target_t cast_b(T r) {
+        return static_cast<typename impl::util_b<T>::target_t>(r);
+    }
     template <typename T>
     SIMDEE_INL constexpr typename impl::util_f<T>::target_t cast_f(T r) {
         return static_cast<typename impl::util_f<T>::target_t>(r);
@@ -70,6 +81,10 @@ namespace sd {
             return *reinterpret_cast<const To*>(&from);
         }
 
+        template <typename T>
+        SIMDEE_INL constexpr typename impl::util_b<T>::target_t as_b(T r) {
+            return dirty::cast<typename impl::util_b<T>::source_t, typename impl::util_b<T>::target_t>(r);
+        }
         template <typename T>
         SIMDEE_INL constexpr typename impl::util_f<T>::target_t as_f(T r) {
             return dirty::cast<typename impl::util_f<T>::source_t, typename impl::util_f<T>::target_t>(r);

@@ -84,7 +84,7 @@ namespace sd {
         using dum_base::dum_base;
         SIMDEE_CTOR(dumb, element_t, mm = r ? scalar_t::T : scalar_t::F);
 
-        SIMDEE_INL mask_t mask() const { return mask_t(dirty::as_u(mm) & 1U); }
+        SIMDEE_INL mask_t mask() const { return mask_t(cast_u(mm) & 1U); }
         SIMDEE_INL element_t first_element() const { return mm != scalar_t::F; }
 
         SIMDEE_BINOP(dumb, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);

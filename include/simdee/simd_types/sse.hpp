@@ -133,7 +133,7 @@ namespace sd {
         SIMDEE_CTOR(sseb, not_sseb, mm = _mm_xor_ps(r.neg.mm, sseb(all_bits()).mm));
 
         SIMDEE_INL mask_t mask() const { return mask_t(tou(_mm_movemask_ps(mm))); }
-        SIMDEE_INL element_t first_element() const { return tou(_mm_cvtss_f32(mm)) != 0; }
+        SIMDEE_INL element_t first_element() const { return _mm_cvtss_f32(mm) != 0; }
 
         SIMDEE_BINOP(sseb, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseb, sseb, operator!=, _mm_xor_ps(l.mm, r.mm));

@@ -137,11 +137,11 @@ namespace sd {
         SIMDEE_BINOP(dumu, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
         SIMDEE_BINOP(dumu, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
 #   endif
-        SIMDEE_BINOP(dumu, dumu, operator&, tou(l.mm) & tou(r.mm));
-        SIMDEE_BINOP(dumu, dumu, operator|, tou(l.mm) | tou(r.mm));
-        SIMDEE_BINOP(dumu, dumu, operator^, tou(l.mm) ^ tou(r.mm));
-        SIMDEE_UNOP(dumu, dumu, operator~, ~tou(l.mm));
-        SIMDEE_BINOP(dumu, dumu, andnot, tou(l.mm) & ~tou(r.mm));
+        SIMDEE_BINOP(dumu, dumu, operator&, l.mm & r.mm);
+        SIMDEE_BINOP(dumu, dumu, operator|, l.mm | r.mm);
+        SIMDEE_BINOP(dumu, dumu, operator^, l.mm ^ r.mm);
+        SIMDEE_UNOP(dumu, dumu, operator~, ~l.mm);
+        SIMDEE_BINOP(dumu, dumu, andnot, l.mm & ~r.mm);
     };
 
     struct dums : dum_base<dums> {

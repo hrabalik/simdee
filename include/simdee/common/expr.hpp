@@ -16,31 +16,33 @@ namespace sd {
     template <typename T>
     struct simd_type_traits;
 
-    namespace expr {
+    namespace dirty {
         template <typename From, typename To>
-        constexpr To&& dirty_cast(From&& from) {
-            static_assert(std::is_trivial<From>::value, "dirty_cast(): the casted-from type isn't trivial");
-            static_assert(std::is_trivial<To>::value, "dirty_cast(): the casted-to type isn't trivial");
-            static_assert(sizeof(From) == sizeof(To), "dirty_cast(): the types aren't the same size");
+        constexpr To&& cast(From&& from) {
+            static_assert(std::is_trivial<From>::value, "dirty::cast(): the casted-from type isn't trivial");
+            static_assert(std::is_trivial<To>::value, "dirty::cast(): the casted-to type isn't trivial");
+            static_assert(sizeof(From) == sizeof(To), "dirty::cast(): the types aren't the same size");
             return std::move(*reinterpret_cast<To*>(&from));
         }
 
         template <typename From, typename To>
-        constexpr To& dirty_cast(From& from) {
-            static_assert(std::is_trivial<From>::value, "dirty_cast(): the casted-from type isn't trivial");
-            static_assert(std::is_trivial<To>::value, "dirty_cast(): the casted-to type isn't trivial");
-            static_assert(sizeof(From) == sizeof(To), "dirty_cast(): the types aren't the same size");
+        constexpr To& cast(From& from) {
+            static_assert(std::is_trivial<From>::value, "dirty::cast(): the casted-from type isn't trivial");
+            static_assert(std::is_trivial<To>::value, "dirty::cast(): the casted-to type isn't trivial");
+            static_assert(sizeof(From) == sizeof(To), "dirty::cast(): the types aren't the same size");
             return *reinterpret_cast<To*>(&from);
         }
 
         template <typename From, typename To>
-        constexpr const To& dirty_cast(const From& from) {
-            static_assert(std::is_trivial<From>::value, "dirty_cast(): the casted-from type isn't trivial");
-            static_assert(std::is_trivial<To>::value, "dirty_cast(): the casted-to type isn't trivial");
-            static_assert(sizeof(From) == sizeof(To), "dirty_cast(): the types aren't the same size");
+        constexpr const To& cast(const From& from) {
+            static_assert(std::is_trivial<From>::value, "dirty::cast(): the casted-from type isn't trivial");
+            static_assert(std::is_trivial<To>::value, "dirty::cast(): the casted-to type isn't trivial");
+            static_assert(sizeof(From) == sizeof(To), "dirty::cast(): the types aren't the same size");
             return *reinterpret_cast<const To*>(&from);
         }
+    }
 
+    namespace expr {
         template <typename T>
         struct aligned {
             SIMDEE_INL constexpr explicit aligned(T* r) : ptr(r) {}
@@ -89,7 +91,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using f_t = select_float_t<sizeof(Target)>;
-                return dirty_cast<f_t, Target>(std::forward<T>(ref));
+                return dirty::cast<f_t, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -103,7 +105,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
-                return dirty_cast<u_t, Target>(std::forward<T>(ref));
+                return dirty::cast<u_t, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -117,7 +119,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using s_t = select_sint_t<sizeof(Target)>;
-                return dirty_cast<s_t, Target>(std::forward<T>(ref));
+                return dirty::cast<s_t, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -128,7 +130,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
-                return dirty_cast<u_t, Target>(0);
+                return dirty::cast<u_t, Target>(0);
             }
         };
 
@@ -136,7 +138,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
-                return dirty_cast<u_t, Target>(~u_t(0));
+                return dirty::cast<u_t, Target>(~u_t(0));
             }
         };
 
@@ -145,7 +147,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
-                return dirty_cast<u_t, Target>(~(~u_t(0) >> 1));
+                return dirty::cast<u_t, Target>(~(~u_t(0) >> 1));
             }
         };
 
@@ -153,7 +155,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using u_t = select_uint_t<sizeof(Target)>;
-                return dirty_cast<u_t, Target>(~u_t(0) >> 1);
+                return dirty::cast<u_t, Target>(~u_t(0) >> 1);
             }
         };
 
@@ -161,7 +163,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using f_t = select_float_t<sizeof(Target)>;
-                return dirty_cast<f_t, Target>(std::numeric_limits<f_t>::infinity());
+                return dirty::cast<f_t, Target>(std::numeric_limits<f_t>::infinity());
             }
         };
 
@@ -169,7 +171,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using f_t = select_float_t<sizeof(Target)>;
-                return dirty_cast<f_t, Target>(-std::numeric_limits<f_t>::infinity());
+                return dirty::cast<f_t, Target>(-std::numeric_limits<f_t>::infinity());
             }
         };
 
@@ -177,7 +179,7 @@ namespace sd {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
                 using f_t = select_float_t<sizeof(Target)>;
-                return dirty_cast<f_t, Target>(std::numeric_limits<f_t>::quiet_NaN());
+                return dirty::cast<f_t, Target>(std::numeric_limits<f_t>::quiet_NaN());
             }
         };
 
@@ -192,7 +194,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
 
             SIMDEE_INL constexpr operator Target() const {
-                return dirty_cast<Source, Target>(std::forward<T>(ref));
+                return dirty::cast<Source, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -207,7 +209,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit tof(T&& r) : ref(std::forward<T>(r)) {}
 
             SIMDEE_INL constexpr operator Target() const {
-                return dirty_cast<Source, Target>(std::forward<T>(ref));
+                return dirty::cast<Source, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -225,7 +227,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
 
             SIMDEE_INL constexpr operator Target() const {
-                return dirty_cast<Source, Target>(std::forward<T>(ref));
+                return dirty::cast<Source, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -240,7 +242,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit tou(T&& r) : ref(std::forward<T>(r)) {}
 
             SIMDEE_INL constexpr operator Target() const {
-                return dirty_cast<Source, Target>(std::forward<T>(ref));
+                return dirty::cast<Source, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -258,7 +260,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
 
             SIMDEE_INL constexpr operator Target() const {
-                return dirty_cast<Source, Target>(std::forward<T>(ref));
+                return dirty::cast<Source, Target>(std::forward<T>(ref));
             }
 
             // data
@@ -273,7 +275,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit tos(T&& r) : ref(std::forward<T>(r)) {}
 
             SIMDEE_INL constexpr operator Target() const {
-                return dirty_cast<Source, Target>(std::forward<T>(ref));
+                return dirty::cast<Source, Target>(std::forward<T>(ref));
             }
 
             // data

@@ -84,48 +84,6 @@ namespace sd {
             }
         };
 
-        template <typename T>
-        struct fval : init<fval<T>> {
-            SIMDEE_INL constexpr explicit fval(T&& r) : ref(std::forward<T>(r)) {}
-
-            template <typename Target>
-            SIMDEE_INL constexpr Target to() const {
-                using f_t = select_float_t<sizeof(Target)>;
-                return dirty::cast<f_t, Target>(std::forward<T>(ref));
-            }
-
-            // data
-            T&& ref;
-        };
-
-        template <typename T>
-        struct uval : init<uval<T>> {
-            SIMDEE_INL constexpr explicit uval(T&& r) : ref(std::forward<T>(r)) {}
-
-            template <typename Target>
-            SIMDEE_INL constexpr Target to() const {
-                using u_t = select_uint_t<sizeof(Target)>;
-                return dirty::cast<u_t, Target>(std::forward<T>(ref));
-            }
-
-            // data
-            T&& ref;
-        };
-
-        template <typename T>
-        struct sval : init<sval<T>> {
-            SIMDEE_INL constexpr explicit sval(T&& r) : ref(std::forward<T>(r)) {}
-
-            template <typename Target>
-            SIMDEE_INL constexpr Target to() const {
-                using s_t = select_sint_t<sizeof(Target)>;
-                return dirty::cast<s_t, Target>(std::forward<T>(ref));
-            }
-
-            // data
-            T&& ref;
-        };
-
         struct zero : init<zero> {
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
@@ -287,12 +245,6 @@ namespace sd {
     SIMDEE_INL constexpr expr::aligned<T> aligned(T* const& r) { return expr::aligned<T>(r); }
     template <typename T>
     SIMDEE_INL constexpr expr::unaligned<T> unaligned(T* const& r) { return expr::unaligned<T>(r); }
-    template <typename T>
-    SIMDEE_INL constexpr expr::fval<T&&> fval(T&& r) { return expr::fval<T&&>(std::forward<T>(r)); }
-    template <typename T>
-    SIMDEE_INL constexpr expr::uval<T&&> uval(T&& r) { return expr::uval<T&&>(std::forward<T>(r)); }
-    template <typename T>
-    SIMDEE_INL constexpr expr::sval<T&&> sval(T&& r) { return expr::sval<T&&>(std::forward<T>(r)); }
     template <typename T>
     SIMDEE_INL constexpr expr::tof<T&&> tof(T&& r) { return expr::tof<T&&>(std::forward<T>(r)); }
     template <typename T>

@@ -177,40 +177,7 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from uval, sval, zero, etc. (sd::init family)") {
-        {
-            B tb(sd::fval(1.2345678f));
-            F tf(sd::fval(1.2345678f));
-            U tu(sd::fval(1.2345678f));
-            S ts(sd::fval(1.2345678f));
-            tor(tb, tf, tu, ts);
-            for (auto val : rb) REQUIRE(sd::tof(val) == 1.2345678f);
-            for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
-            for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
-            for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
-        }
-        {
-            B tb(sd::uval(0xdeadbeef));
-            F tf(sd::uval(0xdeadbeef));
-            U tu(sd::uval(0xdeadbeef));
-            S ts(sd::uval(0xdeadbeef));
-            tor(tb, tf, tu, ts);
-            for (auto val : rb) REQUIRE(sd::tou(val) == 0xdeadbeef);
-            for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
-            for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
-            for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        }
-        {
-            B tb(sd::sval(-123456789));
-            F tf(sd::sval(-123456789));
-            U tu(sd::sval(-123456789));
-            S ts(sd::sval(-123456789));
-            tor(tb, tf, tu, ts);
-            for (auto val : rb) REQUIRE(sd::tos(val) == -123456789);
-            for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
-            for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
-            for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
-        }
+    SECTION("from zero, all_bits, sign_bit, etc. (sd::init family)") {
         {
             B tb(sd::zero());
             F tf(sd::zero());
@@ -324,22 +291,7 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from uval, sval, zero, etc. (sd::init family)") {
-        implicit_test(sd::fval(1.2345678f), sd::fval(1.2345678f), sd::fval(1.2345678f), sd::fval(1.2345678f));
-        for (auto val : rb) REQUIRE(sd::tof(val) == 1.2345678f);
-        for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
-        for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
-        for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
-        implicit_test(sd::uval(0xdeadbeef), sd::uval(0xdeadbeef), sd::uval(0xdeadbeef), sd::uval(0xdeadbeef));
-        for (auto val : rb) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        implicit_test(sd::sval(-123456789), sd::sval(-123456789), sd::sval(-123456789), sd::sval(-123456789));
-        for (auto val : rb) REQUIRE(sd::tos(val) == -123456789);
-        for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
-        for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
-        for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
+    SECTION("from zero, all_bits, sign_bit, etc. (sd::init family)") {
         implicit_test(sd::zero(), sd::zero(), sd::zero(), sd::zero());
         for (auto val : rb) REQUIRE(sd::tou(val) == 0x00000000);
         for (auto val : rf) REQUIRE(sd::tou(val) == 0x00000000);
@@ -440,34 +392,7 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from uval, sval, zero, etc. (sd::init family)") {
-        tb = sd::fval(1.2345678f);
-        tf = sd::fval(1.2345678f);
-        tu = sd::fval(1.2345678f);
-        ts = sd::fval(1.2345678f);
-        tor();
-        for (auto val : rb) REQUIRE(sd::tof(val) == 1.2345678f);
-        for (auto val : rf) REQUIRE(sd::tof(val) == 1.2345678f);
-        for (auto val : ru) REQUIRE(sd::tof(val) == 1.2345678f);
-        for (auto val : rs) REQUIRE(sd::tof(val) == 1.2345678f);
-        tb = sd::uval(0xdeadbeef);
-        tf = sd::uval(0xdeadbeef);
-        tu = sd::uval(0xdeadbeef);
-        ts = sd::uval(0xdeadbeef);
-        tor();
-        for (auto val : rb) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        for (auto val : rf) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        for (auto val : ru) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        for (auto val : rs) REQUIRE(sd::tou(val) == 0xdeadbeef);
-        tb = sd::sval(-123456789);
-        tf = sd::sval(-123456789);
-        tu = sd::sval(-123456789);
-        ts = sd::sval(-123456789);
-        tor();
-        for (auto val : rb) REQUIRE(sd::tos(val) == -123456789);
-        for (auto val : rf) REQUIRE(sd::tos(val) == -123456789);
-        for (auto val : ru) REQUIRE(sd::tos(val) == -123456789);
-        for (auto val : rs) REQUIRE(sd::tos(val) == -123456789);
+    SECTION("from zero, all_bits, sign_bit, etc. (sd::init family)") {
         tb = sd::zero();
         tf = sd::zero();
         tu = sd::zero();

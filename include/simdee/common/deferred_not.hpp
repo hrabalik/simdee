@@ -30,7 +30,6 @@ namespace sd {
             using scalar_t = typename T::scalar_t;
             using mask_t = typename T::mask_t;
             using storage_t = typename T::storage_t;
-            using binary_op_t = typename T::binary_op_t;
             enum : std::size_t { width = T::width };
 
             SIMDEE_INL constexpr explicit deferred_bitnot(const T& r) : neg(r) {}
@@ -80,7 +79,8 @@ namespace sd {
                 pos.interleaved_store(r, step);
             }
 
-            SIMDEE_INL const T reduce(binary_op_t f) const {
+            template <typename Op_t>
+            SIMDEE_INL const T reduce(Op_t f) const {
                 T pos(~neg);
                 return pos.reduce(f);
             }
@@ -168,7 +168,6 @@ namespace sd {
             using scalar_t = typename T::scalar_t;
             using mask_t = typename T::mask_t;
             using storage_t = typename T::storage_t;
-            using binary_op_t = typename T::binary_op_t;
             enum : std::size_t { width = T::width };
 
             SIMDEE_INL constexpr explicit deferred_lognot(const T& r) : neg(r) {}
@@ -218,7 +217,8 @@ namespace sd {
                 pos.interleaved_store(r, step);
             }
 
-            SIMDEE_INL const T reduce(binary_op_t f) const {
+            template <typename Op_t>
+            SIMDEE_INL const T reduce(Op_t f) const {
                 T pos(!neg);
                 return pos.reduce(f);
             }

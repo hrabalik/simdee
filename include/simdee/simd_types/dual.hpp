@@ -44,7 +44,6 @@ namespace sd {
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using element_t = typename simd_base<Crtp>::element_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
-        using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 

@@ -20,14 +20,12 @@ TEST_CASE("deferred_not types", "[deferred_not]") {
     REQUIRE((std::is_same<B::scalar_t, not_B::scalar_t>::value));
     REQUIRE((std::is_same<B::mask_t, not_B::mask_t>::value));
     REQUIRE((std::is_same<B::storage_t, not_B::storage_t>::value));
-    REQUIRE((std::is_same<B::binary_op_t, not_B::binary_op_t>::value));
     REQUIRE((std::size_t(B::width) == not_B::width));
 
     REQUIRE((std::is_same<U::vector_t, not_U::vector_t>::value));
     REQUIRE((std::is_same<U::scalar_t, not_U::scalar_t>::value));
     REQUIRE((std::is_same<U::mask_t, not_U::mask_t>::value));
     REQUIRE((std::is_same<U::storage_t, not_U::storage_t>::value));
-    REQUIRE((std::is_same<U::binary_op_t, not_U::binary_op_t>::value));
     REQUIRE((std::size_t(U::width) == not_U::width));
 }
 

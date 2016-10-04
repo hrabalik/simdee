@@ -59,7 +59,6 @@ namespace sd {
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using element_t = typename simd_base<Crtp>::element_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
-        using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 
@@ -76,7 +75,11 @@ namespace sd {
         SIMDEE_INL void unaligned_store(scalar_t* r) const { *r = mm; }
         SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) { mm = *r; }
         SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const { *r = mm; }
-        SIMDEE_INL const Crtp reduce(binary_op_t) const { return self(); }
+
+        template <typename Op_t>
+        SIMDEE_INL const Crtp reduce(Op_t) const {
+            return self();
+        }
     };
 
     struct dumb : dum_base<dumb> {

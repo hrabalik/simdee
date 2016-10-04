@@ -69,7 +69,6 @@ namespace sd {
         using scalar_t = typename simd_base<Crtp>::scalar_t;
         using element_t = typename simd_base<Crtp>::element_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
-        using binary_op_t = typename simd_base<Crtp>::binary_op_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 
@@ -115,7 +114,8 @@ namespace sd {
             }
         }
 
-        const Crtp reduce(binary_op_t f) const {
+        template <typename Op_t>
+        const Crtp reduce(Op_t f) const {
             Crtp tmp = f(self(), _mm256_permute_ps(mm, _MM_SHUFFLE(2, 3, 0, 1)));
             tmp = f(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));
             return f(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));

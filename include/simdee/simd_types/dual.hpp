@@ -57,33 +57,33 @@ namespace sd {
         SIMDEE_BASE_CTOR(dual_base, storage_t, aligned_load(r.data()));
 
         SIMDEE_INL void aligned_load(const scalar_t* r) {
-            first.aligned_load(r);
-            second.aligned_load(r + T::width);
+            mm.first.aligned_load(r);
+            mm.second.aligned_load(r + T::width);
         }
 
         SIMDEE_INL void aligned_store(scalar_t* r) const {
-            first.aligned_store(r);
-            second.aligned_store(r + T::width);
+            mm.first.aligned_store(r);
+            mm.second.aligned_store(r + T::width);
         }
 
         SIMDEE_INL void unaligned_load(const scalar_t* r) {
-            first.unaligned_load(r);
-            second.unaligned_load(r + T::width);
+            mm.first.unaligned_load(r);
+            mm.second.unaligned_load(r + T::width);
         }
 
         SIMDEE_INL void unaligned_store(scalar_t* r) const {
-            first.unaligned_store(r);
-            second.unaligned_store(r + T::width);
+            mm.first.unaligned_store(r);
+            mm.second.unaligned_store(r + T::width);
         }
 
         SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) {
-            first.interleaved_load(r);
-            second.interleaved_load(r + (T::width * step));
+            mm.first.interleaved_load(r);
+            mm.second.interleaved_load(r + (T::width * step));
         }
 
         SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const {
-            first.interleaved_store(r);
-            second.interleaved_store(r + (T::width * step));
+            mm.first.interleaved_store(r);
+            mm.second.interleaved_store(r + (T::width * step));
         }
 
         // missing: reduce

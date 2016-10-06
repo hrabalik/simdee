@@ -129,7 +129,14 @@ namespace sd {
         using simd_base<dual<T>>::mm;
 
     public:
+        using vec_s = typename simd_base<dual<T>>::vec_s;
+
         SIMDEE_TRIVIAL_TYPE(dual);
+
+        SIMDEE_INL explicit dual(const vec_s& r) {
+            mm.l = decltype(mm.l)(r.data().l);
+            mm.r = decltype(mm.r)(r.data().r);
+        }
 
         using dual_base<dual<T>>::dual_base;
     };
@@ -140,7 +147,20 @@ namespace sd {
         using simd_base<dual<T>>::mm;
 
     public:
+        using vec_b = typename simd_base<dual<T>>::vec_b;
+        using vec_s = typename simd_base<dual<T>>::vec_s;
+
         SIMDEE_TRIVIAL_TYPE(dual);
+
+        SIMDEE_INL explicit dual(const vec_b& r) {
+            mm.l = decltype(mm.l)(r.data().l);
+            mm.r = decltype(mm.r)(r.data().r);
+        }
+
+        SIMDEE_INL explicit dual(const vec_s& r) {
+            mm.l = decltype(mm.l)(r.data().l);
+            mm.r = decltype(mm.r)(r.data().r);
+        }
 
         using dual_base<dual<T>>::dual_base;
     };
@@ -151,7 +171,20 @@ namespace sd {
         using simd_base<dual<T>>::mm;
 
     public:
+        using vec_f = typename simd_base<dual<T>>::vec_f;
+        using vec_u = typename simd_base<dual<T>>::vec_u;
+
         SIMDEE_TRIVIAL_TYPE(dual);
+
+        SIMDEE_INL explicit dual(const vec_f& r) {
+            mm.l = decltype(mm.l)(r.data().l);
+            mm.r = decltype(mm.r)(r.data().r);
+        }
+
+        SIMDEE_INL explicit dual(const vec_u& r) {
+            mm.l = decltype(mm.l)(r.data().l);
+            mm.r = decltype(mm.r)(r.data().r);
+        }
 
         using dual_base<dual<T>>::dual_base;
     };

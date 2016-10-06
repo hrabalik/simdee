@@ -125,6 +125,11 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
+    SECTION("from element_t") {
+        B tb(true);
+        rb = tb;
+        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
+    }
     SECTION("from vector_t") {
         B tb(SIMD_LOAD_AB);
         F tf(SIMD_LOAD_AF);
@@ -243,6 +248,10 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
+    SECTION("from element_t") {
+        implicit_test(true, 0, 0, 0);
+        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
+    }
     SECTION("from vector_t") {
         implicit_test(
             SIMD_LOAD_AB,
@@ -339,6 +348,11 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         for (auto val : rf) REQUIRE(val == 1.2345678f);
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
+    }
+    SECTION("from element_t") {
+        tb = true;
+        rb = tb;
+        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
     }
     SECTION("from vector_t") {
         tb = SIMD_LOAD_AB;

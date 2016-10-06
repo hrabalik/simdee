@@ -9,6 +9,14 @@
 
 namespace sd {
     namespace impl {
+        template <typename T>
+        struct pair {
+            using l_t = T;
+            using r_t = T;
+            T l;
+            T r;
+        };
+
         template <typename Mask_t>
         using dual_mask_t = impl::mask<((Mask_t::all_bits + 1) * (Mask_t::all_bits + 1)) - 1>;
     }
@@ -22,7 +30,7 @@ namespace sd {
     template <typename T>
     struct simd_type_traits<dual<T>> {
         using simd_t = dual<T>;
-        using vector_t = std::pair<T, T>;
+        using vector_t = impl::pair<T>;
         using scalar_t = typename simd_type_traits<T>::scalar_t;
         using element_t = typename simd_type_traits<T>::element_t;
         using vec_b = dual<typename simd_type_traits<T>::vec_b>;
@@ -36,7 +44,7 @@ namespace sd {
     template <typename Crtp>
     struct dual_base : simd_base<Crtp> {
     protected:
-        using T = typename simd_base<Crtp>::vector_t::first_type;
+        using T = typename simd_base<Crtp>::vector_t::l_t;
         using simd_base<Crtp>::mm;
 
     public:
@@ -50,63 +58,102 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(dual_base);
 
         SIMDEE_BASE_CTOR(dual_base, vector_t, mm = r);
-        SIMDEE_BASE_CTOR(dual_base, scalar_t, mm.first = r; mm.second = r);
+        SIMDEE_BASE_CTOR(dual_base, scalar_t, mm.l = r; mm.r = r);
         SIMDEE_BASE_CTOR_TPL(dual_base, expr::aligned<T>, aligned_load(r.ptr));
         SIMDEE_BASE_CTOR_TPL(dual_base, expr::unaligned<T>, unaligned_load(r.ptr));
-        SIMDEE_BASE_CTOR_TPL(dual_base, expr::init<T>, mm.first = r; mm.second = r);
+        SIMDEE_BASE_CTOR_TPL(dual_base, expr::init<T>, mm.l = r; mm.r = r);
         SIMDEE_BASE_CTOR(dual_base, storage_t, aligned_load(r.data()));
 
         SIMDEE_INL void aligned_load(const scalar_t* r) {
-            mm.first.aligned_load(r);
-            mm.second.aligned_load(r + T::width);
+            mm.l.aligned_load(r);
+            mm.r.aligned_load(r + T::width);
         }
 
         SIMDEE_INL void aligned_store(scalar_t* r) const {
-            mm.first.aligned_store(r);
-            mm.second.aligned_store(r + T::width);
+            mm.l.aligned_store(r);
+            mm.r.aligned_store(r + T::width);
         }
 
         SIMDEE_INL void unaligned_load(const scalar_t* r) {
-            mm.first.unaligned_load(r);
-            mm.second.unaligned_load(r + T::width);
+            mm.l.unaligned_load(r);
+            mm.r.unaligned_load(r + T::width);
         }
 
         SIMDEE_INL void unaligned_store(scalar_t* r) const {
-            mm.first.unaligned_store(r);
-            mm.second.unaligned_store(r + T::width);
+            mm.l.unaligned_store(r);
+            mm.r.unaligned_store(r + T::width);
         }
 
         SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) {
-            mm.first.interleaved_load(r);
-            mm.second.interleaved_load(r + (T::width * step));
+            mm.l.interleaved_load(r);
+            mm.r.interleaved_load(r + (T::width * step));
         }
 
         SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const {
-            mm.first.interleaved_store(r);
-            mm.second.interleaved_store(r + (T::width * step));
+            mm.l.interleaved_store(r);
+            mm.r.interleaved_store(r + (T::width * step));
         }
 
-        // missing: reduce
+        template <typename Op_t>
+        const Crtp reduce(Op_t f) const {
+            vector_t res;
+            res.l = mm.l.reduce(f);
+            res.r = mm.r.reduce(f);
+            res.l = f(res.l, res.r);
+            res.r = res.l;
+            return res;
+        }
+
+        SIMDEE_INL element_t first_element() const { return mm.l.first_element(); }
     };
 
     template <typename T>
     struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_b>::value>::type> : dual_base<dual<T>> {
+    private:
+        using simd_base<dual<T>>::mm;
 
+    public:
+        using mask_t = typename simd_base<dual<T>>::mask_t;
+        using dual_base<dual<T>>::dual_base;
+
+        SIMDEE_TRIVIAL_TYPE(dual);
+
+        SIMDEE_INL mask_t mask() const {
+            return mask_t(mm.l.mask().value | (mm.r.mask().value << T::width));
+        }
     };
 
     template <typename T>
     struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_f>::value>::type> : dual_base<dual<T>> {
+    private:
+        using simd_base<dual<T>>::mm;
 
+    public:
+        SIMDEE_TRIVIAL_TYPE(dual);
+
+        using dual_base<dual<T>>::dual_base;
     };
 
     template <typename T>
     struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_u>::value>::type> : dual_base<dual<T>> {
+    private:
+        using simd_base<dual<T>>::mm;
 
+    public:
+        SIMDEE_TRIVIAL_TYPE(dual);
+
+        using dual_base<dual<T>>::dual_base;
     };
 
     template <typename T>
     struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_s>::value>::type> : dual_base<dual<T>> {
+    private:
+        using simd_base<dual<T>>::mm;
 
+    public:
+        SIMDEE_TRIVIAL_TYPE(dual);
+
+        using dual_base<dual<T>>::dual_base;
     };
 }
 

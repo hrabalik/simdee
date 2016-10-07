@@ -5,5 +5,7 @@
 #define SIMDEE_SIMDEE_HPP
 
 #include "common/init.hpp"
+#include "vec4.hpp"
+#include "vec8.hpp"
 
 #endif // SIMDEE_SIMDEE_HPP

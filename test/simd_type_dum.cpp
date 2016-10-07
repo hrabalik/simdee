@@ -1,5 +1,5 @@
-#define SIMDEE_NEED_DUM 1
 #include <simdee/simdee.hpp>
+#include <simdee/simd_types/dum.hpp>
 
 #include "catch.hpp"
 #include <array>

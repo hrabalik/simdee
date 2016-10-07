@@ -135,6 +135,13 @@ namespace sd {
         SIMDEE_BINOP(vec_b, vec_b, operator||, (vector_t{ l.mm.l || r.mm.l, l.mm.r || r.mm.r }));
         SIMDEE_UNOP(vec_b, vec_b, operator!, (vector_t{!l.mm.l, !l.mm.r}));
         SIMDEE_BINOP(vec_b, vec_b, andnot, (vector_t{ andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r) }));
+
+        SIMDEE_INL friend const vec_b cond(const vec_b& pred, const vec_b& if_true, const vec_b& if_false) {
+            return vector_t{
+                cond(pred.data().l, if_true.mm.l, if_false.mm.l),
+                cond(pred.data().r, if_true.mm.r, if_false.mm.r),
+            };
+        }
     };
 
     template <typename T>
@@ -176,6 +183,13 @@ namespace sd {
         SIMDEE_UNOP(vec_f, vec_f, rsqrt, (vector_t{ rsqrt(l.mm.l), rsqrt(l.mm.r) }));
         SIMDEE_UNOP(vec_f, vec_f, rcp, (vector_t{ rcp(l.mm.l), rcp(l.mm.r) }));
         SIMDEE_UNOP(vec_f, vec_f, abs, (vector_t{ abs(l.mm.l), abs(l.mm.r) }));
+
+        SIMDEE_INL friend const vec_f cond(const vec_b& pred, const vec_f& if_true, const vec_f& if_false) {
+            return vector_t{
+                cond(pred.data().l, if_true.mm.l, if_false.mm.l),
+                cond(pred.data().r, if_true.mm.r, if_false.mm.r),
+            };
+        }
     };
 
     template <typename T>
@@ -213,6 +227,13 @@ namespace sd {
         SIMDEE_BINOP(vec_u, vec_u, operator^, (vector_t{ l.mm.l ^ r.mm.l, l.mm.r ^ r.mm.r }));
         SIMDEE_UNOP(vec_u, vec_u, operator~, (vector_t{ ~l.mm.l, ~l.mm.r }));
         SIMDEE_BINOP(vec_u, vec_u, andnot, (vector_t{ andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r) }));
+
+        SIMDEE_INL friend const vec_u cond(const vec_b& pred, const vec_u& if_true, const vec_u& if_false) {
+            return vector_t{
+                cond(pred.data().l, if_true.mm.l, if_false.mm.l),
+                cond(pred.data().r, if_true.mm.r, if_false.mm.r),
+            };
+        }
     };
 
     template <typename T>
@@ -258,7 +279,16 @@ namespace sd {
         SIMDEE_UNOP(vec_s, vec_s, abs, (vector_t{ abs(l.mm.l), abs(l.mm.r) }));
         SIMDEE_UNOP(vec_s, vec_s, signum, (vector_t{ signum(l.mm.l), signum(l.mm.r) }));
 #   endif
+
+        SIMDEE_INL friend const vec_s cond(const vec_b& pred, const vec_s& if_true, const vec_s& if_false) {
+            return vector_t{
+                cond(pred.data().l, if_true.mm.l, if_false.mm.l),
+                cond(pred.data().r, if_true.mm.r, if_false.mm.r),
+            };
+        }
     };
+
+
 }
 
 #endif // SIMDEE_SIMD_TYPES_DUAL_HPP

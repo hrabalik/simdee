@@ -1,14 +1,12 @@
-#define SIMDEE_NEED_SSE 1
-#include <simdee/simdee.hpp>
-
 #include "catch.hpp"
+#include <simdee/simdee.hpp>
 #include <type_traits>
 
-using B = sd::sseb;
+using B = sd::vec4b;
 const B::storage_t dataAB{ B::scalar_t::T, B::scalar_t::F, B::scalar_t::T, B::scalar_t::T };
 const B::storage_t dataBB{ B::scalar_t::F, B::scalar_t::T, B::scalar_t::F, B::scalar_t::T };
 
-using U = sd::sseu;
+using U = sd::vec4u;
 const U::storage_t dataAU{ 1753029375U, 1117080442U, 3817141237U, 3761735248U };
 const U::storage_t dataBU{ 1679702461U, 2102346647U, 480083363U, 3761735248U };
 
@@ -20,14 +18,12 @@ TEST_CASE("deferred_not types", "[deferred_not]") {
     REQUIRE((std::is_same<B::scalar_t, not_B::scalar_t>::value));
     REQUIRE((std::is_same<B::mask_t, not_B::mask_t>::value));
     REQUIRE((std::is_same<B::storage_t, not_B::storage_t>::value));
-    REQUIRE((std::is_same<B::binary_op_t, not_B::binary_op_t>::value));
     REQUIRE((std::size_t(B::width) == not_B::width));
 
     REQUIRE((std::is_same<U::vector_t, not_U::vector_t>::value));
     REQUIRE((std::is_same<U::scalar_t, not_U::scalar_t>::value));
     REQUIRE((std::is_same<U::mask_t, not_U::mask_t>::value));
     REQUIRE((std::is_same<U::storage_t, not_U::storage_t>::value));
-    REQUIRE((std::is_same<U::binary_op_t, not_U::binary_op_t>::value));
     REQUIRE((std::size_t(U::width) == not_U::width));
 }
 

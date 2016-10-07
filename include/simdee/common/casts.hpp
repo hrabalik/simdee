@@ -100,4 +100,4 @@ namespace sd {
     }
 }
 
-#endif
+#endif // SIMDEE_COMMON_CASTS_HPP

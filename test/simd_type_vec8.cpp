@@ -1,17 +1,10 @@
-#define SIMDEE_NEED_AVX 1
+#include "catch.hpp"
 #include <simdee/simdee.hpp>
 
-#include "catch.hpp"
-#include <array>
-#include <type_traits>
-#include <algorithm>
-#include <numeric>
-#include <functional>
-
-using B = sd::avxb;
-using F = sd::avxf;
-using U = sd::avxu;
-using S = sd::avxs;
+using B = sd::vec8b;
+using F = sd::vec8f;
+using U = sd::vec8u;
+using S = sd::vec8s;
 
 const B::storage_t bufAB{
     B::scalar_t::T, B::scalar_t::F, B::scalar_t::T, B::scalar_t::T,
@@ -53,12 +46,8 @@ const F::storage_t bufZF { 0, 0, 0, 0, 0, 0, 0, 0 };
 const U::storage_t bufZU { 0, 0, 0, 0, 0, 0, 0, 0 };
 const S::storage_t bufZS { 0, 0, 0, 0, 0, 0, 0, 0 };
 
-#define SIMD_TYPE "AVX"
-#define SIMD_TEST_TAG "[simd_types][avx]"
+#define SIMD_TYPE "vec8"
+#define SIMD_TEST_TAG "[simd_types][vec8]"
 #define SIMD_WIDTH 8
-#define SIMD_LOAD_AB _mm256_load_ps((float*)bufAB.data())
-#define SIMD_LOAD_AF _mm256_load_ps(bufAF.data())
-#define SIMD_LOAD_AU _mm256_load_ps((float*)bufAU.data())
-#define SIMD_LOAD_AS _mm256_load_ps((float*)bufAS.data())
 
 #include "simd_type.inl"

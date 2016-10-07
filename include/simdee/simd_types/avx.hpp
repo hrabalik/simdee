@@ -18,7 +18,6 @@
 #include <immintrin.h>
 
 namespace sd {
-
     struct avxb;
     struct avxf;
     struct avxu;

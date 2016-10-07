@@ -287,8 +287,6 @@ namespace sd {
             };
         }
     };
-
-
 }
 
 #endif // SIMDEE_SIMD_TYPES_DUAL_HPP

@@ -11,7 +11,6 @@
 #include <cmath>
 
 namespace sd {
-
     struct dumb;
     struct dumf;
     struct dumu;

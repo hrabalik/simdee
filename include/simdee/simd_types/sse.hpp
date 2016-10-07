@@ -28,7 +28,6 @@
 #endif
 
 namespace sd {
-
     struct sseb;
     struct ssef;
     struct sseu;

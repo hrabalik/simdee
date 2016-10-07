@@ -1,18 +1,11 @@
-#define SIMDEE_NEED_SSE 1
+#include "catch.hpp"
 #include <simdee/simdee.hpp>
 #include <simdee/simd_types/dual.hpp>
 
-#include "catch.hpp"
-#include <array>
-#include <type_traits>
-#include <algorithm>
-#include <numeric>
-#include <functional>
-
-using B = sd::dual<sd::sseb>;
-using F = sd::dual<sd::ssef>;
-using U = sd::dual<sd::sseu>;
-using S = sd::dual<sd::sses>;
+using B = sd::dual<sd::vec4b>;
+using F = sd::dual<sd::vec4f>;
+using U = sd::dual<sd::vec4u>;
+using S = sd::dual<sd::vec4s>;
 
 const B::storage_t bufAB{
     B::scalar_t::T, B::scalar_t::F, B::scalar_t::T, B::scalar_t::T,
@@ -57,9 +50,5 @@ const S::storage_t bufZS{ 0, 0, 0, 0, 0, 0, 0, 0 };
 #define SIMD_TYPE "Dual"
 #define SIMD_TEST_TAG "[simd_types][dual]"
 #define SIMD_WIDTH 8
-#define SIMD_LOAD_AB sd::impl::pair<sd::sseb>{_mm_load_ps((float*)bufAB.data()), _mm_load_ps((float*)bufAB.data() + 4)}
-#define SIMD_LOAD_AF sd::impl::pair<sd::ssef>{_mm_load_ps((float*)bufAF.data()), _mm_load_ps((float*)bufAF.data() + 4)}
-#define SIMD_LOAD_AU sd::impl::pair<sd::sseu>{_mm_load_ps((float*)bufAU.data()), _mm_load_ps((float*)bufAU.data() + 4)}
-#define SIMD_LOAD_AS sd::impl::pair<sd::sses>{_mm_load_ps((float*)bufAS.data()), _mm_load_ps((float*)bufAS.data() + 4)}
 
 #include "simd_type.inl"

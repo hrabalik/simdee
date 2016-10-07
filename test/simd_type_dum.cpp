@@ -1,12 +1,6 @@
+#include "catch.hpp"
 #include <simdee/simdee.hpp>
 #include <simdee/simd_types/dum.hpp>
-
-#include "catch.hpp"
-#include <array>
-#include <type_traits>
-#include <algorithm>
-#include <numeric>
-#include <functional>
 
 using B = sd::dumb;
 using F = sd::dumf;
@@ -47,9 +41,5 @@ const S::storage_t bufZS { 0 };
 #define SIMD_TYPE "DUM"
 #define SIMD_TEST_TAG "[simd_types][dum]"
 #define SIMD_WIDTH 1
-#define SIMD_LOAD_AB *bufAB.data()
-#define SIMD_LOAD_AF *bufAF.data()
-#define SIMD_LOAD_AU *bufAU.data()
-#define SIMD_LOAD_AS *bufAS.data()
 
 #include "simd_type.inl"

@@ -36,9 +36,6 @@
 #ifndef SIMDEE_NEED_SSE
 #define SIMDEE_NEED_SSE 0 // require SSE SIMD types to be declared
 #endif
-#ifndef SIMDEE_NEED_DUM
-#define SIMDEE_NEED_DUM 0 // require dummy SIMD types to be declared
-#endif
 
 //
 // fix MSVC borked SSE macros (ICC has got them right though)

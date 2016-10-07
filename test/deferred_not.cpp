@@ -1,14 +1,12 @@
-#define SIMDEE_NEED_SSE 1
-#include <simdee/simdee.hpp>
-
 #include "catch.hpp"
+#include <simdee/simdee.hpp>
 #include <type_traits>
 
-using B = sd::sseb;
+using B = sd::vec4b;
 const B::storage_t dataAB{ B::scalar_t::T, B::scalar_t::F, B::scalar_t::T, B::scalar_t::T };
 const B::storage_t dataBB{ B::scalar_t::F, B::scalar_t::T, B::scalar_t::F, B::scalar_t::T };
 
-using U = sd::sseu;
+using U = sd::vec4u;
 const U::storage_t dataAU{ 1753029375U, 1117080442U, 3817141237U, 3761735248U };
 const U::storage_t dataBU{ 1679702461U, 2102346647U, 480083363U, 3761735248U };
 

@@ -1,5 +1,4 @@
 #include "catch.hpp"
-
 #include <simdee/common/mask.hpp>
 #include <vector>
 

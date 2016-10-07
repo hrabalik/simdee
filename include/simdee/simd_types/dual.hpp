@@ -113,14 +113,28 @@ namespace sd {
         using simd_base<dual<T>>::mm;
 
     public:
+        using vector_t = typename simd_base<dual<T>>::vector_t;
+        using element_t = typename simd_base<dual<T>>::element_t;
+        using vec_b = typename simd_base<dual<T>>::vec_b;
+        using vec_f = typename simd_base<dual<T>>::vec_f;
+        using vec_u = typename simd_base<dual<T>>::vec_u;
+        using vec_s = typename simd_base<dual<T>>::vec_s;
         using mask_t = typename simd_base<dual<T>>::mask_t;
         using dual_base<dual<T>>::dual_base;
 
         SIMDEE_TRIVIAL_TYPE(dual);
+        SIMDEE_CTOR(dual, element_t, mm.l = r; mm.r = r);
 
         SIMDEE_INL mask_t mask() const {
             return mask_t(mm.l.mask().value | (mm.r.mask().value << T::width));
         }
+
+        SIMDEE_BINOP(vec_b, vec_b, operator==, (vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
+        SIMDEE_BINOP(vec_b, vec_b, operator!=, (vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
+        SIMDEE_BINOP(vec_b, vec_b, operator&&, (vector_t{ l.mm.l && r.mm.l, l.mm.r && r.mm.r }));
+        SIMDEE_BINOP(vec_b, vec_b, operator||, (vector_t{ l.mm.l || r.mm.l, l.mm.r || r.mm.r }));
+        SIMDEE_UNOP(vec_b, vec_b, operator!, (vector_t{!l.mm.l, !l.mm.r}));
+        SIMDEE_BINOP(vec_b, vec_b, andnot, (vector_t{ andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r) }));
     };
 
     template <typename T>

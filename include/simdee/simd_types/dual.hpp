@@ -141,9 +141,15 @@ namespace sd {
     struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_f>::value>::type> : dual_base<dual<T>> {
     private:
         using simd_base<dual<T>>::mm;
+        using b_vector_t = typename simd_base<dual<T>>::vec_b::vector_t;
 
     public:
+        using vector_t = typename simd_base<dual<T>>::vector_t;
+        using vec_b = typename simd_base<dual<T>>::vec_b;
+        using vec_f = typename simd_base<dual<T>>::vec_f;
+        using vec_u = typename simd_base<dual<T>>::vec_u;
         using vec_s = typename simd_base<dual<T>>::vec_s;
+        using dual_base<dual<T>>::dual_base;
 
         SIMDEE_TRIVIAL_TYPE(dual);
 
@@ -152,7 +158,24 @@ namespace sd {
             mm.r = decltype(mm.r)(r.data().r);
         }
 
-        using dual_base<dual<T>>::dual_base;
+        SIMDEE_BINOP(vec_f, vec_b, operator<, (b_vector_t{ l.mm.l < r.mm.l, l.mm.r < r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_b, operator>, (b_vector_t{ l.mm.l > r.mm.l, l.mm.r > r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_b, operator<=, (b_vector_t{ l.mm.l <= r.mm.l, l.mm.r <= r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_b, operator>=, (b_vector_t{ l.mm.l >= r.mm.l, l.mm.r >= r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_b, operator==, (b_vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_b, operator!=, (b_vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
+        SIMDEE_UNOP(vec_f, vec_f, operator-, (vector_t{-l.mm.l, -l.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_f, operator+, (vector_t{ l.mm.l + r.mm.l, l.mm.r + r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_f, operator-, (vector_t{ l.mm.l - r.mm.l, l.mm.r - r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_f, operator*, (vector_t{ l.mm.l * r.mm.l, l.mm.r * r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_f, operator/, (vector_t{ l.mm.l / r.mm.l, l.mm.r / r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_f, min, (vector_t{ min(l.mm.l, r.mm.l), min(l.mm.r, r.mm.r) }));
+        SIMDEE_BINOP(vec_f, vec_f, max, (vector_t{ max(l.mm.l, r.mm.l), max(l.mm.r, r.mm.r) }));
+        SIMDEE_UNOP(vec_f, vec_f, signum, (vector_t{ signum(l.mm.l), signum(l.mm.r) }));
+        SIMDEE_UNOP(vec_f, vec_f, sqrt, (vector_t{ sqrt(l.mm.l), sqrt(l.mm.r) }));
+        SIMDEE_UNOP(vec_f, vec_f, rsqrt, (vector_t{ rsqrt(l.mm.l), rsqrt(l.mm.r) }));
+        SIMDEE_UNOP(vec_f, vec_f, rcp, (vector_t{ rcp(l.mm.l), rcp(l.mm.r) }));
+        SIMDEE_UNOP(vec_f, vec_f, abs, (vector_t{ abs(l.mm.l), abs(l.mm.r) }));
     };
 
     template <typename T>

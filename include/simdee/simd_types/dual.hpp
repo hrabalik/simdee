@@ -182,10 +182,15 @@ namespace sd {
     struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_u>::value>::type> : dual_base<dual<T>> {
     private:
         using simd_base<dual<T>>::mm;
+        using b_vector_t = typename simd_base<dual<T>>::vec_b::vector_t;
 
     public:
+        using vector_t = typename simd_base<dual<T>>::vector_t;
         using vec_b = typename simd_base<dual<T>>::vec_b;
+        using vec_f = typename simd_base<dual<T>>::vec_f;
+        using vec_u = typename simd_base<dual<T>>::vec_u;
         using vec_s = typename simd_base<dual<T>>::vec_s;
+        using dual_base<dual<T>>::dual_base;
 
         SIMDEE_TRIVIAL_TYPE(dual);
 
@@ -199,17 +204,30 @@ namespace sd {
             mm.r = decltype(mm.r)(r.data().r);
         }
 
-        using dual_base<dual<T>>::dual_base;
+#   if defined(SIMDEE_NEED_INT)
+        SIMDEE_BINOP(vec_u, vec_b, operator==, (b_vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
+        SIMDEE_BINOP(vec_u, vec_b, operator!=, (b_vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
+#   endif
+        SIMDEE_BINOP(vec_u, vec_u, operator&, (vector_t{ l.mm.l & r.mm.l, l.mm.r & r.mm.r }));
+        SIMDEE_BINOP(vec_u, vec_u, operator|, (vector_t{ l.mm.l | r.mm.l, l.mm.r | r.mm.r }));
+        SIMDEE_BINOP(vec_u, vec_u, operator^, (vector_t{ l.mm.l ^ r.mm.l, l.mm.r ^ r.mm.r }));
+        SIMDEE_UNOP(vec_u, vec_u, operator~, (vector_t{ ~l.mm.l, ~l.mm.r }));
+        SIMDEE_BINOP(vec_u, vec_u, andnot, (vector_t{ andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r) }));
     };
 
     template <typename T>
     struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_s>::value>::type> : dual_base<dual<T>> {
     private:
         using simd_base<dual<T>>::mm;
+        using b_vector_t = typename simd_base<dual<T>>::vec_b::vector_t;
 
     public:
+        using vector_t = typename simd_base<dual<T>>::vector_t;
+        using vec_b = typename simd_base<dual<T>>::vec_b;
         using vec_f = typename simd_base<dual<T>>::vec_f;
         using vec_u = typename simd_base<dual<T>>::vec_u;
+        using vec_s = typename simd_base<dual<T>>::vec_s;
+        using dual_base<dual<T>>::dual_base;
 
         SIMDEE_TRIVIAL_TYPE(dual);
 
@@ -223,7 +241,23 @@ namespace sd {
             mm.r = decltype(mm.r)(r.data().r);
         }
 
-        using dual_base<dual<T>>::dual_base;
+#   if defined(SIMDEE_NEED_INT)
+        SIMDEE_BINOP(vec_s, vec_b, operator<, (b_vector_t{ l.mm.l < r.mm.l, l.mm.r < r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_b, operator>, (b_vector_t{ l.mm.l > r.mm.l, l.mm.r > r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_b, operator<=, (b_vector_t{ l.mm.l <= r.mm.l, l.mm.r <= r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_b, operator>=, (b_vector_t{ l.mm.l >= r.mm.l, l.mm.r >= r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_b, operator==, (b_vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_b, operator!=, (b_vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
+        SIMDEE_UNOP(vec_s, vec_s, operator-, (vector_t{ -l.mm.l, -l.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_s, operator+, (vector_t{ l.mm.l + r.mm.l, l.mm.r + r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_s, operator-, (vector_t{ l.mm.l - r.mm.l, l.mm.r - r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_s, operator*, (vector_t{ l.mm.l * r.mm.l, l.mm.r * r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_s, operator/, (vector_t{ l.mm.l / r.mm.l, l.mm.r / r.mm.r }));
+        SIMDEE_BINOP(vec_s, vec_s, min, (vector_t{ min(l.mm.l, r.mm.l), min(l.mm.r, r.mm.r) }));
+        SIMDEE_BINOP(vec_s, vec_s, max, (vector_t{ max(l.mm.l, r.mm.l), max(l.mm.r, r.mm.r) }));
+        SIMDEE_UNOP(vec_s, vec_s, abs, (vector_t{ abs(l.mm.l), abs(l.mm.r) }));
+        SIMDEE_UNOP(vec_s, vec_s, signum, (vector_t{ signum(l.mm.l), signum(l.mm.r) }));
+#   endif
     };
 }
 

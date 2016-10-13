@@ -365,10 +365,10 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         //
     }
     SECTION("from aligned pointer") {
-        tb = bufAB;
-        tf = bufAF;
-        tu = bufAU;
-        ts = bufAS;
+        tb = sd::aligned(bufAB.data());
+        tf = sd::aligned(bufAF.data());
+        tu = sd::aligned(bufAU.data());
+        ts = sd::aligned(bufAS.data());
         tor();
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
@@ -376,10 +376,10 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
-        tb = bufAB;
-        tf = bufAF;
-        tu = bufAU;
-        ts = bufAS;
+        tb = sd::unaligned(bufAB.data());
+        tf = sd::unaligned(bufAF.data());
+        tu = sd::unaligned(bufAU.data());
+        ts = sd::unaligned(bufAS.data());
         tor();
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);

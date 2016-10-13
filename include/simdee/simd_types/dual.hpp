@@ -85,13 +85,13 @@ namespace sd {
         }
 
         SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) {
-            mm.l.interleaved_load(r);
-            mm.r.interleaved_load(r + (T::width * step));
+            mm.l.interleaved_load(r, step);
+            mm.r.interleaved_load(r + (T::width * step), step);
         }
 
         SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const {
-            mm.l.interleaved_store(r);
-            mm.r.interleaved_store(r + (T::width * step));
+            mm.l.interleaved_store(r, step);
+            mm.r.interleaved_store(r + (T::width * step), step);
         }
 
         template <typename Op_t>

@@ -26,43 +26,71 @@ namespace sd {
             return x && (x & (x - 1)) == 0;
         }
 
-        template <typename T, std::size_t Align = alignof(T)>
-        T* aligned_malloc(std::size_t bytes)
-        {
+        template <typename T, std::size_t Align>
+        struct aligned_allocator;
+        template <typename T, std::size_t Align = alignof(T), bool Switch = (Align > alignof(double))>
+        struct alloc;
+
+        template <typename T, std::size_t Align>
+        struct alloc<T, Align, false> {
+            static T* malloc(std::size_t bytes) {
+                return (T*)std::malloc(bytes);
+            }
+            static void free(T* ptr) {
+                std::free(ptr);
+            }
+            using allocator = std::allocator<T>;
+            using deleter = std::default_delete<T>;
+        };
+
+        template <typename T, std::size_t Align>
+        struct alloc<T, Align, true> {
             static_assert(detail::is_pow2(Align), "alignment must be a power of 2");
             static_assert(Align <= 128, "alignment is too large");
             static_assert(Align > alignof(double), "alignment is too small -- use malloc");
-            auto orig = (uintptr_t)std::malloc(bytes + Align);
-            if (orig == 0) return nullptr;
-            auto aligned = (orig + Align) & ~(Align - 1);
-            auto offset = int8_t(orig - aligned);
-            ((int8_t*)aligned)[-1] = offset;
-            return (T*)aligned;
-        }
 
-        template <typename T, std::size_t Align = alignof(T)>
-        void aligned_free(T* aligned)
-        {
-            if (aligned == nullptr) return;
-            auto offset = ((int8_t*)aligned)[-1];
-            auto orig = uintptr_t(aligned) + offset;
-            std::free((void*)orig);
-        }
+            static T* malloc(std::size_t bytes) {
+                auto orig = (uintptr_t)std::malloc(bytes + Align);
+                if (orig == 0) return nullptr;
+                auto aligned = (orig + Align) & ~(Align - 1);
+                auto offset = int8_t(orig - aligned);
+                ((int8_t*)aligned)[-1] = offset;
+                return (T*)aligned;
+            }
 
-        template <typename T, std::size_t Align = alignof(T)>
+            static void free(T* aligned) {
+                if (aligned == nullptr) return;
+                auto offset = ((int8_t*)aligned)[-1];
+                auto orig = uintptr_t(aligned) + offset;
+                std::free((void*)orig);
+            }
+
+            using allocator = aligned_allocator<T, Align>;
+
+            struct deleter {
+                template <typename S>
+                void operator()(S* ptr) {
+                    free(ptr);
+                }
+            };
+        };
+
+        template <typename T, std::size_t Align>
         struct aligned_allocator {
             using value_type = T;
+            using alloc_t = alloc<T, Align>;
 
             aligned_allocator() = default;
+
             template <typename S>
             aligned_allocator(const aligned_allocator<S, Align>&) {}
 
             T* allocate(std::size_t count) const SIMDEE_NOEXCEPT {
-                return aligned_malloc<T, Align>(sizeof(T) * count);
+                return alloc_t::malloc(sizeof(T) * count);
             }
 
             void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
-                aligned_free<T, Align>(ptr);
+                alloc_t::free(ptr);
             }
 
             void destroy(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {
@@ -98,13 +126,6 @@ namespace sd {
         bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return true; }
         template <typename T, typename U, std::size_t TS, std::size_t US>
         bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return false; }
-
-        struct aligned_deleter {
-            template <typename T>
-            void operator()(T* ptr) {
-                aligned_free(ptr);
-            }
-        };
     }
 }
 

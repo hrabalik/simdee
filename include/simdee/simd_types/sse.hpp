@@ -91,10 +91,11 @@ namespace sd {
         SIMDEE_BASE_CTOR_TPL(sse_base, expr::init<T>, *this = r.template to<scalar_t>());
         SIMDEE_BASE_CTOR(sse_base, storage_t, aligned_load(r.data()));
 
-        SIMDEE_BASE_CTOR_COMPLEX_FLAG(sse_base, expr::all_bits) {
+		SIMDEE_INL sse_base(const expr::all_bits& r) { operator=(r); }
+		SIMDEE_INL sse_base& operator=(const expr::all_bits&) {
             mm = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(mm), _mm_castps_si128(mm)));
             return self();
-        }
+		}
 
         SIMDEE_INL void aligned_load(const scalar_t* r) { mm = _mm_load_ps((const float*)r); }
         SIMDEE_INL void aligned_store(scalar_t* r) const { _mm_store_ps((float*)r, mm); }

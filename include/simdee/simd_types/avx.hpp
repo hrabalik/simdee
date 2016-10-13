@@ -81,16 +81,17 @@ namespace sd {
         SIMDEE_BASE_CTOR_TPL(avx_base, expr::init<T>, *this = r.template to<scalar_t>());
         SIMDEE_BASE_CTOR(avx_base, storage_t, aligned_load(r.data()));
 
-        SIMDEE_BASE_CTOR_COMPLEX_FLAG(avx_base, expr::all_bits) {
+		SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
+		SIMDEE_INL avx_base& operator=(const expr::all_bits&) {
 #       if defined(__AVX2__)
-            mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
+			mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
 #       else
-            __m128 temp;
-            temp = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(temp), _mm_castps_si128(temp)));
-            mm = _mm256_set_m128(temp, temp);
+			__m128 temp;
+			temp = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(temp), _mm_castps_si128(temp)));
+			mm = _mm256_set_m128(temp, temp);
 #       endif
-            return self();
-        }
+			return self();
+		}
 
         SIMDEE_INL void aligned_load(const scalar_t* r) { mm = _mm256_load_ps((const float*)r); }
         SIMDEE_INL void aligned_store(scalar_t* r) const { _mm256_store_ps((float*)r, mm); }

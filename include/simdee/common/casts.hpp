@@ -7,6 +7,7 @@
 #include "../util/inline.hpp"
 #include "../util/integral.hpp"
 #include <type_traits>
+#include <cstring>
 
 namespace sd {
     namespace impl {
@@ -58,27 +59,14 @@ namespace sd {
 
     namespace dirty {
         template <typename From, typename To>
-        constexpr To&& cast(From&& from) {
+        SIMDEE_INL To cast(const From& source) {
             static_assert(std::is_trivial<From>::value, "dirty::cast(): the casted-from type isn't trivial");
             static_assert(std::is_trivial<To>::value, "dirty::cast(): the casted-to type isn't trivial");
             static_assert(sizeof(From) == sizeof(To), "dirty::cast(): the types aren't the same size");
-            return std::move(*reinterpret_cast<To*>(&from));
-        }
 
-        template <typename From, typename To>
-        constexpr To& cast(From& from) {
-            static_assert(std::is_trivial<From>::value, "dirty::cast(): the casted-from type isn't trivial");
-            static_assert(std::is_trivial<To>::value, "dirty::cast(): the casted-to type isn't trivial");
-            static_assert(sizeof(From) == sizeof(To), "dirty::cast(): the types aren't the same size");
-            return *reinterpret_cast<To*>(&from);
-        }
-
-        template <typename From, typename To>
-        constexpr const To& cast(const From& from) {
-            static_assert(std::is_trivial<From>::value, "dirty::cast(): the casted-from type isn't trivial");
-            static_assert(std::is_trivial<To>::value, "dirty::cast(): the casted-to type isn't trivial");
-            static_assert(sizeof(From) == sizeof(To), "dirty::cast(): the types aren't the same size");
-            return *reinterpret_cast<const To*>(&from);
+            To result;
+            std::memcpy(&result, &source, sizeof(From));
+            return result;
         }
 
         template <typename T>

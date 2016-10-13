@@ -73,8 +73,8 @@ namespace sd {
         SIMDEE_INL void aligned_store(scalar_t* r) const { *r = mm; }
         SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = *r; }
         SIMDEE_INL void unaligned_store(scalar_t* r) const { *r = mm; }
-        SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t step) { mm = *r; }
-        SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const { *r = mm; }
+        SIMDEE_INL void interleaved_load(const scalar_t* r, std::size_t) { mm = *r; }
+        SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t) const { *r = mm; }
 
         template <typename Op_t>
         SIMDEE_INL const Crtp reduce(Op_t) const {

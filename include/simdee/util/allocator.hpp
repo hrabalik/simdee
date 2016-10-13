@@ -130,6 +130,8 @@ namespace sd {
 
     template <typename T, std::size_t Align = alignof(T)>
     using allocator = typename detail::alloc<T, Align>::allocator;
+    template <typename T, std::size_t Align = alignof(T)>
+    using deleter = typename detail::alloc<T, Align>::deleter;
 }
 
 #endif // SIMDEE_UTIL_MALLOC_HPP

@@ -31,20 +31,22 @@ namespace sd {
     T* aligned_malloc(std::size_t bytes)
     {
         static_assert(detail::is_pow2(Align), "alignment must be a power of 2");
-        auto size = bytes + sizeof(void*) + Align - 1;
-        auto orig = std::malloc(size);
-        if (orig == nullptr) return nullptr;
-        auto aligned = reinterpret_cast<T*>((reinterpret_cast<std::uintptr_t>(orig) + sizeof(void*) + Align - 1) & ~(Align - 1));
-        reinterpret_cast<void**>(aligned)[-1] = orig; // save orig right before the start of user data
-        return aligned;
+        static_assert(Align <= 128, "alignment is too large");
+        auto orig = (uintptr_t)std::malloc(bytes + Align);
+        if (orig == 0) return nullptr;
+        auto aligned = (orig + Align) & ~(Align - 1);
+        auto offset = int8_t(orig - aligned);
+        ((int8_t*)aligned)[-1] = offset;
+        return (T*)aligned;
     }
 
     template <typename T>
     void aligned_free(T* aligned)
     {
         if (aligned == nullptr) return;
-        auto orig = reinterpret_cast<void**>(aligned)[-1]; // restore orig from right before the start of user data
-        std::free(orig);
+        auto offset = ((int8_t*)aligned)[-1];
+        auto orig = uintptr_t(aligned) + offset;
+        std::free((void*)orig);
     }
 
     struct aligned_deleter {

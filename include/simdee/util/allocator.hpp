@@ -40,7 +40,7 @@ namespace sd {
         return (T*)aligned;
     }
 
-    template <typename T>
+    template <typename T, std::size_t Align = alignof(T)>
     void aligned_free(T* aligned)
     {
         if (aligned == nullptr) return;
@@ -69,7 +69,7 @@ namespace sd {
         }
 
         void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
-            sd::aligned_free(ptr);
+            sd::aligned_free<T, Align>(ptr);
         }
 
         void destroy(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {

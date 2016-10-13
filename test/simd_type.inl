@@ -176,18 +176,10 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         REQUIRE(rs == bufAS);
     }
     SECTION("from storage_t") {
-        B::storage_t storb;
-        F::storage_t storf;
-        U::storage_t storu;
-        S::storage_t stors;
-        storb = bufAB;
-        storf = bufAF;
-        storu = bufAU;
-        stors = bufAS;
-        B tb(storb);
-        F tf(storf);
-        U tu(storu);
-        S ts(stors);
+        B tb(bufAB);
+        F tf(bufAF);
+        U tu(bufAU);
+        S ts(bufAS);
         tor(tb, tf, tu, ts);
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
@@ -308,15 +300,7 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         REQUIRE(rs == bufAS);
     }
     SECTION("from storage_t") {
-        B::storage_t storb;
-        F::storage_t storf;
-        U::storage_t storu;
-        S::storage_t stors;
-        storb = bufAB;
-        storf = bufAF;
-        storu = bufAU;
-        stors = bufAS;
-        implicit_test(storb, storf, storu, stors);
+        implicit_test(bufAB, bufAF, bufAU, bufAS);
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
@@ -420,18 +404,10 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         REQUIRE(rs == bufAS);
     }
     SECTION("from storage_t") {
-        B::storage_t storb;
-        F::storage_t storf;
-        U::storage_t storu;
-        S::storage_t stors;
-        storb = bufAB;
-        storf = bufAF;
-        storu = bufAU;
-        stors = bufAS;
-        tb = storb;
-        tf = storf;
-        tu = storu;
-        ts = stors;
+        tb = bufAB;
+        tf = bufAF;
+        tu = bufAU;
+        ts = bufAS;
         tor();
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);

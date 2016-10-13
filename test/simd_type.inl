@@ -663,11 +663,6 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
         r = abs(a);
         REQUIRE(r == e);
     }
-    SECTION("signum") {
-        expect1([](scalar_t a) { return std::signbit(a) ? scalar_t(-1) : scalar_t(1); });
-        r = signum(a);
-        REQUIRE(r == e);
-    }
     SECTION("square root") {
         expect1([](scalar_t a) { return std::sqrt(std::abs(a)); });
         r = sqrt(abs(a));
@@ -821,11 +816,6 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
     SECTION("absolute value") {
         expect1([](scalar_t a) { return std::abs(a); });
         r = abs(a);
-        REQUIRE(r == e);
-    }
-    SECTION("signum") {
-        expect1([](scalar_t a) { return (a < 0) ? scalar_t(-1) : scalar_t(1); });
-        r = signum(a);
         REQUIRE(r == e);
     }
     SECTION("rhs of compound can be implicitly constructed") {

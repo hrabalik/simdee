@@ -103,10 +103,6 @@ namespace sd {
         return l.self();
     }
     template <typename Simd_t>
-    SIMDEE_INL const Simd_t signum(const simd_base<Simd_t>& l) {
-        return cond(l.self() > zero(), Simd_t(1), Simd_t(-1));
-    }
-    template <typename Simd_t>
     SIMDEE_INL bool any(const simd_base<Simd_t>& l) {
         return l.self().mask().any();
     }

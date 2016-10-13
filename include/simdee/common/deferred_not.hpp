@@ -283,6 +283,10 @@ namespace sd {
         SIMDEE_INL const T andnot(const deferred_lognot<T>& l, const deferred_lognot<T>& r) {
             return andnot(r.neg, l.neg);
         }
+        template<typename T, typename True, typename False>
+        SIMDEE_INL auto cond(const deferred_lognot<T>& l, True t, False f) -> decltype(cond(l.neg, f, t)) {
+            return cond(l.neg, f, t);
+        }
     }
 }
 

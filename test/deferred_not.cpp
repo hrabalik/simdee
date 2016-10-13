@@ -27,6 +27,28 @@ TEST_CASE("deferred_not types", "[deferred_not]") {
     REQUIRE((std::size_t(U::width) == not_U::width));
 }
 
+TEST_CASE("deferred_not cond", "[deferred_not]") {
+    const B ba = !dataAB;
+    const B bb = !dataBB;
+    const not_B nba(dataAB);
+    const not_B nbb(dataBB);
+
+    auto expB = cond(ba, ba, bb);
+    REQUIRE(all(expB == cond(ba, ba, nbb)));
+    REQUIRE(all(expB == cond(ba, nba, bb)));
+    REQUIRE(all(expB == cond(ba, nba, nbb)));
+    REQUIRE(all(expB == cond(nba, ba, bb)));
+    REQUIRE(all(expB == cond(nba, ba, nbb)));
+    REQUIRE(all(expB == cond(nba, nba, bb)));
+    REQUIRE(all(expB == cond(nba, nba, nbb)));
+
+    const U ua = dataAU;
+    const U ub = dataBU;
+    auto expU = cond(ba, ua, ub);
+    REQUIRE(all(expU == cond(ba, ua, ub)));
+    REQUIRE(all(expU == cond(nba, ua, ub)));
+}
+
 TEST_CASE("deferred_not bool arithmetic", "[deferred_not]") {
     const B ba = !dataAB;
     const not_B nba(dataAB);

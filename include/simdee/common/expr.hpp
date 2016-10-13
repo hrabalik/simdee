@@ -14,11 +14,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit aligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDEE_INL void operator=(const Simd_t& r) const {
-                static_assert(!std::is_const<T>::value, "Storing into a const pointer via aligned()");
-                using scalar_t = typename Simd_t::scalar_t;
-                r.aligned_store(reinterpret_cast<scalar_t*>(ptr));
-            }
+            SIMDEE_INL void operator=(const Simd_t& r) const { r.aligned_store(ptr); }
 
             // data
             T* ptr;
@@ -29,11 +25,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit unaligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDEE_INL void operator=(const Simd_t& r) const {
-                static_assert(!std::is_const<T>::value, "Storing into a const pointer via unaligned()");
-                using scalar_t = typename Simd_t::scalar_t;
-                r.unaligned_store(reinterpret_cast<scalar_t*>(ptr));
-            }
+            SIMDEE_INL void operator=(const Simd_t& r) const { r.unaligned_store(ptr); }
 
             // data
             T* ptr;
@@ -44,11 +36,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit interleaved(T* r, std::size_t rs) : ptr(r), step(rs) {}
 
             template <typename Simd_t>
-            SIMDEE_INL void operator=(const Simd_t& r) const {
-                static_assert(!std::is_const<T>::value, "Storing into a const pointer via interleaved()");
-                using scalar_t = typename Simd_t::scalar_t;
-                r.interleaved_store(reinterpret_cast<scalar_t*>(ptr), step);
-            }
+            SIMDEE_INL void operator=(const Simd_t& r) const { r.interleaved_store(ptr, step); }
 
             // data
             T* ptr;

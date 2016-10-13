@@ -128,7 +128,7 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(sseb);
 
         using sse_base::sse_base;
-        SIMDEE_CTOR(sseb, element_t, mm = r ? sseb(all_bits()).mm : sseb(zero()).mm);
+		SIMDEE_CTOR(sseb, element_t, if (r) mm = sseb(all_bits()).mm; else mm = sseb(zero()).mm);
         SIMDEE_CTOR(sseb, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseb, not_sseb, mm = _mm_xor_ps(r.neg.mm, sseb(all_bits()).mm));
 

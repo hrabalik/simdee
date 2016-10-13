@@ -125,7 +125,7 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(avxb);
 
         using avx_base::avx_base;
-        SIMDEE_CTOR(avxb, element_t, mm = r ? avxb(all_bits()).mm : avxb(zero()).mm);
+		SIMDEE_CTOR(avxb, element_t, if (r) mm = avxb(all_bits()).mm; else mm = avxb(zero()).mm);
         SIMDEE_CTOR(avxb, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxb, not_avxb, mm = _mm256_xor_ps(r.neg.mm, avxb(all_bits()).mm));
 

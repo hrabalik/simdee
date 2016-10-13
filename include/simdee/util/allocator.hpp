@@ -22,87 +22,116 @@ namespace sd {
         using is_trivially_default_constructible = std::is_trivially_default_constructible<T>;
 #endif
 
-        template <std::size_t x>
-        using is_power_of_2 = std::integral_constant<bool, x && (x & (x - 1)) == 0>;
-    }
-
-    template <typename T, std::size_t Align>
-    T* aligned_malloc(std::size_t count)
-    {
-        static_assert(detail::is_power_of_2<Align>::value, "alignment must be a power of 2");
-        auto size = (sizeof(T) * count) + sizeof(void*) + Align - 1;
-        auto orig = std::malloc(size);
-        if (orig == nullptr) return nullptr;
-        auto aligned = reinterpret_cast<T*>((reinterpret_cast<std::uintptr_t>(orig) + sizeof(void*) + Align - 1) & ~(Align - 1));
-        reinterpret_cast<void**>(aligned)[-1] = orig; // save orig right before the start of user data
-        return aligned;
-    }
-
-    template <typename T>
-    void aligned_free(T* aligned)
-    {
-        if (aligned == nullptr) return;
-        auto orig = reinterpret_cast<void**>(aligned)[-1]; // restore orig from right before the start of user data
-        std::free(orig);
-    }
-
-    struct aligned_deleter {
-        template <typename T>
-        void operator()(T* ptr) {
-            sd::aligned_free(ptr);
-        }
-    };
-
-    template <typename T, std::size_t Align>
-    struct aligned_allocator {
-        using value_type = T;
-
-        aligned_allocator() = default;
-        template <typename S>
-        aligned_allocator(const aligned_allocator<S, Align>&) {}
-
-        T* allocate(std::size_t count) const SIMDEE_NOEXCEPT {
-            return sd::aligned_malloc<T, Align>(count);
+        inline constexpr bool is_pow2(std::size_t x) {
+            return x && (x & (x - 1)) == 0;
         }
 
-        void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
-            sd::aligned_free(ptr);
-        }
+        template <typename T, std::size_t Align>
+        struct aligned_allocator;
+        template <typename T, std::size_t Align = alignof(T), bool Switch = (Align > alignof(double))>
+        struct alloc;
 
-        void destroy(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {
-            if (!std::is_trivially_destructible<T>::value) {
-                ptr->~T();
+        template <typename T, std::size_t Align>
+        struct alloc<T, Align, false> {
+            static T* malloc(std::size_t bytes) {
+                return (T*)std::malloc(bytes);
             }
-            else {
-                no_op(ptr); // just to suppress MSVC warning "ptr not referenced"
+            static void free(T* ptr) {
+                std::free(ptr);
             }
-        }
-
-        static void no_op(T*) {}
-
-        void construct(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
-            if (!detail::is_trivially_default_constructible<T>::value) {
-                new (ptr)T;
-            }
-        }
-
-        template <typename A1, typename... A>
-        void construct(T* ptr, A1&& a1, A&&... a2) const {
-            new (ptr)T(std::forward<A1>(a1), std::forward<A...>(a2)...);
-        }
-
-        // default rebind should do just this, doesn't seem to work in MSVC though
-        template <typename S>
-        struct rebind {
-            using other = aligned_allocator<S, Align>;
+            using allocator = std::allocator<T>;
+            using deleter = std::default_delete<T>;
         };
-    };
 
-    template <typename T, typename U, std::size_t TS, std::size_t US>
-    bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return true; }
-    template <typename T, typename U, std::size_t TS, std::size_t US>
-    bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return false; }
+        template <typename T, std::size_t Align>
+        struct alloc<T, Align, true> {
+            static_assert(detail::is_pow2(Align), "alignment must be a power of 2");
+            static_assert(Align <= 128, "alignment is too large");
+            static_assert(Align > alignof(double), "alignment is too small -- use malloc");
 
+            static T* malloc(std::size_t bytes) {
+                auto orig = (uintptr_t)std::malloc(bytes + Align);
+                if (orig == 0) return nullptr;
+                auto aligned = (orig + Align) & ~(Align - 1);
+                auto offset = int8_t(orig - aligned);
+                ((int8_t*)aligned)[-1] = offset;
+                return (T*)aligned;
+            }
+
+            static void free(T* aligned) {
+                if (aligned == nullptr) return;
+                auto offset = ((int8_t*)aligned)[-1];
+                auto orig = uintptr_t(aligned) + offset;
+                std::free((void*)orig);
+            }
+
+            using allocator = aligned_allocator<T, Align>;
+
+            struct deleter {
+                template <typename S>
+                void operator()(S* ptr) {
+                    free(ptr);
+                }
+            };
+        };
+
+        template <typename T, std::size_t Align>
+        struct aligned_allocator {
+            using value_type = T;
+            using alloc_t = alloc<T, Align>;
+
+            aligned_allocator() = default;
+
+            template <typename S>
+            aligned_allocator(const aligned_allocator<S, Align>&) {}
+
+            T* allocate(std::size_t count) const SIMDEE_NOEXCEPT {
+                return alloc_t::malloc(sizeof(T) * count);
+            }
+
+            void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
+                alloc_t::free(ptr);
+            }
+
+            void destroy(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {
+                if (!std::is_trivially_destructible<T>::value) {
+                    ptr->~T();
+                }
+                else {
+                    no_op(ptr); // just to suppress MSVC warning "ptr not referenced"
+                }
+            }
+
+            static void no_op(T*) {}
+
+            void construct(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
+                if (!is_trivially_default_constructible<T>::value) {
+                    new (ptr)T;
+                }
+            }
+
+            template <typename A1, typename... A>
+            void construct(T* ptr, A1&& a1, A&&... a2) const {
+                new (ptr)T(std::forward<A1>(a1), std::forward<A...>(a2)...);
+            }
+
+            // default rebind should do just this, doesn't seem to work in MSVC though
+            template <typename S>
+            struct rebind {
+                using other = aligned_allocator<S, Align>;
+            };
+        };
+
+        template <typename T, typename U, std::size_t TS, std::size_t US>
+        inline bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return true; }
+        template <typename T, typename U, std::size_t TS, std::size_t US>
+        inline bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return false; }
+    }
+
+    template <typename T, std::size_t Align = alignof(T)>
+    using allocator = typename detail::alloc<T, Align>::allocator;
+    template <typename T, std::size_t Align = alignof(T)>
+    using deleter = typename detail::alloc<T, Align>::deleter;
 }
 
 #endif // SIMDEE_UTIL_MALLOC_HPP

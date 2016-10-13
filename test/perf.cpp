@@ -48,9 +48,9 @@ TEST_CASE("bench_ray_box", "[!hide][perf]") {
     };
     const std::size_t dataSize8 = 1024 * 1024;
     const std::size_t dataSize1 = 8 * dataSize8;
-    using vec8 = std::vector<RayBoxData8, sd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
+    using vec8 = std::vector<RayBoxData8, sd::allocator<RayBoxData8, sizeof(__m256)>>;
     using vec1 = std::vector<RayBoxData1>;
-    using vec8S = std::vector<RayBoxData8S, sd::aligned_allocator<RayBoxData8, sizeof(__m256)>>;
+    using vec8S = std::vector<RayBoxData8S, sd::allocator<RayBoxData8, sizeof(__m256)>>;
     vec8 data8(dataSize8);
     vec1 data1(dataSize1);
     const vec8S& data8S = reinterpret_cast<const vec8S&>(data8);

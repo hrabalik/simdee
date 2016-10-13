@@ -331,126 +331,175 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
+    B tb; F tf; U tu; S ts;
     B::storage_t rb = bufZB;
     F::storage_t rf = bufZF;
     U::storage_t ru = bufZU;
     S::storage_t rs = bufZS;
-    B tb; F tf; U tu; S ts;
 
-    auto tor = [&rb, &tb, &rf, &tf, &ru, &tu, &rs, &ts]() {
-        rb = tb;
-        rf = tf;
-        ru = tu;
-        rs = ts;
-    };
+    SECTION("from...") {
+        auto tor = [&]() {
+            rb = tb;
+            rf = tf;
+            ru = tu;
+            rs = ts;
+        };
 
-    SECTION("from scalar_t") {
-        tb = B::scalar_t::T;
-        tf = 1.2345678f;
-        tu = 123456789U;
-        ts = -123456789;
-        tor();
-        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
-        for (auto val : rf) REQUIRE(val == 1.2345678f);
-        for (auto val : ru) REQUIRE(val == 123456789U);
-        for (auto val : rs) REQUIRE(val == -123456789);
+        SECTION("from scalar_t") {
+            tb = B::scalar_t::T;
+            tf = 1.2345678f;
+            tu = 123456789U;
+            ts = -123456789;
+            tor();
+            for (auto val : rb) REQUIRE(val == B::scalar_t::T);
+            for (auto val : rf) REQUIRE(val == 1.2345678f);
+            for (auto val : ru) REQUIRE(val == 123456789U);
+            for (auto val : rs) REQUIRE(val == -123456789);
+        }
+        SECTION("from element_t") {
+            tb = true;
+            rb = tb;
+            for (auto val : rb) REQUIRE(val == B::scalar_t::T);
+        }
+        SECTION("from vector_t") {
+            tb = B::vector_t{};
+            tf = F::vector_t{};
+            tu = U::vector_t{};
+            ts = S::vector_t{};
+            tor();
+            //
+            // no requirements
+            //
+        }
+        SECTION("from aligned pointer") {
+            tb = sd::aligned(bufAB.data());
+            tf = sd::aligned(bufAF.data());
+            tu = sd::aligned(bufAU.data());
+            ts = sd::aligned(bufAS.data());
+            tor();
+            REQUIRE(rb == bufAB);
+            REQUIRE(rf == bufAF);
+            REQUIRE(ru == bufAU);
+            REQUIRE(rs == bufAS);
+        }
+        SECTION("from unaligned pointer") {
+            tb = sd::unaligned(bufAB.data());
+            tf = sd::unaligned(bufAF.data());
+            tu = sd::unaligned(bufAU.data());
+            ts = sd::unaligned(bufAS.data());
+            tor();
+            REQUIRE(rb == bufAB);
+            REQUIRE(rf == bufAF);
+            REQUIRE(ru == bufAU);
+            REQUIRE(rs == bufAS);
+        }
+        SECTION("from interleaved pointer") {
+            tb = sd::interleaved(bufAB.data(), 1);
+            tf = sd::interleaved(bufAF.data(), 1);
+            tu = sd::interleaved(bufAU.data(), 1);
+            ts = sd::interleaved(bufAS.data(), 1);
+            tor();
+            REQUIRE(rb == bufAB);
+            REQUIRE(rf == bufAF);
+            REQUIRE(ru == bufAU);
+            REQUIRE(rs == bufAS);
+        }
+        SECTION("from storage_t") {
+            tb = bufAB;
+            tf = bufAF;
+            tu = bufAU;
+            ts = bufAS;
+            tor();
+            REQUIRE(rb == bufAB);
+            REQUIRE(rf == bufAF);
+            REQUIRE(ru == bufAU);
+            REQUIRE(rs == bufAS);
+        }
+        SECTION("from zero, all_bits, sign_bit, etc. (sd::init family)") {
+            tb = sd::zero();
+            tf = sd::zero();
+            tu = sd::zero();
+            ts = sd::zero();
+            tor();
+            for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+            for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+            for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+            for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
+            tb = sd::all_bits();
+            tf = sd::all_bits();
+            tu = sd::all_bits();
+            ts = sd::all_bits();
+            tor();
+            for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+            for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+            for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+            for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
+            tb = sd::sign_bit();
+            tf = sd::sign_bit();
+            tu = sd::sign_bit();
+            ts = sd::sign_bit();
+            tor();
+            for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+            for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+            for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+            for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
+            tb = sd::abs_mask();
+            tf = sd::abs_mask();
+            tu = sd::abs_mask();
+            ts = sd::abs_mask();
+            tor();
+            for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+            for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+            for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+            for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+        }
     }
-    SECTION("from element_t") {
-        tb = true;
-        rb = tb;
-        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
-    }
-    SECTION("from vector_t") {
-        tb = B::vector_t{};
-        tf = F::vector_t{};
-        tu = U::vector_t{};
-        ts = S::vector_t{};
-        tor();
-        //
-        // no requirements
-        //
-    }
-    SECTION("from aligned pointer") {
-        tb = sd::aligned(bufAB.data());
-        tf = sd::aligned(bufAF.data());
-        tu = sd::aligned(bufAU.data());
-        ts = sd::aligned(bufAS.data());
-        tor();
-        REQUIRE(rb == bufAB);
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
-    SECTION("from unaligned pointer") {
-        tb = sd::unaligned(bufAB.data());
-        tf = sd::unaligned(bufAF.data());
-        tu = sd::unaligned(bufAU.data());
-        ts = sd::unaligned(bufAS.data());
-        tor();
-        REQUIRE(rb == bufAB);
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
-    SECTION("from interleaved pointer") {
-        tb = sd::interleaved(bufAB.data(), 1);
-        tf = sd::interleaved(bufAF.data(), 1);
-        tu = sd::interleaved(bufAU.data(), 1);
-        ts = sd::interleaved(bufAS.data(), 1);
-        tor();
-        REQUIRE(rb == bufAB);
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
-    SECTION("from storage_t") {
+    SECTION("to...") {
         tb = bufAB;
         tf = bufAF;
         tu = bufAU;
         ts = bufAS;
-        tor();
-        REQUIRE(rb == bufAB);
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
-    SECTION("from zero, all_bits, sign_bit, etc. (sd::init family)") {
-        tb = sd::zero();
-        tf = sd::zero();
-        tu = sd::zero();
-        ts = sd::zero();
-        tor();
-        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
-        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
-        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
-        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x00000000);
-        tb = sd::all_bits();
-        tf = sd::all_bits();
-        tu = sd::all_bits();
-        ts = sd::all_bits();
-        tor();
-        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
-        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
-        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
-        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0xffffffff);
-        tb = sd::sign_bit();
-        tf = sd::sign_bit();
-        tu = sd::sign_bit();
-        ts = sd::sign_bit();
-        tor();
-        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
-        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
-        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
-        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x80000000);
-        tb = sd::abs_mask();
-        tf = sd::abs_mask();
-        tu = sd::abs_mask();
-        ts = sd::abs_mask();
-        tor();
-        for (auto val : rb) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
-        for (auto val : rf) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
-        for (auto val : ru) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
-        for (auto val : rs) REQUIRE(sd::dirty::as_u(val) == 0x7fffffff);
+
+        SECTION("to aligned pointer") {
+            sd::aligned(rb.data()) = tb;
+            sd::aligned(rf.data()) = tf;
+            sd::aligned(ru.data()) = tu;
+            sd::aligned(rs.data()) = ts;
+            REQUIRE(rb == bufAB);
+            REQUIRE(rf == bufAF);
+            REQUIRE(ru == bufAU);
+            REQUIRE(rs == bufAS);
+        }
+        SECTION("to unaligned pointer") {
+            sd::unaligned(rb.data()) = tb;
+            sd::unaligned(rf.data()) = tf;
+            sd::unaligned(ru.data()) = tu;
+            sd::unaligned(rs.data()) = ts;
+            REQUIRE(rb == bufAB);
+            REQUIRE(rf == bufAF);
+            REQUIRE(ru == bufAU);
+            REQUIRE(rs == bufAS);
+        }
+        SECTION("to interleaved pointer") {
+            sd::interleaved(rb.data(), 1) = tb;
+            sd::interleaved(rf.data(), 1) = tf;
+            sd::interleaved(ru.data(), 1) = tu;
+            sd::interleaved(rs.data(), 1) = ts;
+            REQUIRE(rb == bufAB);
+            REQUIRE(rf == bufAF);
+            REQUIRE(ru == bufAU);
+            REQUIRE(rs == bufAS);
+        }
+        SECTION("to storage_t") {
+            rb = tb;
+            rf = tf;
+            ru = tu;
+            rs = ts;
+            REQUIRE(rb == bufAB);
+            REQUIRE(rf == bufAF);
+            REQUIRE(ru == bufAU);
+            REQUIRE(rs == bufAS);
+        }
     }
 }
 

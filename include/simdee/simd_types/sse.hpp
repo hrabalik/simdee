@@ -88,6 +88,7 @@ namespace sd {
         SIMDEE_BASE_CTOR_FLAG(sse_base, expr::zero, mm = _mm_setzero_ps());
         SIMDEE_BASE_CTOR_TPL(sse_base, expr::aligned<T>, aligned_load(r.ptr));
         SIMDEE_BASE_CTOR_TPL(sse_base, expr::unaligned<T>, unaligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(sse_base, expr::interleaved<T>, interleaved_load(r.ptr, r.step));
         SIMDEE_BASE_CTOR_TPL(sse_base, expr::init<T>, *this = r.template to<scalar_t>());
         SIMDEE_BASE_CTOR(sse_base, storage_t, aligned_load(r.data()));
 

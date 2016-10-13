@@ -164,6 +164,17 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
+    SECTION("from interleaved pointer") {
+        B tb(sd::interleaved(bufAB.data(), 1));
+        F tf(sd::interleaved(bufAF.data(), 1));
+        U tu(sd::interleaved(bufAU.data(), 1));
+        S ts(sd::interleaved(bufAS.data(), 1));
+        tor(tb, tf, tu, ts);
+        REQUIRE(rb == bufAB);
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
+    }
     SECTION("from storage_t") {
         B::storage_t storb;
         F::storage_t storf;
@@ -285,6 +296,17 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
+    SECTION("from interleaved pointer") {
+        implicit_test(
+            sd::interleaved(bufAB.data(), 1),
+            sd::interleaved(bufAF.data(), 1),
+            sd::interleaved(bufAU.data(), 1),
+            sd::interleaved(bufAS.data(), 1));
+        REQUIRE(rb == bufAB);
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
+    }
     SECTION("from storage_t") {
         B::storage_t storb;
         F::storage_t storf;
@@ -380,6 +402,17 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         tf = sd::unaligned(bufAF.data());
         tu = sd::unaligned(bufAU.data());
         ts = sd::unaligned(bufAS.data());
+        tor();
+        REQUIRE(rb == bufAB);
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
+    }
+    SECTION("from interleaved pointer") {
+        tb = sd::interleaved(bufAB.data(), 1);
+        tf = sd::interleaved(bufAF.data(), 1);
+        tu = sd::interleaved(bufAU.data(), 1);
+        ts = sd::interleaved(bufAS.data(), 1);
         tor();
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);

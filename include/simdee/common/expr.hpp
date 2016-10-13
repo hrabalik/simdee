@@ -39,6 +39,22 @@ namespace sd {
             T* ptr;
         };
 
+        template <typename T>
+        struct interleaved {
+            SIMDEE_INL constexpr explicit interleaved(T* r, std::size_t rs) : ptr(r), step(rs) {}
+
+            template <typename Simd_t>
+            SIMDEE_INL void operator=(const Simd_t& r) const {
+                static_assert(!std::is_const<T>::value, "Storing into a const pointer via interleaved()");
+                using scalar_t = typename Simd_t::scalar_t;
+                r.interleaved_store(reinterpret_cast<scalar_t*>(ptr), step);
+            }
+
+            // data
+            T* ptr;
+            std::size_t step;
+        };
+
         template <typename Crtp>
         struct init {
             SIMDEE_INL constexpr const Crtp& self() const { return static_cast<const Crtp&>(*this); }
@@ -112,6 +128,10 @@ namespace sd {
     SIMDEE_INL constexpr expr::aligned<T> aligned(T* const& r) { return expr::aligned<T>(r); }
     template <typename T>
     SIMDEE_INL constexpr expr::unaligned<T> unaligned(T* const& r) { return expr::unaligned<T>(r); }
+    template <typename T>
+    SIMDEE_INL constexpr expr::interleaved<T> interleaved(T* const& r, std::size_t rs) {
+        return expr::interleaved<T>(r, rs);
+    }
 
     SIMDEE_INL constexpr expr::zero zero() { return expr::zero{}; }
     SIMDEE_INL constexpr expr::all_bits all_bits() { return expr::all_bits{}; }

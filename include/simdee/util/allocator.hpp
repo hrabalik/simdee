@@ -127,6 +127,9 @@ namespace sd {
         template <typename T, typename U, std::size_t TS, std::size_t US>
         inline bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return false; }
     }
+
+    template <typename T, std::size_t Align = alignof(T)>
+    using allocator = typename detail::alloc<T, Align>::allocator;
 }
 
 #endif // SIMDEE_UTIL_MALLOC_HPP

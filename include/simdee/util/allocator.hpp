@@ -22,15 +22,16 @@ namespace sd {
         using is_trivially_default_constructible = std::is_trivially_default_constructible<T>;
 #endif
 
-        template <std::size_t x>
-        using is_power_of_2 = std::integral_constant<bool, x && (x & (x - 1)) == 0>;
+        inline constexpr bool is_pow2(std::size_t x) {
+            return x && (x & (x - 1)) == 0;
+        }
     }
 
     template <typename T, std::size_t Align = alignof(T)>
-    T* aligned_malloc(std::size_t count)
+    T* aligned_malloc(std::size_t bytes)
     {
-        static_assert(detail::is_power_of_2<Align>::value, "alignment must be a power of 2");
-        auto size = (sizeof(T) * count) + sizeof(void*) + Align - 1;
+        static_assert(detail::is_pow2(Align), "alignment must be a power of 2");
+        auto size = bytes + sizeof(void*) + Align - 1;
         auto orig = std::malloc(size);
         if (orig == nullptr) return nullptr;
         auto aligned = reinterpret_cast<T*>((reinterpret_cast<std::uintptr_t>(orig) + sizeof(void*) + Align - 1) & ~(Align - 1));
@@ -62,7 +63,7 @@ namespace sd {
         aligned_allocator(const aligned_allocator<S, Align>&) {}
 
         T* allocate(std::size_t count) const SIMDEE_NOEXCEPT {
-            return sd::aligned_malloc<T, Align>(count);
+            return sd::aligned_malloc<T, Align>(sizeof(T) * count);
         }
 
         void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {

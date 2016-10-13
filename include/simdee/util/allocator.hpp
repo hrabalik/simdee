@@ -26,7 +26,7 @@ namespace sd {
         using is_power_of_2 = std::integral_constant<bool, x && (x & (x - 1)) == 0>;
     }
 
-    template <typename T, std::size_t Align>
+    template <typename T, std::size_t Align = alignof(T)>
     T* aligned_malloc(std::size_t count)
     {
         static_assert(detail::is_power_of_2<Align>::value, "alignment must be a power of 2");
@@ -53,7 +53,7 @@ namespace sd {
         }
     };
 
-    template <typename T, std::size_t Align>
+    template <typename T, std::size_t Align = alignof(T)>
     struct aligned_allocator {
         using value_type = T;
 

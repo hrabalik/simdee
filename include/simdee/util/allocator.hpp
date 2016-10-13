@@ -123,9 +123,9 @@ namespace sd {
         };
 
         template <typename T, typename U, std::size_t TS, std::size_t US>
-        bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return true; }
+        inline bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return true; }
         template <typename T, typename U, std::size_t TS, std::size_t US>
-        bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return false; }
+        inline bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return false; }
     }
 }
 

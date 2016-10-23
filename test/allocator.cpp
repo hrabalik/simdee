@@ -9,6 +9,7 @@ struct alignas(64)T {
     T(const T&) = default;
     T& operator=(const T&) = default;
     int64_t v1, v2;
+    char pad[48];
 };
 
 TEST_CASE("sd::detail::alloc::malloc/free", "[allocator]") {

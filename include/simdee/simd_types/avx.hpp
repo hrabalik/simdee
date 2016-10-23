@@ -82,30 +82,10 @@ namespace sd {
         SIMDEE_BASE_CTOR_TPL(avx_base, expr::init<T>, *this = r.template to<scalar_t>());
         SIMDEE_BASE_CTOR(avx_base, storage_t, aligned_load(r.data()));
 
-		SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
-		SIMDEE_INL avx_base& operator=(const expr::all_bits&) {
-#       if defined(__AVX2__)
-			mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
-#       else
-			__m128 temp;
-			temp = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(temp), _mm_castps_si128(temp)));
-			mm = _mm256_set_m128(temp, temp);
-#       endif
-			return self();
-		}
-
         SIMDEE_INL void aligned_load(const scalar_t* r) { mm = _mm256_load_ps((const float*)r); }
         SIMDEE_INL void aligned_store(scalar_t* r) const { _mm256_store_ps((float*)r, mm); }
         SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = _mm256_loadu_ps((const float*)r); }
         SIMDEE_INL void unaligned_store(scalar_t* r) const { _mm256_storeu_ps((float*)r, mm); }
-
-        void interleaved_load(const scalar_t* r, std::size_t step) {
-            alignas(avx_base)scalar_t temp[width];
-            for (std::size_t i = 0; i < width; ++i, r += step) {
-                temp[i] = *r;
-            }
-            aligned_load(temp);
-        }
 
         void interleaved_store(scalar_t* r, std::size_t step) const {
             alignas(avx_base)scalar_t temp[width];
@@ -121,6 +101,37 @@ namespace sd {
             tmp = f(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));
             return f(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));
         }
+
+#   if defined(__AVX2__)
+		SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
+        SIMDEE_INL avx_base& operator=(const expr::all_bits&) {
+			mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
+			return self();
+		}
+
+        void interleaved_load(const scalar_t* r, std::size_t step) {
+            auto step_vec = _mm256_set1_epi32(int(step));
+            auto mult_vec = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
+            auto idx_vec = _mm256_mullo_epi32(mult_vec, step_vec);
+            mm = _mm256_i32gather_ps((float*)r, idx_vec, 4);
+        }
+#   else
+		SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
+        SIMDEE_INL avx_base& operator=(const expr::all_bits&) {
+			__m128 temp;
+			temp = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(temp), _mm_castps_si128(temp)));
+			mm = _mm256_set_m128(temp, temp);
+			return self();
+		}
+
+        void interleaved_load(const scalar_t* r, std::size_t step) {
+            alignas(avx_base)scalar_t temp[width];
+            for (std::size_t i = 0; i < width; ++i, r += step) {
+                temp[i] = *r;
+            }
+            aligned_load(temp);
+        }
+#   endif
     };
 
     struct avxb : avx_base<avxb> {

@@ -87,7 +87,7 @@ namespace sd {
         SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = _mm256_loadu_ps((const float*)r); }
         SIMDEE_INL void unaligned_store(scalar_t* r) const { _mm256_storeu_ps((float*)r, mm); }
 
-        void interleaved_store(scalar_t* r, std::size_t step) const {
+        void interleaved_store(scalar_t* r, int step) const {
             alignas(avx_base)scalar_t temp[width];
             aligned_store(temp);
             for (std::size_t i = 0; i < width; ++i, r += step) {
@@ -109,8 +109,8 @@ namespace sd {
 			return self();
 		}
 
-        void interleaved_load(const scalar_t* r, std::size_t step) {
-            auto step_vec = _mm256_set1_epi32(int(step));
+        void interleaved_load(const scalar_t* r, int step) {
+            auto step_vec = _mm256_set1_epi32(step);
             auto mult_vec = _mm256_setr_epi32(0, 1, 2, 3, 4, 5, 6, 7);
             auto idx_vec = _mm256_mullo_epi32(mult_vec, step_vec);
             mm = _mm256_i32gather_ps((float*)r, idx_vec, 4);
@@ -124,7 +124,7 @@ namespace sd {
 			return self();
 		}
 
-        void interleaved_load(const scalar_t* r, std::size_t step) {
+        void interleaved_load(const scalar_t* r, int step) {
             alignas(avx_base)scalar_t temp[width];
             for (std::size_t i = 0; i < width; ++i, r += step) {
                 temp[i] = *r;

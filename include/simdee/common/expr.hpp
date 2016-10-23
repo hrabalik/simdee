@@ -33,14 +33,14 @@ namespace sd {
 
         template <typename T>
         struct interleaved {
-            SIMDEE_INL constexpr explicit interleaved(T* r, std::size_t rs) : ptr(r), step(rs) {}
+            SIMDEE_INL constexpr explicit interleaved(T* r, int rs) : ptr(r), step(rs) {}
 
             template <typename Simd_t>
             SIMDEE_INL void operator=(const Simd_t& r) const { r.interleaved_store(ptr, step); }
 
             // data
             T* ptr;
-            std::size_t step;
+            int step;
         };
 
         template <typename Crtp>
@@ -117,7 +117,7 @@ namespace sd {
     template <typename T>
     SIMDEE_INL constexpr expr::unaligned<T> unaligned(T* const& r) { return expr::unaligned<T>(r); }
     template <typename T>
-    SIMDEE_INL constexpr expr::interleaved<T> interleaved(T* const& r, std::size_t rs) {
+    SIMDEE_INL constexpr expr::interleaved<T> interleaved(T* const& r, int rs) {
         return expr::interleaved<T>(r, rs);
     }
 

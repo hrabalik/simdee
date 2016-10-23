@@ -70,11 +70,11 @@ namespace sd {
             }
 
             template <typename Rhs>
-            void interleaved_load(const Rhs& r, std::size_t step) {
+            void interleaved_load(const Rhs& r, int step) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
-            SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const {
+            SIMDEE_INL void interleaved_store(scalar_t* r, int step) const {
                 T pos(~neg);
                 pos.interleaved_store(r, step);
             }
@@ -208,11 +208,11 @@ namespace sd {
             }
 
             template <typename Rhs>
-            void interleaved_load(const Rhs& r, std::size_t step) {
+            void interleaved_load(const Rhs& r, int step) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
-            SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t step) const {
+            SIMDEE_INL void interleaved_store(scalar_t* r, int step) const {
                 T pos(!neg);
                 pos.interleaved_store(r, step);
             }

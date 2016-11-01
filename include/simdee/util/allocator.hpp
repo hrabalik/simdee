@@ -8,6 +8,7 @@
 #include <exception>
 #include <cstdlib>
 #include <cstdint>
+#include <memory>
 #include "noexcept.hpp"
 
 namespace sd {

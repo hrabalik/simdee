@@ -30,12 +30,6 @@
 #ifndef SIMDEE_NEED_INT
 #define SIMDEE_NEED_INT 1 // require integer operations for SIMD types
 #endif
-#ifndef SIMDEE_NEED_AVX
-#define SIMDEE_NEED_AVX 0 // require AVX SIMD types to be declared
-#endif
-#ifndef SIMDEE_NEED_SSE
-#define SIMDEE_NEED_SSE 0 // require SSE SIMD types to be declared
-#endif
 
 //
 // fix MSVC borked SSE macros (ICC has got them right though)

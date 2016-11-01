@@ -9,7 +9,7 @@
 //
 // SSE-accelerated vec4 implementation
 //
-#if SIMDEE_NEED_SSE || defined(__SSE2__)
+#if defined(__SSE2__)
 #include "simd_types/sse.hpp"
 
 namespace sd {

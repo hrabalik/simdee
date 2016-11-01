@@ -1,0 +1,11 @@
+file(GLOB_RECURSE SIMDEE_HEADERS "${CMAKE_SOURCE_DIR}/include/*.hpp")
+file(GLOB_RECURSE SIMDEE_BENCH_SOURCES "*.hpp" "*.cpp" "*.inl")
+add_executable(simdee_bench ${SIMDEE_HEADERS} ${SIMDEE_BENCH_SOURCES})
+target_include_directories(simdee_bench PUBLIC ${CMAKE_SOURCE_DIR}/include)
+set_property(TARGET simdee_bench PROPERTY CXX_STANDARD 11)
+
+if(MSVC)
+    SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /W4 /arch:AVX2")
+else()
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -mavx2")
+endif()

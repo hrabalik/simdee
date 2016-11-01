@@ -1,14 +1,13 @@
-#include "catch.hpp"
+#define SIMDEE_NEED_AVX 1
+#include <simdee/simdee.hpp>
+#include <simdee/util/allocator.hpp>
+
 #include <limits>
 #include <vector>
 #include <random>
 #include <chrono>
 #include <iostream>
 #include <functional>
-
-#define SIMDEE_NEED_AVX 1
-#include <simdee/simdee.hpp>
-#include <simdee/util/allocator.hpp>
 
 const char* const hline = "===============================================================================\n";
 
@@ -33,7 +32,7 @@ double benchmark_ms(std::function<void()> func) {
     return best;
 }
 
-TEST_CASE("bench_ray_box", "[!hide][perf]") {
+int main() {
     std::cout << hline << "Benchmark: Ray-box intersection\n";
 
     // allocate data
@@ -60,7 +59,6 @@ TEST_CASE("bench_ray_box", "[!hide][perf]") {
     std::vector<Result> resultsSimdee(dataSize1);
 
     // fill data
-    std::random_device rd;
     std::minstd_rand re(0x8a7ac012);
     std::normal_distribution<float> dist(0, 1);
     auto fill = [&dist, &re](float* data, std::size_t num) {
@@ -70,6 +68,7 @@ TEST_CASE("bench_ray_box", "[!hide][perf]") {
     };
     const std::size_t numFloats = (sizeof(RayBoxData1) / sizeof(float)) * dataSize1;
     fill((float*)(data8.data()), numFloats);
+    
     {
         RayBoxData1* ptr = data1.data();
         for (auto i = 0U; i < dataSize8; ++i) {
@@ -266,6 +265,6 @@ TEST_CASE("bench_ray_box", "[!hide][perf]") {
     std::cout << "Simdee: "    << benchmark_ms(simdee) << " ms\n";
 
     // check correctness
-    REQUIRE((resultsNonSimd == resultsHandSimd));
-    REQUIRE((resultsNonSimd == resultsSimdee));
+    if (resultsNonSimd != resultsHandSimd) std::cerr << "hand SIMD results incorrect\n";
+    if (resultsNonSimd != resultsSimdee) std::cerr << "Simdee results incorrect\n";
 }

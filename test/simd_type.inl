@@ -5,9 +5,6 @@
 // SIMD_TYPE -- name of the SIMD type as a string
 // SIMD_TEST_TAG -- catch tests tag(s) as a string
 // SIMD_WIDTH -- expected SIMD width
-// SIMD_LOAD_AF -- expression that extracts vector_t from bufAF
-// SIMD_LOAD_AU -- expression that extracts vector_t from bufAU
-// SIMD_LOAD_AS -- expression that extracts vector_t from bufAS
 //
 
 #include <numeric>

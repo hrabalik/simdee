@@ -89,8 +89,8 @@ namespace sd {
                 return ~neg.mask();
             }
 
-            SIMDEE_INL typename T::element_t first_element() const {
-                return ~neg.first_element();
+            SIMDEE_INL typename T::log_scalar_t first_scalar() const {
+                return ~neg.first_scalar();
             }
 
             // data
@@ -227,8 +227,8 @@ namespace sd {
                 return ~neg.mask();
             }
 
-            SIMDEE_INL typename T::element_t first_element() const {
-                return !neg.first_element();
+            SIMDEE_INL typename T::log_scalar_t first_scalar() const {
+                return !neg.first_scalar();
             }
 
             // data

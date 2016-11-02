@@ -176,8 +176,8 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         }
     }
     SECTION("reduce") {
-        auto res_ba = ba.reduce([](B a, B b) { return a && b; }).first_element();
-        auto res_nba = nba.reduce([](B a, B b) { return a && b; }).first_element();
+        auto res_ba = ba.reduce([](B a, B b) { return a && b; }).first_scalar();
+        auto res_nba = nba.reduce([](B a, B b) { return a && b; }).first_scalar();
         REQUIRE(res_ba == res_nba);
     }
     SECTION("mask") {
@@ -185,9 +185,9 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         auto res_nba = nba.mask();
         REQUIRE(res_ba == res_nba);
     }
-    SECTION("first_element") {
-        auto res_ba = ba.first_element();
-        auto res_nba = nba.first_element();
+    SECTION("first_scalar") {
+        auto res_ba = ba.first_scalar();
+        auto res_nba = nba.first_scalar();
         REQUIRE(res_ba == res_nba);
     }
 }

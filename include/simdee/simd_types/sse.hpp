@@ -31,12 +31,12 @@ namespace sd {
     template<>
     struct is_simd_type<sses> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename Scalar_t, typename Element_t>
+    template <typename Simd_t, typename Vector_t, typename Scalar_t, typename LogScalar_t>
     struct sse_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Scalar_t;
-        using element_t = Element_t;
+        using log_scalar_t = LogScalar_t;
         using vec_b = sseb;
         using vec_f = ssef;
         using vec_u = sseu;
@@ -63,7 +63,7 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
-        using element_t = typename simd_base<Crtp>::element_t;
+        using log_scalar_t = typename simd_base<Crtp>::log_scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
@@ -117,12 +117,12 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(sseb);
 
         using sse_base::sse_base;
-		SIMDEE_CTOR(sseb, element_t, if (r) mm = sseb(all_bits()).mm; else mm = sseb(zero()).mm);
+		SIMDEE_CTOR(sseb, log_scalar_t, if (r) mm = sseb(all_bits()).mm; else mm = sseb(zero()).mm);
         SIMDEE_CTOR(sseb, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseb, not_sseb, mm = _mm_xor_ps(r.neg.mm, sseb(all_bits()).mm));
 
         SIMDEE_INL mask_t mask() const { return mask_t(cast_u(_mm_movemask_ps(mm))); }
-        SIMDEE_INL element_t first_element() const { return _mm_cvtss_f32(mm) != 0; }
+        SIMDEE_INL log_scalar_t first_scalar() const { return _mm_cvtss_f32(mm) != 0; }
 
         SIMDEE_BINOP(sseb, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseb, sseb, operator!=, _mm_xor_ps(l.mm, r.mm));
@@ -138,7 +138,7 @@ namespace sd {
         using sse_base::sse_base;
         SIMDEE_INL explicit ssef(const sses&);
 
-        SIMDEE_INL element_t first_element() const { return _mm_cvtss_f32(mm); }
+        SIMDEE_INL log_scalar_t first_scalar() const { return _mm_cvtss_f32(mm); }
 
         SIMDEE_BINOP(ssef, sseb, operator<, _mm_cmplt_ps(l.mm, r.mm));
         SIMDEE_BINOP(ssef, sseb, operator>, _mm_cmpgt_ps(l.mm, r.mm));
@@ -170,7 +170,7 @@ namespace sd {
         SIMDEE_CTOR(sseu, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseu, not_sseu, mm = _mm_xor_ps(r.neg.mm, sseu(all_bits()).mm));
 
-        SIMDEE_INL element_t first_element() const { return dirty::as_u(_mm_cvtss_f32(mm)); }
+        SIMDEE_INL log_scalar_t first_scalar() const { return dirty::as_u(_mm_cvtss_f32(mm)); }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(sseu, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
@@ -191,7 +191,7 @@ namespace sd {
         SIMDEE_INL explicit sses(const sseu&);
         SIMDEE_CTOR(sses, __m128i, mm = _mm_castsi128_ps(r));
 
-        SIMDEE_INL element_t first_element() const { return dirty::as_s(_mm_cvtss_f32(mm)); }
+        SIMDEE_INL log_scalar_t first_scalar() const { return dirty::as_s(_mm_cvtss_f32(mm)); }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(sses, sseb, operator<, _mm_cmplt_epi32(l.mmi(), r.mmi()));

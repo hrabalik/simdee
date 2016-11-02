@@ -27,7 +27,7 @@ namespace sd {
         using traits_t = simd_type_traits<Crtp>;
         using vector_t = typename traits_t::vector_t;
         using scalar_t = typename traits_t::scalar_t;
-        using element_t = typename traits_t::element_t;
+        using log_scalar_t = typename traits_t::log_scalar_t;
         using vec_b = typename traits_t::vec_b;
         using vec_f = typename traits_t::vec_f;
         using vec_u = typename traits_t::vec_u;

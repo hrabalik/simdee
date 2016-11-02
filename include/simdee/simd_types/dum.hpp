@@ -25,12 +25,12 @@ namespace sd {
     template<>
     struct is_simd_type<dums> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename Element_t>
+    template <typename Simd_t, typename Vector_t, typename LogScalar_t>
     struct dum_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Vector_t;
-        using element_t = Element_t;
+        using log_scalar_t = LogScalar_t;
         using vec_b = dumb;
         using vec_f = dumf;
         using vec_u = dumu;
@@ -56,7 +56,7 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
-        using element_t = typename simd_base<Crtp>::element_t;
+        using log_scalar_t = typename simd_base<Crtp>::log_scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
@@ -86,17 +86,17 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(dumb);
 
         using dum_base::dum_base;
-        SIMDEE_CTOR(dumb, element_t, mm = r ? scalar_t::T : scalar_t::F);
+        SIMDEE_CTOR(dumb, log_scalar_t, mm = r ? scalar_t::T : scalar_t::F);
 
         SIMDEE_INL mask_t mask() const { return mask_t(cast_u(mm) & 1U); }
-        SIMDEE_INL element_t first_element() const { return mm != scalar_t::F; }
+        SIMDEE_INL log_scalar_t first_scalar() const { return mm != scalar_t::F; }
 
         SIMDEE_BINOP(dumb, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
         SIMDEE_BINOP(dumb, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
-        SIMDEE_BINOP(dumb, dumb, operator&&, l.first_element() && r.first_element());
-        SIMDEE_BINOP(dumb, dumb, operator||, l.first_element() || r.first_element());
-        SIMDEE_UNOP(dumb, dumb, operator!, !l.first_element());
-        SIMDEE_BINOP(dumb, dumb, andnot, l.first_element() && !r.first_element());
+        SIMDEE_BINOP(dumb, dumb, operator&&, l.first_scalar() && r.first_scalar());
+        SIMDEE_BINOP(dumb, dumb, operator||, l.first_scalar() || r.first_scalar());
+        SIMDEE_UNOP(dumb, dumb, operator!, !l.first_scalar());
+        SIMDEE_BINOP(dumb, dumb, andnot, l.first_scalar() && !r.first_scalar());
     };
 
     struct dumf : dum_base<dumf> {
@@ -105,7 +105,7 @@ namespace sd {
         using dum_base::dum_base;
         SIMDEE_INL explicit dumf(const dums&);
 
-        SIMDEE_INL element_t first_element() const { return mm; }
+        SIMDEE_INL log_scalar_t first_scalar() const { return mm; }
 
         SIMDEE_BINOP(dumf, dumb, operator<, (l.mm < r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
         SIMDEE_BINOP(dumf, dumb, operator>, (l.mm > r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
@@ -135,7 +135,7 @@ namespace sd {
         SIMDEE_INL explicit dumu(const dumb&);
         SIMDEE_INL explicit dumu(const dums&);
 
-        SIMDEE_INL element_t first_element() const { return mm; }
+        SIMDEE_INL log_scalar_t first_scalar() const { return mm; }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(dumu, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
@@ -156,7 +156,7 @@ namespace sd {
         SIMDEE_INL explicit dums(const dumf&);
         SIMDEE_INL explicit dums(const dumu&);
 
-        SIMDEE_INL element_t first_element() const { return mm; }
+        SIMDEE_INL log_scalar_t first_scalar() const { return mm; }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(dums, dumb, operator<, (l.mm < r.mm) ? dumb::scalar_t::T : dumb::scalar_t::F);
@@ -184,16 +184,16 @@ namespace sd {
     SIMDEE_INL dums::dums(const dumu& r) { mm = static_cast<scalar_t>(r.data()); }
 
     SIMDEE_INL const dumb cond(const dumb& pred, const dumb& if_true, const dumb& if_false) {
-        return pred.first_element() ? if_true : if_false;
+        return pred.first_scalar() ? if_true : if_false;
     }
     SIMDEE_INL const dumf cond(const dumb& pred, const dumf& if_true, const dumf& if_false) {
-        return pred.first_element() ? if_true : if_false;
+        return pred.first_scalar() ? if_true : if_false;
     }
     SIMDEE_INL const dumu cond(const dumb& pred, const dumu& if_true, const dumu& if_false) {
-        return pred.first_element() ? if_true : if_false;
+        return pred.first_scalar() ? if_true : if_false;
     }
     SIMDEE_INL const dums cond(const dumb& pred, const dums& if_true, const dums& if_false) {
-        return pred.first_element() ? if_true : if_false;
+        return pred.first_scalar() ? if_true : if_false;
     }
 }
 

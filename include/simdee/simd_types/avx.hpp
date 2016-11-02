@@ -34,12 +34,12 @@ namespace sd {
     template <>
     struct is_simd_type<avxs> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename Scalar_t, typename Element_t>
+    template <typename Simd_t, typename Vector_t, typename Scalar_t, typename LogScalar_t>
     struct avx_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Scalar_t;
-        using element_t = Element_t;
+        using log_scalar_t = LogScalar_t;
         using vec_b = avxb;
         using vec_f = avxf;
         using vec_u = avxu;
@@ -66,7 +66,7 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
-        using element_t = typename simd_base<Crtp>::element_t;
+        using log_scalar_t = typename simd_base<Crtp>::log_scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
@@ -138,12 +138,12 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(avxb);
 
         using avx_base::avx_base;
-		SIMDEE_CTOR(avxb, element_t, if (r) mm = avxb(all_bits()).mm; else mm = avxb(zero()).mm);
+		SIMDEE_CTOR(avxb, log_scalar_t, if (r) mm = avxb(all_bits()).mm; else mm = avxb(zero()).mm);
         SIMDEE_CTOR(avxb, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxb, not_avxb, mm = _mm256_xor_ps(r.neg.mm, avxb(all_bits()).mm));
 
         SIMDEE_INL mask_t mask() const { return mask_t(cast_u(_mm256_movemask_ps(mm))); }
-        SIMDEE_INL element_t first_element() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)) != 0; }
+        SIMDEE_INL log_scalar_t first_scalar() const { return _mm_cvtss_f32(_mm256_castps256_ps128(mm)) != 0; }
 
 #   if defined(__AVX2__)
         SIMDEE_BINOP(avxb, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
@@ -164,7 +164,7 @@ namespace sd {
         using avx_base::avx_base;
         SIMDEE_INL explicit avxf(const avxs&);
 
-        SIMDEE_INL element_t first_element() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
+        SIMDEE_INL log_scalar_t first_scalar() const { return  _mm_cvtss_f32(_mm256_castps256_ps128(mm)); }
 
         SIMDEE_BINOP(avxf, avxb, operator<, _mm256_cmp_ps(l.mm, r.mm, _CMP_LT_OQ));
         SIMDEE_BINOP(avxf, avxb, operator>, _mm256_cmp_ps(l.mm, r.mm, _CMP_GT_OQ));
@@ -196,7 +196,7 @@ namespace sd {
         SIMDEE_CTOR(avxu, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxu, not_avxu, mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm));
 
-        SIMDEE_INL element_t first_element() const { return dirty::as_u(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
+        SIMDEE_INL log_scalar_t first_scalar() const { return dirty::as_u(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(avxu, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
@@ -217,7 +217,7 @@ namespace sd {
         SIMDEE_INL explicit avxs(const avxu&);
         SIMDEE_CTOR(avxs, __m256i, mm = _mm256_castsi256_ps(r));
 
-        SIMDEE_INL element_t first_element() const { return dirty::as_s(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
+        SIMDEE_INL log_scalar_t first_scalar() const { return dirty::as_s(_mm_cvtss_f32(_mm256_castps256_ps128(mm))); }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(avxs, avxb, operator<, _mm256_cmpgt_epi32(r.mmi(), l.mmi()));

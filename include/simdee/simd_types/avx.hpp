@@ -96,8 +96,8 @@ namespace sd {
         }
 
         template <typename Op_t>
-        const Crtp reduce(Op_t f) const {
-            Crtp tmp = f(self(), _mm256_permute_ps(mm, _MM_SHUFFLE(2, 3, 0, 1)));
+        friend const Crtp reduce(const Crtp& l, Op_t f) {
+            Crtp tmp = f(l, _mm256_permute_ps(l.mm, _MM_SHUFFLE(2, 3, 0, 1)));
             tmp = f(tmp, _mm256_permute_ps(tmp.mm, _MM_SHUFFLE(1, 0, 3, 2)));
             return f(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));
         }

@@ -79,12 +79,6 @@ namespace sd {
                 pos.interleaved_store(r, step);
             }
 
-            template <typename Op_t>
-            SIMDEE_INL const T reduce(Op_t f) const {
-                T pos(~neg);
-                return pos.reduce(f);
-            }
-
             SIMDEE_INL typename T::mask_t mask() const {
                 return ~neg.mask();
             }
@@ -215,12 +209,6 @@ namespace sd {
             SIMDEE_INL void interleaved_store(scalar_t* r, int step) const {
                 T pos(!neg);
                 pos.interleaved_store(r, step);
-            }
-
-            template <typename Op_t>
-            SIMDEE_INL const T reduce(Op_t f) const {
-                T pos(!neg);
-                return pos.reduce(f);
             }
 
             SIMDEE_INL typename T::mask_t mask() const {

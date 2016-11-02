@@ -77,8 +77,8 @@ namespace sd {
         SIMDEE_INL void interleaved_store(scalar_t* r, std::size_t) const { *r = mm; }
 
         template <typename Op_t>
-        SIMDEE_INL const Crtp reduce(Op_t) const {
-            return self();
+        friend SIMDEE_INL const Crtp reduce(const Crtp& l, Op_t) {
+            return l;
         }
     };
 

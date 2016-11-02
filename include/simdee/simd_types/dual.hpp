@@ -96,10 +96,10 @@ namespace sd {
         }
 
         template <typename Op_t>
-        const Crtp reduce(Op_t f) const {
+        friend const Crtp reduce(const Crtp& l, Op_t f) {
             vector_t res;
-            res.l = mm.l.reduce(f);
-            res.r = mm.r.reduce(f);
+            res.l = reduce(l.data().l, f);
+            res.r = reduce(l.data().r, f);
             res.l = f(res.l, res.r);
             res.r = res.l;
             return res;

@@ -176,8 +176,8 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         }
     }
     SECTION("reduce") {
-        auto res_ba = ba.reduce([](B a, B b) { return a && b; }).first_scalar();
-        auto res_nba = nba.reduce([](B a, B b) { return a && b; }).first_scalar();
+        auto res_ba = reduce(ba, [](B a, B b) { return a && b; }).first_scalar();
+        auto res_nba = reduce(nba, [](B a, B b) { return a && b; }).first_scalar();
         REQUIRE(res_ba == res_nba);
     }
     SECTION("mask") {

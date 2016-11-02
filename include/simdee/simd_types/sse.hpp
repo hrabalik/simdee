@@ -107,8 +107,8 @@ namespace sd {
         }
 
         template <typename Op_t>
-        const Crtp reduce(Op_t f) const {
-            Crtp tmp = f(self(), _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(mm), _MM_SHUFFLE(2, 3, 0, 1))));
+        friend const Crtp reduce(const Crtp& l, Op_t f) {
+            Crtp tmp = f(l, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(l.mm), _MM_SHUFFLE(2, 3, 0, 1))));
             return f(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm), _MM_SHUFFLE(1, 0, 3, 2))));
         }
     };

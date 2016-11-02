@@ -93,10 +93,6 @@ ASSERT(HAS_METHOD(const B, interleaved_store(VAL(B::scalar_t*), VAL(int)), void)
 ASSERT(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(int)), void));
 ASSERT(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(int)), void));
 ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(const B, reduce(VAL(sd::op_add)), B));
-ASSERT(HAS_METHOD(const F, reduce(VAL(sd::op_add)), F));
-ASSERT(HAS_METHOD(const U, reduce(VAL(sd::op_add)), U));
-ASSERT(HAS_METHOD(const S, reduce(VAL(sd::op_add)), S));
 ASSERT(HAS_METHOD(const B, mask(), B::mask_t));
 ASSERT(HAS_METHOD(const B, first_scalar(), B::log_scalar_t));
 ASSERT(HAS_METHOD(const F, first_scalar(), F::log_scalar_t));
@@ -1035,13 +1031,13 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
         SECTION("log and") {
             auto and_ = [](scalar_t l, scalar_t r) { return l && r; };
             e = std::accumulate(begin(bufAB), end(bufAB), scalar_t::T, and_);
-            r = a.reduce(sd::op_logand{}).first_scalar() ? scalar_t::T : scalar_t::F;
+            r = reduce(a, sd::op_logand{}).first_scalar() ? scalar_t::T : scalar_t::F;
             REQUIRE(r == e);
         }
         SECTION("log or") {
             auto or_ = [](scalar_t l, scalar_t r) { return l || r; };
             e = std::accumulate(begin(bufAB), end(bufAB), scalar_t::T, or_);
-            r = a.reduce(sd::op_logor{}).first_scalar() ? scalar_t::T : scalar_t::F;
+            r = reduce(a, sd::op_logor{}).first_scalar() ? scalar_t::T : scalar_t::F;
             REQUIRE(r == e);
         }
     }
@@ -1054,25 +1050,25 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
             constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
             auto max_ = [](scalar_t l, scalar_t r) { return std::max(l, r); };
             e = std::accumulate(begin(bufAF), end(bufAF), -inf, max_);
-            r = a.reduce(sd::op_max{}).first_scalar();
+            r = reduce(a, sd::op_max{}).first_scalar();
             REQUIRE(r == e);
         }
         SECTION("min") {
             constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
             auto min_ = [](scalar_t l, scalar_t r) { return std::min(l, r); };
             e = std::accumulate(begin(bufAF), end(bufAF), inf, min_);
-            r = a.reduce(sd::op_min{}).first_scalar();
+            r = reduce(a, sd::op_min{}).first_scalar();
             REQUIRE(r == e);
         }
         SECTION("sum") {
             e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(0));
-            r = a.reduce(sd::op_add{}).first_scalar();
+            r = reduce(a, sd::op_add{}).first_scalar();
             REQUIRE(r == Approx(e));
         }
         SECTION("product") {
             auto prod = std::multiplies<scalar_t>();
             e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(1), prod);
-            r = a.reduce(sd::op_mul{}).first_scalar();
+            r = reduce(a, sd::op_mul{}).first_scalar();
             REQUIRE(r == Approx(e));
         }
     }
@@ -1084,13 +1080,13 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
         SECTION("log and") {
             auto and_ = [](scalar_t l, scalar_t r) { return l & r; };
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(-1), and_);
-            r = a.reduce(sd::op_bitand{}).first_scalar();
+            r = reduce(a, sd::op_bitand{}).first_scalar();
             REQUIRE(r == e);
         }
         SECTION("log or") {
             auto or_ = [](scalar_t l, scalar_t r) { return l | r; };
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(0), or_);
-            r = a.reduce(sd::op_bitor{}).first_scalar();
+            r = reduce(a, sd::op_bitor{}).first_scalar();
             REQUIRE(r == e);
         }
     }

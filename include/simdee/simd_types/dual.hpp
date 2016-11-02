@@ -32,7 +32,6 @@ namespace sd {
         using simd_t = dual<T>;
         using vector_t = impl::pair<T>;
         using scalar_t = typename simd_type_traits<T>::scalar_t;
-        using log_scalar_t = typename simd_type_traits<T>::log_scalar_t;
         using vec_b = dual<typename simd_type_traits<T>::vec_b>;
         using vec_f = dual<typename simd_type_traits<T>::vec_f>;
         using vec_u = dual<typename simd_type_traits<T>::vec_u>;
@@ -50,7 +49,6 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
-        using log_scalar_t = typename simd_base<Crtp>::log_scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
@@ -105,7 +103,7 @@ namespace sd {
             return res;
         }
 
-        SIMDEE_INL log_scalar_t first_scalar() const { return mm.l.first_scalar(); }
+        SIMDEE_INL scalar_t first_scalar() const { return mm.l.first_scalar(); }
     };
 
     template <typename T>
@@ -115,7 +113,6 @@ namespace sd {
 
     public:
         using vector_t = typename simd_base<dual<T>>::vector_t;
-        using log_scalar_t = typename simd_base<dual<T>>::log_scalar_t;
         using vec_b = typename simd_base<dual<T>>::vec_b;
         using vec_f = typename simd_base<dual<T>>::vec_f;
         using vec_u = typename simd_base<dual<T>>::vec_u;

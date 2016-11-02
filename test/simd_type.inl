@@ -28,10 +28,6 @@ ASSERT((std::is_same<B::scalar_t, sd::bool32_t>::value));
 ASSERT((std::is_same<F::scalar_t, float>::value));
 ASSERT((std::is_same<U::scalar_t, uint32_t>::value));
 ASSERT((std::is_same<S::scalar_t, int32_t>::value));
-ASSERT((std::is_same<B::log_scalar_t, bool>::value));
-ASSERT((std::is_same<F::log_scalar_t, float>::value));
-ASSERT((std::is_same<U::log_scalar_t, uint32_t>::value));
-ASSERT((std::is_same<S::log_scalar_t, int32_t>::value));
 ASSERT((std::is_same<B::mask_t, sd::mask<B>>::value));
 ASSERT((std::is_same<B::storage_t, sd::storage<B>>::value));
 ASSERT((std::is_same<F::storage_t, sd::storage<F>>::value));
@@ -94,10 +90,10 @@ ASSERT(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(int)), void)
 ASSERT(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(int)), void));
 ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(int)), void));
 ASSERT(HAS_METHOD(const B, mask(), B::mask_t));
-ASSERT(HAS_METHOD(const B, first_scalar(), B::log_scalar_t));
-ASSERT(HAS_METHOD(const F, first_scalar(), F::log_scalar_t));
-ASSERT(HAS_METHOD(const U, first_scalar(), U::log_scalar_t));
-ASSERT(HAS_METHOD(const S, first_scalar(), S::log_scalar_t));
+ASSERT(HAS_METHOD(const B, first_scalar(), B::scalar_t));
+ASSERT(HAS_METHOD(const F, first_scalar(), F::scalar_t));
+ASSERT(HAS_METHOD(const U, first_scalar(), U::scalar_t));
+ASSERT(HAS_METHOD(const S, first_scalar(), S::scalar_t));
 
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     B::storage_t rb = bufZB;
@@ -119,11 +115,6 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         for (auto val : rf) REQUIRE(val == 1.2345678f);
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
-    }
-    SECTION("from log_scalar_t") {
-        B tb(true);
-        rb = tb;
-        for (auto val : rb) REQUIRE(val == B::scalar_t(true));
     }
     SECTION("from vector_t") {
         B tb(B::vector_t{});

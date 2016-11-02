@@ -25,12 +25,11 @@ namespace sd {
     template<>
     struct is_simd_type<dums> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename LogScalar_t>
+    template <typename Simd_t, typename Vector_t>
     struct dum_traits {
         using simd_t = Simd_t;
         using vector_t = Vector_t;
         using scalar_t = Vector_t;
-        using log_scalar_t = LogScalar_t;
         using vec_b = dumb;
         using vec_f = dumf;
         using vec_u = dumu;
@@ -40,13 +39,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<dumb> : dum_traits<dumb, bool32_t, bool> {};
+    struct simd_type_traits<dumb> : dum_traits<dumb, bool32_t> {};
     template <>
-    struct simd_type_traits<dumf> : dum_traits<dumf, float, float> {};
+    struct simd_type_traits<dumf> : dum_traits<dumf, float> {};
     template <>
-    struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t, uint32_t> {};
+    struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t> {};
     template <>
-    struct simd_type_traits<dums> : dum_traits<dums, int32_t, int32_t> {};
+    struct simd_type_traits<dums> : dum_traits<dums, int32_t> {};
 
     template <typename Crtp>
     struct dum_base : simd_base<Crtp> {
@@ -56,7 +55,6 @@ namespace sd {
     public:
         using vector_t = typename simd_base<Crtp>::vector_t;
         using scalar_t = typename simd_base<Crtp>::scalar_t;
-        using log_scalar_t = typename simd_base<Crtp>::log_scalar_t;
         using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
@@ -88,7 +86,7 @@ namespace sd {
         using dum_base::dum_base;
 
         SIMDEE_INL mask_t mask() const { return mask_t(cast_u(mm) & 1U); }
-        SIMDEE_INL log_scalar_t first_scalar() const { return mm != scalar_t(false); }
+        SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
         SIMDEE_BINOP(dumb, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
         SIMDEE_BINOP(dumb, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
@@ -104,7 +102,7 @@ namespace sd {
         using dum_base::dum_base;
         SIMDEE_INL explicit dumf(const dums&);
 
-        SIMDEE_INL log_scalar_t first_scalar() const { return mm; }
+        SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
         SIMDEE_BINOP(dumf, dumb, operator<, (l.mm < r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
         SIMDEE_BINOP(dumf, dumb, operator>, (l.mm > r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
@@ -134,7 +132,7 @@ namespace sd {
         SIMDEE_INL explicit dumu(const dumb&);
         SIMDEE_INL explicit dumu(const dums&);
 
-        SIMDEE_INL log_scalar_t first_scalar() const { return mm; }
+        SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(dumu, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
@@ -155,7 +153,7 @@ namespace sd {
         SIMDEE_INL explicit dums(const dumf&);
         SIMDEE_INL explicit dums(const dumu&);
 
-        SIMDEE_INL log_scalar_t first_scalar() const { return mm; }
+        SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(dums, dumb, operator<, (l.mm < r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));

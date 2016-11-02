@@ -83,7 +83,7 @@ namespace sd {
                 return ~neg.mask();
             }
 
-            SIMDEE_INL typename T::log_scalar_t first_scalar() const {
+            SIMDEE_INL typename T::scalar_t first_scalar() const {
                 return ~neg.first_scalar();
             }
 
@@ -215,7 +215,7 @@ namespace sd {
                 return ~neg.mask();
             }
 
-            SIMDEE_INL typename T::log_scalar_t first_scalar() const {
+            SIMDEE_INL typename T::scalar_t first_scalar() const {
                 return !neg.first_scalar();
             }
 

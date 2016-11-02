@@ -29,16 +29,16 @@ type           | description                                  | additional requi
 `vec_f`        | related floating-point SIMD vector           | satisfies `SIMDVectorF`
 `vec_u`        | related unsigned integral SIMD vector        | satisfies `SIMDVectorU`
 `vec_s`        | related signed integral SIMD vector          | satisfies `SIMDVectorS`
+`vector_t`     | low-level underlying vector type             |
 `scalar_t`     | scalar type, as represented in memory        |
 `log_scalar_t` | scalar type, as represented in program logic |
 `storage_t`    | memory storage type                          |
-`register_t`   | low-level underlying register type           |
 
 ### Construction and assignment
 
 Type `T` that satisfies `SIMDVector` must be implicitly constructible and assignable from:
 * `T`
-* `scalar_t`, `log_scalar_t`, `storage_t`, `register_t`
+* `vector_t`, `scalar_t`, `log_scalar_t`, `storage_t`
 * result of `sd::zero()`, `sd::all_bits()`, `sd::sign_bit()`, `sd::abs_mask()`
 * result of `sd::aligned()`, `sd::unaligned()`, `sd::interleaved()`
 

@@ -3,8 +3,8 @@
 #include <type_traits>
 
 using B = sd::vec4b;
-const B::storage_t dataAB{ B::scalar_t::T, B::scalar_t::F, B::scalar_t::T, B::scalar_t::T };
-const B::storage_t dataBB{ B::scalar_t::F, B::scalar_t::T, B::scalar_t::F, B::scalar_t::T };
+const B::storage_t dataAB{ B::scalar_t(true), B::scalar_t(false), B::scalar_t(true), B::scalar_t(true) };
+const B::storage_t dataBB{ B::scalar_t(false), B::scalar_t(true), B::scalar_t(false), B::scalar_t(true) };
 
 using U = sd::vec4u;
 const U::storage_t dataAU{ 1753029375U, 1117080442U, 3817141237U, 3761735248U };

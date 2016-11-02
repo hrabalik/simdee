@@ -10,59 +10,33 @@
 
 namespace sd {
 
-    enum class bool8_t : uint8_t {
-        F = uint8_t(0),
-        T = uint8_t(-1),
-    };
-    enum class bool16_t : uint16_t {
-        F = uint16_t(0),
-        T = uint16_t(-1),
-    };
-    enum class bool32_t : uint32_t {
-        F = uint32_t(0),
-        T = uint32_t(-1),
-    };
-    enum class bool64_t : uint64_t {
-        F = uint64_t(0),
-        T = uint64_t(-1),
-    };
+    namespace impl {
+        template <typename U, typename S>
+        struct bool_t {
+            bool_t() = default;
+            SIMDEE_INL constexpr bool_t(const bool_t&) = default;
+            SIMDEE_INL bool_t& operator=(const bool_t&) = default;
 
-    SIMDEE_INL constexpr bool8_t operator!(bool8_t l) {
-        return (l == bool8_t::F) ? bool8_t::T : bool8_t::F;
+            SIMDEE_INL constexpr bool_t(bool value) : data(value ? U(-1) : U(0)) {}
+            SIMDEE_INL constexpr explicit bool_t(U value) : data(value) {}
+            SIMDEE_INL constexpr explicit bool_t(S value) : data(value) {}
+            SIMDEE_INL constexpr operator bool() const { return data != 0; }
+            SIMDEE_INL constexpr explicit operator U() const { return data; }
+            SIMDEE_INL constexpr explicit operator S() const { return data; }
+
+            SIMDEE_INL constexpr bool_t operator!() const { return bool_t(~data); }
+            SIMDEE_INL constexpr bool_t operator&&(const bool_t& r) const { return bool_t(data & r.data); }
+            SIMDEE_INL constexpr bool_t operator||(const bool_t& r) const { return bool_t(data | r.data); }
+
+            // data
+            U data;
+        };
     }
-    SIMDEE_INL constexpr bool8_t operator&&(bool8_t l, bool8_t r) {
-        return (l != bool8_t::F && r != bool8_t::F) ? bool8_t::T : bool8_t::F;
-    }
-    SIMDEE_INL constexpr bool8_t operator||(bool8_t l, bool8_t r) {
-        return (l != bool8_t::F || r != bool8_t::F) ? bool8_t::T : bool8_t::F;
-    }
-    SIMDEE_INL constexpr bool16_t operator!(bool16_t l) {
-        return (l == bool16_t::F) ? bool16_t::T : bool16_t::F;
-    }
-    SIMDEE_INL constexpr bool16_t operator&&(bool16_t l, bool16_t r) {
-        return (l != bool16_t::F && r != bool16_t::F) ? bool16_t::T : bool16_t::F;
-    }
-    SIMDEE_INL constexpr bool16_t operator||(bool16_t l, bool16_t r) {
-        return (l != bool16_t::F || r != bool16_t::F) ? bool16_t::T : bool16_t::F;
-    }
-    SIMDEE_INL constexpr bool32_t operator!(bool32_t l) {
-        return (l == bool32_t::F) ? bool32_t::T : bool32_t::F;
-    }
-    SIMDEE_INL constexpr bool32_t operator&&(bool32_t l, bool32_t r) {
-        return (l != bool32_t::F && r != bool32_t::F) ? bool32_t::T : bool32_t::F;
-    }
-    SIMDEE_INL constexpr bool32_t operator||(bool32_t l, bool32_t r) {
-        return (l != bool32_t::F || r != bool32_t::F) ? bool32_t::T : bool32_t::F;
-    }
-    SIMDEE_INL constexpr bool64_t operator!(bool64_t l) {
-        return (l == bool64_t::F) ? bool64_t::T : bool64_t::F;
-    }
-    SIMDEE_INL constexpr bool64_t operator&&(bool64_t l, bool64_t r) {
-        return (l != bool64_t::F && r != bool64_t::F) ? bool64_t::T : bool64_t::F;
-    }
-    SIMDEE_INL constexpr bool64_t operator||(bool64_t l, bool64_t r) {
-        return (l != bool64_t::F || r != bool64_t::F) ? bool64_t::T : bool64_t::F;
-    }
+
+    using bool8_t = impl::bool_t<uint8_t, int8_t>;
+    using bool16_t = impl::bool_t<uint16_t, int16_t>;
+    using bool32_t = impl::bool_t<uint32_t, int32_t>;
+    using bool64_t = impl::bool_t<uint64_t, int64_t>;
 
     template <typename T>
     struct is_bool_type : std::integral_constant<bool, false

@@ -110,12 +110,12 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     };
 
     SECTION("from scalar_t") {
-        B tb(B::scalar_t::T);
+        B tb(B::scalar_t(true));
         F tf(1.2345678f);
         U tu(123456789U);
         S ts(-123456789);
         tor(tb, tf, tu, ts);
-        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
+        for (auto val : rb) REQUIRE(val == B::scalar_t(true));
         for (auto val : rf) REQUIRE(val == 1.2345678f);
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
@@ -123,7 +123,7 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     SECTION("from log_scalar_t") {
         B tb(true);
         rb = tb;
-        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
+        for (auto val : rb) REQUIRE(val == B::scalar_t(true));
     }
     SECTION("from vector_t") {
         B tb(B::vector_t{});
@@ -239,15 +239,11 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
     };
 
     SECTION("from scalar_t") {
-        implicit_test(B::scalar_t::T, 1.2345678f, 123456789U, -123456789);
-        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
+        implicit_test(B::scalar_t(true), 1.2345678f, 123456789U, -123456789);
+        for (auto val : rb) REQUIRE(val == B::scalar_t(true));
         for (auto val : rf) REQUIRE(val == 1.2345678f);
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
-    }
-    SECTION("from log_scalar_t") {
-        implicit_test(true, 0, 0, 0);
-        for (auto val : rb) REQUIRE(val == B::scalar_t::T);
     }
     SECTION("from vector_t") {
         implicit_test(
@@ -339,20 +335,15 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
         };
 
         SECTION("from scalar_t") {
-            tb = B::scalar_t::T;
+            tb = B::scalar_t(true);
             tf = 1.2345678f;
             tu = 123456789U;
             ts = -123456789;
             tor();
-            for (auto val : rb) REQUIRE(val == B::scalar_t::T);
+            for (auto val : rb) REQUIRE(val == B::scalar_t(true));
             for (auto val : rf) REQUIRE(val == 1.2345678f);
             for (auto val : ru) REQUIRE(val == 123456789U);
             for (auto val : rs) REQUIRE(val == -123456789);
-        }
-        SECTION("from log_scalar_t") {
-            tb = true;
-            rb = tb;
-            for (auto val : rb) REQUIRE(val == B::scalar_t::T);
         }
         SECTION("from vector_t") {
             tb = B::vector_t{};
@@ -829,11 +820,11 @@ TEST_CASE(SIMD_TYPE " bool comparison", SIMD_TEST_TAG) {
     B b = bufBB;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
+        std::fill(begin(e), end(e), v ? B::scalar_t(true) : B::scalar_t(false));
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
+            return f(a, b) ? B::scalar_t(true) : B::scalar_t(false);
         };
         std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f2);
     };
@@ -863,11 +854,11 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     F b = bufBF;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
+        std::fill(begin(e), end(e), v ? B::scalar_t(true) : B::scalar_t(false));
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
+            return f(a, b) ? B::scalar_t(true) : B::scalar_t(false);
         };
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), f2);
     };
@@ -929,11 +920,11 @@ TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
     U b = bufBU;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
+        std::fill(begin(e), end(e), v ? B::scalar_t(true) : B::scalar_t(false));
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
+            return f(a, b) ? B::scalar_t(true) : B::scalar_t(false);
         };
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f2);
     };
@@ -963,11 +954,11 @@ TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
     S b = bufBS;
 
     auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v ? B::scalar_t::T : B::scalar_t::F);
+        std::fill(begin(e), end(e), v ? B::scalar_t(true) : B::scalar_t(false));
     };
     auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
         auto f2 = [f](scalar_t a, scalar_t b) {
-            return f(a, b) ? B::scalar_t::T : B::scalar_t::F;
+            return f(a, b) ? B::scalar_t(true) : B::scalar_t(false);
         };
         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f2);
     };
@@ -1030,14 +1021,14 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
 
         SECTION("log and") {
             auto and_ = [](scalar_t l, scalar_t r) { return l && r; };
-            e = std::accumulate(begin(bufAB), end(bufAB), scalar_t::T, and_);
-            r = reduce(a, sd::op_logand{}).first_scalar() ? scalar_t::T : scalar_t::F;
+            e = std::accumulate(begin(bufAB), end(bufAB), scalar_t(true), and_);
+            r = reduce(a, sd::op_logand{}).first_scalar() ? scalar_t(true) : scalar_t(false);
             REQUIRE(r == e);
         }
         SECTION("log or") {
             auto or_ = [](scalar_t l, scalar_t r) { return l || r; };
-            e = std::accumulate(begin(bufAB), end(bufAB), scalar_t::T, or_);
-            r = reduce(a, sd::op_logor{}).first_scalar() ? scalar_t::T : scalar_t::F;
+            e = std::accumulate(begin(bufAB), end(bufAB), scalar_t(true), or_);
+            r = reduce(a, sd::op_logor{}).first_scalar() ? scalar_t(true) : scalar_t(false);
             REQUIRE(r == e);
         }
     }

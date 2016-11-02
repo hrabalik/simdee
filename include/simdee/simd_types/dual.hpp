@@ -124,7 +124,6 @@ namespace sd {
         using dual_base<dual<T>>::dual_base;
 
         SIMDEE_TRIVIAL_TYPE(dual);
-        SIMDEE_CTOR(dual, log_scalar_t, mm.l = r; mm.r = r);
 
         SIMDEE_INL mask_t mask() const {
             return mask_t(mm.l.mask().value | (mm.r.mask().value << T::width));

@@ -3,16 +3,16 @@
 #include <simdee/common/casts.hpp>
 
 TEST_CASE("cast_b", "[casts]") {
-    auto b8 = sd::bool8_t::T;
+    auto b8 = sd::bool8_t(true);
     auto u8 = uint8_t(-1);
     auto s8 = int8_t(-1);
-    auto b16 = sd::bool16_t::T;
+    auto b16 = sd::bool16_t(true);
     auto u16 = uint16_t(-1);
     auto s16 = int16_t(-1);
-    auto b32 = sd::bool32_t::T;
+    auto b32 = sd::bool32_t(true);
     auto u32 = uint32_t(-1);
     auto s32 = int32_t(-1);
-    auto b64 = sd::bool64_t::T;
+    auto b64 = sd::bool64_t(true);
     auto u64 = uint64_t(-1);
     auto s64 = int64_t(-1);
 
@@ -29,26 +29,26 @@ TEST_CASE("cast_b", "[casts]") {
     static_assert(std::is_same<decltype(sd::cast_b(u64)), sd::bool64_t>::value, "");
     static_assert(std::is_same<decltype(sd::cast_b(s64)), sd::bool64_t>::value, "");
 
-    REQUIRE(sd::cast_b(b8) == sd::bool8_t::T);
-    REQUIRE(sd::cast_b(u8) == sd::bool8_t::T);
-    REQUIRE(sd::cast_b(s8) == sd::bool8_t::T);
-    REQUIRE(sd::cast_b(b16) == sd::bool16_t::T);
-    REQUIRE(sd::cast_b(u16) == sd::bool16_t::T);
-    REQUIRE(sd::cast_b(s16) == sd::bool16_t::T);
-    REQUIRE(sd::cast_b(b32) == sd::bool32_t::T);
-    REQUIRE(sd::cast_b(u32) == sd::bool32_t::T);
-    REQUIRE(sd::cast_b(s32) == sd::bool32_t::T);
-    REQUIRE(sd::cast_b(b64) == sd::bool64_t::T);
-    REQUIRE(sd::cast_b(u64) == sd::bool64_t::T);
-    REQUIRE(sd::cast_b(s64) == sd::bool64_t::T);
+    REQUIRE(sd::cast_b(b8) == sd::bool8_t(true));
+    REQUIRE(sd::cast_b(u8) == sd::bool8_t(true));
+    REQUIRE(sd::cast_b(s8) == sd::bool8_t(true));
+    REQUIRE(sd::cast_b(b16) == sd::bool16_t(true));
+    REQUIRE(sd::cast_b(u16) == sd::bool16_t(true));
+    REQUIRE(sd::cast_b(s16) == sd::bool16_t(true));
+    REQUIRE(sd::cast_b(b32) == sd::bool32_t(true));
+    REQUIRE(sd::cast_b(u32) == sd::bool32_t(true));
+    REQUIRE(sd::cast_b(s32) == sd::bool32_t(true));
+    REQUIRE(sd::cast_b(b64) == sd::bool64_t(true));
+    REQUIRE(sd::cast_b(u64) == sd::bool64_t(true));
+    REQUIRE(sd::cast_b(s64) == sd::bool64_t(true));
 }
 
 TEST_CASE("cast_f", "[casts]") {
-    auto b32 = sd::bool32_t::F;
+    auto b32 = sd::bool32_t(false);
     auto f32 = float(123);
     auto u32 = uint32_t(123);
     auto s32 = int32_t(123);
-    auto b64 = sd::bool64_t::F;
+    auto b64 = sd::bool64_t(false);
     auto f64 = double(123);
     auto u64 = uint64_t(123);
     auto s64 = int64_t(123);
@@ -73,17 +73,17 @@ TEST_CASE("cast_f", "[casts]") {
 }
 
 TEST_CASE("cast_u", "[casts]") {
-    auto b8 = sd::bool8_t::T;
+    auto b8 = sd::bool8_t(true);
     auto u8 = uint8_t(-1);
     auto s8 = int8_t(-1);
-    auto b16 = sd::bool16_t::T;
+    auto b16 = sd::bool16_t(true);
     auto u16 = uint16_t(-1);
     auto s16 = int16_t(-1);
-    auto b32 = sd::bool32_t::T;
+    auto b32 = sd::bool32_t(true);
     auto f32 = float(123);
     auto u32 = uint32_t(-1);
     auto s32 = int32_t(-1);
-    auto b64 = sd::bool64_t::T;
+    auto b64 = sd::bool64_t(true);
     auto f64 = double(123);
     auto u64 = uint64_t(-1);
     auto s64 = int64_t(-1);
@@ -120,17 +120,17 @@ TEST_CASE("cast_u", "[casts]") {
 }
 
 TEST_CASE("cast_s", "[casts]") {
-    auto b8 = sd::bool8_t::T;
+    auto b8 = sd::bool8_t(true);
     auto u8 = uint8_t(-1);
     auto s8 = int8_t(-1);
-    auto b16 = sd::bool16_t::T;
+    auto b16 = sd::bool16_t(true);
     auto u16 = uint16_t(-1);
     auto s16 = int16_t(-1);
-    auto b32 = sd::bool32_t::T;
+    auto b32 = sd::bool32_t(true);
     auto f32 = float(-1);
     auto u32 = uint32_t(-1);
     auto s32 = int32_t(-1);
-    auto b64 = sd::bool64_t::T;
+    auto b64 = sd::bool64_t(true);
     auto f64 = double(-1);
     auto u64 = uint64_t(-1);
     auto s64 = int64_t(-1);
@@ -168,12 +168,12 @@ TEST_CASE("cast_s", "[casts]") {
 
 TEST_CASE("dirty::as_b", "[casts]") {
     SECTION("rvalues") {
-        REQUIRE(sd::dirty::as_b(uint16_t(-1)) == sd::bool16_t::T);
-        REQUIRE(sd::dirty::as_b(uint32_t(-1)) == sd::bool32_t::T);
-        REQUIRE(sd::dirty::as_b(int16_t(-1)) == sd::bool16_t::T);
-        REQUIRE(sd::dirty::as_b(int32_t(-1)) == sd::bool32_t::T);
-        REQUIRE(sd::dirty::as_b(0.f) == sd::bool32_t::F);
-        REQUIRE(sd::dirty::as_b(0.) == sd::bool64_t::F);
+        REQUIRE(sd::dirty::as_b(uint16_t(-1)) == sd::bool16_t(true));
+        REQUIRE(sd::dirty::as_b(uint32_t(-1)) == sd::bool32_t(true));
+        REQUIRE(sd::dirty::as_b(int16_t(-1)) == sd::bool16_t(true));
+        REQUIRE(sd::dirty::as_b(int32_t(-1)) == sd::bool32_t(true));
+        REQUIRE(sd::dirty::as_b(0.f) == sd::bool32_t(false));
+        REQUIRE(sd::dirty::as_b(0.) == sd::bool64_t(false));
     }
     SECTION("lvalues") {
         auto a1 = uint16_t(-1);
@@ -182,12 +182,12 @@ TEST_CASE("dirty::as_b", "[casts]") {
         auto a4 = int32_t(-1);
         auto a5 = 0.f;
         auto a6 = 0.;
-        REQUIRE(sd::dirty::as_b(a1) == sd::bool16_t::T);
-        REQUIRE(sd::dirty::as_b(a2) == sd::bool32_t::T);
-        REQUIRE(sd::dirty::as_b(a3) == sd::bool16_t::T);
-        REQUIRE(sd::dirty::as_b(a4) == sd::bool32_t::T);
-        REQUIRE(sd::dirty::as_b(a5) == sd::bool32_t::F);
-        REQUIRE(sd::dirty::as_b(a6) == sd::bool64_t::F);
+        REQUIRE(sd::dirty::as_b(a1) == sd::bool16_t(true));
+        REQUIRE(sd::dirty::as_b(a2) == sd::bool32_t(true));
+        REQUIRE(sd::dirty::as_b(a3) == sd::bool16_t(true));
+        REQUIRE(sd::dirty::as_b(a4) == sd::bool32_t(true));
+        REQUIRE(sd::dirty::as_b(a5) == sd::bool32_t(false));
+        REQUIRE(sd::dirty::as_b(a6) == sd::bool64_t(false));
     }
 }
 
@@ -218,11 +218,11 @@ TEST_CASE("dirty::as_u", "[casts]") {
         REQUIRE(sd::dirty::as_u(2.0) == 0x4000000000000000ULL);
         REQUIRE(sd::dirty::as_u(-6.2598534e18f) == 0xdeadbeefU);
         REQUIRE(sd::dirty::as_u(-1.1885959257070704e+148) == 0xdeadbeefdeadbeefULL);
-        REQUIRE(sd::dirty::as_u(sd::bool8_t::F) == 0);
-        REQUIRE(sd::dirty::as_u(sd::bool8_t::T) == uint8_t(-1));
-        REQUIRE(sd::dirty::as_u(sd::bool16_t::T) == uint16_t(-1));
-        REQUIRE(sd::dirty::as_u(sd::bool32_t::T) == uint32_t(-1));
-        REQUIRE(sd::dirty::as_u(sd::bool64_t::T) == uint64_t(-1));
+        REQUIRE(sd::dirty::as_u(sd::bool8_t(false)) == 0);
+        REQUIRE(sd::dirty::as_u(sd::bool8_t(true)) == uint8_t(-1));
+        REQUIRE(sd::dirty::as_u(sd::bool16_t(true)) == uint16_t(-1));
+        REQUIRE(sd::dirty::as_u(sd::bool32_t(true)) == uint32_t(-1));
+        REQUIRE(sd::dirty::as_u(sd::bool64_t(true)) == uint64_t(-1));
     }
     SECTION("lvalues") {
         float f = 2;

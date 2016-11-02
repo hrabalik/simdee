@@ -8,10 +8,10 @@ using U = sd::dumu;
 using S = sd::dums;
 
 const B::storage_t bufAB{
-    B::scalar_t(true),
+    true,
 };
 const B::storage_t bufBB{
-    B::scalar_t(false),
+    false,
 };
 const F::storage_t bufAF {
     -0.27787193f,
@@ -32,7 +32,7 @@ const S::storage_t bufBS {
     724135231,
 };
 const B::storage_t bufZB{
-    B::scalar_t(false),
+    false,
 };
 const F::storage_t bufZF { 0 };
 const U::storage_t bufZU { 0 };

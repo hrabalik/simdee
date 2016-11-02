@@ -88,8 +88,8 @@ namespace sd {
         SIMDEE_INL mask_t mask() const { return mask_t(cast_u(mm) & 1U); }
         SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
-        SIMDEE_BINOP(dumb, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dumb, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
+        SIMDEE_BINOP(dumb, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
+        SIMDEE_BINOP(dumb, dumb, operator!=, dumb::scalar_t(l.mm != r.mm));
         SIMDEE_BINOP(dumb, dumb, operator&&, l.first_scalar() && r.first_scalar());
         SIMDEE_BINOP(dumb, dumb, operator||, l.first_scalar() || r.first_scalar());
         SIMDEE_UNOP(dumb, dumb, operator!, !l.first_scalar());
@@ -104,12 +104,12 @@ namespace sd {
 
         SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
-        SIMDEE_BINOP(dumf, dumb, operator<, (l.mm < r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dumf, dumb, operator>, (l.mm > r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dumf, dumb, operator<=, (l.mm <= r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dumf, dumb, operator>=, (l.mm >= r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dumf, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dumf, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
+        SIMDEE_BINOP(dumf, dumb, operator<, dumb::scalar_t(l.mm < r.mm));
+        SIMDEE_BINOP(dumf, dumb, operator>, dumb::scalar_t(l.mm > r.mm));
+        SIMDEE_BINOP(dumf, dumb, operator<=, dumb::scalar_t(l.mm <= r.mm));
+        SIMDEE_BINOP(dumf, dumb, operator>=, dumb::scalar_t(l.mm >= r.mm));
+        SIMDEE_BINOP(dumf, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
+        SIMDEE_BINOP(dumf, dumb, operator!=, dumb::scalar_t(l.mm != r.mm));
 
         SIMDEE_UNOP(dumf, dumf, operator-, -l.mm);
         SIMDEE_BINOP(dumf, dumf, operator+, l.mm + r.mm);
@@ -135,8 +135,8 @@ namespace sd {
         SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
 #   if defined(SIMDEE_NEED_INT)
-        SIMDEE_BINOP(dumu, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dumu, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
+        SIMDEE_BINOP(dumu, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
+        SIMDEE_BINOP(dumu, dumb, operator!=, dumb::scalar_t(l.mm != r.mm));
 #   endif
         SIMDEE_BINOP(dumu, dumu, operator&, l.mm & r.mm);
         SIMDEE_BINOP(dumu, dumu, operator|, l.mm | r.mm);
@@ -156,12 +156,12 @@ namespace sd {
         SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
 #   if defined(SIMDEE_NEED_INT)
-        SIMDEE_BINOP(dums, dumb, operator<, (l.mm < r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dums, dumb, operator>, (l.mm > r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dums, dumb, operator<=, (l.mm <= r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dums, dumb, operator>=, (l.mm >= r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dums, dumb, operator==, (l.mm == r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
-        SIMDEE_BINOP(dums, dumb, operator!=, (l.mm != r.mm) ? dumb::scalar_t(true) : dumb::scalar_t(false));
+        SIMDEE_BINOP(dums, dumb, operator<, dumb::scalar_t(l.mm < r.mm));
+        SIMDEE_BINOP(dums, dumb, operator>, dumb::scalar_t(l.mm > r.mm));
+        SIMDEE_BINOP(dums, dumb, operator<=, dumb::scalar_t(l.mm <= r.mm));
+        SIMDEE_BINOP(dums, dumb, operator>=, dumb::scalar_t(l.mm >= r.mm));
+        SIMDEE_BINOP(dums, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
+        SIMDEE_BINOP(dums, dumb, operator!=, dumb::scalar_t(l.mm != r.mm));
 
         SIMDEE_UNOP(dums, dums, operator-, -l.mm);
         SIMDEE_BINOP(dums, dums, operator+, l.mm + r.mm);

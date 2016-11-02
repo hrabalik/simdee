@@ -7,12 +7,12 @@ using U = sd::vec8u;
 using S = sd::vec8s;
 
 const B::storage_t bufAB{
-    B::scalar_t(true), B::scalar_t(false), B::scalar_t(true), B::scalar_t(true),
-    B::scalar_t(false), B::scalar_t(true), B::scalar_t(false), B::scalar_t(true),
+    true, false, true, true,
+    false, true, false, true,
 };
 const B::storage_t bufBB{
-    B::scalar_t(false), B::scalar_t(true), B::scalar_t(false), B::scalar_t(true),
-    B::scalar_t(true), B::scalar_t(false), B::scalar_t(false), B::scalar_t(false),
+    false, true, false, true,
+    true, false, false, false,
 };
 const F::storage_t bufAF {
     -0.27787193f, +0.70154146f, -2.05181630f, +2.22944568f,
@@ -39,8 +39,8 @@ const S::storage_t bufBS {
     -899302812, -2112882416, 77287484, 1066617619,
 };
 const B::storage_t bufZB{
-    B::scalar_t(false), B::scalar_t(false), B::scalar_t(false), B::scalar_t(false),
-    B::scalar_t(false), B::scalar_t(false), B::scalar_t(false), B::scalar_t(false),
+    false, false, false, false,
+    false, false, false, false,
 };
 const F::storage_t bufZF { 0, 0, 0, 0, 0, 0, 0, 0 };
 const U::storage_t bufZU { 0, 0, 0, 0, 0, 0, 0, 0 };

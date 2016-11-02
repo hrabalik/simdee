@@ -30,9 +30,8 @@ type           | description                                  | additional requi
 `vec_u`        | related unsigned integral SIMD vector        | satisfies `SIMDVectorU`
 `vec_s`        | related signed integral SIMD vector          | satisfies `SIMDVectorS`
 `vector_t`     | low-level underlying vector type             |
-`scalar_t`     | scalar type, as represented in memory        |
-`log_scalar_t` | scalar type, as represented in program logic |
-`storage_t`    | memory storage type                          |
+`scalar_t`     | scalar type                                  |
+`storage_t`    | type for storing vector in memory            |
 
 ### Construction and assignment
 

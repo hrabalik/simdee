@@ -8,10 +8,10 @@
     * [`SIMDVectorS`](SIMDVectorS.md) 32-bit signed integral SIMD vector
 * Vectors
   * Architecture-agnostic
-    * [`dum`](dum.md) vectors with 1 scalar
-    * [`vec4`](vec4.md) vectors with 4 scalars
-    * [`vec8`](vec8.md) vectors with 8 scalars
+    * [`sd::dum_`](dum.md) vectors with 1 scalar
+    * [`sd::vec4_`](vec4.md) vectors with 4 scalars
+    * [`sd::vec8_`](vec8.md) vectors with 8 scalars
   * Architecture-specific
-    * [`sse`](sse.md) vectors that employ SSE
-    * [`avx`](avx.md) vectors that employ AVX
-  * [`dual<T>`](dual.md) vector composition
+    * [`sd::sse_`](sse.md) vectors that employ SSE
+    * [`sd::avx_`](avx.md) vectors that employ AVX
+  * [`sd::dual<T>`](dual.md) vector composition

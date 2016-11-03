@@ -1,5 +1,7 @@
 # `SIMDVector` (concept)
 
+Describes all SIMD vector types provided by Simdee, regardless of underlying datatype. A particular vector type always satisfies one of the extended concepts `SIMDVectorB`, `SIMDVectorF`, `SIMDVectorU`, `SIMDVectorS`.
+
 ## Implementations
 
 * `sd::sseb`, `sd::ssef`, `sd::sseu`, `sd::sses`

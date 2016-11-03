@@ -1,6 +1,6 @@
 # `SIMDVector` (concept)
 
-Describes all SIMD vector types provided by Simdee, regardless of underlying datatype. A particular vector type always satisfies one of the extended concepts `SIMDVectorB`, `SIMDVectorF`, `SIMDVectorU`, `SIMDVectorS`.
+Describes all SIMD vector types provided by Simdee, regardless of underlying datatype. A particular vector type always satisfies one of the extended concepts [`SIMDVectorB`](SIMDVectorB.md), `SIMDVectorF`, `SIMDVectorU`, `SIMDVectorS`.
 
 ## Implementations
 
@@ -27,7 +27,7 @@ Type that satisfies `SIMDVector` must provide the following member types:
 
 type           | description                                  | additional requirements
 ---------------|----------------------------------------------|-------------------------
-`vec_b`        | related boolean SIMD vector                  | satisfies `SIMDVectorB`
+`vec_b`        | related boolean SIMD vector                  | satisfies [`SIMDVectorB`](SIMDVectorB.md)
 `vec_f`        | related floating-point SIMD vector           | satisfies `SIMDVectorF`
 `vec_u`        | related unsigned integral SIMD vector        | satisfies `SIMDVectorU`
 `vec_s`        | related signed integral SIMD vector          | satisfies `SIMDVectorS`

@@ -27,7 +27,7 @@ A type that satisfies `SIMDVectorU` must be:
 
 ### Operations
 
-Additional operations must be provided for a type `T` that satisfies `SIMDVectorU`, unless the macro `SIMDEE_NEED_INT` is set to `0`.
+Additional operations must be provided for a type `T` that satisfies `SIMDVectorU`, unless the macro `SIMDEE_NEED_INT` is set to `0`:
 
 syntax         | result type               | description
 ---------------|---------------------------|-------------------------------------------------------

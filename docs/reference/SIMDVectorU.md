@@ -4,9 +4,9 @@ Describes all SIMD vector types provided by Simdee that have a 32-bit unsigned i
 
 ## Implementations
 
-* `sd::sseu`, `sd::avxu`, `sd::dumu`
-* `sd::dual<T>`, where `T` satisfies `SIMDVectorU`
-* `sd::vec4u`, `sd::vec8u`
+* [`sd::sseu`](sse.md), [`sd::avxu`](avx.md), [`sd::dumu`](dum.md)
+* [`sd::dual<T>`](dual.md), where `T` satisfies `SIMDVectorU`
+* [`sd::vec4u`](vec4.md), [`sd::vec8u`](vec8.md)
 
 ## Requirements
 

@@ -176,8 +176,8 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         }
     }
     SECTION("reduce") {
-        auto res_ba = reduce(ba, [](B a, B b) { return a && b; }).first_scalar();
-        auto res_nba = reduce(nba, [](B a, B b) { return a && b; }).first_scalar();
+        auto res_ba = first_scalar(reduce(ba, [](B a, B b) { return a && b; }));
+        auto res_nba = first_scalar(reduce(nba, [](B a, B b) { return a && b; }));
         REQUIRE(res_ba == res_nba);
     }
     SECTION("mask") {
@@ -186,8 +186,8 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         REQUIRE(res_ba == res_nba);
     }
     SECTION("first_scalar") {
-        auto res_ba = ba.first_scalar();
-        auto res_nba = nba.first_scalar();
+        auto res_ba = first_scalar(ba);
+        auto res_nba = first_scalar(nba);
         REQUIRE(res_ba == res_nba);
     }
 }

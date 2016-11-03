@@ -103,7 +103,9 @@ namespace sd {
             return res;
         }
 
-        SIMDEE_INL scalar_t first_scalar() const { return mm.l.first_scalar(); }
+        SIMDEE_INL friend scalar_t first_scalar(const dual_base& l) {
+            return first_scalar(l.mm.l);
+        }
     };
 
     template <typename T>

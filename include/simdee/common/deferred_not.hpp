@@ -83,8 +83,8 @@ namespace sd {
                 return ~mask(l.neg);
             }
 
-            SIMDEE_INL typename T::scalar_t first_scalar() const {
-                return ~neg.first_scalar();
+            SIMDEE_INL friend typename T::scalar_t first_scalar(const deferred_bitnot& l) {
+                return ~first_scalar(l.neg);
             }
 
             // data
@@ -215,8 +215,8 @@ namespace sd {
                 return ~mask(l.neg);
             }
 
-            SIMDEE_INL typename T::scalar_t first_scalar() const {
-                return !neg.first_scalar();
+            SIMDEE_INL friend typename T::scalar_t first_scalar(const deferred_lognot& l) {
+                return !first_scalar(l.neg);
             }
 
             // data

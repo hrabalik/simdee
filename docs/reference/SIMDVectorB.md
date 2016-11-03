@@ -18,17 +18,22 @@ Additional requirements apply regarding member types of a type `T` that satisfie
 
 * `vec_b` is `T`
 * `scalar_t` is `sd::bool32_t`
+* `T` has an extra member type `mask_t`, which is an instantiation of `sd::impl::mask`
 
 ### Operations
 
 Additional operations must be provided for a type `T` that satisfies `SIMDVectorB`:
 
-syntax             | description
--------------------|-----------------------------------------------------------------------------
-`mask(x)`          | provide a bit-mask of truth values, returns an instantiation of `sd::impl::mask`
-`!x`               | element-wise logical not
-`x && y`           | element-wise logical and, short-circuit evaluation is disabled
-`x || y`           | element-wise logical or, short-circuit evaluation is disabled
-`andnot(x, y)`     | same as `x && !y`
+syntax         | result type | description
+---------------|-------------|---------------------------------------------------------------
+`!x`           | `T`         | scalar-wise logical not
+`x && y`       | `T`         | scalar-wise logical and, short-circuit evaluation is disabled
+`x || y`       | `T`         | scalar-wise logical or, short-circuit evaluation is disabled
+`andnot(x, y)` | `T`         | same as `x && !y`
+`x == y`       | `T`         | scalar-wise equal
+`x != y`       | `T`         | scalar-wise not equal
+`mask(x)`      | `mask_t`    | provide a bit-mask of truth values
+`any(x)`       | `bool`      | returns `true` if any of the scalars is true
+`all(x)`       | `bool`      | returns `true` if all of the scalars are true
 
 where `x`, `y` are values of type `T`

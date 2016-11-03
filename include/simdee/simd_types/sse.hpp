@@ -118,7 +118,9 @@ namespace sd {
         SIMDEE_CTOR(sseb, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseb, not_sseb, mm = _mm_xor_ps(r.neg.mm, sseb(all_bits()).mm));
 
-        SIMDEE_INL mask_t mask() const { return mask_t(cast_u(_mm_movemask_ps(mm))); }
+        SIMDEE_INL friend mask_t mask(const sseb& l) {
+            return mask_t(cast_u(_mm_movemask_ps(l.mm)));
+        }
         SIMDEE_INL scalar_t first_scalar() const { return dirty::as_b(_mm_cvtss_f32(mm)); }
 
         SIMDEE_BINOP(sseb, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));

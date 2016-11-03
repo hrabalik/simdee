@@ -103,11 +103,11 @@ namespace sd {
     }
     template <typename Simd_t>
     SIMDEE_INL bool any(const simd_base<Simd_t>& l) {
-        return any(l.self().mask());
+        return any(mask(l.self()));
     }
     template <typename Simd_t>
     SIMDEE_INL bool all(const simd_base<Simd_t>& l) {
-        return all(l.self().mask());
+        return all(mask(l.self()));
     }
 
     struct op_add {

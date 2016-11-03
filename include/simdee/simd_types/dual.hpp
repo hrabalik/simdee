@@ -122,8 +122,8 @@ namespace sd {
 
         SIMDEE_TRIVIAL_TYPE(dual);
 
-        SIMDEE_INL mask_t mask() const {
-            return mask_t(mm.l.mask().value | (mm.r.mask().value << T::width));
+        SIMDEE_INL friend mask_t mask(const dual& l) {
+            return mask_t(mask(l.mm.l).value | (mask(l.mm.r).value << T::width));
         }
 
         SIMDEE_BINOP(vec_b, vec_b, operator==, (vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));

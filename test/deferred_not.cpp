@@ -181,8 +181,8 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         REQUIRE(res_ba == res_nba);
     }
     SECTION("mask") {
-        auto res_ba = ba.mask();
-        auto res_nba = nba.mask();
+        auto res_ba = mask(ba);
+        auto res_nba = mask(nba);
         REQUIRE(res_ba == res_nba);
     }
     SECTION("first_scalar") {

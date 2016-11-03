@@ -28,7 +28,7 @@ ASSERT((std::is_same<B::scalar_t, sd::bool32_t>::value));
 ASSERT((std::is_same<F::scalar_t, float>::value));
 ASSERT((std::is_same<U::scalar_t, uint32_t>::value));
 ASSERT((std::is_same<S::scalar_t, int32_t>::value));
-ASSERT((std::is_same<B::mask_t, sd::mask<B>>::value));
+ASSERT((std::is_same<B::mask_t, sd::impl::mask<((1 << SIMD_WIDTH) - 1)>>::value));
 ASSERT((std::is_same<B::storage_t, sd::storage<B>>::value));
 ASSERT((std::is_same<F::storage_t, sd::storage<F>>::value));
 ASSERT((std::is_same<U::storage_t, sd::storage<U>>::value));
@@ -89,7 +89,6 @@ ASSERT(HAS_METHOD(const B, interleaved_store(VAL(B::scalar_t*), VAL(int)), void)
 ASSERT(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(int)), void));
 ASSERT(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(int)), void));
 ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(const B, mask(), B::mask_t));
 ASSERT(HAS_METHOD(const B, first_scalar(), B::scalar_t));
 ASSERT(HAS_METHOD(const F, first_scalar(), F::scalar_t));
 ASSERT(HAS_METHOD(const U, first_scalar(), U::scalar_t));
@@ -1073,7 +1072,7 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     S bs = bufBS;
 
     B sel = af >= bf;
-    auto mask = sel.mask();
+    auto sel_mask = mask(sel);
 
     B::storage_t rb(cond(sel, ab, bb));
     F::storage_t rf(cond(sel, af, bf));
@@ -1081,15 +1080,15 @@ TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
     S::storage_t rs(cond(sel, as, bs));
 
     for (auto i = 0U; i < F::width; ++i) {
-        REQUIRE((rb[i]) == (mask[i] ? bufAB[i] : bufBB[i]));
-        REQUIRE((rf[i]) == (mask[i] ? bufAF[i] : bufBF[i]));
-        REQUIRE((ru[i]) == (mask[i] ? bufAU[i] : bufBU[i]));
-        REQUIRE((rs[i]) == (mask[i] ? bufAS[i] : bufBS[i]));
+        REQUIRE((rb[i]) == (sel_mask[i] ? bufAB[i] : bufBB[i]));
+        REQUIRE((rf[i]) == (sel_mask[i] ? bufAF[i] : bufBF[i]));
+        REQUIRE((ru[i]) == (sel_mask[i] ? bufAU[i] : bufBU[i]));
+        REQUIRE((rs[i]) == (sel_mask[i] ? bufAS[i] : bufBS[i]));
     }
 }
 
-TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
-    SECTION("mask() itself") {
+TEST_CASE(SIMD_TYPE " mask", SIMD_TEST_TAG) {
+    SECTION("mask itself") {
         auto expected = [](const B::storage_t& s) {
             B::mask_t res(0U);
             for (auto i = 0U; i < s.size(); ++i) {
@@ -1100,15 +1099,15 @@ TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
             return res;
         };
 
-        REQUIRE(expected(bufAB) == B(bufAB).mask());
-        REQUIRE(expected(bufBB) == B(bufBB).mask());
+        REQUIRE(expected(bufAB) == mask(B(bufAB)));
+        REQUIRE(expected(bufBB) == mask(B(bufBB)));
     }
     SECTION("any, all") {
         B a = bufAB;
         B b = bufBB;
-        REQUIRE(any(a) == any(a.mask()));
-        REQUIRE(any(b) == any(b.mask()));
-        REQUIRE(all(a) == all(a.mask()));
-        REQUIRE(all(b) == all(b.mask()));
+        REQUIRE(any(a) == any(mask(a)));
+        REQUIRE(any(b) == any(mask(b)));
+        REQUIRE(all(a) == all(mask(a)));
+        REQUIRE(all(b) == all(mask(b)));
     }
 }

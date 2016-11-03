@@ -43,9 +43,6 @@ namespace sd {
             uint32_t value;
         };
     }
-
-    template <typename T>
-    using mask = typename T::mask_t;
 }
 
 #endif // SIMDEE_COMMON_MASK_HPP

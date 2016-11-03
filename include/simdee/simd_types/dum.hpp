@@ -85,7 +85,9 @@ namespace sd {
 
         using dum_base::dum_base;
 
-        SIMDEE_INL mask_t mask() const { return mask_t(cast_u(mm) & 1U); }
+        SIMDEE_INL friend mask_t mask(const dumb& l) {
+            return mask_t(cast_u(l.mm) & 1U);
+        }
         SIMDEE_INL scalar_t first_scalar() const { return mm; }
 
         SIMDEE_BINOP(dumb, dumb, operator==, dumb::scalar_t(l.mm == r.mm));

@@ -79,8 +79,8 @@ namespace sd {
                 pos.interleaved_store(r, step);
             }
 
-            SIMDEE_INL typename T::mask_t mask() const {
-                return ~neg.mask();
+            SIMDEE_INL friend typename T::mask_t mask(const deferred_bitnot& l) {
+                return ~mask(l.neg);
             }
 
             SIMDEE_INL typename T::scalar_t first_scalar() const {
@@ -211,8 +211,8 @@ namespace sd {
                 pos.interleaved_store(r, step);
             }
 
-            SIMDEE_INL typename T::mask_t mask() const {
-                return ~neg.mask();
+            SIMDEE_INL friend typename T::mask_t mask(const deferred_lognot& l) {
+                return ~mask(l.neg);
             }
 
             SIMDEE_INL typename T::scalar_t first_scalar() const {
@@ -225,11 +225,11 @@ namespace sd {
 
         template<typename T>
         SIMDEE_INL bool any(const deferred_lognot<T>& l) {
-            return !all(l.neg.mask());
+            return !all(mask(l.neg));
         }
         template<typename T>
         SIMDEE_INL bool all(const deferred_lognot<T>& l) {
-            return !any(l.neg.mask());
+            return !any(mask(l.neg));
         }
         template<typename T>
         SIMDEE_INL constexpr const T operator!(const deferred_lognot<T>& l) {

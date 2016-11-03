@@ -4,9 +4,9 @@ Describes all SIMD vector types provided by Simdee that have a 32-bit floating-p
 
 ## Implementations
 
-* `sd::ssef`, `sd::avxf`, `sd::dumf`
-* `sd::dual<T>`, where `T` satisfies `SIMDVectorF`
-* `sd::vec4f`, `sd::vec8f`
+* [`sd::ssef`](sse.md), [`sd::avxf`](avx.md), `sd::dumf`](dum.md)
+* [`sd::dual<T>`](dual.md), where `T` satisfies `SIMDVectorF`
+* [`sd::vec4f`](vec4.md), [`sd::vec8f`](vec8.md)
 
 ## Requirements
 

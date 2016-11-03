@@ -2,7 +2,12 @@
 
 Defined in header `<simdee/simd_types/avx.hpp>`
 
-`avx` is an architecture-specific type family that employs the AVX instruction set and its extensions. If you use `avx` type family in your code, AVX support must be enabled. See guide on how to [enable instruction sets].
+`avx` is an architecture-specific type family that employs the AVX instruction set and its extensions. If you use `avx` type family in your code, AVX support must be enabled. Unless the macro `SIMDEE_NEED_INT` is set to `0`, AVX2 support must be enabled. See guide on how to [enable instruction sets].
+
+`SIMDEE_NEED_INT` | required instruction set
+------------------|--------------------------
+`0`               | AVX
+`1` (default)     | AVX2
 
 Avoid coding against architecture-specific types; prefer [architecture-agnostic types] instead.
 

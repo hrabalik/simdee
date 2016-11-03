@@ -10,7 +10,7 @@ Describes all SIMD vector types provided by Simdee that have a boolean underlyin
 
 ## Requirements
 
-Type that satisfies `SIMDVectorB` must also satisfy `SIMDVector`.
+Type that satisfies `SIMDVectorB` must also satisfy [`SIMDVector`](SIMDVector.md).
 
 ### Member types
 

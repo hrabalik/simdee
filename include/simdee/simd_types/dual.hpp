@@ -103,9 +103,7 @@ namespace sd {
             return res;
         }
 
-        SIMDEE_INL friend scalar_t first_scalar(const dual_base& l) {
-            return first_scalar(l.mm.l);
-        }
+        SIMDEE_UNOP(dual_base, scalar_t, first_scalar, first_scalar(l.mm.l));
     };
 
     template <typename T>
@@ -124,9 +122,7 @@ namespace sd {
 
         SIMDEE_TRIVIAL_TYPE(dual);
 
-        SIMDEE_INL friend mask_t mask(const dual& l) {
-            return mask_t(mask(l.mm.l).value | (mask(l.mm.r).value << T::width));
-        }
+        SIMDEE_UNOP(dual, mask_t, mask, mask_t(mask(l.mm.l).value | (mask(l.mm.r).value << T::width)));
 
         SIMDEE_BINOP(vec_b, vec_b, operator==, (vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
         SIMDEE_BINOP(vec_b, vec_b, operator!=, (vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));

@@ -85,13 +85,8 @@ namespace sd {
 
         using dum_base::dum_base;
 
-        SIMDEE_INL friend mask_t mask(const dumb& l) {
-            return mask_t(cast_u(l.mm) & 1U);
-        }
-        SIMDEE_INL friend scalar_t first_scalar(const dumb& l) {
-            return l.mm;
-        }
-
+        SIMDEE_UNOP(dumb, mask_t, mask, mask_t(l.mm));
+        SIMDEE_UNOP(dumb, scalar_t, first_scalar, l.mm);
         SIMDEE_BINOP(dumb, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
         SIMDEE_BINOP(dumb, dumb, operator!=, dumb::scalar_t(l.mm != r.mm));
         SIMDEE_BINOP(dumb, dumb, operator&&, first_scalar(l) && first_scalar(r));
@@ -106,10 +101,7 @@ namespace sd {
         using dum_base::dum_base;
         SIMDEE_INL explicit dumf(const dums&);
 
-        SIMDEE_INL friend scalar_t first_scalar(const dumf& l) {
-            return l.mm;
-        }
-
+        SIMDEE_UNOP(dumf, scalar_t, first_scalar, l.mm);
         SIMDEE_BINOP(dumf, dumb, operator<, dumb::scalar_t(l.mm < r.mm));
         SIMDEE_BINOP(dumf, dumb, operator>, dumb::scalar_t(l.mm > r.mm));
         SIMDEE_BINOP(dumf, dumb, operator<=, dumb::scalar_t(l.mm <= r.mm));
@@ -138,9 +130,7 @@ namespace sd {
         SIMDEE_INL explicit dumu(const dumb&);
         SIMDEE_INL explicit dumu(const dums&);
 
-        SIMDEE_INL friend scalar_t first_scalar(const dumu& l) {
-            return l.mm;
-        }
+        SIMDEE_UNOP(dumu, scalar_t, first_scalar, l.mm);
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(dumu, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
@@ -161,9 +151,7 @@ namespace sd {
         SIMDEE_INL explicit dums(const dumf&);
         SIMDEE_INL explicit dums(const dumu&);
 
-        SIMDEE_INL friend scalar_t first_scalar(const dums& l) {
-            return l.mm;
-        }
+        SIMDEE_UNOP(dums, scalar_t, first_scalar, l.mm);
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(dums, dumb, operator<, dumb::scalar_t(l.mm < r.mm));

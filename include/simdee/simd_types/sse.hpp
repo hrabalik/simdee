@@ -118,12 +118,8 @@ namespace sd {
         SIMDEE_CTOR(sseb, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseb, not_sseb, mm = _mm_xor_ps(r.neg.mm, sseb(all_bits()).mm));
 
-        SIMDEE_INL friend mask_t mask(const sseb& l) {
-            return mask_t(cast_u(_mm_movemask_ps(l.mm)));
-        }
-        SIMDEE_INL friend scalar_t first_scalar(const sseb& l) {
-            return dirty::as_b(_mm_cvtss_f32(l.mm));
-        }
+        SIMDEE_UNOP(sseb, mask_t, mask, mask_t(cast_u(_mm_movemask_ps(l.mm))));
+        SIMDEE_UNOP(sseb, scalar_t, first_scalar, dirty::as_b(_mm_cvtss_f32(l.mm)));
 
         SIMDEE_BINOP(sseb, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseb, sseb, operator!=, _mm_xor_ps(l.mm, r.mm));
@@ -139,9 +135,7 @@ namespace sd {
         using sse_base::sse_base;
         SIMDEE_INL explicit ssef(const sses&);
 
-        SIMDEE_INL friend scalar_t first_scalar(const ssef& l) {
-            return _mm_cvtss_f32(l.mm);
-        }
+        SIMDEE_UNOP(ssef, scalar_t, first_scalar, _mm_cvtss_f32(l.mm));
 
         SIMDEE_BINOP(ssef, sseb, operator<, _mm_cmplt_ps(l.mm, r.mm));
         SIMDEE_BINOP(ssef, sseb, operator>, _mm_cmpgt_ps(l.mm, r.mm));
@@ -173,9 +167,7 @@ namespace sd {
         SIMDEE_CTOR(sseu, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseu, not_sseu, mm = _mm_xor_ps(r.neg.mm, sseu(all_bits()).mm));
 
-        SIMDEE_INL friend scalar_t first_scalar(const sseu& l) {
-            return dirty::as_u(_mm_cvtss_f32(l.mm));
-        }
+        SIMDEE_UNOP(sseu, scalar_t, first_scalar, dirty::as_u(_mm_cvtss_f32(l.mm)));
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(sseu, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
@@ -196,9 +188,7 @@ namespace sd {
         SIMDEE_INL explicit sses(const sseu&);
         SIMDEE_CTOR(sses, __m128i, mm = _mm_castsi128_ps(r));
 
-        SIMDEE_INL friend scalar_t first_scalar(const sses& l) {
-            return dirty::as_s(_mm_cvtss_f32(l.mm));
-        }
+        SIMDEE_UNOP(sses, scalar_t, first_scalar, dirty::as_s(_mm_cvtss_f32(l.mm)));
 
 #   if defined(SIMDEE_NEED_INT)
         SIMDEE_BINOP(sses, sseb, operator<, _mm_cmplt_epi32(l.mmi(), r.mmi()));

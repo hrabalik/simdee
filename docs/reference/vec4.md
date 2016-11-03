@@ -13,7 +13,7 @@ type    | `width` | `scalar_t`      | satisfies concepts
 
 The `vec4` family is an alias for another type family, based on supported instruction sets:
 
-                      | `vec4b`                       | `vec4f`                       | `vec4u`                       | `vec4s`   
-----------------------|-------------------------------|-------------------------------|-------------------------------|--------------------------------
-if `sse` is available | [`sseb`](sse.md)              | [`ssef`](sse.md)              | [`sseu`](sse.md)              | [`sses`](sse.md)
-otherwise             | [`dual<dual<dumb>>`](dual.md) | [`dual<dual<dumf>>`](dual.md) | [`dual<dual<dumu>>`](dual.md) | [`dual<dual<dums>>`](dual.md)
+                                | `vec4b`                       | `vec4f`                       | `vec4u`                       | `vec4s`   
+--------------------------------|-------------------------------|-------------------------------|-------------------------------|--------------------------------
+if [`sse`](sse.md) is supported | [`sseb`](sse.md)              | [`ssef`](sse.md)              | [`sseu`](sse.md)              | [`sses`](sse.md)
+otherwise                       | [`dual<dual<dumb>>`](dual.md) | [`dual<dual<dumf>>`](dual.md) | [`dual<dual<dumu>>`](dual.md) | [`dual<dual<dums>>`](dual.md)

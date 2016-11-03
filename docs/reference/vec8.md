@@ -13,7 +13,9 @@ type    | `width` | `scalar_t`      | satisfies concepts
 
 The `vec8` family is an alias for another type family, based on supported instruction sets:
 
-                                | `vec8b`                       | `vec8f`                       | `vec8u`                       | `vec8s`   
---------------------------------|-------------------------------|-------------------------------|-------------------------------|--------------------------------
-if [`avx`](avx.md) is supported | [`avxb`](avx.md)              | [`avxf`](avx.md)              | [`avxu`](avx.md)              | [`avxs`](avx.md)
-otherwise                       | [`dual<vec4f>`](dual.md)      | [`dual<vec4f>`](dual.md)      | [`dual<vec4f>`](dual.md)      | [`dual<vec4f>`](dual.md)
+                            | if [`avx`](avx.md) is supported | otherwise
+----------------------------|---------------------------------|----------------------------------                       
+`sd::vec8b` is an alias for | [`sd::avxb`](avx.md)            | [`sd::dual<sd::vec4b>`](dual.md)                        
+`sd::vec8f` is an alias for | [`sd::avxf`](avx.md)            | [`sd::dual<sd::vec4f>`](dual.md)                        
+`sd::vec8u` is an alias for | [`sd::avxu`](avx.md)            | [`sd::dual<sd::vec4u>`](dual.md)                        
+`sd::vec8s` is an alias for | [`sd::avxs`](avx.md)            | [`sd::dual<sd::vec4s>`](dual.md)

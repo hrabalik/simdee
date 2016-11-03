@@ -13,9 +13,9 @@ type        | `width` | `scalar_t`      | satisfies concepts
 
 The `vec4` family is an alias for another type family, based on supported instruction sets:
 
-                        | if [`sse`](sse.md) is supported | otherwise
-------------------------|---------------------------------|-------------------------------------------                        
-`vec4b` is an alias for | [`sd::sseb`](sse.md)            | [`sd::dual<sd::dual<sd::dumb>>`](dual.md)                        
-`vec4f` is an alias for | [`sd::ssef`](sse.md)            | [`sd::dual<sd::dual<sd::dumf>>`](dual.md)                        
-`vec4u` is an alias for | [`sd::sseu`](sse.md)            | [`sd::dual<sd::dual<sd::dumu>>`](dual.md)                        
-`vec4s` is an alias for | [`sd::sses`](sse.md)            | [`sd::dual<sd::dual<sd::dums>>`](dual.md)
+                            | if [`sse`](sse.md) is supported | otherwise
+----------------------------|---------------------------------|-------------------------------------------                        
+`sd::vec4b` is an alias for | [`sd::sseb`](sse.md)            | [`sd::dual<sd::dual<sd::dumb>>`](dual.md)                        
+`sd::vec4f` is an alias for | [`sd::ssef`](sse.md)            | [`sd::dual<sd::dual<sd::dumf>>`](dual.md)                        
+`sd::vec4u` is an alias for | [`sd::sseu`](sse.md)            | [`sd::dual<sd::dual<sd::dumu>>`](dual.md)                        
+`sd::vec4s` is an alias for | [`sd::sses`](sse.md)            | [`sd::dual<sd::dual<sd::dums>>`](dual.md)

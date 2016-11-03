@@ -225,11 +225,11 @@ namespace sd {
 
         template<typename T>
         SIMDEE_INL bool any(const deferred_lognot<T>& l) {
-            return !l.neg.mask().all();
+            return !all(l.neg.mask());
         }
         template<typename T>
         SIMDEE_INL bool all(const deferred_lognot<T>& l) {
-            return !l.neg.mask().any();
+            return !any(l.neg.mask());
         }
         template<typename T>
         SIMDEE_INL constexpr const T operator!(const deferred_lognot<T>& l) {

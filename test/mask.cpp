@@ -50,15 +50,15 @@ TEST_CASE("mask", "[mask]") {
     }
 
     SECTION("any(), all()") {
-        REQUIRE(m0.any() == false);
-        REQUIRE(m1.any() == true);
-        REQUIRE(m2.any() == true);
-        REQUIRE(mA.any() == true);
+        REQUIRE(any(m0) == false);
+        REQUIRE(any(m1) == true);
+        REQUIRE(any(m2) == true);
+        REQUIRE(any(mA) == true);
 
-        REQUIRE(m0.all() == false);
-        REQUIRE(m1.all() == false);
-        REQUIRE(m2.all() == false);
-        REQUIRE(mA.all() == true);
+        REQUIRE(all(m0) == false);
+        REQUIRE(all(m1) == false);
+        REQUIRE(all(m2) == false);
+        REQUIRE(all(mA) == true);
     }
 
     SECTION("iteration") {

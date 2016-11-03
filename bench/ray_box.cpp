@@ -227,7 +227,7 @@ int main() {
             tmaxy *= factor;
             auto fail = ((tmin > tmaxy) || (tminy > tmax)).mask();
 
-            if (fail.all()) {
+            if (all(fail)) {
                 for (int i = 0; i < 8; ++i) {
                     *(resIt++) = Result::fail;
                 }
@@ -241,7 +241,7 @@ int main() {
             tmaxz *= factor;
             fail |= ((tmin > tmaxz) || (tminz > tmax)).mask();
 
-            if (fail.all()) {
+            if (all(fail)) {
                 for (int i = 0; i < 8; ++i) {
                     *(resIt++) = Result::fail;
                 }

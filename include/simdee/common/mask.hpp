@@ -29,10 +29,15 @@ namespace sd {
             SIMDEE_INL constexpr mask operator~() const { return mask(value ^ all_bits); }
             SIMDEE_INL constexpr bool operator==(mask r) const { return value == r.value; }
             SIMDEE_INL constexpr bool operator!=(mask r) const { return value != r.value; }
-            SIMDEE_INL constexpr bool any() const { return value != 0; }
-            SIMDEE_INL constexpr bool all() const { return value == all_bits; }
             SIMDEE_INL constexpr bit_iterator begin() const { return bit_iterator(value); }
             SIMDEE_INL constexpr bit_iterator end() const { return bit_iterator(0); }
+
+            SIMDEE_INL friend constexpr bool any(mask l) {
+                return l.value != 0;
+            }
+            SIMDEE_INL friend constexpr bool all(mask l) {
+                return l.value == all_bits;
+            }
 
             //data
             uint32_t value;

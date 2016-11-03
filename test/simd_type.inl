@@ -1106,9 +1106,9 @@ TEST_CASE(SIMD_TYPE " mask() method", SIMD_TEST_TAG) {
     SECTION("any, all") {
         B a = bufAB;
         B b = bufBB;
-        REQUIRE(any(a) == a.mask().any());
-        REQUIRE(any(b) == b.mask().any());
-        REQUIRE(all(a) == a.mask().all());
-        REQUIRE(all(b) == b.mask().all());
+        REQUIRE(any(a) == any(a.mask()));
+        REQUIRE(any(b) == any(b.mask()));
+        REQUIRE(all(a) == all(a.mask()));
+        REQUIRE(all(b) == all(b.mask()));
     }
 }

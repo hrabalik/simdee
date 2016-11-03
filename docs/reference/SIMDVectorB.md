@@ -40,4 +40,4 @@ syntax         | result type | description
 `any(x)`       | `bool`      | returns `true` if any of the scalars is true
 `all(x)`       | `bool`      | returns `true` if all of the scalars are true
 
-where `x`, `y` are values of type `T`
+where `x`, `y` are values of type `T`.

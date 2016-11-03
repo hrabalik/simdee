@@ -9,7 +9,7 @@ Defined in header `<simdee/simd_types/avx.hpp>`
 `0`               | AVX
 `1` (default)     | AVX2
 
-Avoid coding against architecture-specific types; prefer [architecture-agnostic types] instead.
+Avoid coding against architecture-specific types; prefer [architecture-agnostic types](vec8.md) instead.
 
 type       | `width` | `scalar_t`      | satisfies concepts
 -----------|---------|-----------------|----------------------------------------------------------------

@@ -2,12 +2,12 @@
 
 ## Implementations
 
-* `sseb`, `ssef`, `sseu`, `sses`
-* `avxb`, `avxf`, `avxu`, `avxs`
-* `dumb`, `dumf`, `dumu`, `dums`
-* `dual<T>`
-* `vec4b`, `vec4f`, `vec4u`, `vec4s`
-* `vec8b`, `vec8f`, `vec8u`, `vec8s`
+* `sd::sseb`, `sd::ssef`, `sd::sseu`, `sd::sses`
+* `sd::avxb`, `sd::avxf`, `sd::avxu`, `sd::avxs`
+* `sd::dumb`, `sd::dumf`, `sd::dumu`, `sd::dums`
+* `sd::dual<T>`
+* `sd::vec4b`, `sd::vec4f`, `sd::vec4u`, `sd::vec4s`
+* `sd::vec8b`, `sd::vec8f`, `sd::vec8u`, `sd::vec8s`
 
 ## Requirements
 
@@ -51,6 +51,8 @@ For a type `T` that satisfies `SIMDVector`, the following operations must be pro
 
 syntax                           | description
 ---------------------------------|-----------------------------------------------------------------------------
+`x.eval()`                       | no-op, used to enforce evaluation of expression templates
+`x.data()`                       | provides access to the underlying low-level register value
 `x.aligned_load(ptr)`            | load vector from a memory location aligned to `alignof(T)` bytes
 `x.aligned_store(ptr)`           | store vector to a memory location aligned to `alignof(T)` bytes
 `x.unaligned_load(ptr)`          | load vector from an arbitrary memory location
@@ -58,6 +60,7 @@ syntax                           | description
 `x.interleaved_load(ptr, step)`  | load vector, `i`-th scalar is loaded from `ptr + i*step`
 `x.interleaved_store(ptr, step)` | store vector, `i`-th scalar is stored `ptr + i*step`
 `cond(b, x, y)`                  | based on values in `b`, select scalars from `x` (if true) or `y` (if false)
+`first_scalar(x)`                | retrieve the value of the first scalar in vector
 `reduce(x, f)`                   | apply reduction `f` to `x`, storing the result in each scalar
 
 where:

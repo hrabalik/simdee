@@ -20,6 +20,10 @@ Additional requirements apply regarding member types of a type `T` that satisfie
 * `scalar_t` is `sd::bool32_t`
 * `T` has an extra member type `mask_t`, which is an instantiation of `sd::impl::mask`
 
+### Conversions
+
+A type that satisfies `SIMDVectorB` must be explicitly convertible to [`vec_u`](SIMDVectorU.md).
+
 ### Operations
 
 Additional operations must be provided for a type `T` that satisfies `SIMDVectorB`:

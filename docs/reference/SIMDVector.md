@@ -4,12 +4,12 @@ Describes all SIMD vector types provided by Simdee, regardless of underlying dat
 
 ## Implementations
 
-* `sd::sseb`, `sd::ssef`, `sd::sseu`, `sd::sses`
-* `sd::avxb`, `sd::avxf`, `sd::avxu`, `sd::avxs`
-* `sd::dumb`, `sd::dumf`, `sd::dumu`, `sd::dums`
-* `sd::dual<T>`
-* `sd::vec4b`, `sd::vec4f`, `sd::vec4u`, `sd::vec4s`
-* `sd::vec8b`, `sd::vec8f`, `sd::vec8u`, `sd::vec8s`
+* [`sd::sseb`](sse.md), [`sd::ssef`](sse.md), [`sd::sseu`](sse.md), [`sd::sses`](sse.md)
+* [`sd::avxb`](avx.md), [`sd::avxf`](avx.md), [`sd::avxu`](avx.md), [`sd::avxs`](avx.md)
+* [`sd::dumb`](dum.md), [`sd::dumf`](dum.md), [`sd::dumu`](dum.md), [`sd::dums`](dum.md)
+* [`sd::dual<T>`](dual.md)
+* [`sd::vec4b`](vec4.md), [`sd::vec4f`](vec4.md), [`sd::vec4u`](vec4.md), [`sd::vec4s`](vec4.md)
+* [`sd::vec8b`](vec8.md), [`sd::vec8f`](vec8.md), [`sd::vec8u`](vec8.md), [`sd::vec8s`](vec8.md)
 
 ## Requirements
 

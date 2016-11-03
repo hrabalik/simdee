@@ -1,6 +1,6 @@
 # `SIMDVector` (concept)
 
-Describes all SIMD vector types provided by Simdee, regardless of underlying datatype. A particular vector type always satisfies one of the extended concepts [`SIMDVectorB`](SIMDVectorB.md), [`SIMDVectorF`](SIMDVectorF.md), `SIMDVectorU`, `SIMDVectorS`.
+Describes all SIMD vector types provided by Simdee, regardless of underlying datatype. A particular vector type always satisfies one of the extended concepts [`SIMDVectorB`](SIMDVectorB.md), [`SIMDVectorF`](SIMDVectorF.md), [`SIMDVectorU`](SIMDVectorU.md), [`SIMDVectorS`](SIMDVectorS.md).
 
 ## Implementations
 
@@ -29,8 +29,8 @@ type           | description                                  | additional requi
 ---------------|----------------------------------------------|-------------------------
 `vec_b`        | related boolean SIMD vector                  | satisfies [`SIMDVectorB`](SIMDVectorB.md)
 `vec_f`        | related floating-point SIMD vector           | satisfies [`SIMDVectorF`](SIMDVectorF.md)
-`vec_u`        | related unsigned integral SIMD vector        | satisfies `SIMDVectorU`
-`vec_s`        | related signed integral SIMD vector          | satisfies `SIMDVectorS`
+`vec_u`        | related unsigned integral SIMD vector        | satisfies [`SIMDVectorU`](SIMDVectorU.md)
+`vec_s`        | related signed integral SIMD vector          | satisfies [`SIMDVectorS`](SIMDVectorS.md)
 `vector_t`     | low-level underlying vector type             |
 `scalar_t`     | scalar type                                  |
 `storage_t`    | type for storing vector in memory            |

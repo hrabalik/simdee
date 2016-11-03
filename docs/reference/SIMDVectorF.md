@@ -41,6 +41,10 @@ syntax         | result type               | description
 `x - y`        | `T`                       | scalar-wise subtraction
 `x * y`        | `T`                       | scalar-wise multiplication
 `x / y`        | `T`                       | scalar-wise division
+`x += y`       | `T`                       | same as `x = x + y`
+`x -= y`       | `T`                       | same as `x = x - y`
+`x *= y`       | `T`                       | same as `x = x * y`
+`x /= y`       | `T`                       | same as `x = x / y`
 `min(x)`       | `T`                       | scalar-wise minimum
 `max(x)`       | `T`                       | scalar-wise maximum
 `abs(x)`       | `T`                       | scalar-wise absolute value

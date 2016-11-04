@@ -45,7 +45,7 @@ You can define the following macros before you include Simdee headers:
 
 ## Availability of type families
 
-Both compiler and library configuration influences what types (and, therefore, what instruction sets) are enabled for use. The following table lists enabled architecture-dependent type families for a specific configuration:
+Both compiler and library configuration influence what types (and, therefore, what instruction sets) are enabled for use. The following table lists enabled architecture-dependent type families for a specific configuration:
 
 Instruction set         | `#define SIMDEE_NEED_INT 1`                                | `#define SIMDEE_NEED_INT 0`
 ------------------------|------------------------------------------------------------|------------------------------------------------------------

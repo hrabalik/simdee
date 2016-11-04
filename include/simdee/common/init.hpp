@@ -49,4 +49,23 @@
 #   endif
 #endif
 
+//
+// create architecture support macros
+//
+#if defined(__SSE2__)
+#   define SIMDEE_SSE2 1
+#else
+#   define SIMDEE_SSE2 0
+#endif
+#if defined(__AVX__)
+#   define SIMDEE_AVX 1
+#else
+#   define SIMDEE_AVX 0
+#endif
+#if defined(__AVX2__)
+#   define SIMDEE_AVX2 1
+#else
+#   define SIMDEE_AVX2 0
+#endif
+
 #endif // SIMDEE_COMMON_INIT_HPP

@@ -6,8 +6,8 @@
 
 #include "common.hpp"
 
-#ifndef __SSE2__
-#   error "The macro '__SSE2__' is not set. SSE2 intrinsics are required to use the SSE SIMD type. Please check your build options."
+#if !SIMDEE_SSE2
+#   error "SSE2 intrinsics are required to use the SSE SIMD type. Please check your build options."
 #endif
 
 #include <emmintrin.h>

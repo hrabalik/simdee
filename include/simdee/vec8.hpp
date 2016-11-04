@@ -9,8 +9,8 @@
 //
 // AVX-accelerated vec8 implementation
 //
-#if (!SIMDEE_NEED_INT && defined(__AVX__)) || \
-    (SIMDEE_NEED_INT && defined(__AVX2__))
+#if (!SIMDEE_NEED_INT && SIMDEE_AVX) || \
+    (SIMDEE_NEED_INT && SIMDEE_AVX2)
 #include "simd_types/avx.hpp"
 
 namespace sd {

@@ -6,7 +6,7 @@
 
 #define SIMDEE
 #define SIMDEE_MAJOR 0
-#define SIMDEE_MINOR 2
+#define SIMDEE_MINOR 3
 #define SIMDEE_PATCHLEVEL 0
 
 //

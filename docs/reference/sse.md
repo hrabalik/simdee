@@ -2,7 +2,7 @@
 
 Defined in header `<simdee/simd_types/sse.hpp>`
 
-`sse` is an architecture-specific type family that employs the SSE2 instruction set and its extensions. If you use `sse` type family in your code, SSE2 support must be enabled. See guide on how to [enable instruction sets].
+`sse` is an architecture-specific type family that employs the SSE2 instruction set and its extensions. If you use `sse` type family in your code, SSE2 support must be enabled. See guide on how to [enable instruction sets](../guides/config.md).
 
 Avoid coding against architecture-specific types; prefer [architecture-agnostic types](vec4.md) instead.
 

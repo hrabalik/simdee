@@ -7,10 +7,10 @@
 #include "common.hpp"
 
 #if !defined(__AVX__)
-#error "The macro '__AVX__' is not set. AVX intrinsics are required to use the AVX SIMD type. Please check your build options."
+#   error "The macro '__AVX__' is not set. AVX intrinsics are required to use the AVX SIMD type. Please check your build options."
 #endif
 #if SIMDEE_NEED_INT && !defined(__AVX2__)
-#error "AVX2 intrinsics are required to use the AVX SIMD type with integer operations. Use SIMDEE_NEED_INT 0 to use floating-point operations only."
+#   error "AVX2 intrinsics are required to use the AVX SIMD type with integer operations. Use SIMDEE_NEED_INT 0 to use floating-point operations only."
 #endif
 
 #include <immintrin.h>

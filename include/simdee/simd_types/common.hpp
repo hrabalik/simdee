@@ -4,14 +4,15 @@
 #ifndef SIMDEE_SIMD_TYPES_COMMON_HPP
 #define SIMDEE_SIMD_TYPES_COMMON_HPP
 
-#include "../util/inline.hpp"
-#include "../util/bitfiddle.hpp"
-#include "../util/macros.hpp"
+#include "../common/init.hpp"
 #include "../common/casts.hpp"
 #include "../common/expr.hpp"
 #include "../common/mask.hpp"
 #include "../common/storage.hpp"
 #include "../common/deferred_not.hpp"
+#include "../util/inline.hpp"
+#include "../util/bitfiddle.hpp"
+#include "../util/macros.hpp"
 #include <array>
 #include <type_traits>
 

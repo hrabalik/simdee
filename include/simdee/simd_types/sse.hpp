@@ -169,15 +169,15 @@ namespace sd {
 
         SIMDEE_UNOP(sseu, scalar_t, first_scalar, dirty::as_u(_mm_cvtss_f32(l.mm)));
 
-#   if defined(SIMDEE_NEED_INT)
+#   if SIMDEE_NEED_INT
         SIMDEE_BINOP(sseu, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseu, not_sseb, operator!=, not_sseb(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
-#   endif
         SIMDEE_BINOP(sseu, sseu, operator&, _mm_and_ps(l.mm, r.mm));
         SIMDEE_BINOP(sseu, sseu, operator|, _mm_or_ps(l.mm, r.mm));
         SIMDEE_BINOP(sseu, sseu, operator^, _mm_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(sseu, not_sseu, operator~, not_sseu(l));
         SIMDEE_BINOP(sseu, sseu, andnot, _mm_andnot_ps(r.mm, l.mm));
+#   endif
     };
 
     struct sses : sse_base<sses> {
@@ -190,7 +190,7 @@ namespace sd {
 
         SIMDEE_UNOP(sses, scalar_t, first_scalar, dirty::as_s(_mm_cvtss_f32(l.mm)));
 
-#   if defined(SIMDEE_NEED_INT)
+#   if SIMDEE_NEED_INT
         SIMDEE_BINOP(sses, sseb, operator<, _mm_cmplt_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, sseb, operator>, _mm_cmpgt_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, not_sseb, operator<=, not_sseb(_mm_cmpgt_epi32(l.mmi(), r.mmi())));

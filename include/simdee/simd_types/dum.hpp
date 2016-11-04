@@ -132,15 +132,15 @@ namespace sd {
 
         SIMDEE_UNOP(dumu, scalar_t, first_scalar, l.mm);
 
-#   if defined(SIMDEE_NEED_INT)
+#   if SIMDEE_NEED_INT
         SIMDEE_BINOP(dumu, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
         SIMDEE_BINOP(dumu, dumb, operator!=, dumb::scalar_t(l.mm != r.mm));
-#   endif
         SIMDEE_BINOP(dumu, dumu, operator&, l.mm & r.mm);
         SIMDEE_BINOP(dumu, dumu, operator|, l.mm | r.mm);
         SIMDEE_BINOP(dumu, dumu, operator^, l.mm ^ r.mm);
         SIMDEE_UNOP(dumu, dumu, operator~, ~l.mm);
         SIMDEE_BINOP(dumu, dumu, andnot, l.mm & ~r.mm);
+#   endif
     };
 
     struct dums : dum_base<dums> {
@@ -153,7 +153,7 @@ namespace sd {
 
         SIMDEE_UNOP(dums, scalar_t, first_scalar, l.mm);
 
-#   if defined(SIMDEE_NEED_INT)
+#   if SIMDEE_NEED_INT
         SIMDEE_BINOP(dums, dumb, operator<, dumb::scalar_t(l.mm < r.mm));
         SIMDEE_BINOP(dums, dumb, operator>, dumb::scalar_t(l.mm > r.mm));
         SIMDEE_BINOP(dums, dumb, operator<=, dumb::scalar_t(l.mm <= r.mm));

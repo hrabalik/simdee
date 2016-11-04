@@ -212,15 +212,15 @@ namespace sd {
             mm.r = decltype(mm.r)(r.data().r);
         }
 
-#   if defined(SIMDEE_NEED_INT)
+#   if SIMDEE_NEED_INT
         SIMDEE_BINOP(vec_u, vec_b, operator==, (b_vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
         SIMDEE_BINOP(vec_u, vec_b, operator!=, (b_vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
-#   endif
         SIMDEE_BINOP(vec_u, vec_u, operator&, (vector_t{ l.mm.l & r.mm.l, l.mm.r & r.mm.r }));
         SIMDEE_BINOP(vec_u, vec_u, operator|, (vector_t{ l.mm.l | r.mm.l, l.mm.r | r.mm.r }));
         SIMDEE_BINOP(vec_u, vec_u, operator^, (vector_t{ l.mm.l ^ r.mm.l, l.mm.r ^ r.mm.r }));
         SIMDEE_UNOP(vec_u, vec_u, operator~, (vector_t{ ~l.mm.l, ~l.mm.r }));
         SIMDEE_BINOP(vec_u, vec_u, andnot, (vector_t{ andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r) }));
+#   endif
 
         SIMDEE_INL friend const vec_u cond(const vec_b& pred, const vec_u& if_true, const vec_u& if_false) {
             return vector_t{
@@ -256,7 +256,7 @@ namespace sd {
             mm.r = decltype(mm.r)(r.data().r);
         }
 
-#   if defined(SIMDEE_NEED_INT)
+#   if SIMDEE_NEED_INT
         SIMDEE_BINOP(vec_s, vec_b, operator<, (b_vector_t{ l.mm.l < r.mm.l, l.mm.r < r.mm.r }));
         SIMDEE_BINOP(vec_s, vec_b, operator>, (b_vector_t{ l.mm.l > r.mm.l, l.mm.r > r.mm.r }));
         SIMDEE_BINOP(vec_s, vec_b, operator<=, (b_vector_t{ l.mm.l <= r.mm.l, l.mm.r <= r.mm.r }));

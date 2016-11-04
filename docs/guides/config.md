@@ -47,10 +47,10 @@ You can define the following macros before you include Simdee headers:
 
 Both compiler and library configuration influence what types (and, therefore, what instruction sets) are enabled for use. The following table lists enabled architecture-dependent type families for a specific configuration:
 
-Instruction set         | `#define SIMDEE_NEED_INT 1`                                | `#define SIMDEE_NEED_INT 0`
-------------------------|------------------------------------------------------------|------------------------------------------------------------
-SSE2                    | [`sse`](../reference/sse.md)                               | [`sse`](../reference/sse.md)
-AVX                     | [`sse`](../reference/sse.md)                               | [`sse`](../reference/sse.md), [`avx`](../reference/avx.md)
-AVX2                    | [`sse`](../reference/sse.md), [`avx`](../reference/avx.md) | [`sse`](../reference/sse.md), [`avx`](../reference/avx.md)
+Instruction set         | `#define SIMDEE_NEED_INT 1`                                          | `#define SIMDEE_NEED_INT 0`
+------------------------|----------------------------------------------------------------------|------------------------------------------------------------
+SSE2                    | [`sd::sse_`](../reference/sse.md)                                    | [`sd::sse_`](../reference/sse.md)
+AVX                     | [`sd::sse_`](../reference/sse.md)                                    | [`sd::sse_`](../reference/sse.md), [`sd::avx_`](../reference/avx.md)
+AVX2                    | [`sd::sse_`](../reference/sse.md), [`sd::avx_`](../reference/avx.md) | [`sd::sse_`](../reference/sse.md), [`sd::avx_`](../reference/avx.md)
 
-When coding with Simdee, you should prefer architecture-agnostic type families [`vec4`](../reference/vec4.md) and [`vec8`](../reference/vec8.md) to the architecture-specific ones above.
+When coding with Simdee, you should prefer architecture-independent type families [`sd::vec4_`](../reference/vec4.md) and [`sd::vec8_`](../reference/vec8.md) to the architecture-specific ones above.

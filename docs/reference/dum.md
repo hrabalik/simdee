@@ -1,8 +1,8 @@
-# `dum` (type family)
+# `sd::dum_` (type family)
 
 Defined in header `<simdee/simd_types/dum.hpp>`
 
-`dum` is a type family of vectors containing only a single scalar.
+`sd::dum_` is a type family of vectors containing only a single scalar.
 
 type       | `width` | `scalar_t`      | satisfies concepts
 -----------|---------|-----------------|----------------------------------------------------------------

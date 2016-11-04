@@ -13,7 +13,7 @@
     * [`SIMDVectorU`](reference/SIMDVectorU.md) 32-bit unsigned integral SIMD vector
     * [`SIMDVectorS`](reference/SIMDVectorS.md) 32-bit signed integral SIMD vector
 * Vectors
-  * Architecture-agnostic
+  * Architecture-independent
     * [`sd::dum_`](reference/dum.md) vectors with 1 scalar
     * [`sd::vec4_`](reference/vec4.md) vectors with 4 scalars
     * [`sd::vec8_`](reference/vec8.md) vectors with 8 scalars

@@ -2,7 +2,7 @@
 
 Defined in header `<simdee/simd_types/dual.hpp>`
 
-`sd::dual` is a class template that creates a new vector based on an existing [`SIMDVector`](SIMDVector.md) `T`.
+`sd::dual` is a class template that creates a new vector based on an existing type `T` that satisfies [`SIMDVector`](SIMDVector.md).
 
 * The width of the new vector is doubled, i.e. `sd::dual<T>::width == 2 * T::width`.
 * `sd::dual<T>` satisfies [`SIMDVector`](SIMDVector.md).

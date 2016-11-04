@@ -1,8 +1,8 @@
-# `vec4` (type family)
+# `sd::vec4_` (type family)
 
 Defined in header `<simdee/vec4.hpp>`
 
-`vec4` is an architecture-agnostic type family of vectors that contain 4 scalars.
+`sd::vec4_` is an architecture-independent type family of vectors that contain 4 scalars.
 
 type        | `width` | `scalar_t`      | satisfies concepts
 ------------|---------|-----------------|----------------------------------------------------------------

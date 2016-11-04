@@ -98,7 +98,7 @@ namespace sd {
             return f(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));
         }
 
-#   if defined(__AVX2__)
+#   if SIMDEE_AVX2
 		SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
         SIMDEE_INL avx_base& operator=(const expr::all_bits&) {
 			mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
@@ -140,7 +140,7 @@ namespace sd {
         SIMDEE_UNOP(avxb, mask_t, mask, mask_t(cast_u(_mm256_movemask_ps(l.mm))));
         SIMDEE_UNOP(avxb, scalar_t, first_scalar, dirty::as_b(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
 
-#   if defined(__AVX2__)
+#   if SIMDEE_AVX2
         SIMDEE_BINOP(avxb, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
 #   else
         SIMDEE_BINOP(avxb, not_avxb, operator==, not_avxb(_mm256_xor_ps(l.mm, r.mm)));

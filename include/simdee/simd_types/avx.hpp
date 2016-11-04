@@ -6,8 +6,6 @@
 
 #include "common.hpp"
 
-#define SIMDEE_HAVE_AVX
-
 #if !defined(__AVX__)
 #error "The macro '__AVX__' is not set. AVX intrinsics are required to use the AVX SIMD type. Please check your build options."
 #endif

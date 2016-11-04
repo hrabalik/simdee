@@ -6,8 +6,6 @@
 
 #include "common.hpp"
 
-#define SIMDEE_HAVE_DUM
-
 #include <cmath>
 
 namespace sd {

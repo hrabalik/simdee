@@ -15,13 +15,13 @@ namespace sd {
     struct dums;
 
     template<>
-    struct is_simd_type<dumb> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<dumb> : std::integral_constant<bool, true> {};
     template<>
-    struct is_simd_type<dumf> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<dumf> : std::integral_constant<bool, true> {};
     template<>
-    struct is_simd_type<dumu> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<dumu> : std::integral_constant<bool, true> {};
     template<>
-    struct is_simd_type<dums> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<dums> : std::integral_constant<bool, true> {};
 
     template <typename Simd_t, typename Vector_t>
     struct dum_traits {
@@ -37,13 +37,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<dumb> : dum_traits<dumb, bool32_t> {};
+    struct simd_vector_traits<dumb> : dum_traits<dumb, bool32_t> {};
     template <>
-    struct simd_type_traits<dumf> : dum_traits<dumf, float> {};
+    struct simd_vector_traits<dumf> : dum_traits<dumf, float> {};
     template <>
-    struct simd_type_traits<dumu> : dum_traits<dumu, uint32_t> {};
+    struct simd_vector_traits<dumu> : dum_traits<dumu, uint32_t> {};
     template <>
-    struct simd_type_traits<dums> : dum_traits<dums, int32_t> {};
+    struct simd_vector_traits<dums> : dum_traits<dums, int32_t> {};
 
     template <typename Crtp>
     struct dum_base : simd_base<Crtp> {

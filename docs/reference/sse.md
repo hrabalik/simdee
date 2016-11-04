@@ -1,6 +1,6 @@
 # `sd::sse_` (type family)
 
-Defined in header `<simdee/simd_types/sse.hpp>`
+Defined in header `<simdee/simd_vectors/sse.hpp>`
 
 `sd::sse_` is an architecture-specific type family that employs the SSE2 instruction set and its extensions. If you use `sd::sse_` type family in your code, SSE2 support must be enabled. See guide on how to [enable instruction sets](../guides/config.md).
 

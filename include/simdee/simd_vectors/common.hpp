@@ -19,13 +19,13 @@
 namespace sd {
 
     template <typename T>
-    struct is_simd_type : std::integral_constant<bool, false> {};
+    struct is_simd_vector : std::integral_constant<bool, false> {};
     template <typename T>
-    struct simd_type_traits;
+    struct simd_vector_traits;
 
     template <typename Crtp>
     struct simd_base {
-        using traits_t = simd_type_traits<Crtp>;
+        using traits_t = simd_vector_traits<Crtp>;
         using vector_t = typename traits_t::vector_t;
         using scalar_t = typename traits_t::scalar_t;
         using vec_b = typename traits_t::vec_b;

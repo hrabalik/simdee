@@ -1,6 +1,6 @@
 #include "catch.hpp"
 #include <simdee/simdee.hpp>
-#include <simdee/simd_types/dum.hpp>
+#include <simdee/simd_vectors/dum.hpp>
 
 using B = sd::dumb;
 using F = sd::dumf;
@@ -39,7 +39,7 @@ const U::storage_t bufZU { 0 };
 const S::storage_t bufZS { 0 };
 
 #define SIMD_TYPE "DUM"
-#define SIMD_TEST_TAG "[simd_types][dum]"
+#define SIMD_TEST_TAG "[simd_vectors][dum]"
 #define SIMD_WIDTH 1
 
-#include "simd_type.inl"
+#include "simd_vector.inl"

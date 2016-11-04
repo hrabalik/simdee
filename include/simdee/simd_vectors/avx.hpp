@@ -24,13 +24,13 @@ namespace sd {
     using not_avxu = expr::deferred_bitnot<avxu>;
 
     template <>
-    struct is_simd_type<avxb> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<avxb> : std::integral_constant<bool, true> {};
     template <>
-    struct is_simd_type<avxf> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<avxf> : std::integral_constant<bool, true> {};
     template <>
-    struct is_simd_type<avxu> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<avxu> : std::integral_constant<bool, true> {};
     template <>
-    struct is_simd_type<avxs> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<avxs> : std::integral_constant<bool, true> {};
 
     template <typename Simd_t, typename Vector_t, typename Scalar_t>
     struct avx_traits {
@@ -46,13 +46,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<avxb> : avx_traits<avxb, __m256, bool32_t> {};
+    struct simd_vector_traits<avxb> : avx_traits<avxb, __m256, bool32_t> {};
     template <>
-    struct simd_type_traits<avxf> : avx_traits<avxf, __m256, float> {};
+    struct simd_vector_traits<avxf> : avx_traits<avxf, __m256, float> {};
     template <>
-    struct simd_type_traits<avxu> : avx_traits<avxu, __m256, uint32_t> {};
+    struct simd_vector_traits<avxu> : avx_traits<avxu, __m256, uint32_t> {};
     template <>
-    struct simd_type_traits<avxs> : avx_traits<avxs, __m256, int32_t> {};
+    struct simd_vector_traits<avxs> : avx_traits<avxs, __m256, int32_t> {};
 
     template <typename Crtp>
     struct avx_base : simd_base<Crtp> {

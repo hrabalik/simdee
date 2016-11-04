@@ -47,7 +47,7 @@ const U::storage_t bufZU { 0, 0, 0, 0, 0, 0, 0, 0 };
 const S::storage_t bufZS { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 #define SIMD_TYPE "vec8"
-#define SIMD_TEST_TAG "[simd_types][vec8]"
+#define SIMD_TEST_TAG "[simd_vectors][vec8]"
 #define SIMD_WIDTH 8
 
-#include "simd_type.inl"
+#include "simd_vector.inl"

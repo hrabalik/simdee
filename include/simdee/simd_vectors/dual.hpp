@@ -25,18 +25,18 @@ namespace sd {
     struct dual;
 
     template <typename T>
-    struct is_simd_type<dual<T>> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<dual<T>> : std::integral_constant<bool, true> {};
 
     template <typename T>
-    struct simd_type_traits<dual<T>> {
+    struct simd_vector_traits<dual<T>> {
         using simd_t = dual<T>;
         using vector_t = impl::pair<T>;
-        using scalar_t = typename simd_type_traits<T>::scalar_t;
-        using vec_b = dual<typename simd_type_traits<T>::vec_b>;
-        using vec_f = dual<typename simd_type_traits<T>::vec_f>;
-        using vec_u = dual<typename simd_type_traits<T>::vec_u>;
-        using vec_s = dual<typename simd_type_traits<T>::vec_s>;
-        using mask_t = impl::dual_mask_t<typename simd_type_traits<T>::mask_t>;
+        using scalar_t = typename simd_vector_traits<T>::scalar_t;
+        using vec_b = dual<typename simd_vector_traits<T>::vec_b>;
+        using vec_f = dual<typename simd_vector_traits<T>::vec_f>;
+        using vec_u = dual<typename simd_vector_traits<T>::vec_u>;
+        using vec_s = dual<typename simd_vector_traits<T>::vec_s>;
+        using mask_t = impl::dual_mask_t<typename simd_vector_traits<T>::mask_t>;
         using storage_t = impl::storage<simd_t, scalar_t, alignof(vector_t)>;
     };
 

@@ -1,6 +1,6 @@
 # `sd::dum_` (type family)
 
-Defined in header `<simdee/simd_types/dum.hpp>`
+Defined in header `<simdee/simd_vectors/dum.hpp>`
 
 `sd::dum_` is a type family of vectors containing only a single scalar.
 

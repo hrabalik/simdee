@@ -1,5 +1,5 @@
 #define SIMDEE_NEED_INT 0
-#include <simdee/simd_types/avx.hpp>
+#include <simdee/simd_vectors/avx.hpp>
 #include <simdee/util/allocator.hpp>
 
 #include <limits>

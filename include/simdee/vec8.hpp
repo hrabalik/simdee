@@ -10,7 +10,7 @@
 // AVX-accelerated vec8 implementation
 //
 #if (!SIMDEE_NEED_INT && SIMDEE_AVX) || SIMDEE_AVX2
-#include "simd_types/avx.hpp"
+#include "simd_vectors/avx.hpp"
 
 namespace sd {
     using vec8b = avxb;
@@ -24,7 +24,7 @@ namespace sd {
 //
 #else
 #include "vec4.hpp"
-#include "simd_types/dual.hpp"
+#include "simd_vectors/dual.hpp"
 
 namespace sd {
     using vec8b = dual<vec4b>;

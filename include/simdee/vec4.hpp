@@ -10,7 +10,7 @@
 // SSE-accelerated vec4 implementation
 //
 #if SIMDEE_SSE2
-#include "simd_types/sse.hpp"
+#include "simd_vectors/sse.hpp"
 
 namespace sd {
     using vec4b = sseb;
@@ -23,8 +23,8 @@ namespace sd {
 // Emulated vec4 implementation
 //
 #else
-#include "simd_types/dum.hpp"
-#include "simd_types/dual.hpp"
+#include "simd_vectors/dum.hpp"
+#include "simd_vectors/dual.hpp"
 
 namespace sd {
     using vec4b = dual<dual<dumb>>;

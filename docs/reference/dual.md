@@ -1,6 +1,6 @@
 # `sd::dual<T>`
 
-Defined in header `<simdee/simd_types/dual.hpp>`
+Defined in header `<simdee/simd_vectors/dual.hpp>`
 
 `sd::dual` is a class template that creates a new vector based on an existing type `T` that satisfies [`SIMDVector`](SIMDVector.md).
 

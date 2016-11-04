@@ -1,6 +1,6 @@
 #include "catch.hpp"
 #include <simdee/simdee.hpp>
-#include <simdee/simd_types/dual.hpp>
+#include <simdee/simd_vectors/dual.hpp>
 
 using B = sd::dual<sd::vec4b>;
 using F = sd::dual<sd::vec4f>;
@@ -48,7 +48,7 @@ const U::storage_t bufZU{ 0, 0, 0, 0, 0, 0, 0, 0 };
 const S::storage_t bufZS{ 0, 0, 0, 0, 0, 0, 0, 0 };
 
 #define SIMD_TYPE "Dual"
-#define SIMD_TEST_TAG "[simd_types][dual]"
+#define SIMD_TEST_TAG "[simd_vectors][dual]"
 #define SIMD_WIDTH 8
 
-#include "simd_type.inl"
+#include "simd_vector.inl"

@@ -21,13 +21,13 @@ namespace sd {
     using not_sseu = expr::deferred_bitnot<sseu>;
 
     template<>
-    struct is_simd_type<sseb> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<sseb> : std::integral_constant<bool, true> {};
     template<>
-    struct is_simd_type<ssef> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<ssef> : std::integral_constant<bool, true> {};
     template<>
-    struct is_simd_type<sseu> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<sseu> : std::integral_constant<bool, true> {};
     template<>
-    struct is_simd_type<sses> : std::integral_constant<bool, true> {};
+    struct is_simd_vector<sses> : std::integral_constant<bool, true> {};
 
     template <typename Simd_t, typename Vector_t, typename Scalar_t>
     struct sse_traits {
@@ -43,13 +43,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_type_traits<sseb> : sse_traits<sseb, __m128, bool32_t> {};
+    struct simd_vector_traits<sseb> : sse_traits<sseb, __m128, bool32_t> {};
     template <>
-    struct simd_type_traits<ssef> : sse_traits<ssef, __m128, float> {};
+    struct simd_vector_traits<ssef> : sse_traits<ssef, __m128, float> {};
     template <>
-    struct simd_type_traits<sseu> : sse_traits<sseu, __m128, uint32_t> {};
+    struct simd_vector_traits<sseu> : sse_traits<sseu, __m128, uint32_t> {};
     template <>
-    struct simd_type_traits<sses> : sse_traits<sses, __m128, int32_t> {};
+    struct simd_vector_traits<sses> : sse_traits<sses, __m128, int32_t> {};
 
     template <typename Crtp>
     struct sse_base : simd_base<Crtp> {

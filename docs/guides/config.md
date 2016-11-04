@@ -35,8 +35,22 @@ SSE2               | `-msse2`       | `-msse2`       | `/arch:SSE2`
 AVX                | `-mavx`        | `-mavx`        | `/arch:AVX`
 AVX2               | `-mavx2`       | `-mavx2`       | `/arch:AVX2`
 
-Beware that if your computer doesn't support the instruction set that you select, the program will crash. No compiler flag is necessary when you want to target SSE2 on a x86-64 architecture.
+Beware that if your computer doesn't support the instruction set that you select, the program will crash. No compiler flag is necessary when you want to target SSE2 on a x86-64 architecture; all 64-bit processors support SSE2.
 
 ## Library configuration
 
-...
+You can define the following macros before you include Simdee headers:
+
+* `SIMDEE_NEED_INT` (default value `1`) enables or disables integral arithmetic. When set to `0`, most operations with signed and unsigned vectors are disabled (see reference for [SIMDVectorS](../reference/SIMDVectorS.md) and [SIMDVectorU](../reference/SIMDVectorU.md) for a full list).
+
+## Availability of type families
+
+Both compiler and library configuration influences what types (and, therefore, what instruction sets) are enabled for use. The following table lists enabled architecture-dependent type families for a specific configuration:
+
+Instruction set         | `#define SIMDEE_NEED_INT 1`                                | `#define SIMDEE_NEED_INT 0`
+------------------------|------------------------------------------------------------|------------------------------------------------------------
+SSE2                    | [`sse`](../reference/sse.md)                               | [`sse`](../reference/sse.md)
+AVX                     | [`sse`](../reference/sse.md)                               | [`sse`](../reference/sse.md), [`avx`](../reference/avx.md)
+AVX2                    | [`sse`](../reference/sse.md), [`avx`](../reference/avx.md) | [`sse`](../reference/sse.md), [`avx`](../reference/avx.md)
+
+When coding with Simdee, you should prefer architecture-agnostic type families [`vec4`](../reference/vec4.md) and [`vec8`](../reference/vec8.md) to the architecture-specific ones above.

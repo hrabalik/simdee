@@ -36,16 +36,28 @@
 //
 #if defined(_MSC_VER) && !defined(__INTEL_COMPILER)
 #   if defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 1)
-#       define __SSE__
+#       if !defined(__SSE__)
+#           define __SSE__
+#       endif
 #   endif
 #   if defined(_M_X64) || (defined(_M_IX86_FP) && _M_IX86_FP >= 2)
-#       define __SSE2__
+#       if !defined(__SSE2__)
+#           define __SSE2__
+#       endif
 #   endif
 #   if defined(__AVX__)
-#       define __SSE3__
-#       define __SSSE3__
-#       define __SSE4_1__
-#       define __SSE4_2__
+#       if !defined(__SSE3__)
+#           define __SSE3__
+#       endif
+#       if !defined(__SSSE3__)
+#           define __SSSE3__
+#       endif
+#       if !defined(__SSE4_1__)
+#           define __SSE4_1__
+#       endif
+#       if !defined(__SSE4_2__)
+#           define __SSE4_2__
+#       endif
 #   endif
 #endif
 

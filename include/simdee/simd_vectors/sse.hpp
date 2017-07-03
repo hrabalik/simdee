@@ -1,4 +1,4 @@
-// This file is a part of Simdee, see homepage at http://github.com/tufak/simdee
+// This file is a part of Simdee, see homepage at http://github.com/hrabalik/simdee
 // This file is distributed under the MIT license.
 
 #ifndef SIMDEE_SIMD_TYPES_SSE_HPP

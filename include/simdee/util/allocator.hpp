@@ -4,17 +4,18 @@
 #ifndef SIMDEE_UTIL_MALLOC_HPP
 #define SIMDEE_UTIL_MALLOC_HPP
 
-#include <type_traits>
-#include <exception>
-#include <cstdlib>
-#include <cstdint>
-#include <memory>
 #include "noexcept.hpp"
+#include <cstdint>
+#include <cstdlib>
+#include <exception>
+#include <memory>
+#include <type_traits>
 
 namespace sd {
 
     namespace detail {
-#if defined(__GLIBCXX__) && (__GLIBCXX__ < 20150422 || __GLIBCXX__ == 20150623 || __GLIBCXX__ == 20150626 || __GLIBCXX__ == 20160803)
+#if defined(__GLIBCXX__) && (__GLIBCXX__ < 20150422 || __GLIBCXX__ == 20150623 ||                  \
+                             __GLIBCXX__ == 20150626 || __GLIBCXX__ == 20160803)
         // type_traits is buggered in libstdc++ up until GCC 5
         template <typename T>
         using is_trivially_default_constructible = std::has_trivial_default_constructor<T>;
@@ -23,23 +24,18 @@ namespace sd {
         using is_trivially_default_constructible = std::is_trivially_default_constructible<T>;
 #endif
 
-        inline constexpr bool is_pow2(std::size_t x) {
-            return x && (x & (x - 1)) == 0;
-        }
+        inline constexpr bool is_pow2(std::size_t x) { return x && (x & (x - 1)) == 0; }
 
         template <typename T, std::size_t Align>
         struct aligned_allocator;
-        template <typename T, std::size_t Align = alignof(T), bool Switch = (Align > alignof(double))>
+        template <typename T, std::size_t Align = alignof(T),
+                  bool Switch = (Align > alignof(double))>
         struct alloc;
 
         template <typename T, std::size_t Align>
         struct alloc<T, Align, false> {
-            static T* malloc(std::size_t bytes) {
-                return (T*)std::malloc(bytes);
-            }
-            static void free(T* ptr) {
-                std::free(ptr);
-            }
+            static T* malloc(std::size_t bytes) { return (T*)std::malloc(bytes); }
+            static void free(T* ptr) { std::free(ptr); }
             using allocator = std::allocator<T>;
             using deleter = std::default_delete<T>;
         };
@@ -90,30 +86,26 @@ namespace sd {
                 return alloc_t::malloc(sizeof(T) * count);
             }
 
-            void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
-                alloc_t::free(ptr);
-            }
+            void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT { alloc_t::free(ptr); }
 
             void destroy(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {
                 if (!std::is_trivially_destructible<T>::value) {
                     ptr->~T();
-                }
-                else {
+                } else {
                     no_op(ptr); // just to suppress MSVC warning "ptr not referenced"
                 }
             }
 
             static void no_op(T*) {}
 
-            void construct(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
-                if (!is_trivially_default_constructible<T>::value) {
-                    new (ptr)T;
-                }
+            void construct(T* ptr) const
+                SIMDEE_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
+                if (!is_trivially_default_constructible<T>::value) { new (ptr) T; }
             }
 
             template <typename A1, typename... A>
             void construct(T* ptr, A1&& a1, A&&... a2) const {
-                new (ptr)T(std::forward<A1>(a1), std::forward<A...>(a2)...);
+                new (ptr) T(std::forward<A1>(a1), std::forward<A...>(a2)...);
             }
 
             // default rebind should do just this, doesn't seem to work in MSVC though
@@ -124,9 +116,13 @@ namespace sd {
         };
 
         template <typename T, typename U, std::size_t TS, std::size_t US>
-        inline bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return true; }
+        inline bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) {
+            return true;
+        }
         template <typename T, typename U, std::size_t TS, std::size_t US>
-        inline bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) { return false; }
+        inline bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) {
+            return false;
+        }
     }
 
     template <typename T, std::size_t Align = alignof(T)>

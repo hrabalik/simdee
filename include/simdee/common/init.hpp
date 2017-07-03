@@ -1,6 +1,8 @@
 // This file is a part of Simdee, see homepage at http://github.com/hrabalik/simdee
 // This file is distributed under the MIT license.
 
+// clang-format off
+
 #ifndef SIMDEE_COMMON_INIT_HPP
 #define SIMDEE_COMMON_INIT_HPP
 

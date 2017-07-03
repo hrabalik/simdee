@@ -9,16 +9,13 @@
 
 #include <numeric>
 
-#define VAL(TYPE) \
-    std::declval< TYPE >()
+#define VAL(TYPE) std::declval<TYPE>()
 
-#define HAS_METHOD(WHO, NAME_ARGS, RETURN_TYPE) \
-    (std::is_same< std::remove_cv<std::remove_reference< \
-    decltype( VAL(WHO) . NAME_ARGS ) >::type>::type, \
-    RETURN_TYPE >::value)
+#define HAS_METHOD(WHO, NAME_ARGS, RETURN_TYPE)                                                    \
+    (std::is_same<std::remove_cv<std::remove_reference<decltype(VAL(WHO).NAME_ARGS)>::type>::type, \
+                  RETURN_TYPE>::value)
 
-#define ASSERT(COND) \
-    static_assert( COND , SIMD_TYPE " compile-time check" )
+#define ASSERT(COND) static_assert(COND, SIMD_TYPE " compile-time check")
 
 ASSERT(B::width == SIMD_WIDTH);
 ASSERT(F::width == SIMD_WIDTH);
@@ -93,7 +90,10 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     S::storage_t rs = bufZS;
 
     auto tor = [&rb, &rf, &ru, &rs](const B& tb, const F& tf, const U& tu, const S& ts) {
-        rb = tb; rf = tf; ru = tu; rs = ts;
+        rb = tb;
+        rf = tf;
+        ru = tu;
+        rs = ts;
     };
 
     SECTION("from scalar_t") {
@@ -209,7 +209,6 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     }
 }
 
-
 TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
     B::storage_t rb = bufZB;
     F::storage_t rf = bufZF;
@@ -217,7 +216,10 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
     S::storage_t rs = bufZS;
 
     auto implicit_test = [&rb, &rf, &ru, &rs](const B& tb, const F& tf, const U& tu, const S& ts) {
-        rb = tb; rf = tf; ru = tu; rs = ts;
+        rb = tb;
+        rf = tf;
+        ru = tu;
+        rs = ts;
     };
 
     SECTION("from scalar_t") {
@@ -228,43 +230,30 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         for (auto val : rs) REQUIRE(val == -123456789);
     }
     SECTION("from vector_t") {
-        implicit_test(
-            B::vector_t{},
-            F::vector_t{},
-            U::vector_t{},
-            S::vector_t{});
+        implicit_test(B::vector_t{}, F::vector_t{}, U::vector_t{}, S::vector_t{});
         //
         // no requirements
         //
     }
     SECTION("from aligned pointer") {
-        implicit_test(
-            sd::aligned(bufAB.data()),
-            sd::aligned(bufAF.data()),
-            sd::aligned(bufAU.data()),
-            sd::aligned(bufAS.data()));
+        implicit_test(sd::aligned(bufAB.data()), sd::aligned(bufAF.data()),
+                      sd::aligned(bufAU.data()), sd::aligned(bufAS.data()));
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from unaligned pointer") {
-        implicit_test(
-            sd::unaligned(bufAB.data()),
-            sd::unaligned(bufAF.data()),
-            sd::unaligned(bufAU.data()),
-            sd::unaligned(bufAS.data()));
+        implicit_test(sd::unaligned(bufAB.data()), sd::unaligned(bufAF.data()),
+                      sd::unaligned(bufAU.data()), sd::unaligned(bufAS.data()));
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
     SECTION("from interleaved pointer") {
-        implicit_test(
-            sd::interleaved(bufAB.data(), 1),
-            sd::interleaved(bufAF.data(), 1),
-            sd::interleaved(bufAU.data(), 1),
-            sd::interleaved(bufAS.data(), 1));
+        implicit_test(sd::interleaved(bufAB.data(), 1), sd::interleaved(bufAF.data(), 1),
+                      sd::interleaved(bufAU.data(), 1), sd::interleaved(bufAS.data(), 1));
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
         REQUIRE(ru == bufAU);
@@ -302,7 +291,10 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
 }
 
 TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
-    B tb; F tf; U tu; S ts;
+    B tb;
+    F tf;
+    U tu;
+    S ts;
     B::storage_t rb = bufZB;
     F::storage_t rf = bufZF;
     U::storage_t ru = bufZU;
@@ -472,45 +464,40 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
 TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
     SECTION("int to float") {
         F::storage_t expected, result;
-        std::transform(begin(bufAS), end(bufAS), begin(expected), [](S::scalar_t a) {
-            return static_cast<F::scalar_t>(a);
-        });
+        std::transform(begin(bufAS), end(bufAS), begin(expected),
+                       [](S::scalar_t a) { return static_cast<F::scalar_t>(a); });
         S in = bufAS;
         result = F(in);
         REQUIRE(result == expected);
     }
     SECTION("float to int") {
         S::storage_t expected, result;
-        std::transform(begin(bufAF), end(bufAF), begin(expected), [](F::scalar_t a) {
-            return sd::round_to_int32(a);
-        });
+        std::transform(begin(bufAF), end(bufAF), begin(expected),
+                       [](F::scalar_t a) { return sd::round_to_int32(a); });
         F in = bufAF;
         result = S(in);
         REQUIRE(result == expected);
     }
     SECTION("int to uint") {
         U::storage_t expected, result;
-        std::transform(begin(bufAS), end(bufAS), begin(expected), [](S::scalar_t a) {
-            return static_cast<U::scalar_t>(a);
-        });
+        std::transform(begin(bufAS), end(bufAS), begin(expected),
+                       [](S::scalar_t a) { return static_cast<U::scalar_t>(a); });
         S in = bufAS;
         result = U(in);
         REQUIRE(result == expected);
     }
     SECTION("uint to int") {
         S::storage_t expected, result;
-        std::transform(begin(bufAU), end(bufAU), begin(expected), [](U::scalar_t a) {
-            return sd::round_to_int32(a);
-        });
+        std::transform(begin(bufAU), end(bufAU), begin(expected),
+                       [](U::scalar_t a) { return sd::round_to_int32(a); });
         U in = bufAU;
         result = S(in);
         REQUIRE(result == expected);
     }
     SECTION("bool to uint") {
         U::storage_t expected, result;
-        std::transform(begin(bufAB), end(bufAB), begin(expected), [](B::scalar_t a) {
-            return static_cast<U::scalar_t>(a);
-        });
+        std::transform(begin(bufAB), end(bufAB), begin(expected),
+                       [](B::scalar_t a) { return static_cast<U::scalar_t>(a); });
         B in = bufAB;
         result = U(in);
         REQUIRE(result == expected);
@@ -523,10 +510,10 @@ TEST_CASE(SIMD_TYPE " bool arithmetic", SIMD_TEST_TAG) {
     B a = bufAB;
     B b = bufBB;
 
-    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+    auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
         std::transform(begin(bufAB), end(bufAB), begin(e), f);
     };
-    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+    auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
         std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f);
     };
 
@@ -565,10 +552,10 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     F a = bufAF;
     F b = bufBF;
 
-    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+    auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
         std::transform(begin(bufAF), end(bufAF), begin(e), f);
     };
-    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+    auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), f);
     };
 
@@ -646,13 +633,17 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     }
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;
-        a += 1.23f; b = b + 1.23f;
+        a += 1.23f;
+        b = b + 1.23f;
         REQUIRE(all(a == b));
-        a -= 2.34f; b = b - 2.34f;
+        a -= 2.34f;
+        b = b - 2.34f;
         REQUIRE(all(a == b));
-        a *= 3.45f; b = b * 3.45f;
+        a *= 3.45f;
+        b = b * 3.45f;
         REQUIRE(all(a == b));
-        a /= 4.56f; b = b / 4.56f;
+        a /= 4.56f;
+        b = b / 4.56f;
         REQUIRE(all(a == b));
     }
 }
@@ -663,10 +654,10 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
     U a = bufAU;
     U b = bufBU;
 
-    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+    auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
         std::transform(begin(bufAU), end(bufAU), begin(e), f);
     };
-    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+    auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
     };
 
@@ -713,11 +704,14 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
     }
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;
-        a &= 0xdeadbeefU; b = b & 0xdeadbeefU;
+        a &= 0xdeadbeefU;
+        b = b & 0xdeadbeefU;
         REQUIRE(all(a == b));
-        a |= 0xf0f0f0f0U; b = b | 0xf0f0f0f0U;
+        a |= 0xf0f0f0f0U;
+        b = b | 0xf0f0f0f0U;
         REQUIRE(all(a == b));
-        a ^= 0x1234abcdU; b = b ^ 0x1234abcdU;
+        a ^= 0x1234abcdU;
+        b = b ^ 0x1234abcdU;
         REQUIRE(all(a == b));
     }
 }
@@ -728,10 +722,10 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
     S a = bufAS;
     S b = bufBS;
 
-    auto expect1 = [&e](scalar_t(*f)(scalar_t)) {
+    auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
         std::transform(begin(bufAS), end(bufAS), begin(e), f);
     };
-    auto expect = [&e](scalar_t(*f)(scalar_t, scalar_t)) {
+    auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f);
     };
 
@@ -786,11 +780,14 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
     }
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;
-        a += 123; b = b + 123;
+        a += 123;
+        b = b + 123;
         REQUIRE(all(a == b));
-        a -= 234; b = b - 234;
+        a -= 234;
+        b = b - 234;
         REQUIRE(all(a == b));
-        a *= 345; b = b * 345;
+        a *= 345;
+        b = b * 345;
         REQUIRE(all(a == b));
     }
 }
@@ -801,10 +798,8 @@ TEST_CASE(SIMD_TYPE " bool comparison", SIMD_TEST_TAG) {
     B a = bufAB;
     B b = bufBB;
 
-    auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v);
-    };
-    auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
+    auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
+    auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
         std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f);
     };
 
@@ -832,10 +827,8 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     F a = bufAF;
     F b = bufBF;
 
-    auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v);
-    };
-    auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
+    auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
+    auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
         std::transform(begin(bufAF), end(bufAF), begin(bufBF), begin(e), f);
     };
 
@@ -895,10 +888,8 @@ TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
     U a = bufAU;
     U b = bufBU;
 
-    auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v);
-    };
-    auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
+    auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
+    auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
     };
 
@@ -926,10 +917,8 @@ TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
     S a = bufAS;
     S b = bufBS;
 
-    auto expect0 = [&e](bool v) {
-        std::fill(begin(e), end(e), v);
-    };
-    auto expect = [&e](bool(*f)(scalar_t, scalar_t)) {
+    auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
+    auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f);
     };
 
@@ -1084,9 +1073,7 @@ TEST_CASE(SIMD_TYPE " mask", SIMD_TEST_TAG) {
         auto expected = [](const B::storage_t& s) {
             B::mask_t res(0U);
             for (auto i = 0U; i < s.size(); ++i) {
-                if (sd::cast_u(s[i]) & (1U << 31)) {
-                    res |= B::mask_t(1U << i);
-                }
+                if (sd::cast_u(s[i]) & (1U << 31)) { res |= B::mask_t(1U << i); }
             }
             return res;
         };

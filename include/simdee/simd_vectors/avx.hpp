@@ -7,10 +7,10 @@
 #include "common.hpp"
 
 #if !SIMDEE_AVX
-#   error "AVX intrinsics are required to use the AVX SIMD type. Please check your build options."
+#error "AVX intrinsics are required to use the AVX SIMD type. Please check your build options."
 #endif
 #if SIMDEE_NEED_INT && !SIMDEE_AVX2
-#   error "AVX2 intrinsics are required to use the AVX SIMD type with integer operations. Use SIMDEE_NEED_INT 0 to use floating-point operations only."
+#error "AVX2 intrinsics are required to use the AVX SIMD type with integer operations."
 #endif
 
 #include <immintrin.h>
@@ -84,11 +84,9 @@ namespace sd {
         SIMDEE_INL void unaligned_store(scalar_t* r) const { _mm256_storeu_ps((float*)r, mm); }
 
         void interleaved_store(scalar_t* r, int step) const {
-            alignas(avx_base)scalar_t temp[width];
+            alignas(avx_base) scalar_t temp[width];
             aligned_store(temp);
-            for (std::size_t i = 0; i < width; ++i, r += step) {
-                *r = temp[i];
-            }
+            for (std::size_t i = 0; i < width; ++i, r += step) { *r = temp[i]; }
         }
 
         template <typename Op_t>
@@ -98,12 +96,13 @@ namespace sd {
             return f(tmp, _mm256_permute2f128_ps(tmp.mm, tmp.mm, _MM_SHUFFLE(0, 0, 0, 1)));
         }
 
-#   if SIMDEE_AVX2
-		SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
+#if SIMDEE_AVX2
+        SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
         SIMDEE_INL avx_base& operator=(const expr::all_bits&) {
-			mm = _mm256_castsi256_ps(_mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
-			return self();
-		}
+            mm = _mm256_castsi256_ps(
+                _mm256_cmpeq_epi32(_mm256_castps_si256(mm), _mm256_castps_si256(mm)));
+            return self();
+        }
 
         void interleaved_load(const scalar_t* r, int step) {
             auto step_vec = _mm256_set1_epi32(step);
@@ -111,23 +110,22 @@ namespace sd {
             auto idx_vec = _mm256_mullo_epi32(mult_vec, step_vec);
             mm = _mm256_i32gather_ps((float*)r, idx_vec, 4);
         }
-#   else
-		SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
+#else
+        SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
         SIMDEE_INL avx_base& operator=(const expr::all_bits&) {
-			__m128 temp;
-			temp = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(temp), _mm_castps_si128(temp)));
-			mm = _mm256_set_m128(temp, temp);
-			return self();
-		}
+            __m128 temp;
+            temp =
+                _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(temp), _mm_castps_si128(temp)));
+            mm = _mm256_set_m128(temp, temp);
+            return self();
+        }
 
         void interleaved_load(const scalar_t* r, int step) {
-            alignas(avx_base)scalar_t temp[width];
-            for (std::size_t i = 0; i < width; ++i, r += step) {
-                temp[i] = *r;
-            }
+            alignas(avx_base) scalar_t temp[width];
+            for (std::size_t i = 0; i < width; ++i, r += step) { temp[i] = *r; }
             aligned_load(temp);
         }
-#   endif
+#endif
     };
 
     struct avxb : avx_base<avxb> {
@@ -138,13 +136,14 @@ namespace sd {
         SIMDEE_CTOR(avxb, not_avxb, mm = _mm256_xor_ps(r.neg.mm, avxb(all_bits()).mm));
 
         SIMDEE_UNOP(avxb, mask_t, mask, mask_t(cast_u(_mm256_movemask_ps(l.mm))));
-        SIMDEE_UNOP(avxb, scalar_t, first_scalar, dirty::as_b(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
+        SIMDEE_UNOP(avxb, scalar_t, first_scalar,
+                    dirty::as_b(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
 
-#   if SIMDEE_AVX2
+#if SIMDEE_AVX2
         SIMDEE_BINOP(avxb, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
-#   else
+#else
         SIMDEE_BINOP(avxb, not_avxb, operator==, not_avxb(_mm256_xor_ps(l.mm, r.mm)));
-#   endif
+#endif
         SIMDEE_BINOP(avxb, avxb, operator!=, _mm256_xor_ps(l.mm, r.mm));
 
         SIMDEE_BINOP(avxb, avxb, operator&&, _mm256_and_ps(l.mm, r.mm));
@@ -191,9 +190,10 @@ namespace sd {
         SIMDEE_CTOR(avxu, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxu, not_avxu, mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm));
 
-        SIMDEE_UNOP(avxu, scalar_t, first_scalar, dirty::as_u(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
+        SIMDEE_UNOP(avxu, scalar_t, first_scalar,
+                    dirty::as_u(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
 
-#   if SIMDEE_NEED_INT
+#if SIMDEE_NEED_INT
         SIMDEE_BINOP(avxu, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(avxu, not_avxb, operator!=, not_avxb(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
         SIMDEE_BINOP(avxu, avxu, operator&, _mm256_and_ps(l.mm, r.mm));
@@ -201,7 +201,7 @@ namespace sd {
         SIMDEE_BINOP(avxu, avxu, operator^, _mm256_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(avxu, not_avxu, operator~, not_avxu(l));
         SIMDEE_BINOP(avxu, avxu, andnot, _mm256_andnot_ps(r.mm, l.mm));
-#   endif
+#endif
     };
 
     struct avxs : avx_base<avxs> {
@@ -212,9 +212,10 @@ namespace sd {
         SIMDEE_INL explicit avxs(const avxu&);
         SIMDEE_CTOR(avxs, __m256i, mm = _mm256_castsi256_ps(r));
 
-        SIMDEE_UNOP(avxs, scalar_t, first_scalar, dirty::as_s(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
+        SIMDEE_UNOP(avxs, scalar_t, first_scalar,
+                    dirty::as_s(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
 
-#   if SIMDEE_NEED_INT
+#if SIMDEE_NEED_INT
         SIMDEE_BINOP(avxs, avxb, operator<, _mm256_cmpgt_epi32(r.mmi(), l.mmi()));
         SIMDEE_BINOP(avxs, avxb, operator>, _mm256_cmpgt_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(avxs, not_avxb, operator<=, not_avxb(_mm256_cmpgt_epi32(l.mmi(), r.mmi())));
@@ -230,7 +231,7 @@ namespace sd {
         SIMDEE_BINOP(avxs, avxs, min, _mm256_min_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(avxs, avxs, max, _mm256_max_epi32(l.mmi(), r.mmi()));
         SIMDEE_UNOP(avxs, avxs, abs, _mm256_abs_epi32(l.mmi()));
-#   endif
+#endif
     };
 
     SIMDEE_INL avxf::avxf(const avxs& r) { mm = _mm256_cvtepi32_ps(_mm256_castps_si256(r.data())); }

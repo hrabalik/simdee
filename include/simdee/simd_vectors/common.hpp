@@ -4,14 +4,14 @@
 #ifndef SIMDEE_SIMD_TYPES_COMMON_HPP
 #define SIMDEE_SIMD_TYPES_COMMON_HPP
 
-#include "../common/init.hpp"
 #include "../common/casts.hpp"
+#include "../common/deferred_not.hpp"
 #include "../common/expr.hpp"
+#include "../common/init.hpp"
 #include "../common/mask.hpp"
 #include "../common/storage.hpp"
-#include "../common/deferred_not.hpp"
-#include "../util/inline.hpp"
 #include "../util/bitfiddle.hpp"
+#include "../util/inline.hpp"
 #include "../util/macros.hpp"
 #include <array>
 #include <type_traits>
@@ -35,25 +35,15 @@ namespace sd {
         using mask_t = typename traits_t::mask_t;
         using storage_t = typename traits_t::storage_t;
 
-        enum : std::size_t {
-            width = sizeof(vector_t) / sizeof(scalar_t)
-        };
+        enum : std::size_t { width = sizeof(vector_t) / sizeof(scalar_t) };
 
-        SIMDEE_INL Crtp& self() {
-            return static_cast<Crtp&>(*this);
-        }
+        SIMDEE_INL Crtp& self() { return static_cast<Crtp&>(*this); }
 
-        SIMDEE_INL constexpr const Crtp& self() const {
-            return static_cast<const Crtp&>(*this);
-        }
+        SIMDEE_INL constexpr const Crtp& self() const { return static_cast<const Crtp&>(*this); }
 
-        SIMDEE_INL Crtp& eval() {
-            return static_cast<Crtp&>(*this);
-        }
+        SIMDEE_INL Crtp& eval() { return static_cast<Crtp&>(*this); }
 
-        SIMDEE_INL constexpr const Crtp& eval() const {
-            return static_cast<const Crtp&>(*this);
-        }
+        SIMDEE_INL constexpr const Crtp& eval() const { return static_cast<const Crtp&>(*this); }
 
         vector_t& data() { return mm; }
         const vector_t& data() const { return mm; }
@@ -113,41 +103,58 @@ namespace sd {
 
     struct op_add {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l + r) { return l + r; }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l + r) {
+            return l + r;
+        }
     };
     struct op_mul {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l * r) { return l * r; }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l * r) {
+            return l * r;
+        }
     };
     struct op_min {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(min(l, r)) { return min(l, r); }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(min(l, r)) {
+            return min(l, r);
+        }
     };
     struct op_max {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(max(l, r)) { return max(l, r); }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(max(l, r)) {
+            return max(l, r);
+        }
     };
     struct op_bitand {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l & r) { return l & r; }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l & r) {
+            return l & r;
+        }
     };
     struct op_bitor {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l | r) { return l | r; }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l | r) {
+            return l | r;
+        }
     };
     struct op_bitxor {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l ^ r) { return l ^ r; }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l ^ r) {
+            return l ^ r;
+        }
     };
     struct op_logand {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l && r) { return l && r; }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l && r) {
+            return l && r;
+        }
     };
     struct op_logor {
         template <typename L, typename R>
-        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l || r) { return l || r; }
+        SIMDEE_INL auto operator()(const L& l, const R& r) -> decltype(l || r) {
+            return l || r;
+        }
     };
-
 }
 
 #endif // SIMDEE_SIMD_TYPES_COMMON_HPP

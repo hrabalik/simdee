@@ -5,14 +5,14 @@
 #define SIMDEE_COMMON_STORAGE_HPP
 
 #include "../util/inline.hpp"
-#include <array>
 #include <algorithm>
+#include <array>
 #include <initializer_list>
 
 namespace sd {
     namespace impl {
         template <typename Simd_t, typename Scalar_t, std::size_t Align>
-        struct alignas(Align)storage : std::array<Scalar_t, Simd_t::width> {
+        struct alignas(Align) storage : std::array<Scalar_t, Simd_t::width> {
             using stored_t = Simd_t;
             using array_t = std::array<Scalar_t, Simd_t::width>;
             using array_t::data;
@@ -20,9 +20,7 @@ namespace sd {
 
             SIMDEE_INL constexpr storage() = default;
             SIMDEE_INL constexpr storage(const storage&) = default;
-            SIMDEE_INL explicit storage(const Simd_t& rhs) {
-                rhs.aligned_store(data());
-            }
+            SIMDEE_INL explicit storage(const Simd_t& rhs) { rhs.aligned_store(data()); }
             storage(std::initializer_list<Scalar_t> list) {
                 std::copy(list.begin(), list.end(), begin());
             }

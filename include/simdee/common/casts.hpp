@@ -6,8 +6,8 @@
 
 #include "../util/inline.hpp"
 #include "../util/integral.hpp"
-#include <type_traits>
 #include <cstring>
+#include <type_traits>
 
 namespace sd {
     namespace impl {
@@ -15,28 +15,32 @@ namespace sd {
         struct util_b {
             using source_t = typename std::decay<T>::type;
             using target_t = select_bool_t<sizeof(source_t)>;
-            static_assert(is_extended_arithmetic_type<source_t>::value, "as_f(): source isn't arithmetic");
+            static_assert(is_extended_arithmetic_type<source_t>::value,
+                          "as_f(): source isn't arithmetic");
         };
 
         template <typename T>
         struct util_f {
             using source_t = typename std::decay<T>::type;
             using target_t = select_float_t<sizeof(source_t)>;
-            static_assert(is_extended_arithmetic_type<source_t>::value, "as_f(): source isn't arithmetic");
+            static_assert(is_extended_arithmetic_type<source_t>::value,
+                          "as_f(): source isn't arithmetic");
         };
 
         template <typename T>
         struct util_u {
             using source_t = typename std::decay<T>::type;
             using target_t = select_uint_t<sizeof(source_t)>;
-            static_assert(is_extended_arithmetic_type<source_t>::value, "as_u(): source isn't arithmetic");
+            static_assert(is_extended_arithmetic_type<source_t>::value,
+                          "as_u(): source isn't arithmetic");
         };
 
         template <typename T>
         struct util_s {
             using source_t = typename std::decay<T>::type;
             using target_t = select_sint_t<sizeof(source_t)>;
-            static_assert(is_extended_arithmetic_type<source_t>::value, "as_s(): source isn't arithmetic");
+            static_assert(is_extended_arithmetic_type<source_t>::value,
+                          "as_s(): source isn't arithmetic");
         };
     }
 
@@ -60,9 +64,12 @@ namespace sd {
     namespace dirty {
         template <typename From, typename To>
         SIMDEE_INL To cast(const From& source) {
-            static_assert(std::is_trivial<From>::value, "dirty::cast(): the casted-from type isn't trivial");
-            static_assert(std::is_trivial<To>::value, "dirty::cast(): the casted-to type isn't trivial");
-            static_assert(sizeof(From) == sizeof(To), "dirty::cast(): the types aren't the same size");
+            static_assert(std::is_trivial<From>::value,
+                          "dirty::cast(): the casted-from type isn't trivial");
+            static_assert(std::is_trivial<To>::value,
+                          "dirty::cast(): the casted-to type isn't trivial");
+            static_assert(sizeof(From) == sizeof(To),
+                          "dirty::cast(): the types aren't the same size");
 
             To result;
             std::memcpy(&result, &source, sizeof(From));
@@ -71,19 +78,23 @@ namespace sd {
 
         template <typename T>
         SIMDEE_INL constexpr typename impl::util_b<T>::target_t as_b(T r) {
-            return dirty::cast<typename impl::util_b<T>::source_t, typename impl::util_b<T>::target_t>(r);
+            return dirty::cast<typename impl::util_b<T>::source_t,
+                               typename impl::util_b<T>::target_t>(r);
         }
         template <typename T>
         SIMDEE_INL constexpr typename impl::util_f<T>::target_t as_f(T r) {
-            return dirty::cast<typename impl::util_f<T>::source_t, typename impl::util_f<T>::target_t>(r);
+            return dirty::cast<typename impl::util_f<T>::source_t,
+                               typename impl::util_f<T>::target_t>(r);
         }
         template <typename T>
         SIMDEE_INL constexpr typename impl::util_u<T>::target_t as_u(T r) {
-            return dirty::cast<typename impl::util_u<T>::source_t, typename impl::util_u<T>::target_t>(r);
+            return dirty::cast<typename impl::util_u<T>::source_t,
+                               typename impl::util_u<T>::target_t>(r);
         }
         template <typename T>
         SIMDEE_INL constexpr typename impl::util_s<T>::target_t as_s(T r) {
-            return dirty::cast<typename impl::util_s<T>::source_t, typename impl::util_s<T>::target_t>(r);
+            return dirty::cast<typename impl::util_s<T>::source_t,
+                               typename impl::util_s<T>::target_t>(r);
         }
     }
 }

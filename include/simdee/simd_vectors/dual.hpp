@@ -107,7 +107,8 @@ namespace sd {
     };
 
     template <typename T>
-    struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_b>::value>::type> : dual_base<dual<T>> {
+    struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_b>::value>::type>
+        : dual_base<dual<T>> {
     private:
         using simd_base<dual<T>>::mm;
 
@@ -122,16 +123,19 @@ namespace sd {
 
         SIMDEE_TRIVIAL_TYPE(dual);
 
-        SIMDEE_UNOP(dual, mask_t, mask, mask_t(mask(l.mm.l).value | (mask(l.mm.r).value << T::width)));
+        SIMDEE_UNOP(dual, mask_t, mask,
+                    mask_t(mask(l.mm.l).value | (mask(l.mm.r).value << T::width)));
 
-        SIMDEE_BINOP(vec_b, vec_b, operator==, (vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
-        SIMDEE_BINOP(vec_b, vec_b, operator!=, (vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
-        SIMDEE_BINOP(vec_b, vec_b, operator&&, (vector_t{ l.mm.l && r.mm.l, l.mm.r && r.mm.r }));
-        SIMDEE_BINOP(vec_b, vec_b, operator||, (vector_t{ l.mm.l || r.mm.l, l.mm.r || r.mm.r }));
+        SIMDEE_BINOP(vec_b, vec_b, operator==, (vector_t{l.mm.l == r.mm.l, l.mm.r == r.mm.r}));
+        SIMDEE_BINOP(vec_b, vec_b, operator!=, (vector_t{l.mm.l != r.mm.l, l.mm.r != r.mm.r}));
+        SIMDEE_BINOP(vec_b, vec_b, operator&&, (vector_t{l.mm.l && r.mm.l, l.mm.r&& r.mm.r}));
+        SIMDEE_BINOP(vec_b, vec_b, operator||, (vector_t{l.mm.l || r.mm.l, l.mm.r || r.mm.r}));
         SIMDEE_UNOP(vec_b, vec_b, operator!, (vector_t{!l.mm.l, !l.mm.r}));
-        SIMDEE_BINOP(vec_b, vec_b, andnot, (vector_t{ andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r) }));
+        SIMDEE_BINOP(vec_b, vec_b, andnot,
+                     (vector_t{andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r)}));
 
-        SIMDEE_INL friend const vec_b cond(const vec_b& pred, const vec_b& if_true, const vec_b& if_false) {
+        SIMDEE_INL friend const vec_b cond(const vec_b& pred, const vec_b& if_true,
+                                           const vec_b& if_false) {
             return vector_t{
                 cond(pred.data().l, if_true.mm.l, if_false.mm.l),
                 cond(pred.data().r, if_true.mm.r, if_false.mm.r),
@@ -140,7 +144,8 @@ namespace sd {
     };
 
     template <typename T>
-    struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_f>::value>::type> : dual_base<dual<T>> {
+    struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_f>::value>::type>
+        : dual_base<dual<T>> {
     private:
         using simd_base<dual<T>>::mm;
         using b_vector_t = typename simd_base<dual<T>>::vec_b::vector_t;
@@ -160,25 +165,26 @@ namespace sd {
             mm.r = decltype(mm.r)(r.data().r);
         }
 
-        SIMDEE_BINOP(vec_f, vec_b, operator<, (b_vector_t{ l.mm.l < r.mm.l, l.mm.r < r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_b, operator>, (b_vector_t{ l.mm.l > r.mm.l, l.mm.r > r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_b, operator<=, (b_vector_t{ l.mm.l <= r.mm.l, l.mm.r <= r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_b, operator>=, (b_vector_t{ l.mm.l >= r.mm.l, l.mm.r >= r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_b, operator==, (b_vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_b, operator!=, (b_vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
+        SIMDEE_BINOP(vec_f, vec_b, operator<, (b_vector_t{l.mm.l < r.mm.l, l.mm.r < r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_b, operator>, (b_vector_t{l.mm.l > r.mm.l, l.mm.r > r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_b, operator<=, (b_vector_t{l.mm.l <= r.mm.l, l.mm.r <= r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_b, operator>=, (b_vector_t{l.mm.l >= r.mm.l, l.mm.r >= r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_b, operator==, (b_vector_t{l.mm.l == r.mm.l, l.mm.r == r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_b, operator!=, (b_vector_t{l.mm.l != r.mm.l, l.mm.r != r.mm.r}));
         SIMDEE_UNOP(vec_f, vec_f, operator-, (vector_t{-l.mm.l, -l.mm.r}));
-        SIMDEE_BINOP(vec_f, vec_f, operator+, (vector_t{ l.mm.l + r.mm.l, l.mm.r + r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_f, operator-, (vector_t{ l.mm.l - r.mm.l, l.mm.r - r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_f, operator*, (vector_t{ l.mm.l * r.mm.l, l.mm.r * r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_f, operator/, (vector_t{ l.mm.l / r.mm.l, l.mm.r / r.mm.r }));
-        SIMDEE_BINOP(vec_f, vec_f, min, (vector_t{ min(l.mm.l, r.mm.l), min(l.mm.r, r.mm.r) }));
-        SIMDEE_BINOP(vec_f, vec_f, max, (vector_t{ max(l.mm.l, r.mm.l), max(l.mm.r, r.mm.r) }));
-        SIMDEE_UNOP(vec_f, vec_f, sqrt, (vector_t{ sqrt(l.mm.l), sqrt(l.mm.r) }));
-        SIMDEE_UNOP(vec_f, vec_f, rsqrt, (vector_t{ rsqrt(l.mm.l), rsqrt(l.mm.r) }));
-        SIMDEE_UNOP(vec_f, vec_f, rcp, (vector_t{ rcp(l.mm.l), rcp(l.mm.r) }));
-        SIMDEE_UNOP(vec_f, vec_f, abs, (vector_t{ abs(l.mm.l), abs(l.mm.r) }));
+        SIMDEE_BINOP(vec_f, vec_f, operator+, (vector_t{l.mm.l + r.mm.l, l.mm.r + r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_f, operator-, (vector_t{l.mm.l - r.mm.l, l.mm.r - r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_f, operator*, (vector_t{l.mm.l * r.mm.l, l.mm.r* r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_f, operator/, (vector_t{l.mm.l / r.mm.l, l.mm.r / r.mm.r}));
+        SIMDEE_BINOP(vec_f, vec_f, min, (vector_t{min(l.mm.l, r.mm.l), min(l.mm.r, r.mm.r)}));
+        SIMDEE_BINOP(vec_f, vec_f, max, (vector_t{max(l.mm.l, r.mm.l), max(l.mm.r, r.mm.r)}));
+        SIMDEE_UNOP(vec_f, vec_f, sqrt, (vector_t{sqrt(l.mm.l), sqrt(l.mm.r)}));
+        SIMDEE_UNOP(vec_f, vec_f, rsqrt, (vector_t{rsqrt(l.mm.l), rsqrt(l.mm.r)}));
+        SIMDEE_UNOP(vec_f, vec_f, rcp, (vector_t{rcp(l.mm.l), rcp(l.mm.r)}));
+        SIMDEE_UNOP(vec_f, vec_f, abs, (vector_t{abs(l.mm.l), abs(l.mm.r)}));
 
-        SIMDEE_INL friend const vec_f cond(const vec_b& pred, const vec_f& if_true, const vec_f& if_false) {
+        SIMDEE_INL friend const vec_f cond(const vec_b& pred, const vec_f& if_true,
+                                           const vec_f& if_false) {
             return vector_t{
                 cond(pred.data().l, if_true.mm.l, if_false.mm.l),
                 cond(pred.data().r, if_true.mm.r, if_false.mm.r),
@@ -187,7 +193,8 @@ namespace sd {
     };
 
     template <typename T>
-    struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_u>::value>::type> : dual_base<dual<T>> {
+    struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_u>::value>::type>
+        : dual_base<dual<T>> {
     private:
         using simd_base<dual<T>>::mm;
         using b_vector_t = typename simd_base<dual<T>>::vec_b::vector_t;
@@ -212,17 +219,19 @@ namespace sd {
             mm.r = decltype(mm.r)(r.data().r);
         }
 
-#   if SIMDEE_NEED_INT
-        SIMDEE_BINOP(vec_u, vec_b, operator==, (b_vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
-        SIMDEE_BINOP(vec_u, vec_b, operator!=, (b_vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
-        SIMDEE_BINOP(vec_u, vec_u, operator&, (vector_t{ l.mm.l & r.mm.l, l.mm.r & r.mm.r }));
-        SIMDEE_BINOP(vec_u, vec_u, operator|, (vector_t{ l.mm.l | r.mm.l, l.mm.r | r.mm.r }));
-        SIMDEE_BINOP(vec_u, vec_u, operator^, (vector_t{ l.mm.l ^ r.mm.l, l.mm.r ^ r.mm.r }));
-        SIMDEE_UNOP(vec_u, vec_u, operator~, (vector_t{ ~l.mm.l, ~l.mm.r }));
-        SIMDEE_BINOP(vec_u, vec_u, andnot, (vector_t{ andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r) }));
-#   endif
+#if SIMDEE_NEED_INT
+        SIMDEE_BINOP(vec_u, vec_b, operator==, (b_vector_t{l.mm.l == r.mm.l, l.mm.r == r.mm.r}));
+        SIMDEE_BINOP(vec_u, vec_b, operator!=, (b_vector_t{l.mm.l != r.mm.l, l.mm.r != r.mm.r}));
+        SIMDEE_BINOP(vec_u, vec_u, operator&, (vector_t{l.mm.l & r.mm.l, l.mm.r& r.mm.r}));
+        SIMDEE_BINOP(vec_u, vec_u, operator|, (vector_t{l.mm.l | r.mm.l, l.mm.r | r.mm.r}));
+        SIMDEE_BINOP(vec_u, vec_u, operator^, (vector_t{l.mm.l ^ r.mm.l, l.mm.r ^ r.mm.r}));
+        SIMDEE_UNOP(vec_u, vec_u, operator~, (vector_t{~l.mm.l, ~l.mm.r}));
+        SIMDEE_BINOP(vec_u, vec_u, andnot,
+                     (vector_t{andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r)}));
+#endif
 
-        SIMDEE_INL friend const vec_u cond(const vec_b& pred, const vec_u& if_true, const vec_u& if_false) {
+        SIMDEE_INL friend const vec_u cond(const vec_b& pred, const vec_u& if_true,
+                                           const vec_u& if_false) {
             return vector_t{
                 cond(pred.data().l, if_true.mm.l, if_false.mm.l),
                 cond(pred.data().r, if_true.mm.r, if_false.mm.r),
@@ -231,7 +240,8 @@ namespace sd {
     };
 
     template <typename T>
-    struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_s>::value>::type> : dual_base<dual<T>> {
+    struct dual<T, typename std::enable_if<std::is_same<T, typename T::vec_s>::value>::type>
+        : dual_base<dual<T>> {
     private:
         using simd_base<dual<T>>::mm;
         using b_vector_t = typename simd_base<dual<T>>::vec_b::vector_t;
@@ -256,24 +266,25 @@ namespace sd {
             mm.r = decltype(mm.r)(r.data().r);
         }
 
-#   if SIMDEE_NEED_INT
-        SIMDEE_BINOP(vec_s, vec_b, operator<, (b_vector_t{ l.mm.l < r.mm.l, l.mm.r < r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_b, operator>, (b_vector_t{ l.mm.l > r.mm.l, l.mm.r > r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_b, operator<=, (b_vector_t{ l.mm.l <= r.mm.l, l.mm.r <= r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_b, operator>=, (b_vector_t{ l.mm.l >= r.mm.l, l.mm.r >= r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_b, operator==, (b_vector_t{ l.mm.l == r.mm.l, l.mm.r == r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_b, operator!=, (b_vector_t{ l.mm.l != r.mm.l, l.mm.r != r.mm.r }));
-        SIMDEE_UNOP(vec_s, vec_s, operator-, (vector_t{ -l.mm.l, -l.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_s, operator+, (vector_t{ l.mm.l + r.mm.l, l.mm.r + r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_s, operator-, (vector_t{ l.mm.l - r.mm.l, l.mm.r - r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_s, operator*, (vector_t{ l.mm.l * r.mm.l, l.mm.r * r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_s, operator/, (vector_t{ l.mm.l / r.mm.l, l.mm.r / r.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_s, min, (vector_t{ min(l.mm.l, r.mm.l), min(l.mm.r, r.mm.r) }));
-        SIMDEE_BINOP(vec_s, vec_s, max, (vector_t{ max(l.mm.l, r.mm.l), max(l.mm.r, r.mm.r) }));
-        SIMDEE_UNOP(vec_s, vec_s, abs, (vector_t{ abs(l.mm.l), abs(l.mm.r) }));
-#   endif
+#if SIMDEE_NEED_INT
+        SIMDEE_BINOP(vec_s, vec_b, operator<, (b_vector_t{l.mm.l < r.mm.l, l.mm.r < r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_b, operator>, (b_vector_t{l.mm.l > r.mm.l, l.mm.r > r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_b, operator<=, (b_vector_t{l.mm.l <= r.mm.l, l.mm.r <= r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_b, operator>=, (b_vector_t{l.mm.l >= r.mm.l, l.mm.r >= r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_b, operator==, (b_vector_t{l.mm.l == r.mm.l, l.mm.r == r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_b, operator!=, (b_vector_t{l.mm.l != r.mm.l, l.mm.r != r.mm.r}));
+        SIMDEE_UNOP(vec_s, vec_s, operator-, (vector_t{-l.mm.l, -l.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_s, operator+, (vector_t{l.mm.l + r.mm.l, l.mm.r + r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_s, operator-, (vector_t{l.mm.l - r.mm.l, l.mm.r - r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_s, operator*, (vector_t{l.mm.l * r.mm.l, l.mm.r* r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_s, operator/, (vector_t{l.mm.l / r.mm.l, l.mm.r / r.mm.r}));
+        SIMDEE_BINOP(vec_s, vec_s, min, (vector_t{min(l.mm.l, r.mm.l), min(l.mm.r, r.mm.r)}));
+        SIMDEE_BINOP(vec_s, vec_s, max, (vector_t{max(l.mm.l, r.mm.l), max(l.mm.r, r.mm.r)}));
+        SIMDEE_UNOP(vec_s, vec_s, abs, (vector_t{abs(l.mm.l), abs(l.mm.r)}));
+#endif
 
-        SIMDEE_INL friend const vec_s cond(const vec_b& pred, const vec_s& if_true, const vec_s& if_false) {
+        SIMDEE_INL friend const vec_s cond(const vec_b& pred, const vec_s& if_true,
+                                           const vec_s& if_false) {
             return vector_t{
                 cond(pred.data().l, if_true.mm.l, if_false.mm.l),
                 cond(pred.data().r, if_true.mm.r, if_false.mm.r),

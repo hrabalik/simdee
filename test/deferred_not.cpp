@@ -3,12 +3,12 @@
 #include <type_traits>
 
 using B = sd::vec4b;
-const B::storage_t dataAB{ true, false, true, true };
-const B::storage_t dataBB{ false, true, false, true };
+const B::storage_t dataAB{true, false, true, true};
+const B::storage_t dataBB{false, true, false, true};
 
 using U = sd::vec4u;
-const U::storage_t dataAU{ 1753029375U, 1117080442U, 3817141237U, 3761735248U };
-const U::storage_t dataBU{ 1679702461U, 2102346647U, 480083363U, 3761735248U };
+const U::storage_t dataAU{1753029375U, 1117080442U, 3817141237U, 3761735248U};
+const U::storage_t dataBU{1679702461U, 2102346647U, 480083363U, 3761735248U};
 
 using not_B = sd::expr::deferred_lognot<B>;
 using not_U = sd::expr::deferred_bitnot<U>;
@@ -150,9 +150,7 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         REQUIRE((std::is_same<decltype(res_ua), decltype(res_nua)>::value));
         REQUIRE(all(res_ua == res_nua));
     }
-    SECTION("data") {
-        REQUIRE(all(B(ba.data()) == B(nba.data())));
-    }
+    SECTION("data") { REQUIRE(all(B(ba.data()) == B(nba.data()))); }
     SECTION("store") {
         SECTION("aligned") {
             B::storage_t res_ua{}, res_nua{};

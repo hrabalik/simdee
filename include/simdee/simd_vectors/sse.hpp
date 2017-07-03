@@ -7,7 +7,7 @@
 #include "common.hpp"
 
 #if !SIMDEE_SSE2
-#   error "SSE2 intrinsics are required to use the SSE SIMD type. Please check your build options."
+#error "SSE2 intrinsics are required to use the SSE SIMD type. Please check your build options."
 #endif
 
 #include <emmintrin.h>
@@ -20,13 +20,13 @@ namespace sd {
     using not_sseb = expr::deferred_lognot<sseb>;
     using not_sseu = expr::deferred_bitnot<sseu>;
 
-    template<>
+    template <>
     struct is_simd_vector<sseb> : std::integral_constant<bool, true> {};
-    template<>
+    template <>
     struct is_simd_vector<ssef> : std::integral_constant<bool, true> {};
-    template<>
+    template <>
     struct is_simd_vector<sseu> : std::integral_constant<bool, true> {};
-    template<>
+    template <>
     struct is_simd_vector<sses> : std::integral_constant<bool, true> {};
 
     template <typename Simd_t, typename Vector_t, typename Scalar_t>
@@ -75,11 +75,11 @@ namespace sd {
         SIMDEE_BASE_CTOR_TPL(sse_base, expr::init<T>, *this = r.template to<scalar_t>());
         SIMDEE_BASE_CTOR(sse_base, storage_t, aligned_load(r.data()));
 
-		SIMDEE_INL sse_base(const expr::all_bits& r) { operator=(r); }
-		SIMDEE_INL sse_base& operator=(const expr::all_bits&) {
+        SIMDEE_INL sse_base(const expr::all_bits& r) { operator=(r); }
+        SIMDEE_INL sse_base& operator=(const expr::all_bits&) {
             mm = _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(mm), _mm_castps_si128(mm)));
             return self();
-		}
+        }
 
         SIMDEE_INL void aligned_load(const scalar_t* r) { mm = _mm_load_ps((const float*)r); }
         SIMDEE_INL void aligned_store(scalar_t* r) const { _mm_store_ps((float*)r, mm); }
@@ -87,25 +87,23 @@ namespace sd {
         SIMDEE_INL void unaligned_store(scalar_t* r) const { _mm_storeu_ps((float*)r, mm); }
 
         void interleaved_load(const scalar_t* r, int step) {
-            alignas(Crtp)scalar_t temp[width];
-            for (std::size_t i = 0; i < width; ++i, r += step) {
-                temp[i] = *r;
-            }
+            alignas(Crtp) scalar_t temp[width];
+            for (std::size_t i = 0; i < width; ++i, r += step) { temp[i] = *r; }
             aligned_load(temp);
         }
 
         void interleaved_store(scalar_t* r, int step) const {
-            alignas(Crtp)scalar_t temp[width];
+            alignas(Crtp) scalar_t temp[width];
             aligned_store(temp);
-            for (std::size_t i = 0; i < width; ++i, r += step) {
-                *r = temp[i];
-            }
+            for (std::size_t i = 0; i < width; ++i, r += step) { *r = temp[i]; }
         }
 
         template <typename Op_t>
         friend const Crtp reduce(const Crtp& l, Op_t f) {
-            Crtp tmp = f(l, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(l.mm), _MM_SHUFFLE(2, 3, 0, 1))));
-            return f(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm), _MM_SHUFFLE(1, 0, 3, 2))));
+            Crtp tmp = f(l, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(l.mm),
+                                                               _MM_SHUFFLE(2, 3, 0, 1))));
+            return f(tmp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(tmp.mm),
+                                                             _MM_SHUFFLE(1, 0, 3, 2))));
         }
     };
 
@@ -167,7 +165,7 @@ namespace sd {
 
         SIMDEE_UNOP(sseu, scalar_t, first_scalar, dirty::as_u(_mm_cvtss_f32(l.mm)));
 
-#   if SIMDEE_NEED_INT
+#if SIMDEE_NEED_INT
         SIMDEE_BINOP(sseu, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseu, not_sseb, operator!=, not_sseb(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
         SIMDEE_BINOP(sseu, sseu, operator&, _mm_and_ps(l.mm, r.mm));
@@ -175,7 +173,7 @@ namespace sd {
         SIMDEE_BINOP(sseu, sseu, operator^, _mm_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(sseu, not_sseu, operator~, not_sseu(l));
         SIMDEE_BINOP(sseu, sseu, andnot, _mm_andnot_ps(r.mm, l.mm));
-#   endif
+#endif
     };
 
     struct sses : sse_base<sses> {
@@ -188,7 +186,7 @@ namespace sd {
 
         SIMDEE_UNOP(sses, scalar_t, first_scalar, dirty::as_s(_mm_cvtss_f32(l.mm)));
 
-#   if SIMDEE_NEED_INT
+#if SIMDEE_NEED_INT
         SIMDEE_BINOP(sses, sseb, operator<, _mm_cmplt_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, sseb, operator>, _mm_cmpgt_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, not_sseb, operator<=, not_sseb(_mm_cmpgt_epi32(l.mmi(), r.mmi())));
@@ -204,7 +202,7 @@ namespace sd {
         SIMDEE_BINOP(sses, sses, min, _mm_min_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, sses, max, _mm_max_epi32(l.mmi(), r.mmi()));
         SIMDEE_UNOP(sses, sses, abs, _mm_abs_epi32(l.mmi()));
-#   endif
+#endif
     };
 
     SIMDEE_INL ssef::ssef(const sses& r) { mm = _mm_cvtepi32_ps(_mm_castps_si128(r.data())); }

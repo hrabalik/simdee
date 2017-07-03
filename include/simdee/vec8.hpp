@@ -23,8 +23,8 @@ namespace sd {
 // Emulated vec8 implementation
 //
 #else
-#include "vec4.hpp"
 #include "simd_vectors/dual.hpp"
+#include "vec4.hpp"
 
 namespace sd {
     using vec8b = dual<vec4b>;

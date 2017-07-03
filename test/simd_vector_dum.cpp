@@ -1,6 +1,6 @@
 #include "catch.hpp"
-#include <simdee/simdee.hpp>
 #include <simdee/simd_vectors/dum.hpp>
+#include <simdee/simdee.hpp>
 
 using B = sd::dumb;
 using F = sd::dumf;
@@ -13,30 +13,30 @@ const B::storage_t bufAB{
 const B::storage_t bufBB{
     false,
 };
-const F::storage_t bufAF {
+const F::storage_t bufAF{
     -0.27787193f,
 };
-const F::storage_t bufBF {
+const F::storage_t bufBF{
     -0.23645458f,
 };
-const U::storage_t bufAU {
+const U::storage_t bufAU{
     1753029375U,
 };
-const U::storage_t bufBU {
+const U::storage_t bufBU{
     1679702461U,
 };
-const S::storage_t bufAS {
+const S::storage_t bufAS{
     -1712190449,
 };
-const S::storage_t bufBS {
+const S::storage_t bufBS{
     724135231,
 };
 const B::storage_t bufZB{
     false,
 };
-const F::storage_t bufZF { 0 };
-const U::storage_t bufZU { 0 };
-const S::storage_t bufZS { 0 };
+const F::storage_t bufZF{0};
+const U::storage_t bufZU{0};
+const S::storage_t bufZS{0};
 
 #define SIMD_TYPE "DUM"
 #define SIMD_TEST_TAG "[simd_vectors][dum]"

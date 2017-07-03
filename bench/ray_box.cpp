@@ -1,24 +1,24 @@
-// work around a STL bug in normal_distribution, where a double-to-float conversion produces a warning
+// work around a STL bug in normal_distribution, where a double-to-float conversion produces a
+// warning
 #if defined(_MSC_VER)
-#pragma warning(disable: 4244)
+#pragma warning(disable : 4244)
 #endif
 
 #define SIMDEE_NEED_INT 0
 #include <simdee/simd_vectors/avx.hpp>
 #include <simdee/util/allocator.hpp>
 
-#include <limits>
-#include <vector>
-#include <random>
 #include <chrono>
-#include <iostream>
 #include <functional>
+#include <iostream>
+#include <limits>
+#include <random>
+#include <vector>
 
-const char* const hline = "===============================================================================\n";
+const char* const hline =
+    "===============================================================================\n";
 
-auto now = []() {
-    return std::chrono::high_resolution_clock::now();
-};
+auto now = []() { return std::chrono::high_resolution_clock::now(); };
 
 template <typename Duration>
 double to_ms(Duration dur) {
@@ -67,13 +67,11 @@ int main() {
     std::minstd_rand re(0x8a7ac012);
     std::normal_distribution<float> dist(0, 1);
     auto fill = [&dist, &re](float* data, std::size_t num) {
-        for (size_t i = 0; i < num; ++i) {
-            *(data++) = dist(re);
-        }
+        for (size_t i = 0; i < num; ++i) { *(data++) = dist(re); }
     };
     const std::size_t numFloats = (sizeof(RayBoxData1) / sizeof(float)) * dataSize1;
     fill((float*)(data8.data()), numFloats);
-    
+
     {
         RayBoxData1* ptr = data1.data();
         for (auto i = 0U; i < dataSize8; ++i) {
@@ -95,12 +93,15 @@ int main() {
         float eps2 = static_cast<float>(std::numeric_limits<float>::epsilon() * 0.5);
         return (n * eps2) / (1 - n * eps2);
     };
-    struct Vec3f { float x, y, z; };
+    struct Vec3f {
+        float x, y, z;
+    };
     const float robustFactor = 1 + 2 * gamma(3);
-    const Vec3f invDir = { dist(re), dist(re), dist(re) };
-    const Vec3f rayOrigin = { dist(re), dist(re), dist(re) };
+    const Vec3f invDir = {dist(re), dist(re), dist(re)};
+    const Vec3f rayOrigin = {dist(re), dist(re), dist(re)};
     const float rayTMax = 100.f;
-    const int dirIsNeg[3] = { (dist(re) > 0) ? 1 : 0, (dist(re) > 0) ? 1 : 0, (dist(re) > 0) ? 1 : 0 };
+    const int dirIsNeg[3] = {(dist(re) > 0) ? 1 : 0, (dist(re) > 0) ? 1 : 0,
+                             (dist(re) > 0) ? 1 : 0};
 
     // non-SIMD implementation (for correctness checking)
     auto nonSimd = [&]() {
@@ -164,13 +165,12 @@ int main() {
                 tmaxy = _mm256_mul_ps(tmaxy, factor);
 
                 {
-                    __m256 failcond = _mm256_or_ps(_mm256_cmp_ps(tmin, tmaxy, _CMP_GT_OQ), _mm256_cmp_ps(tminy, tmax, _CMP_GT_OQ));
+                    __m256 failcond = _mm256_or_ps(_mm256_cmp_ps(tmin, tmaxy, _CMP_GT_OQ),
+                                                   _mm256_cmp_ps(tminy, tmax, _CMP_GT_OQ));
                     fail = uint32_t(_mm256_movemask_ps(failcond));
 
                     if (fail == 0xFF) {
-                        for (int i = 0; i < 8; ++i) {
-                            *(resIt++) = Result::fail;
-                        }
+                        for (int i = 0; i < 8; ++i) { *(resIt++) = Result::fail; }
                         continue;
                     }
                 }
@@ -194,13 +194,12 @@ int main() {
                 tmaxz = _mm256_mul_ps(tmaxz, factor);
 
                 {
-                    __m256 failcond = _mm256_or_ps(_mm256_cmp_ps(tmin, tmaxz, _CMP_GT_OQ), _mm256_cmp_ps(tminz, tmax, _CMP_GT_OQ));
+                    __m256 failcond = _mm256_or_ps(_mm256_cmp_ps(tmin, tmaxz, _CMP_GT_OQ),
+                                                   _mm256_cmp_ps(tminz, tmax, _CMP_GT_OQ));
                     fail = fail | uint32_t(_mm256_movemask_ps(failcond));
 
                     if (fail == 0xFF) {
-                        for (int i = 0; i < 8; ++i) {
-                            *(resIt++) = Result::fail;
-                        }
+                        for (int i = 0; i < 8; ++i) { *(resIt++) = Result::fail; }
                         continue;
                     }
                 }
@@ -209,7 +208,9 @@ int main() {
                 tmax = _mm256_blendv_ps(tmax, tmaxz, _mm256_cmp_ps(tmaxz, tmax, _CMP_LT_OQ));
             }
 
-            __m256 wincond = _mm256_and_ps(_mm256_cmp_ps(tmin, _mm256_broadcast_ss(&rayTMax), _CMP_LT_OQ), _mm256_cmp_ps(tmax, _mm256_setzero_ps(), _CMP_GT_OQ));
+            __m256 wincond =
+                _mm256_and_ps(_mm256_cmp_ps(tmin, _mm256_broadcast_ss(&rayTMax), _CMP_LT_OQ),
+                              _mm256_cmp_ps(tmax, _mm256_setzero_ps(), _CMP_GT_OQ));
             uint32_t win = ~fail & uint32_t(_mm256_movemask_ps(wincond));
 
             for (int i = 0; i < 8; ++i) {
@@ -234,9 +235,7 @@ int main() {
             auto fail = mask((tmin > tmaxy) || (tminy > tmax));
 
             if (all(fail)) {
-                for (int i = 0; i < 8; ++i) {
-                    *(resIt++) = Result::fail;
-                }
+                for (int i = 0; i < 8; ++i) { *(resIt++) = Result::fail; }
                 continue;
             }
 
@@ -248,9 +247,7 @@ int main() {
             fail |= mask((tmin > tmaxz) || (tminz > tmax));
 
             if (all(fail)) {
-                for (int i = 0; i < 8; ++i) {
-                    *(resIt++) = Result::fail;
-                }
+                for (int i = 0; i < 8; ++i) { *(resIt++) = Result::fail; }
                 continue;
             }
 
@@ -258,16 +255,14 @@ int main() {
             tmax = cond(tmaxz < tmax, tmaxz, tmax);
             auto win = ~fail & mask((tmin < rayTMax) && (tmax > sd::zero()));
 
-            for (int i = 0; i < 8; ++i) {
-                *(resIt++) = win[i] ? Result::win : Result::fail;
-            }
+            for (int i = 0; i < 8; ++i) { *(resIt++) = win[i] ? Result::win : Result::fail; }
         }
     };
 
     // check performance
-    std::cout << "non-SIMD: "  << benchmark_ms(nonSimd) << " ms\n";
+    std::cout << "non-SIMD: " << benchmark_ms(nonSimd) << " ms\n";
     std::cout << "hand SIMD: " << benchmark_ms(handSimd) << " ms\n";
-    std::cout << "Simdee: "    << benchmark_ms(simdee) << " ms\n";
+    std::cout << "Simdee: " << benchmark_ms(simdee) << " ms\n";
 
     // check correctness
     if (resultsNonSimd != resultsHandSimd) std::cerr << "hand SIMD results incorrect\n";

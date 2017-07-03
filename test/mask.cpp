@@ -70,9 +70,7 @@ TEST_CASE("mask", "[mask]") {
         auto expected = [](uint32_t u) {
             std::vector<uint32_t> res;
             for (int i = 0; i < 32; ++i) {
-                if ((u & (1U << i)) != 0) {
-                    res.push_back(i);
-                }
+                if ((u & (1U << i)) != 0) { res.push_back(i); }
             }
             return res;
         };
@@ -83,16 +81,12 @@ TEST_CASE("mask", "[mask]") {
     SECTION("operator []") {
         auto received = [](mask_t m) {
             std::vector<bool> res;
-            for (int i = 0; i < 32; ++i) {
-                res.push_back(m[i]);
-            }
+            for (int i = 0; i < 32; ++i) { res.push_back(m[i]); }
             return res;
         };
         auto expected = [](uint32_t u) {
             std::vector<bool> res;
-            for (int i = 0; i < 32; ++i) {
-                res.push_back((u & (1U << i)) != 0);
-            }
+            for (int i = 0; i < 32; ++i) { res.push_back((u & (1U << i)) != 0); }
             return res;
         };
         REQUIRE(received(m1) == expected(u1));

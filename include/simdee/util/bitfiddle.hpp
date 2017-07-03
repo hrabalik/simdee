@@ -5,19 +5,25 @@
 #define SIMDEE_UTIL_BITFIDDLE_HPP
 
 #include "inline.hpp"
-#include <iterator>
 #include <cstdint>
 #include <cstring>
+#include <iterator>
 
 #if defined(__GNUC__) // GCC, Clang
 
 namespace sd {
     SIMDEE_INL int lsb(unsigned int in) { return __builtin_ctz(in); }
-    SIMDEE_INL int msb(unsigned int in) { return (8*int(sizeof(unsigned int)) - 1) - __builtin_clz(in); }
+    SIMDEE_INL int msb(unsigned int in) {
+        return (8 * int(sizeof(unsigned int)) - 1) - __builtin_clz(in);
+    }
     SIMDEE_INL int lsb(unsigned long in) { return __builtin_ctzl(in); }
-    SIMDEE_INL int msb(unsigned long in) { return (8*int(sizeof(unsigned long)) - 1) - __builtin_clzl(in); }
+    SIMDEE_INL int msb(unsigned long in) {
+        return (8 * int(sizeof(unsigned long)) - 1) - __builtin_clzl(in);
+    }
     SIMDEE_INL int lsb(unsigned long long in) { return __builtin_ctzll(in); }
-    SIMDEE_INL int msb(unsigned long long in) { return (8*int(sizeof(unsigned long long)) - 1) - __builtin_clzll(in); }
+    SIMDEE_INL int msb(unsigned long long in) {
+        return (8 * int(sizeof(unsigned long long)) - 1) - __builtin_clzll(in);
+    }
     SIMDEE_INL uint16_t bswap(uint16_t in) { return __builtin_bswap16(in); }
     SIMDEE_INL uint32_t bswap(uint32_t in) { return __builtin_bswap32(in); }
     SIMDEE_INL uint64_t bswap(uint64_t in) { return __builtin_bswap64(in); }
@@ -28,15 +34,31 @@ namespace sd {
 #include <intrin.h>
 
 namespace sd {
-    SIMDEE_INL unsigned long lsb(unsigned __int32 in) { unsigned long res; _BitScanForward(&res, in); return res; }
-    SIMDEE_INL unsigned long msb(unsigned __int32 in) { unsigned long res; _BitScanReverse(&res, in); return res; }
+    SIMDEE_INL unsigned long lsb(unsigned __int32 in) {
+        unsigned long res;
+        _BitScanForward(&res, in);
+        return res;
+    }
+    SIMDEE_INL unsigned long msb(unsigned __int32 in) {
+        unsigned long res;
+        _BitScanReverse(&res, in);
+        return res;
+    }
     SIMDEE_INL uint16_t bswap(uint16_t in) { return _byteswap_ushort(in); }
     SIMDEE_INL uint32_t bswap(uint32_t in) { return _byteswap_ulong(in); }
     SIMDEE_INL uint64_t bswap(uint64_t in) { return _byteswap_uint64(in); }
 
 #if defined(_M_X64)
-    SIMDEE_INL unsigned long lsb(unsigned __int64 in) { unsigned long res; _BitScanForward64(&res, in); return res; }
-    SIMDEE_INL unsigned long msb(unsigned __int64 in) { unsigned long res; _BitScanReverse64(&res, in); return res; }
+    SIMDEE_INL unsigned long lsb(unsigned __int64 in) {
+        unsigned long res;
+        _BitScanForward64(&res, in);
+        return res;
+    }
+    SIMDEE_INL unsigned long msb(unsigned __int64 in) {
+        unsigned long res;
+        _BitScanReverse64(&res, in);
+        return res;
+    }
 #endif
 }
 
@@ -55,8 +77,15 @@ namespace sd {
         SIMDEE_INL constexpr bit_iterator(uint32_t mask_) : mask(mask_) {}
         SIMDEE_INL uint32_t operator*() const { return uint32_t(lsb(mask)); }
         SIMDEE_INL uint32_t operator->() const { return uint32_t(lsb(mask)); }
-        SIMDEE_INL bit_iterator& operator++() { mask = mask & (mask - 1); return *this; }
-        SIMDEE_INL bit_iterator operator++(int) { bit_iterator r = mask; operator++(); return r; }
+        SIMDEE_INL bit_iterator& operator++() {
+            mask = mask & (mask - 1);
+            return *this;
+        }
+        SIMDEE_INL bit_iterator operator++(int) {
+            bit_iterator r = mask;
+            operator++();
+            return r;
+        }
         SIMDEE_INL bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }
     };
 
@@ -66,7 +95,6 @@ namespace sd {
         std::memcpy(out, &in, sizeof(double));
         return out[0]; // assuming little-endian architecture, use out[1] for big-endian
     }
-
 }
 
 #endif // SIMDEE_UTIL_BITFIDDLE_HPP

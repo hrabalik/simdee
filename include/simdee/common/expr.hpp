@@ -14,7 +14,9 @@ namespace sd {
             SIMDEE_INL constexpr explicit aligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDEE_INL void operator=(const Simd_t& r) const { r.aligned_store(ptr); }
+            SIMDEE_INL void operator=(const Simd_t& r) const {
+                r.aligned_store(ptr);
+            }
 
             // data
             T* ptr;
@@ -25,7 +27,9 @@ namespace sd {
             SIMDEE_INL constexpr explicit unaligned(T* r) : ptr(r) {}
 
             template <typename Simd_t>
-            SIMDEE_INL void operator=(const Simd_t& r) const { r.unaligned_store(ptr); }
+            SIMDEE_INL void operator=(const Simd_t& r) const {
+                r.unaligned_store(ptr);
+            }
 
             // data
             T* ptr;
@@ -36,7 +40,9 @@ namespace sd {
             SIMDEE_INL constexpr explicit interleaved(T* r, int rs) : ptr(r), step(rs) {}
 
             template <typename Simd_t>
-            SIMDEE_INL void operator=(const Simd_t& r) const { r.interleaved_store(ptr, step); }
+            SIMDEE_INL void operator=(const Simd_t& r) const {
+                r.interleaved_store(ptr, step);
+            }
 
             // data
             T* ptr;
@@ -45,11 +51,14 @@ namespace sd {
 
         template <typename Crtp>
         struct init {
-            SIMDEE_INL constexpr const Crtp& self() const { return static_cast<const Crtp&>(*this); }
+            SIMDEE_INL constexpr const Crtp& self() const {
+                return static_cast<const Crtp&>(*this);
+            }
 
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
-                static_assert(is_extended_arithmetic_type<Target>::value, "init::to<Target>():: Target must be an arithmetic type");
+                static_assert(is_extended_arithmetic_type<Target>::value,
+                              "init::to<Target>():: Target must be an arithmetic type");
                 return self().template to<Target>();
             }
         };
@@ -69,7 +78,6 @@ namespace sd {
                 return dirty::cast<u_t, Target>(~u_t(0));
             }
         };
-
 
         struct sign_bit : init<sign_bit> {
             template <typename Target>
@@ -113,9 +121,13 @@ namespace sd {
     }
 
     template <typename T>
-    SIMDEE_INL constexpr expr::aligned<T> aligned(T* const& r) { return expr::aligned<T>(r); }
+    SIMDEE_INL constexpr expr::aligned<T> aligned(T* const& r) {
+        return expr::aligned<T>(r);
+    }
     template <typename T>
-    SIMDEE_INL constexpr expr::unaligned<T> unaligned(T* const& r) { return expr::unaligned<T>(r); }
+    SIMDEE_INL constexpr expr::unaligned<T> unaligned(T* const& r) {
+        return expr::unaligned<T>(r);
+    }
     template <typename T>
     SIMDEE_INL constexpr expr::interleaved<T> interleaved(T* const& r, int rs) {
         return expr::interleaved<T>(r, rs);

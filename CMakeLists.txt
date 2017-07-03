@@ -10,6 +10,7 @@ set_property(CACHE SIMDEE_INSTRUCTION_SET PROPERTY STRINGS "default" "SSE2" "AVX
 # Add a target for the header-only library
 add_library(simdee INTERFACE)
 target_include_directories(simdee INTERFACE include)
+target_compile_features(simdee INTERFACE cxx_defaulted_functions cxx_deleted_functions cxx_delegating_constructors)
 
 # Enable selected instruction set for library users
 if(${SIMDEE_INSTRUCTION_SET} STREQUAL "default")

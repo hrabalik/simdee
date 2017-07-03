@@ -6,7 +6,9 @@ struct vec_t {
     enum { width = 3 };
 
     void aligned_store(scalar_t* ptr) const {
-        std::copy(data, data + width, ptr);
+        for (int i = 0; i < width; i++) {
+            ptr[i] = data[i];
+        }
     }
 
     scalar_t data[width];

@@ -1,3 +1,8 @@
+// work around a STL bug in normal_distribution, where a double-to-float conversion produces a warning
+#if defined(_MSC_VER)
+#pragma warning(disable: 4244)
+#endif
+
 #define SIMDEE_NEED_INT 0
 #include <simdee/simd_vectors/avx.hpp>
 #include <simdee/util/allocator.hpp>

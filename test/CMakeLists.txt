@@ -56,10 +56,13 @@ target_link_libraries(simdee-test PRIVATE simdee)
 
 # Enable strict warnings
 if (MSVC)
-    target_compile_options(simdee-test PRIVATE "/W4" "/WX")
+    target_compile_options(simdee-test PRIVATE "/W4" "/WX" "/MP")
 else()
     target_compile_options(simdee-test PRIVATE "-Wall" "-Werror")
 endif()
+
+# Enable fast Catch compilation
+target_compile_definitions(simdee-test PRIVATE "CATCH_CONFIG_FAST_COMPILE")
 
 # Organize files in the IDE
 source_group("tests" FILES ${TEST_FILES})

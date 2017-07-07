@@ -532,13 +532,6 @@ TEST_CASE(SIMD_TYPE " bool arithmetic", SIMD_TEST_TAG) {
         r = a || b;
         REQUIRE(r == e);
     }
-    SECTION("log andnot") {
-        expect([](scalar_t a, scalar_t b) { return a && !b; });
-        r = a && !b;
-        REQUIRE(r == e);
-        r = andnot(a, b);
-        REQUIRE(r == e);
-    }
     SECTION("complex expr") {
         expect([](scalar_t a, scalar_t b) { return !((!a && !b) || (!a || !b)); });
         r = !((!a && !b) || (!a || !b));
@@ -690,13 +683,6 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
         r = a;
         REQUIRE(r == e);
     }
-    SECTION("bit andnot") {
-        expect([](scalar_t a, scalar_t b) { return a & ~b; });
-        r = a & ~b;
-        REQUIRE(r == e);
-        r = andnot(a, b);
-        REQUIRE(r == e);
-    }
     SECTION("complex bit-wise expr") {
         expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
         r = ~((~a & ~b) | (~a ^ ~b));
@@ -800,13 +786,6 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         REQUIRE(r == e);
         a ^= b;
         r = a;
-        REQUIRE(r == e);
-    }
-    SECTION("bit andnot") {
-        expect([](scalar_t a, scalar_t b) { return a & ~b; });
-        r = a & ~b;
-        REQUIRE(r == e);
-        r = andnot(a, b);
         REQUIRE(r == e);
     }
     SECTION("complex bit-wise expr") {

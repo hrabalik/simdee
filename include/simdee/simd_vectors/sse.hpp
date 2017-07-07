@@ -123,7 +123,6 @@ namespace sd {
         SIMDEE_BINOP(sseb, sseb, operator&&, _mm_and_ps(l.mm, r.mm));
         SIMDEE_BINOP(sseb, sseb, operator||, _mm_or_ps(l.mm, r.mm));
         SIMDEE_UNOP(sseb, not_sseb, operator!, not_sseb(l));
-        SIMDEE_BINOP(sseb, sseb, andnot, _mm_andnot_ps(r.mm, l.mm));
     };
 
     struct ssef : sse_base<ssef> {
@@ -182,7 +181,6 @@ namespace sd {
         SIMDEE_BINOP(sseu, sseu, operator|, _mm_or_ps(l.mm, r.mm));
         SIMDEE_BINOP(sseu, sseu, operator^, _mm_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(sseu, not_sseu, operator~, not_sseu(l));
-        SIMDEE_BINOP(sseu, sseu, andnot, _mm_andnot_ps(r.mm, l.mm));
         SIMDEE_UNOP(sseu, sseu, operator-, _mm_sub_epi32(_mm_setzero_si128(), l.mmi()));
         SIMDEE_BINOP(sseu, sseu, operator+, _mm_add_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseu, sseu, operator-, _mm_sub_epi32(l.mmi(), r.mmi()));
@@ -227,7 +225,6 @@ namespace sd {
         SIMDEE_BINOP(sses, sses, operator|, _mm_or_ps(l.mm, r.mm));
         SIMDEE_BINOP(sses, sses, operator^, _mm_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(sses, not_sses, operator~, not_sses(l));
-        SIMDEE_BINOP(sses, sses, andnot, _mm_andnot_ps(r.mm, l.mm));
 
         SIMDEE_UNOP(sses, sses, operator-, _mm_sub_epi32(_mm_setzero_si128(), l.mmi()));
         SIMDEE_BINOP(sses, sses, operator+, _mm_add_epi32(l.mmi(), r.mmi()));
@@ -268,6 +265,14 @@ namespace sd {
         __m128 t = _mm_and_ps(pred.data(), if_true.data());
         __m128 f = _mm_andnot_ps(pred.data(), if_false.data());
         return _mm_or_ps(t, f);
+    }
+
+    namespace impl {
+        template <typename T>
+        SIMDEE_INL const typename simd_vector_traits<T>::simd_t andnot(const sse_base<T>& l,
+                                                                       const sse_base<T>& r) {
+            return _mm_andnot_ps(r.data(), l.data());
+        }
     }
 }
 

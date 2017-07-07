@@ -44,7 +44,6 @@ syntax         | result type               | description
 `x &= y`       | `T`                       | same as `x = x & y`
 `x \|= y`      | `T`                       | same as `x = x \| y`
 `x ^= y`       | `T`                       | same as `x = x ^ y`
-`andnot(x, y)` | `T`                       | same as `x & ~y`
 `+x`           | `T`                       | scalar-wise unary plus
 `-x`           | `T`                       | scalar-wise unary minus
 `x + y`        | `T`                       | scalar-wise addition

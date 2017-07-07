@@ -150,7 +150,6 @@ namespace sd {
         SIMDEE_BINOP(avxb, avxb, operator&&, _mm256_and_ps(l.mm, r.mm));
         SIMDEE_BINOP(avxb, avxb, operator||, _mm256_or_ps(l.mm, r.mm));
         SIMDEE_UNOP(avxb, not_avxb, operator!, not_avxb(l));
-        SIMDEE_BINOP(avxb, avxb, andnot, _mm256_andnot_ps(r.mm, l.mm));
     };
 
     struct avxf : avx_base<avxf> {
@@ -205,7 +204,6 @@ namespace sd {
         SIMDEE_BINOP(avxu, avxu, operator|, _mm256_or_ps(l.mm, r.mm));
         SIMDEE_BINOP(avxu, avxu, operator^, _mm256_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(avxu, not_avxu, operator~, not_avxu(l));
-        SIMDEE_BINOP(avxu, avxu, andnot, _mm256_andnot_ps(r.mm, l.mm));
         SIMDEE_UNOP(avxu, avxu, operator-, _mm256_sub_epi32(_mm256_setzero_si256(), l.mmi()));
         SIMDEE_BINOP(avxu, avxu, operator+, _mm256_add_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(avxu, avxu, operator-, _mm256_sub_epi32(l.mmi(), r.mmi()));
@@ -239,7 +237,6 @@ namespace sd {
         SIMDEE_BINOP(avxs, avxs, operator|, _mm256_or_ps(l.mm, r.mm));
         SIMDEE_BINOP(avxs, avxs, operator^, _mm256_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(avxs, not_avxs, operator~, not_avxs(l));
-        SIMDEE_BINOP(avxs, avxs, andnot, _mm256_andnot_ps(r.mm, l.mm));
 
         SIMDEE_UNOP(avxs, avxs, operator-, _mm256_sub_epi32(_mm256_setzero_si256(), l.mmi()));
         SIMDEE_BINOP(avxs, avxs, operator+, _mm256_add_epi32(l.mmi(), r.mmi()));
@@ -269,6 +266,14 @@ namespace sd {
     }
     SIMDEE_INL const avxs cond(const avxb& pred, const avxs& if_true, const avxs& if_false) {
         return _mm256_blendv_ps(if_false.data(), if_true.data(), pred.data());
+    }
+
+    namespace impl {
+        template <typename T>
+        SIMDEE_INL const typename simd_vector_traits<T>::simd_t andnot(const avx_base<T>& l,
+                                                                       const avx_base<T>& r) {
+            return _mm256_andnot_ps(r.data(), l.data());
+        }
     }
 }
 

@@ -131,8 +131,6 @@ namespace sd {
         SIMDEE_BINOP(vec_b, vec_b, operator&&, (vector_t{l.mm.l && r.mm.l, l.mm.r&& r.mm.r}));
         SIMDEE_BINOP(vec_b, vec_b, operator||, (vector_t{l.mm.l || r.mm.l, l.mm.r || r.mm.r}));
         SIMDEE_UNOP(vec_b, vec_b, operator!, (vector_t{!l.mm.l, !l.mm.r}));
-        SIMDEE_BINOP(vec_b, vec_b, andnot,
-                     (vector_t{andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r)}));
 
         SIMDEE_INL friend const vec_b cond(const vec_b& pred, const vec_b& if_true,
                                            const vec_b& if_false) {
@@ -230,8 +228,6 @@ namespace sd {
         SIMDEE_BINOP(vec_u, vec_u, operator|, (vector_t{l.mm.l | r.mm.l, l.mm.r | r.mm.r}));
         SIMDEE_BINOP(vec_u, vec_u, operator^, (vector_t{l.mm.l ^ r.mm.l, l.mm.r ^ r.mm.r}));
         SIMDEE_UNOP(vec_u, vec_u, operator~, (vector_t{~l.mm.l, ~l.mm.r}));
-        SIMDEE_BINOP(vec_u, vec_u, andnot,
-                     (vector_t{andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r)}));
         SIMDEE_UNOP(vec_u, vec_u, operator-, (vector_t{-l.mm.l, -l.mm.r}));
         SIMDEE_BINOP(vec_u, vec_u, operator+, (vector_t{l.mm.l + r.mm.l, l.mm.r + r.mm.r}));
         SIMDEE_BINOP(vec_u, vec_u, operator-, (vector_t{l.mm.l - r.mm.l, l.mm.r - r.mm.r}));
@@ -288,8 +284,6 @@ namespace sd {
         SIMDEE_BINOP(vec_s, vec_s, operator|, (vector_t{ l.mm.l | r.mm.l, l.mm.r | r.mm.r }));
         SIMDEE_BINOP(vec_s, vec_s, operator^, (vector_t{ l.mm.l ^ r.mm.l, l.mm.r ^ r.mm.r }));
         SIMDEE_UNOP(vec_s, vec_s, operator~, (vector_t{ ~l.mm.l, ~l.mm.r }));
-        SIMDEE_BINOP(vec_s, vec_s, andnot,
-            (vector_t{ andnot(l.mm.l, r.mm.l), andnot(l.mm.r, r.mm.r) }));
 
         SIMDEE_UNOP(vec_s, vec_s, operator-, (vector_t{-l.mm.l, -l.mm.r}));
         SIMDEE_BINOP(vec_s, vec_s, operator+, (vector_t{l.mm.l + r.mm.l, l.mm.r + r.mm.r}));

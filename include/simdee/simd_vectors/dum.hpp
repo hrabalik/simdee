@@ -131,6 +131,10 @@ namespace sd {
         SIMDEE_UNOP(dumu, scalar_t, first_scalar, l.mm);
 
 #if SIMDEE_NEED_INT
+        SIMDEE_BINOP(dumu, dumb, operator<, dumb::scalar_t(l.mm < r.mm));
+        SIMDEE_BINOP(dumu, dumb, operator>, dumb::scalar_t(l.mm > r.mm));
+        SIMDEE_BINOP(dumu, dumb, operator<=, dumb::scalar_t(l.mm <= r.mm));
+        SIMDEE_BINOP(dumu, dumb, operator>=, dumb::scalar_t(l.mm >= r.mm));
         SIMDEE_BINOP(dumu, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
         SIMDEE_BINOP(dumu, dumb, operator!=, dumb::scalar_t(l.mm != r.mm));
         SIMDEE_BINOP(dumu, dumu, operator&, l.mm& r.mm);
@@ -138,6 +142,12 @@ namespace sd {
         SIMDEE_BINOP(dumu, dumu, operator^, l.mm ^ r.mm);
         SIMDEE_UNOP(dumu, dumu, operator~, ~l.mm);
         SIMDEE_BINOP(dumu, dumu, andnot, l.mm & ~r.mm);
+        SIMDEE_UNOP(dumu, dumu, operator-, 0 - l.mm);
+        SIMDEE_BINOP(dumu, dumu, operator+, l.mm + r.mm);
+        SIMDEE_BINOP(dumu, dumu, operator-, l.mm - r.mm);
+        SIMDEE_BINOP(dumu, dumu, operator*, l.mm* r.mm);
+        SIMDEE_BINOP(dumu, dumu, min, std::min(l.mm, r.mm));
+        SIMDEE_BINOP(dumu, dumu, max, std::max(l.mm, r.mm));
 #endif
     };
 

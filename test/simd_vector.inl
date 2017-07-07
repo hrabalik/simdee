@@ -697,6 +697,50 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
         r = andnot(a, b);
         REQUIRE(r == e);
     }
+    SECTION("unary plus") {
+        expect1([](scalar_t a) { return +a; });
+        r = +a;
+        REQUIRE(r == e);
+    }
+    SECTION("unary minus") {
+        expect1([](scalar_t a) { return 0 - a; });
+        r = -a;
+        REQUIRE(r == e);
+    }
+    SECTION("plus") {
+        expect([](scalar_t a, scalar_t b) { return a + b; });
+        r = a + b;
+        REQUIRE(r == e);
+        a += b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("minus") {
+        expect([](scalar_t a, scalar_t b) { return a - b; });
+        r = a - b;
+        REQUIRE(r == e);
+        a -= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("multiplies") {
+        expect([](scalar_t a, scalar_t b) { return a * b; });
+        r = a * b;
+        REQUIRE(r == e);
+        a *= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("minimum") {
+        expect([](scalar_t a, scalar_t b) { return std::min(a, b); });
+        r = min(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("maximum") {
+        expect([](scalar_t a, scalar_t b) { return std::max(a, b); });
+        r = max(a, b);
+        REQUIRE(r == e);
+    }
     SECTION("complex expr") {
         expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
         r = ~((~a & ~b) | (~a ^ ~b));
@@ -909,6 +953,38 @@ TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
         r = a != a;
         REQUIRE(r == e);
     }
+    SECTION("greater") {
+        expect([](scalar_t a, scalar_t b) { return a > b; });
+        r = a > b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a > a;
+        REQUIRE(r == e);
+    }
+    SECTION("less") {
+        expect([](scalar_t a, scalar_t b) { return a < b; });
+        r = a < b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a < a;
+        REQUIRE(r == e);
+    }
+    SECTION("greater equal") {
+        expect([](scalar_t a, scalar_t b) { return a >= b; });
+        r = a >= b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a >= a;
+        REQUIRE(r == e);
+    }
+    SECTION("less equal") {
+        expect([](scalar_t a, scalar_t b) { return a <= b; });
+        r = a <= b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a <= a;
+        REQUIRE(r == e);
+    }
 }
 
 TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
@@ -1037,6 +1113,31 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
             auto or_ = [](scalar_t l, scalar_t r) { return l | r; };
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(0), or_);
             r = first_scalar(reduce(a, sd::op_bitor{}));
+            REQUIRE(r == e);
+        }
+        SECTION("sum") {
+            e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(0));
+            r = first_scalar(reduce(a, sd::op_add{}));
+            REQUIRE(r == Approx(e));
+        }
+        SECTION("product") {
+            auto prod = std::multiplies<scalar_t>();
+            e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(1), prod);
+            r = first_scalar(reduce(a, sd::op_mul{}));
+            REQUIRE(r == Approx(e));
+        }
+        SECTION("min") {
+            constexpr scalar_t seed = std::numeric_limits<scalar_t>::max();
+            auto min_ = [](scalar_t l, scalar_t r) { return std::min(l, r); };
+            e = std::accumulate(begin(bufAU), end(bufAU), seed, min_);
+            r = first_scalar(reduce(a, sd::op_min{}));
+            REQUIRE(r == e);
+        }
+        SECTION("max") {
+            constexpr scalar_t seed = std::numeric_limits<scalar_t>::min();
+            auto max_ = [](scalar_t l, scalar_t r) { return std::max(l, r); };
+            e = std::accumulate(begin(bufAU), end(bufAU), seed, max_);
+            r = first_scalar(reduce(a, sd::op_max{}));
             REQUIRE(r == e);
         }
     }

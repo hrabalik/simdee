@@ -166,6 +166,15 @@ namespace sd {
         SIMDEE_UNOP(sseu, scalar_t, first_scalar, dirty::as_u(_mm_cvtss_f32(l.mm)));
 
 #if SIMDEE_NEED_INT
+        SIMDEE_INL friend const sseb operator>(const sseu& l, const sseu& r) {
+            sseu low{0x80000000};
+            return _mm_cmpgt_epi32(_mm_sub_epi32(l.mmi(), low.mmi()),
+                                   _mm_sub_epi32(r.mmi(), low.mmi()));
+        }
+
+        SIMDEE_BINOP(sseu, sseb, operator<, r> l);
+        SIMDEE_BINOP(sseu, not_sseb, operator<=, !(l > r));
+        SIMDEE_BINOP(sseu, not_sseb, operator>=, !(r > l));
         SIMDEE_BINOP(sseu, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseu, not_sseb, operator!=, not_sseb(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
         SIMDEE_BINOP(sseu, sseu, operator&, _mm_and_ps(l.mm, r.mm));
@@ -173,6 +182,24 @@ namespace sd {
         SIMDEE_BINOP(sseu, sseu, operator^, _mm_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(sseu, not_sseu, operator~, not_sseu(l));
         SIMDEE_BINOP(sseu, sseu, andnot, _mm_andnot_ps(r.mm, l.mm));
+        SIMDEE_UNOP(sseu, sseu, operator-, _mm_sub_epi32(_mm_setzero_si128(), l.mmi()));
+        SIMDEE_BINOP(sseu, sseu, operator+, _mm_add_epi32(l.mmi(), r.mmi()));
+        SIMDEE_BINOP(sseu, sseu, operator-, _mm_sub_epi32(l.mmi(), r.mmi()));
+        SIMDEE_BINOP(sseu, sseu, operator*, _mm_mullo_epi32(l.mmi(), r.mmi()));
+
+        SIMDEE_INL friend const sseu min(const sseu& l, const sseu& r) {
+            sseb pred{r > l};
+            __m128 t = _mm_and_ps(pred.data(), l.data());
+            __m128 f = _mm_andnot_ps(pred.data(), r.data());
+            return _mm_or_ps(t, f);
+        }
+
+        SIMDEE_INL friend const sseu max(const sseu& l, const sseu& r) {
+            sseb pred{l > r};
+            __m128 t = _mm_and_ps(pred.data(), l.data());
+            __m128 f = _mm_andnot_ps(pred.data(), r.data());
+            return _mm_or_ps(t, f);
+        }
 #endif
     };
 

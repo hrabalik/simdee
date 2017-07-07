@@ -194,6 +194,10 @@ namespace sd {
                     dirty::as_u(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
 
 #if SIMDEE_NEED_INT
+        SIMDEE_BINOP(avxu, not_avxb, operator<, max(l, r) != l);
+        SIMDEE_BINOP(avxu, not_avxb, operator>, max(l, r) != r);
+        SIMDEE_BINOP(avxu, avxb, operator<=, max(l, r) == r);
+        SIMDEE_BINOP(avxu, avxb, operator>=, max(l, r) == l);
         SIMDEE_BINOP(avxu, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(avxu, not_avxb, operator!=, not_avxb(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
         SIMDEE_BINOP(avxu, avxu, operator&, _mm256_and_ps(l.mm, r.mm));
@@ -201,6 +205,12 @@ namespace sd {
         SIMDEE_BINOP(avxu, avxu, operator^, _mm256_xor_ps(l.mm, r.mm));
         SIMDEE_UNOP(avxu, not_avxu, operator~, not_avxu(l));
         SIMDEE_BINOP(avxu, avxu, andnot, _mm256_andnot_ps(r.mm, l.mm));
+        SIMDEE_UNOP(avxu, avxu, operator-, _mm256_sub_epi32(_mm256_setzero_si256(), l.mmi()));
+        SIMDEE_BINOP(avxu, avxu, operator+, _mm256_add_epi32(l.mmi(), r.mmi()));
+        SIMDEE_BINOP(avxu, avxu, operator-, _mm256_sub_epi32(l.mmi(), r.mmi()));
+        SIMDEE_BINOP(avxu, avxu, operator*, _mm256_mullo_epi32(l.mmi(), r.mmi()));
+        SIMDEE_BINOP(avxu, avxu, min, _mm256_min_epu32(l.mmi(), r.mmi()));
+        SIMDEE_BINOP(avxu, avxu, max, _mm256_max_epu32(l.mmi(), r.mmi()));
 #endif
     };
 

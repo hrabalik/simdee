@@ -252,28 +252,34 @@ namespace sd {
     SIMDEE_INL sseu::sseu(const sses& r) { mm = r.data(); }
     SIMDEE_INL sses::sses(const sseu& r) { mm = r.data(); }
 
+#if SIMDEE_SSE41
+    namespace impl {
+        SIMDEE_INL __m128 sse_cond(__m128 pred, __m128 if_true, __m128 if_false) {
+            return _mm_blendv_ps(if_false, if_true, pred);
+        }
+    }
+#else
+    namespace impl {
+        SIMDEE_INL __m128 sse_cond(__m128 pred, __m128 if_true, __m128 if_false) {
+            return _mm_or_ps(_mm_and_ps(pred, if_true), _mm_andnot_ps(pred, if_false));
+        }
+    }
+#endif
+
     SIMDEE_INL const sseb cond(const sseb& pred, const sseb& if_true, const sseb& if_false) {
-        __m128 t = _mm_and_ps(pred.data(), if_true.data());
-        __m128 f = _mm_andnot_ps(pred.data(), if_false.data());
-        return _mm_or_ps(t, f);
+        return impl::sse_cond(pred.data(), if_true.data(), if_false.data());
     }
 
     SIMDEE_INL const ssef cond(const sseb& pred, const ssef& if_true, const ssef& if_false) {
-        __m128 t = _mm_and_ps(pred.data(), if_true.data());
-        __m128 f = _mm_andnot_ps(pred.data(), if_false.data());
-        return _mm_or_ps(t, f);
+        return impl::sse_cond(pred.data(), if_true.data(), if_false.data());
     }
 
     SIMDEE_INL const sseu cond(const sseb& pred, const sseu& if_true, const sseu& if_false) {
-        __m128 t = _mm_and_ps(pred.data(), if_true.data());
-        __m128 f = _mm_andnot_ps(pred.data(), if_false.data());
-        return _mm_or_ps(t, f);
+        return impl::sse_cond(pred.data(), if_true.data(), if_false.data());
     }
 
     SIMDEE_INL const sses cond(const sseb& pred, const sses& if_true, const sses& if_false) {
-        __m128 t = _mm_and_ps(pred.data(), if_true.data());
-        __m128 f = _mm_andnot_ps(pred.data(), if_false.data());
-        return _mm_or_ps(t, f);
+        return impl::sse_cond(pred.data(), if_true.data(), if_false.data());
     }
 
     namespace impl {

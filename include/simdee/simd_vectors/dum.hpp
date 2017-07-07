@@ -169,6 +169,12 @@ namespace sd {
         SIMDEE_BINOP(dums, dumb, operator==, dumb::scalar_t(l.mm == r.mm));
         SIMDEE_BINOP(dums, dumb, operator!=, dumb::scalar_t(l.mm != r.mm));
 
+        SIMDEE_BINOP(dums, dums, operator&, l.mm& r.mm);
+        SIMDEE_BINOP(dums, dums, operator|, l.mm | r.mm);
+        SIMDEE_BINOP(dums, dums, operator^, l.mm ^ r.mm);
+        SIMDEE_UNOP(dums, dums, operator~, ~l.mm);
+        SIMDEE_BINOP(dums, dums, andnot, l.mm & ~r.mm);
+
         SIMDEE_UNOP(dums, dums, operator-, -l.mm);
         SIMDEE_BINOP(dums, dums, operator+, l.mm + r.mm);
         SIMDEE_BINOP(dums, dums, operator-, l.mm - r.mm);

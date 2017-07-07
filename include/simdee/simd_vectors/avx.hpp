@@ -22,6 +22,7 @@ namespace sd {
     struct avxs;
     using not_avxb = expr::deferred_lognot<avxb>;
     using not_avxu = expr::deferred_bitnot<avxu>;
+    using not_avxs = expr::deferred_bitnot<avxs>;
 
     template <>
     struct is_simd_vector<avxb> : std::integral_constant<bool, true> {};
@@ -221,6 +222,7 @@ namespace sd {
         SIMDEE_INL explicit avxs(const avxf&);
         SIMDEE_INL explicit avxs(const avxu&);
         SIMDEE_CTOR(avxs, __m256i, mm = _mm256_castsi256_ps(r));
+        SIMDEE_CTOR(avxs, not_avxs, mm = _mm256_xor_ps(r.neg.mm, avxs(all_bits()).mm));
 
         SIMDEE_UNOP(avxs, scalar_t, first_scalar,
                     dirty::as_s(_mm_cvtss_f32(_mm256_castps256_ps128(l.mm))));
@@ -232,6 +234,12 @@ namespace sd {
         SIMDEE_BINOP(avxs, not_avxb, operator>=, not_avxb(_mm256_cmpgt_epi32(r.mmi(), l.mmi())));
         SIMDEE_BINOP(avxs, avxb, operator==, _mm256_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(avxs, not_avxb, operator!=, not_avxb(_mm256_cmpeq_epi32(l.mmi(), r.mmi())));
+
+        SIMDEE_BINOP(avxs, avxs, operator&, _mm256_and_ps(l.mm, r.mm));
+        SIMDEE_BINOP(avxs, avxs, operator|, _mm256_or_ps(l.mm, r.mm));
+        SIMDEE_BINOP(avxs, avxs, operator^, _mm256_xor_ps(l.mm, r.mm));
+        SIMDEE_UNOP(avxs, not_avxs, operator~, not_avxs(l));
+        SIMDEE_BINOP(avxs, avxs, andnot, _mm256_andnot_ps(r.mm, l.mm));
 
         SIMDEE_UNOP(avxs, avxs, operator-, _mm256_sub_epi32(_mm256_setzero_si256(), l.mmi()));
         SIMDEE_BINOP(avxs, avxs, operator+, _mm256_add_epi32(l.mmi(), r.mmi()));

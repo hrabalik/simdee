@@ -19,6 +19,7 @@ namespace sd {
     struct sses;
     using not_sseb = expr::deferred_lognot<sseb>;
     using not_sseu = expr::deferred_bitnot<sseu>;
+    using not_sses = expr::deferred_bitnot<sses>;
 
     template <>
     struct is_simd_vector<sseb> : std::integral_constant<bool, true> {};
@@ -210,6 +211,7 @@ namespace sd {
         SIMDEE_INL explicit sses(const ssef&);
         SIMDEE_INL explicit sses(const sseu&);
         SIMDEE_CTOR(sses, __m128i, mm = _mm_castsi128_ps(r));
+        SIMDEE_CTOR(sses, not_sses, mm = _mm_xor_ps(r.neg.mm, sses(all_bits()).mm));
 
         SIMDEE_UNOP(sses, scalar_t, first_scalar, dirty::as_s(_mm_cvtss_f32(l.mm)));
 
@@ -220,6 +222,12 @@ namespace sd {
         SIMDEE_BINOP(sses, not_sseb, operator>=, not_sseb(_mm_cmplt_epi32(l.mmi(), r.mmi())));
         SIMDEE_BINOP(sses, sseb, operator==, _mm_cmpeq_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, not_sseb, operator!=, not_sseb(_mm_cmpeq_epi32(l.mmi(), r.mmi())));
+
+        SIMDEE_BINOP(sses, sses, operator&, _mm_and_ps(l.mm, r.mm));
+        SIMDEE_BINOP(sses, sses, operator|, _mm_or_ps(l.mm, r.mm));
+        SIMDEE_BINOP(sses, sses, operator^, _mm_xor_ps(l.mm, r.mm));
+        SIMDEE_UNOP(sses, not_sses, operator~, not_sses(l));
+        SIMDEE_BINOP(sses, sses, andnot, _mm_andnot_ps(r.mm, l.mm));
 
         SIMDEE_UNOP(sses, sses, operator-, _mm_sub_epi32(_mm_setzero_si128(), l.mmi()));
         SIMDEE_BINOP(sses, sses, operator+, _mm_add_epi32(l.mmi(), r.mmi()));

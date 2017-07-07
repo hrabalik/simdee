@@ -697,6 +697,11 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
         r = andnot(a, b);
         REQUIRE(r == e);
     }
+    SECTION("complex bit-wise expr") {
+        expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
+        r = ~((~a & ~b) | (~a ^ ~b));
+        REQUIRE(r == e);
+    }
     SECTION("unary plus") {
         expect1([](scalar_t a) { return +a; });
         r = +a;
@@ -741,11 +746,6 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
         r = max(a, b);
         REQUIRE(r == e);
     }
-    SECTION("complex expr") {
-        expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
-        r = ~((~a & ~b) | (~a ^ ~b));
-        REQUIRE(r == e);
-    }
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;
         a &= 0xdeadbeefU;
@@ -773,6 +773,47 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f);
     };
 
+    SECTION("bit not") {
+        expect1([](scalar_t a) { return ~a; });
+        r = ~a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit and") {
+        expect([](scalar_t a, scalar_t b) { return a & b; });
+        r = a & b;
+        REQUIRE(r == e);
+        a &= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit or") {
+        expect([](scalar_t a, scalar_t b) { return a | b; });
+        r = a | b;
+        REQUIRE(r == e);
+        a |= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit xor") {
+        expect([](scalar_t a, scalar_t b) { return a ^ b; });
+        r = a ^ b;
+        REQUIRE(r == e);
+        a ^= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit andnot") {
+        expect([](scalar_t a, scalar_t b) { return a & ~b; });
+        r = a & ~b;
+        REQUIRE(r == e);
+        r = andnot(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("complex bit-wise expr") {
+        expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
+        r = ~((~a & ~b) | (~a ^ ~b));
+        REQUIRE(r == e);
+    }
     SECTION("unary plus") {
         expect1([](scalar_t a) { return +a; });
         r = +a;

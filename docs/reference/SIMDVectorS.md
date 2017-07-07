@@ -37,6 +37,14 @@ syntax         | result type               | description
 `x < y`        | [`vec_b`](SIMDVectorB.md) | scalar-wise less than
 `x >= y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise greater than or equal
 `x <= y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise less than or equal
+`~x`           | `T`                       | bit-wise not
+`x & y`        | `T`                       | bit-wise and
+`x \| y`       | `T`                       | bit-wise or
+`x ^ y`        | `T`                       | bit-wise xor
+`x &= y`       | `T`                       | same as `x = x & y`
+`x \|= y`      | `T`                       | same as `x = x \| y`
+`x ^= y`       | `T`                       | same as `x = x ^ y`
+`andnot(x, y)` | `T`                       | same as `x & ~y`
 `+x`           | `T`                       | scalar-wise unary plus
 `-x`           | `T`                       | scalar-wise unary minus
 `x + y`        | `T`                       | scalar-wise addition

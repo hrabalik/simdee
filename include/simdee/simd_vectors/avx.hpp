@@ -277,6 +277,4 @@ namespace sd {
     }
 }
 
-#undef SIMDEE_AVX_COMMON_DECLARATIONS
-
 #endif // SIMDEE_SIMD_TYPES_AVX_HPP

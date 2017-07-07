@@ -291,6 +291,4 @@ namespace sd {
     }
 }
 
-#undef SIMDEE_SSE_COMMON_DECLARATIONS
-
 #endif // SIMDEE_SIMD_TYPES_SSE_HPP

@@ -13,6 +13,26 @@
 #include <emmintrin.h>
 
 namespace sd {
+    namespace impl {
+#if SIMDEE_SSE41
+        SIMDEE_INL __m128 sse_cond(__m128 pred, __m128 if_true, __m128 if_false) {
+            return _mm_blendv_ps(if_false, if_true, pred);
+        }
+        SIMDEE_INL __m128i sse_imul(__m128i l, __m128i r) { return _mm_mullo_epi32(l, r); }
+#else
+        SIMDEE_INL __m128 sse_cond(__m128 pred, __m128 if_true, __m128 if_false) {
+            return _mm_or_ps(_mm_and_ps(pred, if_true), _mm_andnot_ps(pred, if_false));
+        }
+        SIMDEE_INL __m128i sse_imul(__m128i l, __m128i r) {
+            __m128i prod_a = _mm_mul_epu32(l, r);
+            __m128i prod_b = _mm_mul_epu32(_mm_srli_epi64(l, 32), _mm_srli_epi64(r, 32));
+            prod_a = _mm_and_si128(prod_a, _mm_setr_epi32(-1, 0, -1, 0));
+            prod_b = _mm_slli_epi64(prod_b, 32);
+            return _mm_or_si128(prod_a, prod_b);
+        }
+#endif
+    }
+
     struct sseb;
     struct ssef;
     struct sseu;
@@ -207,7 +227,7 @@ namespace sd {
         SIMDEE_UNOP(sseu, sseu, operator-, _mm_sub_epi32(_mm_setzero_si128(), l.mmi()));
         SIMDEE_BINOP(sseu, sseu, operator+, _mm_add_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sseu, sseu, operator-, _mm_sub_epi32(l.mmi(), r.mmi()));
-        SIMDEE_BINOP(sseu, sseu, operator*, _mm_mullo_epi32(l.mmi(), r.mmi()));
+        SIMDEE_BINOP(sseu, sseu, operator*, impl::sse_imul(l.mmi(), r.mmi()));
 #endif
     };
 
@@ -238,7 +258,7 @@ namespace sd {
         SIMDEE_UNOP(sses, sses, operator-, _mm_sub_epi32(_mm_setzero_si128(), l.mmi()));
         SIMDEE_BINOP(sses, sses, operator+, _mm_add_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, sses, operator-, _mm_sub_epi32(l.mmi(), r.mmi()));
-        SIMDEE_BINOP(sses, sses, operator*, _mm_mullo_epi32(l.mmi(), r.mmi()));
+        SIMDEE_BINOP(sses, sses, operator*, impl::sse_imul(l.mmi(), r.mmi()));
 
         SIMDEE_BINOP(sses, sses, min, _mm_min_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, sses, max, _mm_max_epi32(l.mmi(), r.mmi()));
@@ -251,20 +271,6 @@ namespace sd {
     SIMDEE_INL sseu::sseu(const sseb& r) { mm = r.data(); }
     SIMDEE_INL sseu::sseu(const sses& r) { mm = r.data(); }
     SIMDEE_INL sses::sses(const sseu& r) { mm = r.data(); }
-
-#if SIMDEE_SSE41
-    namespace impl {
-        SIMDEE_INL __m128 sse_cond(__m128 pred, __m128 if_true, __m128 if_false) {
-            return _mm_blendv_ps(if_false, if_true, pred);
-        }
-    }
-#else
-    namespace impl {
-        SIMDEE_INL __m128 sse_cond(__m128 pred, __m128 if_true, __m128 if_false) {
-            return _mm_or_ps(_mm_and_ps(pred, if_true), _mm_andnot_ps(pred, if_false));
-        }
-    }
-#endif
 
     SIMDEE_INL const sseb cond(const sseb& pred, const sseb& if_true, const sseb& if_false) {
         return impl::sse_cond(pred.data(), if_true.data(), if_false.data());

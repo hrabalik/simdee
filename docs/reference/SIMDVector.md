@@ -39,7 +39,7 @@ type           | description                                  | additional requi
 
 Type `T` that satisfies `SIMDVector` must be implicitly constructible and assignable from:
 * `T`
-* `vector_t`, `scalar_t`, `log_scalar_t`, `storage_t`
+* `vector_t`, `scalar_t`, `storage_t`
 * result of `sd::zero()`, `sd::all_bits()`, `sd::sign_bit()`, `sd::abs_mask()`
 * result of `sd::aligned()`, `sd::unaligned()`, `sd::interleaved()`
 

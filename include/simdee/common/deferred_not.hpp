@@ -80,10 +80,6 @@ namespace sd {
                 pos.interleaved_store(r, step);
             }
 
-            SIMDEE_INL friend typename T::mask_t mask(const deferred_bitnot& l) {
-                return ~mask(l.neg);
-            }
-
             SIMDEE_INL friend typename T::scalar_t first_scalar(const deferred_bitnot& l) {
                 return ~first_scalar(l.neg);
             }

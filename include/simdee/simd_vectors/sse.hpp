@@ -12,6 +12,10 @@
 
 #include <emmintrin.h>
 
+#if SIMDEE_SSE41
+#include <smmintrin.h>
+#endif
+
 namespace sd {
     namespace impl {
 #if SIMDEE_SSE41

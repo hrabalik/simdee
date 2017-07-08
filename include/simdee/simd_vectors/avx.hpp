@@ -270,10 +270,21 @@ namespace sd {
 
     namespace impl {
         template <typename T>
-        SIMDEE_INL const typename simd_vector_traits<T>::simd_t andnot(const avx_base<T>& l,
-                                                                       const avx_base<T>& r) {
-            return _mm256_andnot_ps(r.data(), l.data());
-        }
+        struct avx_special_traits {
+            SIMDEE_INL static T andnot(T l, T r) { return _mm256_andnot_ps(r.data(), l.data()); }
+        };
+
+        template <typename T>
+        struct special_traits;
+
+        template <>
+        struct special_traits<avxb> : avx_special_traits<avxb> {};
+
+        template <>
+        struct special_traits<avxu> : avx_special_traits<avxu> {};
+
+        template <>
+        struct special_traits<avxs> : avx_special_traits<avxs> {};
     }
 }
 

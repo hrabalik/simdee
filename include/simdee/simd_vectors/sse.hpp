@@ -290,10 +290,21 @@ namespace sd {
 
     namespace impl {
         template <typename T>
-        SIMDEE_INL const typename simd_vector_traits<T>::simd_t andnot(const sse_base<T>& l,
-                                                                       const sse_base<T>& r) {
-            return _mm_andnot_ps(r.data(), l.data());
-        }
+        struct sse_special_traits {
+            SIMDEE_INL static T andnot(T l, T r) { return _mm_andnot_ps(r.data(), l.data()); }
+        };
+
+        template <typename T>
+        struct special_traits;
+
+        template <>
+        struct special_traits<sseb> : sse_special_traits<sseb> {};
+
+        template <>
+        struct special_traits<sseu> : sse_special_traits<sseu> {};
+
+        template <>
+        struct special_traits<sses> : sse_special_traits<sses> {};
     }
 }
 

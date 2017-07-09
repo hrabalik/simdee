@@ -6,36 +6,36 @@ using F = sd::neonf;
 using U = sd::neonu;
 using S = sd::neons;
 
-// const B::storage_t bufAB{
-//     true, false, true, true,
-// };
-// const B::storage_t bufBB{
-//     false, true, false, true,
-// };
-// const F::storage_t bufAF{
-//     -0.27787193f, +0.70154146f, -2.05181630f, +2.22944568f,
-// };
-// const F::storage_t bufBF{
-//     -0.23645458f, +2.02369089f, -2.25835397f, +2.22944568f,
-// };
-// const U::storage_t bufAU{
-//     1753029375U, 1117080442U, 3817141237U, 3761735248U,
-// };
-// const U::storage_t bufBU{
-//     1679702461U, 2102346647U, 480083363U, 3761735248U,
-// };
-// const S::storage_t bufAS{
-//     -1712190449, -48692967, -214510247, 440646957,
-// };
-// const S::storage_t bufBS{
-//     724135231, 56848532, 64122653, 440646957,
-// };
-// const B::storage_t bufZB{
-//     false, false, false, false,
-// };
-// const F::storage_t bufZF{0, 0, 0, 0};
-// const U::storage_t bufZU{0, 0, 0, 0};
-// const S::storage_t bufZS{0, 0, 0, 0};
+const B::storage_t bufAB{
+    true, false, true, true,
+};
+const B::storage_t bufBB{
+    false, true, false, true,
+};
+const F::storage_t bufAF{
+    -0.27787193f, +0.70154146f, -2.05181630f, +2.22944568f,
+};
+const F::storage_t bufBF{
+    -0.23645458f, +2.02369089f, -2.25835397f, +2.22944568f,
+};
+const U::storage_t bufAU{
+    1753029375U, 1117080442U, 3817141237U, 3761735248U,
+};
+const U::storage_t bufBU{
+    1679702461U, 2102346647U, 480083363U, 3761735248U,
+};
+const S::storage_t bufAS{
+    -1712190449, -48692967, -214510247, 440646957,
+};
+const S::storage_t bufBS{
+    724135231, 56848532, 64122653, 440646957,
+};
+const B::storage_t bufZB{
+    false, false, false, false,
+};
+const F::storage_t bufZF{0, 0, 0, 0};
+const U::storage_t bufZU{0, 0, 0, 0};
+const S::storage_t bufZS{0, 0, 0, 0};
 
 #define SIMD_TYPE "neon"
 #define SIMD_TEST_TAG "[simd_vectors][neon]"
@@ -99,22 +99,22 @@ ASSERT(HAS_METHOD(const B, data(), B::vector_t));
 ASSERT(HAS_METHOD(const F, data(), F::vector_t));
 ASSERT(HAS_METHOD(const U, data(), U::vector_t));
 ASSERT(HAS_METHOD(const S, data(), S::vector_t));
-// ASSERT(HAS_METHOD(B, aligned_load(VAL(B::scalar_t*)), void));
-// ASSERT(HAS_METHOD(F, aligned_load(VAL(F::scalar_t*)), void));
-// ASSERT(HAS_METHOD(U, aligned_load(VAL(U::scalar_t*)), void));
-// ASSERT(HAS_METHOD(S, aligned_load(VAL(S::scalar_t*)), void));
-// ASSERT(HAS_METHOD(const B, aligned_store(VAL(B::scalar_t*)), void));
-// ASSERT(HAS_METHOD(const F, aligned_store(VAL(F::scalar_t*)), void));
-// ASSERT(HAS_METHOD(const U, aligned_store(VAL(U::scalar_t*)), void));
-// ASSERT(HAS_METHOD(const S, aligned_store(VAL(S::scalar_t*)), void));
-// ASSERT(HAS_METHOD(B, unaligned_load(VAL(B::scalar_t*)), void));
-// ASSERT(HAS_METHOD(F, unaligned_load(VAL(F::scalar_t*)), void));
-// ASSERT(HAS_METHOD(U, unaligned_load(VAL(U::scalar_t*)), void));
-// ASSERT(HAS_METHOD(S, unaligned_load(VAL(S::scalar_t*)), void));
-// ASSERT(HAS_METHOD(const B, unaligned_store(VAL(B::scalar_t*)), void));
-// ASSERT(HAS_METHOD(const F, unaligned_store(VAL(F::scalar_t*)), void));
-// ASSERT(HAS_METHOD(const U, unaligned_store(VAL(U::scalar_t*)), void));
-// ASSERT(HAS_METHOD(const S, unaligned_store(VAL(S::scalar_t*)), void));
+ASSERT(HAS_METHOD(B, aligned_load(VAL(B::scalar_t*)), void));
+ASSERT(HAS_METHOD(F, aligned_load(VAL(F::scalar_t*)), void));
+ASSERT(HAS_METHOD(U, aligned_load(VAL(U::scalar_t*)), void));
+ASSERT(HAS_METHOD(S, aligned_load(VAL(S::scalar_t*)), void));
+ASSERT(HAS_METHOD(const B, aligned_store(VAL(B::scalar_t*)), void));
+ASSERT(HAS_METHOD(const F, aligned_store(VAL(F::scalar_t*)), void));
+ASSERT(HAS_METHOD(const U, aligned_store(VAL(U::scalar_t*)), void));
+ASSERT(HAS_METHOD(const S, aligned_store(VAL(S::scalar_t*)), void));
+ASSERT(HAS_METHOD(B, unaligned_load(VAL(B::scalar_t*)), void));
+ASSERT(HAS_METHOD(F, unaligned_load(VAL(F::scalar_t*)), void));
+ASSERT(HAS_METHOD(U, unaligned_load(VAL(U::scalar_t*)), void));
+ASSERT(HAS_METHOD(S, unaligned_load(VAL(S::scalar_t*)), void));
+ASSERT(HAS_METHOD(const B, unaligned_store(VAL(B::scalar_t*)), void));
+ASSERT(HAS_METHOD(const F, unaligned_store(VAL(F::scalar_t*)), void));
+ASSERT(HAS_METHOD(const U, unaligned_store(VAL(U::scalar_t*)), void));
+ASSERT(HAS_METHOD(const S, unaligned_store(VAL(S::scalar_t*)), void));
 // ASSERT(HAS_METHOD(B, interleaved_load(VAL(B::scalar_t*), VAL(int)), void));
 // ASSERT(HAS_METHOD(F, interleaved_load(VAL(F::scalar_t*), VAL(int)), void));
 // ASSERT(HAS_METHOD(U, interleaved_load(VAL(U::scalar_t*), VAL(int)), void));
@@ -260,7 +260,8 @@ ASSERT(HAS_METHOD(const S, data(), S::vector_t));
 //     U::storage_t ru = bufZU;
 //     S::storage_t rs = bufZS;
 
-//     auto implicit_test = [&rb, &rf, &ru, &rs](const B& tb, const F& tf, const U& tu, const S& ts) {
+//     auto implicit_test = [&rb, &rf, &ru, &rs](const B& tb, const F& tf, const U& tu, const S& ts)
+//     {
 //         rb = tb;
 //         rf = tf;
 //         ru = tu;

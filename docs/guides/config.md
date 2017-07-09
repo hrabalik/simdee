@@ -6,9 +6,9 @@
 
 When coding with Simdee, be sure to use a recent version of your C++ toolchain. These are the supported compilers:
 
-* Clang, currently tested under 3.8.0
-* GCC, currently tested under 5.4.0
-* MSVC, currrently tested under 14.0 (Visual Studio 2015)
+* Clang, currently tested under 4.0.0
+* GCC, currently tested under 6.3.0
+* MSVC, currrently tested under 15.0 (Visual Studio 2017)
 
 ### Add Simdee to include path
 

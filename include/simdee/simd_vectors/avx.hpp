@@ -114,10 +114,7 @@ namespace sd {
 #else
         SIMDEE_INL avx_base(const expr::all_bits& r) { operator=(r); }
         SIMDEE_INL avx_base& operator=(const expr::all_bits&) {
-            __m128 temp;
-            temp =
-                _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(temp), _mm_castps_si128(temp)));
-            mm = _mm256_set_m128(temp, temp);
+            mm = _mm256_castsi256_ps(_mm256_set1_epi32(-1));
             return self();
         }
 

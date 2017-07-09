@@ -33,6 +33,7 @@ set(LIB_FILES_SIMD_VECTORS
     "../include/simdee/simd_vectors/common.hpp"
     "../include/simdee/simd_vectors/dual.hpp"
     "../include/simdee/simd_vectors/dum.hpp"
+    "../include/simdee/simd_vectors/neon.hpp"
     "../include/simdee/simd_vectors/sse.hpp"
 )
 set(LIB_FILES_UTIL

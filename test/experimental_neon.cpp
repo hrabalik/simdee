@@ -115,18 +115,18 @@ ASSERT(HAS_METHOD(const B, unaligned_store(VAL(B::scalar_t*)), void));
 ASSERT(HAS_METHOD(const F, unaligned_store(VAL(F::scalar_t*)), void));
 ASSERT(HAS_METHOD(const U, unaligned_store(VAL(U::scalar_t*)), void));
 ASSERT(HAS_METHOD(const S, unaligned_store(VAL(S::scalar_t*)), void));
-// ASSERT(HAS_METHOD(B, interleaved_load(VAL(B::scalar_t*), VAL(int)), void));
-// ASSERT(HAS_METHOD(F, interleaved_load(VAL(F::scalar_t*), VAL(int)), void));
-// ASSERT(HAS_METHOD(U, interleaved_load(VAL(U::scalar_t*), VAL(int)), void));
-// ASSERT(HAS_METHOD(S, interleaved_load(VAL(S::scalar_t*), VAL(int)), void));
-// ASSERT(HAS_METHOD(const B, interleaved_store(VAL(B::scalar_t*), VAL(int)), void));
-// ASSERT(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(int)), void));
-// ASSERT(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(int)), void));
-// ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(int)), void));
+ASSERT(HAS_METHOD(B, interleaved_load(VAL(B::scalar_t*), VAL(int)), void));
+ASSERT(HAS_METHOD(F, interleaved_load(VAL(F::scalar_t*), VAL(int)), void));
+ASSERT(HAS_METHOD(U, interleaved_load(VAL(U::scalar_t*), VAL(int)), void));
+ASSERT(HAS_METHOD(S, interleaved_load(VAL(S::scalar_t*), VAL(int)), void));
+ASSERT(HAS_METHOD(const B, interleaved_store(VAL(B::scalar_t*), VAL(int)), void));
+ASSERT(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(int)), void));
+ASSERT(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(int)), void));
+ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(int)), void));
 
-// #if !defined(__clang__) && defined(__GNUC__) && __GNUC__ >= 6
-// #pragma GCC diagnostic pop
-// #endif
+#if !defined(__clang__) && defined(__GNUC__) && __GNUC__ >= 6
+#pragma GCC diagnostic pop
+#endif
 
 // TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
 //     B::storage_t rb = bufZB;

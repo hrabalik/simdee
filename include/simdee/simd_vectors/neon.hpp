@@ -87,9 +87,21 @@ namespace sd {
         using simd_base<Crtp>::self;
 
         SIMDEE_INL void aligned_load(const scalar_t* r) { mm = impl::neon_load(r); }
-        SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = impl::neon_load(r); }
         SIMDEE_INL void aligned_store(scalar_t* r) const { impl::neon_store(mm, r); }
+        SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = impl::neon_load(r); }
         SIMDEE_INL void unaligned_store(scalar_t* r) const { impl::neon_store(mm, r); }
+
+        void interleaved_load(const scalar_t* r, int step) {
+            storage_t temp;
+            for (int i = 0; i < width; i++, r += step) { temp[i] = *r; }
+            mm = impl::neon_load(temp.data());
+        }
+
+        void interleaved_store(scalar_t* r, int step) const {
+            storage_t temp;
+            impl::neon_store(mm, temp.data());
+            for (int i = 0; i < width; i++, r += step) { *r = temp[i]; }
+        }
     };
 
     struct neonb final : neon_base<neonb> {};

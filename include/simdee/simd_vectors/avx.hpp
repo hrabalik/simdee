@@ -33,10 +33,10 @@ namespace sd {
     template <>
     struct is_simd_vector<avxs> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename Scalar_t>
+    template <typename Simd_t, typename Scalar_t>
     struct avx_traits {
         using simd_t = Simd_t;
-        using vector_t = Vector_t;
+        using vector_t = __m256;
         using scalar_t = Scalar_t;
         using vec_b = avxb;
         using vec_f = avxf;
@@ -47,13 +47,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_vector_traits<avxb> : avx_traits<avxb, __m256, bool32_t> {};
+    struct simd_vector_traits<avxb> : avx_traits<avxb, bool32_t> {};
     template <>
-    struct simd_vector_traits<avxf> : avx_traits<avxf, __m256, float> {};
+    struct simd_vector_traits<avxf> : avx_traits<avxf, float> {};
     template <>
-    struct simd_vector_traits<avxu> : avx_traits<avxu, __m256, uint32_t> {};
+    struct simd_vector_traits<avxu> : avx_traits<avxu, uint32_t> {};
     template <>
-    struct simd_vector_traits<avxs> : avx_traits<avxs, __m256, int32_t> {};
+    struct simd_vector_traits<avxs> : avx_traits<avxs, int32_t> {};
 
     template <typename Crtp>
     struct avx_base : simd_base<Crtp> {

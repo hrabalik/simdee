@@ -54,10 +54,10 @@ namespace sd {
     template <>
     struct is_simd_vector<sses> : std::integral_constant<bool, true> {};
 
-    template <typename Simd_t, typename Vector_t, typename Scalar_t>
+    template <typename Simd_t, typename Scalar_t>
     struct sse_traits {
         using simd_t = Simd_t;
-        using vector_t = Vector_t;
+        using vector_t = __m128;
         using scalar_t = Scalar_t;
         using vec_b = sseb;
         using vec_f = ssef;
@@ -68,13 +68,13 @@ namespace sd {
     };
 
     template <>
-    struct simd_vector_traits<sseb> : sse_traits<sseb, __m128, bool32_t> {};
+    struct simd_vector_traits<sseb> : sse_traits<sseb, bool32_t> {};
     template <>
-    struct simd_vector_traits<ssef> : sse_traits<ssef, __m128, float> {};
+    struct simd_vector_traits<ssef> : sse_traits<ssef, float> {};
     template <>
-    struct simd_vector_traits<sseu> : sse_traits<sseu, __m128, uint32_t> {};
+    struct simd_vector_traits<sseu> : sse_traits<sseu, uint32_t> {};
     template <>
-    struct simd_vector_traits<sses> : sse_traits<sses, __m128, int32_t> {};
+    struct simd_vector_traits<sses> : sse_traits<sses, int32_t> {};
 
     template <typename Crtp>
     struct sse_base : simd_base<Crtp> {

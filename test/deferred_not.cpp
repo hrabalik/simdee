@@ -14,6 +14,13 @@ using not_B = sd::expr::deferred_lognot<B>;
 using not_U = sd::expr::deferred_bitnot<U>;
 
 TEST_CASE("deferred_not types", "[deferred_not]") {
+#if !defined(__clang__) && defined(__GNUC__) && __GNUC__ >= 6
+// GCC attempts to be helpful here by warning that some attributes of types such as __m128 are not
+// preserved when passsed as a template parameter.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
     REQUIRE((std::is_same<B::vector_t, not_B::vector_t>::value));
     REQUIRE((std::is_same<B::scalar_t, not_B::scalar_t>::value));
     REQUIRE((std::is_same<B::mask_t, not_B::mask_t>::value));
@@ -25,6 +32,10 @@ TEST_CASE("deferred_not types", "[deferred_not]") {
     REQUIRE((std::is_same<U::mask_t, not_U::mask_t>::value));
     REQUIRE((std::is_same<U::storage_t, not_U::storage_t>::value));
     REQUIRE((std::size_t(U::width) == not_U::width));
+
+#if !defined(__clang__) && defined(__GNUC__) && __GNUC__ >= 6
+#pragma GCC diagnostic pop
+#endif
 }
 
 TEST_CASE("deferred_not cond", "[deferred_not]") {

@@ -17,6 +17,13 @@
 
 #define ASSERT(COND) static_assert(COND, SIMD_TYPE " compile-time check")
 
+#if !defined(__clang__) && defined(__GNUC__) && __GNUC__ >= 6
+// GCC attempts to be helpful here by warning that some attributes of types such as __m128 are not
+// preserved when passsed as a template parameter.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wignored-attributes"
+#endif
+
 ASSERT(B::width == SIMD_WIDTH);
 ASSERT(F::width == SIMD_WIDTH);
 ASSERT(U::width == SIMD_WIDTH);
@@ -82,6 +89,10 @@ ASSERT(HAS_METHOD(const B, interleaved_store(VAL(B::scalar_t*), VAL(int)), void)
 ASSERT(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(int)), void));
 ASSERT(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(int)), void));
 ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(int)), void));
+
+#if !defined(__clang__) && defined(__GNUC__) && __GNUC__ >= 6
+#pragma GCC diagnostic pop
+#endif
 
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     B::storage_t rb = bufZB;

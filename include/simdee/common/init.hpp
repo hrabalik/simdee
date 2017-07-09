@@ -121,5 +121,10 @@
 #else
 #define SIMDEE_AVX2 0
 #endif
+#if defined(__ARM_NEON)
+#define SIMDEE_NEON 1
+#else
+#define SIMDEE_NEON 0
+#endif
 
 #endif // SIMDEE_COMMON_INIT_HPP

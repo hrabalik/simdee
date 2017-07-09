@@ -2,11 +2,13 @@
 #include <simdee/simdee.hpp>
 #include <type_traits>
 
-using B = sd::vec4b;
+#if SIMDEE_SSE
+
+using B = sd::sseb;
 const B::storage_t dataAB{true, false, true, true};
 const B::storage_t dataBB{false, true, false, true};
 
-using U = sd::vec4u;
+using U = sd::sseu;
 const U::storage_t dataAU{1753029375U, 1117080442U, 3817141237U, 3761735248U};
 const U::storage_t dataBU{1679702461U, 2102346647U, 480083363U, 3761735248U};
 
@@ -188,3 +190,5 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         REQUIRE(res_ba == res_nba);
     }
 }
+
+#endif

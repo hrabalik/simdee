@@ -20,6 +20,19 @@ namespace sd {
 }
 
 //
+// NEON-accelerated vec4 implementation
+//
+#elif SIMDEE_NEON
+#include "simd_vectors/neon.hpp"
+
+namespace sd {
+    using vec4b = neonb;
+    using vec4f = neonf;
+    using vec4u = neonu;
+    using vec4s = neons;
+}
+
+//
 // Emulated vec4 implementation
 //
 #else

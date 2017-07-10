@@ -151,6 +151,14 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
         SIMDEE_BINOP(neonb, neonb, operator&&, vandq_u32(l.mm, r.mm));
         SIMDEE_BINOP(neonb, neonb, operator||, vorrq_u32(l.mm, r.mm));
         SIMDEE_UNOP(neonb, neonb, operator!, vmvnq_u32(l.mm));
+
+        friend const mask_t mask(const neonb& l) {
+            uint32x4_t temp = {0x1, 0x2, 0x4, 0x8};
+            temp = vandq_u32(temp, l.mm);
+            temp = vpaddq_u32(temp, temp);
+            temp = vpaddq_u32(temp, temp);
+            return mask_t(vgetq_lane_u32(temp, 0));
+        }
     };
 
     struct neonf final : neon_base<neonf> {

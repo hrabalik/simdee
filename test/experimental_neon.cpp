@@ -669,21 +669,21 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
         r = rsqrt(abs(a));
         for (auto i = 0U; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
     }
-    // SECTION("rhs of compound can be implicitly constructed") {
-    //     a = b;
-    //     a += 1.23f;
-    //     b = b + 1.23f;
-    //     REQUIRE(all(a == b));
-    //     a -= 2.34f;
-    //     b = b - 2.34f;
-    //     REQUIRE(all(a == b));
-    //     a *= 3.45f;
-    //     b = b * 3.45f;
-    //     REQUIRE(all(a == b));
-    //     a /= 4.56f;
-    //     b = b / 4.56f;
-    //     REQUIRE(all(a == b));
-    // }
+    SECTION("rhs of compound can be implicitly constructed") {
+        a = b;
+        a += 1.23f;
+        b = b + 1.23f;
+        REQUIRE(all(a == b));
+        a -= 2.34f;
+        b = b - 2.34f;
+        REQUIRE(all(a == b));
+        a *= 3.45f;
+        b = b * 3.45f;
+        REQUIRE(all(a == b));
+        a /= 4.56f;
+        b = b / 4.56f;
+        REQUIRE(all(a == b));
+    }
 }
 
 TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
@@ -777,18 +777,18 @@ TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
         r = max(a, b);
         REQUIRE(r == e);
     }
-    // SECTION("rhs of compound can be implicitly constructed") {
-    //     a = b;
-    //     a &= 0xdeadbeefU;
-    //     b = b & 0xdeadbeefU;
-    //     REQUIRE(all(a == b));
-    //     a |= 0xf0f0f0f0U;
-    //     b = b | 0xf0f0f0f0U;
-    //     REQUIRE(all(a == b));
-    //     a ^= 0x1234abcdU;
-    //     b = b ^ 0x1234abcdU;
-    //     REQUIRE(all(a == b));
-    // }
+    SECTION("rhs of compound can be implicitly constructed") {
+        a = b;
+        a &= 0xdeadbeefU;
+        b = b & 0xdeadbeefU;
+        REQUIRE(all(a == b));
+        a |= 0xf0f0f0f0U;
+        b = b | 0xf0f0f0f0U;
+        REQUIRE(all(a == b));
+        a ^= 0x1234abcdU;
+        b = b ^ 0x1234abcdU;
+        REQUIRE(all(a == b));
+    }
 }
 
 TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
@@ -887,18 +887,18 @@ TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
         r = abs(a);
         REQUIRE(r == e);
     }
-    // SECTION("rhs of compound can be implicitly constructed") {
-    //     a = b;
-    //     a += 123;
-    //     b = b + 123;
-    //     REQUIRE(all(a == b));
-    //     a -= 234;
-    //     b = b - 234;
-    //     REQUIRE(all(a == b));
-    //     a *= 345;
-    //     b = b * 345;
-    //     REQUIRE(all(a == b));
-    // }
+    SECTION("rhs of compound can be implicitly constructed") {
+        a = b;
+        a += 123;
+        b = b + 123;
+        REQUIRE(all(a == b));
+        a -= 234;
+        b = b - 234;
+        REQUIRE(all(a == b));
+        a *= 345;
+        b = b * 345;
+        REQUIRE(all(a == b));
+    }
 }
 
 TEST_CASE(SIMD_TYPE " bool comparison", SIMD_TEST_TAG) {
@@ -1234,28 +1234,28 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
 //     }
 // }
 
-// TEST_CASE(SIMD_TYPE " mask", SIMD_TEST_TAG) {
-//     SECTION("mask itself") {
-//         auto expected = [](const B::storage_t& s) {
-//             B::mask_t res(0U);
-//             for (auto i = 0U; i < s.size(); ++i) {
-//                 if (sd::cast_u(s[i]) & (1U << 31)) { res |= B::mask_t(1U << i); }
-//             }
-//             return res;
-//         };
+TEST_CASE(SIMD_TYPE " mask", SIMD_TEST_TAG) {
+    SECTION("mask itself") {
+        auto expected = [](const B::storage_t& s) {
+            B::mask_t res(0U);
+            for (auto i = 0U; i < s.size(); ++i) {
+                if (sd::cast_u(s[i]) & (1U << 31)) { res |= B::mask_t(1U << i); }
+            }
+            return res;
+        };
 
-//         REQUIRE(expected(bufAB) == mask(B(bufAB)));
-//         REQUIRE(expected(bufBB) == mask(B(bufBB)));
-//     }
-//     SECTION("any, all") {
-//         B a = bufAB;
-//         B b = bufBB;
-//         REQUIRE(any(a) == any(mask(a)));
-//         REQUIRE(any(b) == any(mask(b)));
-//         REQUIRE(all(a) == all(mask(a)));
-//         REQUIRE(all(b) == all(mask(b)));
-//     }
-// }
+        REQUIRE(expected(bufAB) == mask(B(bufAB)));
+        REQUIRE(expected(bufBB) == mask(B(bufBB)));
+    }
+    SECTION("any, all") {
+        B a = bufAB;
+        B b = bufBB;
+        REQUIRE(any(a) == any(mask(a)));
+        REQUIRE(any(b) == any(mask(b)));
+        REQUIRE(all(a) == all(mask(a)));
+        REQUIRE(all(b) == all(mask(b)));
+    }
+}
 
 TEST_CASE(SIMD_TYPE " first_scalar", SIMD_TEST_TAG) {
     B b = bufAB;

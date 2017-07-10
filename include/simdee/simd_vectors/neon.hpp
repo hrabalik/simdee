@@ -122,7 +122,6 @@ SIMDEE_UNOP( CLASS, scalar_t, first_scalar, scalar_t(vgetq_lane_ ## SUFFIX (l.mm
 
     struct neonb final : neon_base<neonb> {
         using neon_base::neon_base;
-
         SIMDEE_TRIVIAL_TYPE(neonb);
         SIMDEE_NEON_COMMON(neonb, u32, uint32_t);
 
@@ -138,6 +137,43 @@ SIMDEE_UNOP( CLASS, scalar_t, first_scalar, scalar_t(vgetq_lane_ ## SUFFIX (l.mm
         SIMDEE_TRIVIAL_TYPE(neonf);
         SIMDEE_NEON_COMMON(neonf, f32, float);
         SIMDEE_INL explicit neonf(const neons&);
+
+        SIMDEE_BINOP(neonf, neonb, operator<, vcltq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonb, operator>, vcgtq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonb, operator<=, vcleq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonb, operator>=, vcgeq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonb, operator==, vceqq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonb, operator!=, vmvnq_u32(vceqq_f32(l.mm, r.mm)));
+
+        SIMDEE_UNOP(neonf, neonf, operator-, vnegq_f32(l.mm));
+        SIMDEE_BINOP(neonf, neonf, operator+, vaddq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonf, operator-, vsubq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonf, operator*, vmulq_f32(l.mm, r.mm));
+
+        inline friend const neonf operator/(const neonf& l, const neonf& r) {
+            neonf res = vmovq_n_f32(0);
+            res.mm = vsetq_lane_f32(vgetq_lane_f32(l.mm, 0) / vgetq_lane_f32(r.mm, 0), res.mm, 0);
+            res.mm = vsetq_lane_f32(vgetq_lane_f32(l.mm, 1) / vgetq_lane_f32(r.mm, 1), res.mm, 1);
+            res.mm = vsetq_lane_f32(vgetq_lane_f32(l.mm, 2) / vgetq_lane_f32(r.mm, 2), res.mm, 2);
+            res.mm = vsetq_lane_f32(vgetq_lane_f32(l.mm, 3) / vgetq_lane_f32(r.mm, 3), res.mm, 3);
+            return res;
+        }
+
+        SIMDEE_BINOP(neonf, neonf, min, vminq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonf, max, vmaxq_f32(l.mm, r.mm));
+
+        inline friend const neonf sqrt(const neonf& l) {
+            neonf res = vmovq_n_f32(0);
+            res.mm = vsetq_lane_f32(std::sqrt(vgetq_lane_f32(l.mm, 0)), res.mm, 0);
+            res.mm = vsetq_lane_f32(std::sqrt(vgetq_lane_f32(l.mm, 1)), res.mm, 1);
+            res.mm = vsetq_lane_f32(std::sqrt(vgetq_lane_f32(l.mm, 2)), res.mm, 2);
+            res.mm = vsetq_lane_f32(std::sqrt(vgetq_lane_f32(l.mm, 3)), res.mm, 3);
+            return res;
+        }
+
+        SIMDEE_UNOP(neonf, neonf, rsqrt, vrsqrteq_f32(l.mm));
+        SIMDEE_UNOP(neonf, neonf, rcp, vrecpeq_f32(l.mm));
+        SIMDEE_UNOP(neonf, neonf, abs, vabsq_f32(l.mm));
     };
 
     struct neonu final : neon_base<neonu> {

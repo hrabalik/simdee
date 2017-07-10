@@ -3,7 +3,6 @@ set(TEST_FILES
     allocator.cpp
     casts.cpp
     deferred_not.cpp
-    experimental_neon.cpp
     expr.cpp
     main.cpp
     mask.cpp

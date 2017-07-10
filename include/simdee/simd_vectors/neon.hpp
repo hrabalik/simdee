@@ -117,6 +117,27 @@ namespace sd {
 SIMDEE_CTOR( CLASS , scalar_t, mm = vmovq_n_ ## SUFFIX ( SCALAR_TYPE (r)));                              \
 SIMDEE_CTOR_TPL( CLASS, expr::init<T>, mm = vmovq_n_ ## SUFFIX (r.template to< SCALAR_TYPE >()));        \
 SIMDEE_UNOP( CLASS, scalar_t, first_scalar, scalar_t(vgetq_lane_ ## SUFFIX (l.mm, 0)));                  \
+                                                                                                         \
+template <typename Op_t>                                                                                 \
+friend const CLASS reduce(const CLASS & l, Op_t f) {                                                     \
+    CLASS tmp = f(l, vextq_ ## SUFFIX (l.mm, l.mm, 2));                                                  \
+    return f(tmp, vrev64q_ ## SUFFIX (tmp.mm));                                                          \
+}                                                                                                        \
+                                                                                                         \
+SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_add) {                                          \
+    CLASS tmp {vpaddq_ ## SUFFIX (l.mm, l.mm)};                                                          \
+    return vpaddq_ ## SUFFIX (tmp.mm, tmp.mm);                                                           \
+}                                                                                                        \
+                                                                                                         \
+SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_min) {                                          \
+    CLASS tmp {vpminq_ ## SUFFIX (l.mm, l.mm)};                                                          \
+    return vpminq_ ## SUFFIX (tmp.mm, tmp.mm);                                                           \
+}                                                                                                        \
+                                                                                                         \
+SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                                          \
+    CLASS tmp {vpmaxq_ ## SUFFIX (l.mm, l.mm)};                                                          \
+    return vpmaxq_ ## SUFFIX (tmp.mm, tmp.mm);                                                           \
+}                                                                                                        \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
     // clang-format on
 

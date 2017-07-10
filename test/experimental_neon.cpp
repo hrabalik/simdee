@@ -1,3 +1,5 @@
+#if defined(__ARM_NEON)
+
 #include "catch.hpp"
 #include <simdee/simd_vectors/neon.hpp>
 
@@ -1266,3 +1268,5 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
 //     REQUIRE(bufAU[0] == first_scalar(u));
 //     REQUIRE(bufAS[0] == first_scalar(s));
 // }
+
+#endif // defined(__ARM_NEON)

@@ -86,6 +86,13 @@ namespace sd {
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 
+        SIMDEE_TRIVIAL_TYPE(neon_base);
+        SIMDEE_BASE_CTOR(neon_base, vector_t, mm = r);
+        SIMDEE_BASE_CTOR_TPL(neon_base, expr::aligned<T>, aligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(neon_base, expr::unaligned<T>, unaligned_load(r.ptr));
+        SIMDEE_BASE_CTOR_TPL(neon_base, expr::interleaved<T>, interleaved_load(r.ptr, r.step));
+        SIMDEE_BASE_CTOR(neon_base, storage_t, aligned_load(r.data()));
+
         SIMDEE_INL void aligned_load(const scalar_t* r) { mm = impl::neon_load(r); }
         SIMDEE_INL void aligned_store(scalar_t* r) const { impl::neon_store(mm, r); }
         SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = impl::neon_load(r); }
@@ -93,21 +100,45 @@ namespace sd {
 
         void interleaved_load(const scalar_t* r, int step) {
             storage_t temp;
-            for (int i = 0; i < width; i++, r += step) { temp[i] = *r; }
+            for (size_t i = 0; i < width; i++, r += step) { temp[i] = *r; }
             mm = impl::neon_load(temp.data());
         }
 
         void interleaved_store(scalar_t* r, int step) const {
             storage_t temp;
             impl::neon_store(mm, temp.data());
-            for (int i = 0; i < width; i++, r += step) { *r = temp[i]; }
+            for (size_t i = 0; i < width; i++, r += step) { *r = temp[i]; }
         }
     };
 
-    struct neonb final : neon_base<neonb> {};
-    struct neonf final : neon_base<neonf> {};
-    struct neonu final : neon_base<neonu> {};
-    struct neons final : neon_base<neons> {};
+// clang-format off
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDEE_NEON_COMMON( CLASS, SUFFIX, SCALAR_TYPE )                                                 \
+SIMDEE_CTOR( CLASS , scalar_t, mm = vmovq_n_ ## SUFFIX ( SCALAR_TYPE (r)));                              \
+SIMDEE_CTOR_TPL( CLASS, expr::init<T>, mm = vmovq_n_ ## SUFFIX (r.template to< SCALAR_TYPE >()));        \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // clang-format on
+
+    struct neonb final : neon_base<neonb> {
+        using neon_base::neon_base;
+        SIMDEE_TRIVIAL_TYPE(neonb);
+        SIMDEE_NEON_COMMON(neonb, u32, uint32_t);
+    };
+    struct neonf final : neon_base<neonf> {
+        using neon_base::neon_base;
+        SIMDEE_TRIVIAL_TYPE(neonf);
+        SIMDEE_NEON_COMMON(neonf, f32, float);
+    };
+    struct neonu final : neon_base<neonu> {
+        using neon_base::neon_base;
+        SIMDEE_TRIVIAL_TYPE(neonu);
+        SIMDEE_NEON_COMMON(neonu, u32, uint32_t);
+    };
+    struct neons final : neon_base<neons> {
+        using neon_base::neon_base;
+        SIMDEE_TRIVIAL_TYPE(neons);
+        SIMDEE_NEON_COMMON(neons, s32, int32_t);
+    };
 }
 
 #endif // SIMDEE_SIMD_TYPES_NEON_HPP

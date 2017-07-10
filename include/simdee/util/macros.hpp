@@ -36,6 +36,36 @@ SIMDEE_INL CLASS & operator=(const ARGTYPE & r) {                               
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDEE_CTOR_FLAG( CLASS, ARGTYPE, IMPL )                                                         \
+                                                                                                         \
+SIMDEE_INL CLASS (const ARGTYPE &) {                                                                     \
+    IMPL ;                                                                                               \
+}                                                                                                        \
+                                                                                                         \
+SIMDEE_INL CLASS & operator=(const ARGTYPE &) {                                                          \
+    IMPL ;                                                                                               \
+    return *this;                                                                                        \
+}                                                                                                        \
+                                                                                                         \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDEE_CTOR_TPL( CLASS, ARGTYPE, IMPL )                                                          \
+                                                                                                         \
+template <typename T>                                                                                    \
+SIMDEE_INL CLASS (const ARGTYPE & r) {                                                                   \
+    IMPL ;                                                                                               \
+}                                                                                                        \
+                                                                                                         \
+template <typename T>                                                                                    \
+SIMDEE_INL CLASS & operator=(const ARGTYPE & r) {                                                        \
+    IMPL ;                                                                                               \
+    return *this;                                                                                        \
+}                                                                                                        \
+                                                                                                         \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDEE_BASE_CTOR( CLASS, ARGTYPE, IMPL )                                                         \
                                                                                                          \
 SIMDEE_INL CLASS (const ARGTYPE & r) {                                                                   \

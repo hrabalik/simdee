@@ -121,8 +121,15 @@ SIMDEE_CTOR_TPL( CLASS, expr::init<T>, mm = vmovq_n_ ## SUFFIX (r.template to< S
 
     struct neonb final : neon_base<neonb> {
         using neon_base::neon_base;
+
         SIMDEE_TRIVIAL_TYPE(neonb);
         SIMDEE_NEON_COMMON(neonb, u32, uint32_t);
+
+        SIMDEE_BINOP(neonb, neonb, operator==, vceqq_u32(l.mm, r.mm));
+        SIMDEE_BINOP(neonb, neonb, operator!=, vmvnq_u32(vceqq_u32(l.mm, r.mm)));
+        SIMDEE_BINOP(neonb, neonb, operator&&, vandq_u32(l.mm, r.mm));
+        SIMDEE_BINOP(neonb, neonb, operator||, vorrq_u32(l.mm, r.mm));
+        SIMDEE_UNOP(neonb, neonb, operator!, vmvnq_u32(l.mm));
     };
 
     struct neonf final : neon_base<neonf> {

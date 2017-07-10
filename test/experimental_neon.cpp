@@ -549,40 +549,40 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
     }
 }
 
-// TEST_CASE(SIMD_TYPE " bool arithmetic", SIMD_TEST_TAG) {
-//     using scalar_t = B::scalar_t;
-//     B::storage_t r, e;
-//     B a = bufAB;
-//     B b = bufBB;
+TEST_CASE(SIMD_TYPE " bool arithmetic", SIMD_TEST_TAG) {
+    using scalar_t = B::scalar_t;
+    B::storage_t r, e;
+    B a = bufAB;
+    B b = bufBB;
 
-//     auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
-//         std::transform(begin(bufAB), end(bufAB), begin(e), f);
-//     };
-//     auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
-//         std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f);
-//     };
+    auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
+        std::transform(begin(bufAB), end(bufAB), begin(e), f);
+    };
+    auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f);
+    };
 
-//     SECTION("log not") {
-//         expect1([](scalar_t a) { return !a; });
-//         r = !a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("log and") {
-//         expect([](scalar_t a, scalar_t b) { return a && b; });
-//         r = a && b;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("log or") {
-//         expect([](scalar_t a, scalar_t b) { return a || b; });
-//         r = a || b;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("complex expr") {
-//         expect([](scalar_t a, scalar_t b) { return !((!a && !b) || (!a || !b)); });
-//         r = !((!a && !b) || (!a || !b));
-//         REQUIRE(r == e);
-//     }
-// }
+    SECTION("log not") {
+        expect1([](scalar_t a) { return !a; });
+        r = !a;
+        REQUIRE(r == e);
+    }
+    SECTION("log and") {
+        expect([](scalar_t a, scalar_t b) { return a && b; });
+        r = a && b;
+        REQUIRE(r == e);
+    }
+    SECTION("log or") {
+        expect([](scalar_t a, scalar_t b) { return a || b; });
+        r = a || b;
+        REQUIRE(r == e);
+    }
+    SECTION("complex expr") {
+        expect([](scalar_t a, scalar_t b) { return !((!a && !b) || (!a || !b)); });
+        r = !((!a && !b) || (!a || !b));
+        REQUIRE(r == e);
+    }
+}
 
 // TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
 //     using scalar_t = F::scalar_t;
@@ -901,34 +901,34 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
 //     }
 // }
 
-// TEST_CASE(SIMD_TYPE " bool comparison", SIMD_TEST_TAG) {
-//     using scalar_t = B::scalar_t;
-//     B::storage_t r, e;
-//     B a = bufAB;
-//     B b = bufBB;
+TEST_CASE(SIMD_TYPE " bool comparison", SIMD_TEST_TAG) {
+    using scalar_t = B::scalar_t;
+    B::storage_t r, e;
+    B a = bufAB;
+    B b = bufBB;
 
-//     auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
-//     auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
-//         std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f);
-//     };
+    auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
+    auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAB), end(bufAB), begin(bufBB), begin(e), f);
+    };
 
-//     SECTION("equal to") {
-//         expect([](scalar_t a, scalar_t b) { return a == b; });
-//         r = a == b;
-//         REQUIRE(r == e);
-//         expect0(true);
-//         r = a == a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("not equal to") {
-//         expect([](scalar_t a, scalar_t b) { return a != b; });
-//         r = a != b;
-//         REQUIRE(r == e);
-//         expect0(false);
-//         r = a != a;
-//         REQUIRE(r == e);
-//     }
-// }
+    SECTION("equal to") {
+        expect([](scalar_t a, scalar_t b) { return a == b; });
+        r = a == b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a == a;
+        REQUIRE(r == e);
+    }
+    SECTION("not equal to") {
+        expect([](scalar_t a, scalar_t b) { return a != b; });
+        r = a != b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a != a;
+        REQUIRE(r == e);
+    }
+}
 
 // TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
 //     using scalar_t = F::scalar_t;

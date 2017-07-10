@@ -1208,31 +1208,31 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
     }
 }
 
-// TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
-//     B ab = bufAB;
-//     F af = bufAF;
-//     U au = bufAU;
-//     S as = bufAS;
-//     B bb = bufBB;
-//     F bf = bufBF;
-//     U bu = bufBU;
-//     S bs = bufBS;
+TEST_CASE(SIMD_TYPE " conditional", SIMD_TEST_TAG) {
+    B ab = bufAB;
+    F af = bufAF;
+    U au = bufAU;
+    S as = bufAS;
+    B bb = bufBB;
+    F bf = bufBF;
+    U bu = bufBU;
+    S bs = bufBS;
 
-//     B sel = af >= bf;
-//     auto sel_mask = mask(sel);
+    B sel = af >= bf;
+    auto sel_mask = mask(sel);
 
-//     B::storage_t rb(cond(sel, ab, bb));
-//     F::storage_t rf(cond(sel, af, bf));
-//     U::storage_t ru(cond(sel, au, bu));
-//     S::storage_t rs(cond(sel, as, bs));
+    B::storage_t rb(cond(sel, ab, bb));
+    F::storage_t rf(cond(sel, af, bf));
+    U::storage_t ru(cond(sel, au, bu));
+    S::storage_t rs(cond(sel, as, bs));
 
-//     for (auto i = 0U; i < F::width; ++i) {
-//         REQUIRE((rb[i]) == (sel_mask[i] ? bufAB[i] : bufBB[i]));
-//         REQUIRE((rf[i]) == (sel_mask[i] ? bufAF[i] : bufBF[i]));
-//         REQUIRE((ru[i]) == (sel_mask[i] ? bufAU[i] : bufBU[i]));
-//         REQUIRE((rs[i]) == (sel_mask[i] ? bufAS[i] : bufBS[i]));
-//     }
-// }
+    for (auto i = 0U; i < F::width; ++i) {
+        REQUIRE((rb[i]) == (sel_mask[i] ? bufAB[i] : bufBB[i]));
+        REQUIRE((rf[i]) == (sel_mask[i] ? bufAF[i] : bufBF[i]));
+        REQUIRE((ru[i]) == (sel_mask[i] ? bufAU[i] : bufBU[i]));
+        REQUIRE((rs[i]) == (sel_mask[i] ? bufAS[i] : bufBS[i]));
+    }
+}
 
 TEST_CASE(SIMD_TYPE " mask", SIMD_TEST_TAG) {
     SECTION("mask itself") {

@@ -266,6 +266,22 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
     SIMDEE_INL neonu::neonu(const neonb& r) { mm = r.data(); }
     SIMDEE_INL neonu::neonu(const neons& r) { mm = vreinterpretq_u32_s32(r.data()); }
     SIMDEE_INL neons::neons(const neonu& r) { mm = vreinterpretq_s32_u32(r.data()); }
+
+    SIMDEE_INL const neonb cond(const neonb& pred, const neonb& if_true, const neonb& if_false) {
+        return vbslq_u32(pred.data(), if_true.data(), if_false.data());
+    }
+
+    SIMDEE_INL const neonf cond(const neonb& pred, const neonf& if_true, const neonf& if_false) {
+        return vbslq_f32(pred.data(), if_true.data(), if_false.data());
+    }
+
+    SIMDEE_INL const neonu cond(const neonb& pred, const neonu& if_true, const neonu& if_false) {
+        return vbslq_u32(pred.data(), if_true.data(), if_false.data());
+    }
+
+    SIMDEE_INL const neons cond(const neonb& pred, const neons& if_true, const neons& if_false) {
+        return vbslq_s32(pred.data(), if_true.data(), if_false.data());
+    }
 }
 
 #endif // SIMDEE_SIMD_TYPES_NEON_HPP

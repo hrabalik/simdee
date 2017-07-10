@@ -628,12 +628,12 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     SECTION("fast reciprocal") {
         expect1([](scalar_t a) { return 1 / a; });
         r = rcp(a);
-        for (auto i = 0U; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+        for (auto i = 0U; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.005));
     }
     SECTION("fast reciprocal square root") {
         expect1([](scalar_t a) { return 1 / std::sqrt(std::abs(a)); });
         r = rsqrt(abs(a));
-        for (auto i = 0U; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.001));
+        for (auto i = 0U; i < F::width; ++i) REQUIRE(r[i] == Approx(e[i]).epsilon(0.005));
     }
     SECTION("rhs of compound can be implicitly constructed") {
         a = b;

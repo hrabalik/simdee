@@ -1257,16 +1257,16 @@ TEST_CASE(SIMD_TYPE " bool comparison", SIMD_TEST_TAG) {
 //     }
 // }
 
-// TEST_CASE(SIMD_TYPE " first_scalar", SIMD_TEST_TAG) {
-//     B b = bufAB;
-//     F f = bufAF;
-//     U u = bufAU;
-//     S s = bufAS;
+TEST_CASE(SIMD_TYPE " first_scalar", SIMD_TEST_TAG) {
+    B b = bufAB;
+    F f = bufAF;
+    U u = bufAU;
+    S s = bufAS;
 
-//     REQUIRE(bufAB[0] == first_scalar(b));
-//     REQUIRE(bufAF[0] == first_scalar(f));
-//     REQUIRE(bufAU[0] == first_scalar(u));
-//     REQUIRE(bufAS[0] == first_scalar(s));
-// }
+    REQUIRE(bufAB[0] == first_scalar(b));
+    REQUIRE(bufAF[0] == first_scalar(f));
+    REQUIRE(bufAU[0] == first_scalar(u));
+    REQUIRE(bufAS[0] == first_scalar(s));
+}
 
 #endif // defined(__ARM_NEON)

@@ -116,6 +116,7 @@ namespace sd {
 #define SIMDEE_NEON_COMMON( CLASS, SUFFIX, SCALAR_TYPE )                                                 \
 SIMDEE_CTOR( CLASS , scalar_t, mm = vmovq_n_ ## SUFFIX ( SCALAR_TYPE (r)));                              \
 SIMDEE_CTOR_TPL( CLASS, expr::init<T>, mm = vmovq_n_ ## SUFFIX (r.template to< SCALAR_TYPE >()));        \
+SIMDEE_UNOP( CLASS, scalar_t, first_scalar, scalar_t(vgetq_lane_ ## SUFFIX (l.mm, 0)));                  \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
     // clang-format on
 

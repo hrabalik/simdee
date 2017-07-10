@@ -271,7 +271,12 @@ namespace sd {
     };
 
     SIMDEE_INL ssef::ssef(const sses& r) { mm = _mm_cvtepi32_ps(_mm_castps_si128(r.data())); }
-    SIMDEE_INL sses::sses(const ssef& r) { mm = _mm_castsi128_ps(_mm_cvtps_epi32(r.data())); }
+    SIMDEE_INL sses::sses(const ssef& r) {
+        uint32_t csr = _mm_getcsr();
+        _mm_setcsr(csr | 0x6000);
+        mm = _mm_castsi128_ps(_mm_cvtps_epi32(r.data()));
+        _mm_setcsr(csr);
+    }
     SIMDEE_INL sseu::sseu(const sseb& r) { mm = r.data(); }
     SIMDEE_INL sseu::sseu(const sses& r) { mm = r.data(); }
     SIMDEE_INL sses::sses(const sseu& r) { mm = r.data(); }

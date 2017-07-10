@@ -69,7 +69,6 @@ namespace sd {
 #endif
 
 namespace sd {
-
     // provides indices of set (1) bits, ordered from least significant to most significant
     struct bit_iterator : std::iterator<std::input_iterator_tag, uint32_t> {
         uint32_t mask;
@@ -88,13 +87,6 @@ namespace sd {
         }
         SIMDEE_INL bool operator!=(const bit_iterator& rhs) const { return mask != rhs.mask; }
     };
-
-    inline int32_t round_to_int32(double in) {
-        in += double((1LL << 52) + (1LL << 51));
-        int32_t out[2];
-        std::memcpy(out, &in, sizeof(double));
-        return out[0]; // assuming little-endian architecture, use out[1] for big-endian
-    }
 }
 
 #endif // SIMDEE_UTIL_BITFIDDLE_HPP

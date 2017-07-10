@@ -484,7 +484,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
     SECTION("float to int") {
         S::storage_t expected, result;
         std::transform(begin(bufAF), end(bufAF), begin(expected),
-                       [](F::scalar_t a) { return sd::round_to_int32(a); });
+                       [](F::scalar_t a) { return static_cast<S::scalar_t>(a); });
         F in = bufAF;
         result = S(in);
         REQUIRE(result == expected);
@@ -500,7 +500,7 @@ TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
     SECTION("uint to int") {
         S::storage_t expected, result;
         std::transform(begin(bufAU), end(bufAU), begin(expected),
-                       [](U::scalar_t a) { return sd::round_to_int32(a); });
+                       [](U::scalar_t a) { return static_cast<S::scalar_t>(a); });
         U in = bufAU;
         result = S(in);
         REQUIRE(result == expected);

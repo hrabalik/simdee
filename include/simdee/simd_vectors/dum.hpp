@@ -184,7 +184,7 @@ namespace sd {
     };
 
     SIMDEE_INL dumf::dumf(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
-    SIMDEE_INL dums::dums(const dumf& r) { mm = round_to_int32(r.data()); }
+    SIMDEE_INL dums::dums(const dumf& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dumu::dumu(const dumb& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dumu::dumu(const dums& r) { mm = static_cast<scalar_t>(r.data()); }
     SIMDEE_INL dums::dums(const dumu& r) { mm = static_cast<scalar_t>(r.data()); }

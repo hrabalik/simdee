@@ -124,21 +124,35 @@ SIMDEE_CTOR_TPL( CLASS, expr::init<T>, mm = vmovq_n_ ## SUFFIX (r.template to< S
         SIMDEE_TRIVIAL_TYPE(neonb);
         SIMDEE_NEON_COMMON(neonb, u32, uint32_t);
     };
+
     struct neonf final : neon_base<neonf> {
         using neon_base::neon_base;
         SIMDEE_TRIVIAL_TYPE(neonf);
         SIMDEE_NEON_COMMON(neonf, f32, float);
+        SIMDEE_INL explicit neonf(const neons&);
     };
+
     struct neonu final : neon_base<neonu> {
         using neon_base::neon_base;
         SIMDEE_TRIVIAL_TYPE(neonu);
         SIMDEE_NEON_COMMON(neonu, u32, uint32_t);
+        SIMDEE_INL explicit neonu(const neonb&);
+        SIMDEE_INL explicit neonu(const neons&);
     };
+
     struct neons final : neon_base<neons> {
         using neon_base::neon_base;
         SIMDEE_TRIVIAL_TYPE(neons);
         SIMDEE_NEON_COMMON(neons, s32, int32_t);
+        SIMDEE_INL explicit neons(const neonf&);
+        SIMDEE_INL explicit neons(const neonu&);
     };
+
+    SIMDEE_INL neonf::neonf(const neons& r) { mm = vcvtq_f32_s32(r.data()); }
+    SIMDEE_INL neons::neons(const neonf& r) { mm = vcvtq_s32_f32(r.data()); }
+    SIMDEE_INL neonu::neonu(const neonb& r) { mm = r.data(); }
+    SIMDEE_INL neonu::neonu(const neons& r) { mm = vreinterpretq_u32_s32(r.data()); }
+    SIMDEE_INL neons::neons(const neonu& r) { mm = vreinterpretq_s32_u32(r.data()); }
 }
 
 #endif // SIMDEE_SIMD_TYPES_NEON_HPP

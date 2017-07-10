@@ -258,8 +258,7 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
     U::storage_t ru = bufZU;
     S::storage_t rs = bufZS;
 
-    auto implicit_test = [&rb, &rf, &ru, &rs](const B& tb, const F& tf, const U& tu, const S& ts)
-    {
+    auto implicit_test = [&rb, &rf, &ru, &rs](const B& tb, const F& tf, const U& tu, const S& ts) {
         rb = tb;
         rf = tf;
         ru = tu;
@@ -505,48 +504,48 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
     }
 }
 
-// TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
-//     SECTION("int to float") {
-//         F::storage_t expected, result;
-//         std::transform(begin(bufAS), end(bufAS), begin(expected),
-//                        [](S::scalar_t a) { return static_cast<F::scalar_t>(a); });
-//         S in = bufAS;
-//         result = F(in);
-//         REQUIRE(result == expected);
-//     }
-//     SECTION("float to int") {
-//         S::storage_t expected, result;
-//         std::transform(begin(bufAF), end(bufAF), begin(expected),
-//                        [](F::scalar_t a) { return sd::round_to_int32(a); });
-//         F in = bufAF;
-//         result = S(in);
-//         REQUIRE(result == expected);
-//     }
-//     SECTION("int to uint") {
-//         U::storage_t expected, result;
-//         std::transform(begin(bufAS), end(bufAS), begin(expected),
-//                        [](S::scalar_t a) { return static_cast<U::scalar_t>(a); });
-//         S in = bufAS;
-//         result = U(in);
-//         REQUIRE(result == expected);
-//     }
-//     SECTION("uint to int") {
-//         S::storage_t expected, result;
-//         std::transform(begin(bufAU), end(bufAU), begin(expected),
-//                        [](U::scalar_t a) { return sd::round_to_int32(a); });
-//         U in = bufAU;
-//         result = S(in);
-//         REQUIRE(result == expected);
-//     }
-//     SECTION("bool to uint") {
-//         U::storage_t expected, result;
-//         std::transform(begin(bufAB), end(bufAB), begin(expected),
-//                        [](B::scalar_t a) { return static_cast<U::scalar_t>(a); });
-//         B in = bufAB;
-//         result = U(in);
-//         REQUIRE(result == expected);
-//     }
-// }
+TEST_CASE(SIMD_TYPE " type conversion", SIMD_TEST_TAG) {
+    SECTION("int to float") {
+        F::storage_t expected, result;
+        std::transform(begin(bufAS), end(bufAS), begin(expected),
+                       [](S::scalar_t a) { return static_cast<F::scalar_t>(a); });
+        S in = bufAS;
+        result = F(in);
+        REQUIRE(result == expected);
+    }
+    SECTION("float to int") {
+        S::storage_t expected, result;
+        std::transform(begin(bufAF), end(bufAF), begin(expected),
+                       [](F::scalar_t a) { return static_cast<S::scalar_t>(a); });
+        F in = bufAF;
+        result = S(in);
+        REQUIRE(result == expected);
+    }
+    SECTION("int to uint") {
+        U::storage_t expected, result;
+        std::transform(begin(bufAS), end(bufAS), begin(expected),
+                       [](S::scalar_t a) { return static_cast<U::scalar_t>(a); });
+        S in = bufAS;
+        result = U(in);
+        REQUIRE(result == expected);
+    }
+    SECTION("uint to int") {
+        S::storage_t expected, result;
+        std::transform(begin(bufAU), end(bufAU), begin(expected),
+                       [](U::scalar_t a) { return static_cast<S::scalar_t>(a); });
+        U in = bufAU;
+        result = S(in);
+        REQUIRE(result == expected);
+    }
+    SECTION("bool to uint") {
+        U::storage_t expected, result;
+        std::transform(begin(bufAB), end(bufAB), begin(expected),
+                       [](B::scalar_t a) { return static_cast<U::scalar_t>(a); });
+        B in = bufAB;
+        result = U(in);
+        REQUIRE(result == expected);
+    }
+}
 
 // TEST_CASE(SIMD_TYPE " bool arithmetic", SIMD_TEST_TAG) {
 //     using scalar_t = B::scalar_t;

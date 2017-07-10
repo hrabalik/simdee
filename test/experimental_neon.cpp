@@ -686,220 +686,220 @@ TEST_CASE(SIMD_TYPE " float arithmetic", SIMD_TEST_TAG) {
     // }
 }
 
-// TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
-//     using scalar_t = U::scalar_t;
-//     U::storage_t r, e;
-//     U a = bufAU;
-//     U b = bufBU;
+TEST_CASE(SIMD_TYPE " uint arithmetic", SIMD_TEST_TAG) {
+    using scalar_t = U::scalar_t;
+    U::storage_t r, e;
+    U a = bufAU;
+    U b = bufBU;
 
-//     auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
-//         std::transform(begin(bufAU), end(bufAU), begin(e), f);
-//     };
-//     auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
-//         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
-//     };
+    auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
+        std::transform(begin(bufAU), end(bufAU), begin(e), f);
+    };
+    auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
+    };
 
-//     SECTION("bit not") {
-//         expect1([](scalar_t a) { return ~a; });
-//         r = ~a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("bit and") {
-//         expect([](scalar_t a, scalar_t b) { return a & b; });
-//         r = a & b;
-//         REQUIRE(r == e);
-//         a &= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("bit or") {
-//         expect([](scalar_t a, scalar_t b) { return a | b; });
-//         r = a | b;
-//         REQUIRE(r == e);
-//         a |= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("bit xor") {
-//         expect([](scalar_t a, scalar_t b) { return a ^ b; });
-//         r = a ^ b;
-//         REQUIRE(r == e);
-//         a ^= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("complex bit-wise expr") {
-//         expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
-//         r = ~((~a & ~b) | (~a ^ ~b));
-//         REQUIRE(r == e);
-//     }
-//     SECTION("unary plus") {
-//         expect1([](scalar_t a) { return +a; });
-//         r = +a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("unary minus") {
-//         expect1([](scalar_t a) { return 0 - a; });
-//         r = -a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("plus") {
-//         expect([](scalar_t a, scalar_t b) { return a + b; });
-//         r = a + b;
-//         REQUIRE(r == e);
-//         a += b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("minus") {
-//         expect([](scalar_t a, scalar_t b) { return a - b; });
-//         r = a - b;
-//         REQUIRE(r == e);
-//         a -= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("multiplies") {
-//         expect([](scalar_t a, scalar_t b) { return a * b; });
-//         r = a * b;
-//         REQUIRE(r == e);
-//         a *= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("minimum") {
-//         expect([](scalar_t a, scalar_t b) { return std::min(a, b); });
-//         r = min(a, b);
-//         REQUIRE(r == e);
-//     }
-//     SECTION("maximum") {
-//         expect([](scalar_t a, scalar_t b) { return std::max(a, b); });
-//         r = max(a, b);
-//         REQUIRE(r == e);
-//     }
-//     SECTION("rhs of compound can be implicitly constructed") {
-//         a = b;
-//         a &= 0xdeadbeefU;
-//         b = b & 0xdeadbeefU;
-//         REQUIRE(all(a == b));
-//         a |= 0xf0f0f0f0U;
-//         b = b | 0xf0f0f0f0U;
-//         REQUIRE(all(a == b));
-//         a ^= 0x1234abcdU;
-//         b = b ^ 0x1234abcdU;
-//         REQUIRE(all(a == b));
-//     }
-// }
+    SECTION("bit not") {
+        expect1([](scalar_t a) { return ~a; });
+        r = ~a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit and") {
+        expect([](scalar_t a, scalar_t b) { return a & b; });
+        r = a & b;
+        REQUIRE(r == e);
+        a &= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit or") {
+        expect([](scalar_t a, scalar_t b) { return a | b; });
+        r = a | b;
+        REQUIRE(r == e);
+        a |= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit xor") {
+        expect([](scalar_t a, scalar_t b) { return a ^ b; });
+        r = a ^ b;
+        REQUIRE(r == e);
+        a ^= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("complex bit-wise expr") {
+        expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
+        r = ~((~a & ~b) | (~a ^ ~b));
+        REQUIRE(r == e);
+    }
+    SECTION("unary plus") {
+        expect1([](scalar_t a) { return +a; });
+        r = +a;
+        REQUIRE(r == e);
+    }
+    SECTION("unary minus") {
+        expect1([](scalar_t a) { return 0 - a; });
+        r = -a;
+        REQUIRE(r == e);
+    }
+    SECTION("plus") {
+        expect([](scalar_t a, scalar_t b) { return a + b; });
+        r = a + b;
+        REQUIRE(r == e);
+        a += b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("minus") {
+        expect([](scalar_t a, scalar_t b) { return a - b; });
+        r = a - b;
+        REQUIRE(r == e);
+        a -= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("multiplies") {
+        expect([](scalar_t a, scalar_t b) { return a * b; });
+        r = a * b;
+        REQUIRE(r == e);
+        a *= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("minimum") {
+        expect([](scalar_t a, scalar_t b) { return std::min(a, b); });
+        r = min(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("maximum") {
+        expect([](scalar_t a, scalar_t b) { return std::max(a, b); });
+        r = max(a, b);
+        REQUIRE(r == e);
+    }
+    // SECTION("rhs of compound can be implicitly constructed") {
+    //     a = b;
+    //     a &= 0xdeadbeefU;
+    //     b = b & 0xdeadbeefU;
+    //     REQUIRE(all(a == b));
+    //     a |= 0xf0f0f0f0U;
+    //     b = b | 0xf0f0f0f0U;
+    //     REQUIRE(all(a == b));
+    //     a ^= 0x1234abcdU;
+    //     b = b ^ 0x1234abcdU;
+    //     REQUIRE(all(a == b));
+    // }
+}
 
-// TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
-//     using scalar_t = S::scalar_t;
-//     S::storage_t r, e;
-//     S a = bufAS;
-//     S b = bufBS;
+TEST_CASE(SIMD_TYPE " int arithmetic", SIMD_TEST_TAG) {
+    using scalar_t = S::scalar_t;
+    S::storage_t r, e;
+    S a = bufAS;
+    S b = bufBS;
 
-//     auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
-//         std::transform(begin(bufAS), end(bufAS), begin(e), f);
-//     };
-//     auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
-//         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f);
-//     };
+    auto expect1 = [&e](scalar_t (*f)(scalar_t)) {
+        std::transform(begin(bufAS), end(bufAS), begin(e), f);
+    };
+    auto expect = [&e](scalar_t (*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f);
+    };
 
-//     SECTION("bit not") {
-//         expect1([](scalar_t a) { return ~a; });
-//         r = ~a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("bit and") {
-//         expect([](scalar_t a, scalar_t b) { return a & b; });
-//         r = a & b;
-//         REQUIRE(r == e);
-//         a &= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("bit or") {
-//         expect([](scalar_t a, scalar_t b) { return a | b; });
-//         r = a | b;
-//         REQUIRE(r == e);
-//         a |= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("bit xor") {
-//         expect([](scalar_t a, scalar_t b) { return a ^ b; });
-//         r = a ^ b;
-//         REQUIRE(r == e);
-//         a ^= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("complex bit-wise expr") {
-//         expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
-//         r = ~((~a & ~b) | (~a ^ ~b));
-//         REQUIRE(r == e);
-//     }
-//     SECTION("unary plus") {
-//         expect1([](scalar_t a) { return +a; });
-//         r = +a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("unary minus") {
-//         expect1([](scalar_t a) { return -a; });
-//         r = -a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("plus") {
-//         expect([](scalar_t a, scalar_t b) { return a + b; });
-//         r = a + b;
-//         REQUIRE(r == e);
-//         a += b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("minus") {
-//         expect([](scalar_t a, scalar_t b) { return a - b; });
-//         r = a - b;
-//         REQUIRE(r == e);
-//         a -= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("multiplies") {
-//         expect([](scalar_t a, scalar_t b) { return a * b; });
-//         r = a * b;
-//         REQUIRE(r == e);
-//         a *= b;
-//         r = a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("minimum") {
-//         expect([](scalar_t a, scalar_t b) { return std::min(a, b); });
-//         r = min(a, b);
-//         REQUIRE(r == e);
-//     }
-//     SECTION("maximum") {
-//         expect([](scalar_t a, scalar_t b) { return std::max(a, b); });
-//         r = max(a, b);
-//         REQUIRE(r == e);
-//     }
-//     SECTION("absolute value") {
-//         expect1([](scalar_t a) { return std::abs(a); });
-//         r = abs(a);
-//         REQUIRE(r == e);
-//     }
-//     SECTION("rhs of compound can be implicitly constructed") {
-//         a = b;
-//         a += 123;
-//         b = b + 123;
-//         REQUIRE(all(a == b));
-//         a -= 234;
-//         b = b - 234;
-//         REQUIRE(all(a == b));
-//         a *= 345;
-//         b = b * 345;
-//         REQUIRE(all(a == b));
-//     }
-// }
+    SECTION("bit not") {
+        expect1([](scalar_t a) { return ~a; });
+        r = ~a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit and") {
+        expect([](scalar_t a, scalar_t b) { return a & b; });
+        r = a & b;
+        REQUIRE(r == e);
+        a &= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit or") {
+        expect([](scalar_t a, scalar_t b) { return a | b; });
+        r = a | b;
+        REQUIRE(r == e);
+        a |= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("bit xor") {
+        expect([](scalar_t a, scalar_t b) { return a ^ b; });
+        r = a ^ b;
+        REQUIRE(r == e);
+        a ^= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("complex bit-wise expr") {
+        expect([](scalar_t a, scalar_t b) { return ~((~a & ~b) | (~a ^ ~b)); });
+        r = ~((~a & ~b) | (~a ^ ~b));
+        REQUIRE(r == e);
+    }
+    SECTION("unary plus") {
+        expect1([](scalar_t a) { return +a; });
+        r = +a;
+        REQUIRE(r == e);
+    }
+    SECTION("unary minus") {
+        expect1([](scalar_t a) { return -a; });
+        r = -a;
+        REQUIRE(r == e);
+    }
+    SECTION("plus") {
+        expect([](scalar_t a, scalar_t b) { return a + b; });
+        r = a + b;
+        REQUIRE(r == e);
+        a += b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("minus") {
+        expect([](scalar_t a, scalar_t b) { return a - b; });
+        r = a - b;
+        REQUIRE(r == e);
+        a -= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("multiplies") {
+        expect([](scalar_t a, scalar_t b) { return a * b; });
+        r = a * b;
+        REQUIRE(r == e);
+        a *= b;
+        r = a;
+        REQUIRE(r == e);
+    }
+    SECTION("minimum") {
+        expect([](scalar_t a, scalar_t b) { return std::min(a, b); });
+        r = min(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("maximum") {
+        expect([](scalar_t a, scalar_t b) { return std::max(a, b); });
+        r = max(a, b);
+        REQUIRE(r == e);
+    }
+    SECTION("absolute value") {
+        expect1([](scalar_t a) { return std::abs(a); });
+        r = abs(a);
+        REQUIRE(r == e);
+    }
+    // SECTION("rhs of compound can be implicitly constructed") {
+    //     a = b;
+    //     a += 123;
+    //     b = b + 123;
+    //     REQUIRE(all(a == b));
+    //     a -= 234;
+    //     b = b - 234;
+    //     REQUIRE(all(a == b));
+    //     a *= 345;
+    //     b = b * 345;
+    //     REQUIRE(all(a == b));
+    // }
+}
 
 TEST_CASE(SIMD_TYPE " bool comparison", SIMD_TEST_TAG) {
     using scalar_t = B::scalar_t;
@@ -991,127 +991,127 @@ TEST_CASE(SIMD_TYPE " float comparison", SIMD_TEST_TAG) {
     }
 }
 
-// TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
-//     using scalar_t = U::scalar_t;
-//     B::storage_t r, e;
-//     U a = bufAU;
-//     U b = bufBU;
+TEST_CASE(SIMD_TYPE " uint comparison", SIMD_TEST_TAG) {
+    using scalar_t = U::scalar_t;
+    B::storage_t r, e;
+    U a = bufAU;
+    U b = bufBU;
 
-//     auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
-//     auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
-//         std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
-//     };
+    auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
+    auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAU), end(bufAU), begin(bufBU), begin(e), f);
+    };
 
-//     SECTION("equal to") {
-//         expect([](scalar_t a, scalar_t b) { return a == b; });
-//         r = a == b;
-//         REQUIRE(r == e);
-//         expect0(true);
-//         r = a == a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("not equal to") {
-//         expect([](scalar_t a, scalar_t b) { return a != b; });
-//         r = a != b;
-//         REQUIRE(r == e);
-//         expect0(false);
-//         r = a != a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("greater") {
-//         expect([](scalar_t a, scalar_t b) { return a > b; });
-//         r = a > b;
-//         REQUIRE(r == e);
-//         expect0(false);
-//         r = a > a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("less") {
-//         expect([](scalar_t a, scalar_t b) { return a < b; });
-//         r = a < b;
-//         REQUIRE(r == e);
-//         expect0(false);
-//         r = a < a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("greater equal") {
-//         expect([](scalar_t a, scalar_t b) { return a >= b; });
-//         r = a >= b;
-//         REQUIRE(r == e);
-//         expect0(true);
-//         r = a >= a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("less equal") {
-//         expect([](scalar_t a, scalar_t b) { return a <= b; });
-//         r = a <= b;
-//         REQUIRE(r == e);
-//         expect0(true);
-//         r = a <= a;
-//         REQUIRE(r == e);
-//     }
-// }
+    SECTION("equal to") {
+        expect([](scalar_t a, scalar_t b) { return a == b; });
+        r = a == b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a == a;
+        REQUIRE(r == e);
+    }
+    SECTION("not equal to") {
+        expect([](scalar_t a, scalar_t b) { return a != b; });
+        r = a != b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a != a;
+        REQUIRE(r == e);
+    }
+    SECTION("greater") {
+        expect([](scalar_t a, scalar_t b) { return a > b; });
+        r = a > b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a > a;
+        REQUIRE(r == e);
+    }
+    SECTION("less") {
+        expect([](scalar_t a, scalar_t b) { return a < b; });
+        r = a < b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a < a;
+        REQUIRE(r == e);
+    }
+    SECTION("greater equal") {
+        expect([](scalar_t a, scalar_t b) { return a >= b; });
+        r = a >= b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a >= a;
+        REQUIRE(r == e);
+    }
+    SECTION("less equal") {
+        expect([](scalar_t a, scalar_t b) { return a <= b; });
+        r = a <= b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a <= a;
+        REQUIRE(r == e);
+    }
+}
 
-// TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
-//     using scalar_t = S::scalar_t;
-//     B::storage_t r, e;
-//     S a = bufAS;
-//     S b = bufBS;
+TEST_CASE(SIMD_TYPE " int comparison", SIMD_TEST_TAG) {
+    using scalar_t = S::scalar_t;
+    B::storage_t r, e;
+    S a = bufAS;
+    S b = bufBS;
 
-//     auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
-//     auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
-//         std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f);
-//     };
+    auto expect0 = [&e](bool v) { std::fill(begin(e), end(e), v); };
+    auto expect = [&e](bool (*f)(scalar_t, scalar_t)) {
+        std::transform(begin(bufAS), end(bufAS), begin(bufBS), begin(e), f);
+    };
 
-//     SECTION("equal to") {
-//         expect([](scalar_t a, scalar_t b) { return a == b; });
-//         r = a == b;
-//         REQUIRE(r == e);
-//         expect0(true);
-//         r = a == a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("not equal to") {
-//         expect([](scalar_t a, scalar_t b) { return a != b; });
-//         r = a != b;
-//         REQUIRE(r == e);
-//         expect0(false);
-//         r = a != a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("greater") {
-//         expect([](scalar_t a, scalar_t b) { return a > b; });
-//         r = a > b;
-//         REQUIRE(r == e);
-//         expect0(false);
-//         r = a > a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("less") {
-//         expect([](scalar_t a, scalar_t b) { return a < b; });
-//         r = a < b;
-//         REQUIRE(r == e);
-//         expect0(false);
-//         r = a < a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("greater equal") {
-//         expect([](scalar_t a, scalar_t b) { return a >= b; });
-//         r = a >= b;
-//         REQUIRE(r == e);
-//         expect0(true);
-//         r = a >= a;
-//         REQUIRE(r == e);
-//     }
-//     SECTION("less equal") {
-//         expect([](scalar_t a, scalar_t b) { return a <= b; });
-//         r = a <= b;
-//         REQUIRE(r == e);
-//         expect0(true);
-//         r = a <= a;
-//         REQUIRE(r == e);
-//     }
-// }
+    SECTION("equal to") {
+        expect([](scalar_t a, scalar_t b) { return a == b; });
+        r = a == b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a == a;
+        REQUIRE(r == e);
+    }
+    SECTION("not equal to") {
+        expect([](scalar_t a, scalar_t b) { return a != b; });
+        r = a != b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a != a;
+        REQUIRE(r == e);
+    }
+    SECTION("greater") {
+        expect([](scalar_t a, scalar_t b) { return a > b; });
+        r = a > b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a > a;
+        REQUIRE(r == e);
+    }
+    SECTION("less") {
+        expect([](scalar_t a, scalar_t b) { return a < b; });
+        r = a < b;
+        REQUIRE(r == e);
+        expect0(false);
+        r = a < a;
+        REQUIRE(r == e);
+    }
+    SECTION("greater equal") {
+        expect([](scalar_t a, scalar_t b) { return a >= b; });
+        r = a >= b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a >= a;
+        REQUIRE(r == e);
+    }
+    SECTION("less equal") {
+        expect([](scalar_t a, scalar_t b) { return a <= b; });
+        r = a <= b;
+        REQUIRE(r == e);
+        expect0(true);
+        r = a <= a;
+        REQUIRE(r == e);
+    }
+}
 
 // TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
 //     SECTION("on bools") {

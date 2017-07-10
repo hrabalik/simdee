@@ -124,6 +124,12 @@ friend const CLASS reduce(const CLASS & l, Op_t f) {                            
     return f(tmp, vrev64q_ ## SUFFIX (tmp.mm));                                                          \
 }                                                                                                        \
                                                                                                          \
+SIMDEE_NEON_OPTIMIZED_REDUCE(CLASS, SUFFIX);                                                             \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#if SIMDEE_ARM64
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDEE_NEON_OPTIMIZED_REDUCE( CLASS, SUFFIX )                                                    \
 SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_add) {                                          \
     CLASS tmp {vpaddq_ ## SUFFIX (l.mm, l.mm)};                                                          \
     return vpaddq_ ## SUFFIX (tmp.mm, tmp.mm);                                                           \
@@ -139,7 +145,9 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
     return vpmaxq_ ## SUFFIX (tmp.mm, tmp.mm);                                                           \
 }                                                                                                        \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // clang-format on
+#else
+#define SIMDEE_NEON_OPTIMIZED_REDUCE( CLASS, SUFFIX ) ;
+#endif // clang-format on
 
     struct neonb final : neon_base<neonb> {
         using neon_base::neon_base;
@@ -152,6 +160,7 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
         SIMDEE_BINOP(neonb, neonb, operator||, vorrq_u32(l.mm, r.mm));
         SIMDEE_UNOP(neonb, neonb, operator!, vmvnq_u32(l.mm));
 
+#if SIMDEE_ARM64
         friend const mask_t mask(const neonb& l) {
             uint32x4_t temp = {0x1, 0x2, 0x4, 0x8};
             temp = vandq_u32(temp, l.mm);
@@ -159,6 +168,15 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
             temp = vpaddq_u32(temp, temp);
             return mask_t(vgetq_lane_u32(temp, 0));
         }
+#else
+        friend const mask_t mask(const neonb& l) {
+            uint32x4_t temp = {0x1, 0x2, 0x4, 0x8};
+            temp = vandq_u32(temp, l.mm);
+            uint32x2_t temp2 = vadd_u32(vget_low_u32(temp), vget_high_u32(temp));
+            temp2 = vadd_u32(temp2, vrev64_u32(temp2));
+            return mask_t(vget_lane_u32(temp2, 0));
+        }
+#endif
     };
 
     struct neonf final : neon_base<neonf> {

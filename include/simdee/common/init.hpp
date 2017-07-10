@@ -126,5 +126,10 @@
 #else
 #define SIMDEE_NEON 0
 #endif
+#if defined(__aarch64__) || defined(_M_ARM64)
+#define SIMDEE_ARM64 1
+#else
+#define SIMDEE_ARM64 0
+#endif
 
 #endif // SIMDEE_COMMON_INIT_HPP

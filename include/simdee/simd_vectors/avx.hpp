@@ -248,10 +248,7 @@ namespace sd {
 
     SIMDEE_INL avxf::avxf(const avxs& r) { mm = _mm256_cvtepi32_ps(_mm256_castps_si256(r.data())); }
     SIMDEE_INL avxs::avxs(const avxf& r) {
-        uint32_t csr = _mm_getcsr();
-        _mm_setcsr(csr | 0x6000);
-        mm = _mm256_castsi256_ps(_mm256_cvtps_epi32(r.data()));
-        _mm_setcsr(csr);
+        mm = _mm256_castsi256_ps(_mm256_cvttps_epi32(r.data()));
     }
     SIMDEE_INL avxu::avxu(const avxb& r) { mm = r.data(); }
     SIMDEE_INL avxu::avxu(const avxs& r) { mm = r.data(); }

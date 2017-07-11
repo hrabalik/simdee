@@ -14,7 +14,7 @@ When coding with Simdee, be sure to use a recent version of your C++ toolchain. 
 
 If you are using CMake to build your project, integrating and configuring Simdee is quite straightforward (effectively allowing you to skip the rest of this document). First, copy the contents of the Simdee repository into a subdirectory in your source tree. Add the line `add_subdirectory(path/to/simdee)` to your `CMakeLists.txt`, where `path/to/simdee` is the path where Simdee is located relative to this file.
 
-After that, you can make Simdee available to your sources by adding the line `target_link_libraries(mytarget PRIVATE simdee)` for each of the binaries that you wish to accelerate, `mytarget` being the name the binary. Finally, when you perform CMake configuration, additional parameters will be pop up for tweaking; the most important one is `SIMDEE_INSTRUCTION_SET`, which lets you pick what instructions should be used.
+After that, you can make Simdee available to your sources by adding the line `target_link_libraries(mytarget PRIVATE simdee)` for each of the binaries that you wish to accelerate, `mytarget` being the name the binary. Finally, when you perform CMake configuration, additional parameters will pop up for tweaking; the most important one is `SIMDEE_INSTRUCTION_SET`, which lets you pick what instructions should be used.
 
 ### Add Simdee to include path
 

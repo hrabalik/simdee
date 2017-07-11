@@ -2,7 +2,7 @@
 
 Defined in header `<simdee/simd_vectors/avx.hpp>`
 
-`sd::avx_` is an architecture-specific type family that employs the AVX instruction set and its extensions. If you use `sd::avx_` type family in your code, AVX support must be enabled. Unless the macro `SIMDEE_NEED_INT` is set to `0`, AVX2 support must be enabled. See guide on how to [enable instruction sets](../guides/config.md).
+`sd::avx_` is an architecture-specific type family that employs the AVX instruction set and its extensions. If you use `sd::avx_` type family in your code, AVX support must be enabled. Additionally, unless the macro `SIMDEE_NEED_INT` is set to `0`, AVX2 support must be enabled. See guide on how to [enable instruction sets](../guides/config.md).
 
 `SIMDEE_NEED_INT` | required instruction set
 ------------------|--------------------------

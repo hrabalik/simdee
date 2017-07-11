@@ -1,12 +1,9 @@
-# Simdee
-
 ## Overview
 
-- Header-only SIMD abstraction library.
-- Handles SSE and AVX instruction sets.
-- Restricted to 32-bit arithmetic with floating-point and integral types.
-- Open-source, distributed under the MIT license.
+- An unified interface for 32-bit arithmetic with SSE2, AVX, AVX2 and NEON instructions.
+- Builds with GCC, Clang and Visual Studio on x86, AMD64, ARM, AArch64.
+- Integrates easily due to its header-only nature.
 
 ## Getting started
 
-Check out the [documentation](docs/readme.md).
+Check out the [configuration guide](docs/guides/config.md) and [documentation](docs/readme.md).

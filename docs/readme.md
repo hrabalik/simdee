@@ -18,6 +18,7 @@
     * [`sd::vec4_`](reference/vec4.md) vectors with 4 scalars
     * [`sd::vec8_`](reference/vec8.md) vectors with 8 scalars
   * Architecture-specific
-    * [`sd::sse_`](reference/sse.md) vectors that employ SSE
-    * [`sd::avx_`](reference/avx.md) vectors that employ AVX
+    * [`sd::sse_`](reference/sse.md) vectors that employ SSE2
+    * [`sd::avx_`](reference/avx.md) vectors that employ AVX and AVX2
+    * [`sd::neon_`](reference/neon.md) vectors that employ NEON
   * [`sd::dual<T>`](reference/dual.md) vector composition

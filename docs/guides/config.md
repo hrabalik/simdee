@@ -22,7 +22,7 @@ No CMake? Not to worry, integrating Simdee to your project is still very simple.
 
 ### Enable a modern C++ standard
 
-Simdee requires the C++11 language standard. The table below lists which compiler flag to use to enable the given standard (or newer):
+Simdee requires the C++11 language standard or newer. Recent compilers either support it out of the box or provide a flag to turn it on; the same applies to C++14 (which we recommend for developing new applications).
 
 Language standard  | Clang          | GCC <= 5       | GCC 6          | VS 2015      | VS 2017
 -------------------|----------------|----------------|----------------|--------------|--------------

@@ -58,11 +58,12 @@ You can define the following macros before you include Simdee headers:
 
 Both compiler and library configuration influence what types (and, therefore, what instruction sets) are enabled for use. The following table lists enabled architecture-dependent type families for a specific configuration:
 
-Instruction set         | `#define SIMDEE_NEED_INT 1`                                          | `#define SIMDEE_NEED_INT 0`
+Instruction set         | `#define SIMDEE_NEED_INT 1` (default)                                | `#define SIMDEE_NEED_INT 0`
 ------------------------|----------------------------------------------------------------------|------------------------------------------------------------
 SSE2                    | [`sd::sse_`](../reference/sse.md)                                    | [`sd::sse_`](../reference/sse.md)
 AVX                     | [`sd::sse_`](../reference/sse.md)                                    | [`sd::sse_`](../reference/sse.md), [`sd::avx_`](../reference/avx.md)
 AVX2                    | [`sd::sse_`](../reference/sse.md), [`sd::avx_`](../reference/avx.md) | [`sd::sse_`](../reference/sse.md), [`sd::avx_`](../reference/avx.md)
 NEON                    | [`sd::neon_`](../reference/neon.md)                                  | [`sd::neon_`](../reference/neon.md)
 
-Note that when coding with Simdee, one should prefer architecture-independent type families [`sd::vec4_`](../reference/vec4.md) and [`sd::vec8_`](../reference/vec8.md) to the architecture-specific ones above.
+* Note that even though using AVX doesn't allow you to use types named `avx_` (at least not in the default configuration), there  might still be significant performance gains over SSE2.
+* Note that when coding with Simdee, one should prefer architecture-independent type families [`sd::vec4_`](../reference/vec4.md) and [`sd::vec8_`](../reference/vec8.md) to the architecture-specific ones above.

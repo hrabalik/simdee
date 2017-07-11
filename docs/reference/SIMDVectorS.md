@@ -4,7 +4,7 @@ Describes all SIMD vector types provided by Simdee that have a 32-bit signed int
 
 ## Implementations
 
-* [`sd::sses`](sse.md), [`sd::avxs`](avx.md), [`sd::dums`](dum.md)
+* [`sd::sses`](sse.md), [`sd::avxs`](avx.md), [`sd::neons`](neon.md), [`sd::dums`](dum.md)
 * [`sd::dual<T>`](dual.md), where `T` satisfies `SIMDVectorS`
 * [`sd::vec4s`](vec4.md), [`sd::vec8s`](vec8.md)
 

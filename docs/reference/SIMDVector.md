@@ -6,6 +6,7 @@ Describes all SIMD vector types provided by Simdee, regardless of underlying dat
 
 * [`sd::sseb`](sse.md), [`sd::ssef`](sse.md), [`sd::sseu`](sse.md), [`sd::sses`](sse.md)
 * [`sd::avxb`](avx.md), [`sd::avxf`](avx.md), [`sd::avxu`](avx.md), [`sd::avxs`](avx.md)
+* [`sd::neonb`](neon.md), [`sd::neonf`](neon.md), [`sd::neonu`](neon.md), [`sd::neons`](neon.md)
 * [`sd::dumb`](dum.md), [`sd::dumf`](dum.md), [`sd::dumu`](dum.md), [`sd::dums`](dum.md)
 * [`sd::dual<T>`](dual.md)
 * [`sd::vec4b`](vec4.md), [`sd::vec4f`](vec4.md), [`sd::vec4u`](vec4.md), [`sd::vec4s`](vec4.md)

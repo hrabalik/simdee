@@ -4,7 +4,7 @@ Describes all SIMD vector types provided by Simdee that have a boolean underlyin
 
 ## Implementations
 
-* [`sd::sseb`](sse.md), [`sd::avxb`](avx.md), [`sd::dumb`](dum.md)
+* [`sd::sseb`](sse.md), [`sd::avxb`](avx.md), [`sd::neonb`](neon.md), [`sd::dumb`](dum.md)
 * [`sd::dual<T>`](dual.md), where `T` satisfies `SIMDVectorB`
 * [`sd::vec4b`](vec4.md), [`sd::vec8b`](vec8.md)
 

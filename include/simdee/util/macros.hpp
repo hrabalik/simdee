@@ -112,7 +112,7 @@ SIMDEE_INL Crtp& operator=(const ARGTYPE & r) {                                 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDEE_UNOP( ARGTYPE, RESTYPE, NAME, IMPL )                                                      \
                                                                                                          \
-SIMDEE_INL friend const RESTYPE NAME (const ARGTYPE & l) {                                               \
+SIMDEE_INL friend RESTYPE NAME (const ARGTYPE & l) {                                                     \
     return IMPL ;                                                                                        \
 }                                                                                                        \
                                                                                                          \
@@ -121,7 +121,7 @@ SIMDEE_INL friend const RESTYPE NAME (const ARGTYPE & l) {                      
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDEE_BINOP( ARGTYPE, RESTYPE, NAME, IMPL )                                                     \
                                                                                                          \
-SIMDEE_INL friend const RESTYPE NAME (const ARGTYPE & l, const ARGTYPE & r) {                            \
+SIMDEE_INL friend RESTYPE NAME (const ARGTYPE & l, const ARGTYPE & r) {                                  \
     return IMPL ;                                                                                        \
 }                                                                                                        \
                                                                                                          \

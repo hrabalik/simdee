@@ -12,6 +12,10 @@
 
 #include <emmintrin.h>
 
+#if SIMDEE_SSSE3
+#include <tmmintrin.h>
+#endif
+
 #if SIMDEE_SSE41
 #include <smmintrin.h>
 #endif
@@ -264,9 +268,30 @@ namespace sd {
         SIMDEE_BINOP(sses, sses, operator-, _mm_sub_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, sses, operator*, impl::sse_imul(l.mmi(), r.mmi()));
 
+#if SIMDEE_SSE41
         SIMDEE_BINOP(sses, sses, min, _mm_min_epi32(l.mmi(), r.mmi()));
         SIMDEE_BINOP(sses, sses, max, _mm_max_epi32(l.mmi(), r.mmi()));
+#else
+        SIMDEE_INL friend sses min(const sses& l, const sses& r) {
+            sseb pred{r > l};
+            __m128 t = _mm_and_ps(pred.data(), l.data());
+            __m128 f = _mm_andnot_ps(pred.data(), r.data());
+            return _mm_or_ps(t, f);
+        }
+        SIMDEE_INL friend sses max(const sses& l, const sses& r) {
+            sseb pred{l > r};
+            __m128 t = _mm_and_ps(pred.data(), l.data());
+            __m128 f = _mm_andnot_ps(pred.data(), r.data());
+            return _mm_or_ps(t, f);
+        }
+#endif
+
+#if SIMDEE_SSSE3
         SIMDEE_UNOP(sses, sses, abs, _mm_abs_epi32(l.mmi()));
+#else
+        SIMDEE_UNOP(sses, sses, abs, max(l, -l));
+#endif
+
 #endif
     };
 

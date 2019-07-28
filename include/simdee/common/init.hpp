@@ -106,6 +106,11 @@
 #else
 #define SIMDEE_SSE2 0
 #endif
+#if defined(__SSSE3__)
+#define SIMDEE_SSSE3 1
+#else
+#define SIMDEE_SSSE3 0
+#endif
 #if defined(__SSE4_1__)
 #define SIMDEE_SSE41 1
 #else

@@ -11,6 +11,7 @@
 #endif
 
 #include <arm_neon.h>
+#include <cmath>
 
 namespace sd {
     namespace impl {

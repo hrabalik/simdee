@@ -94,6 +94,19 @@ ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(int)), void)
 #pragma GCC diagnostic pop
 #endif
 
+const B::storage_t bufAB{SIMDEE_DATA_BUFAB};
+const B::storage_t bufBB{SIMDEE_DATA_BUFBB};
+const B::storage_t bufZB{SIMDEE_DATA_BUFZB};
+const F::storage_t bufAF{SIMDEE_DATA_BUFAF};
+const F::storage_t bufBF{SIMDEE_DATA_BUFBF};
+const F::storage_t bufZF{SIMDEE_DATA_BUFZF};
+const U::storage_t bufAU{SIMDEE_DATA_BUFAU};
+const U::storage_t bufBU{SIMDEE_DATA_BUFBU};
+const U::storage_t bufZU{SIMDEE_DATA_BUFZU};
+const S::storage_t bufAS{SIMDEE_DATA_BUFAS};
+const S::storage_t bufBS{SIMDEE_DATA_BUFBS};
+const S::storage_t bufZS{SIMDEE_DATA_BUFZS};
+
 TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
     B::storage_t rb = bufZB;
     F::storage_t rf = bufZF;

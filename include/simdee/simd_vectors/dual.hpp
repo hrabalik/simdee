@@ -40,8 +40,57 @@ namespace sd {
         using storage_t = impl::storage<simd_t, scalar_t, alignof(vector_t)>;
     };
 
+    template <typename Crtp, size_t Width>
+    struct dual_base_base;
+
     template <typename Crtp>
-    struct dual_base : simd_base<Crtp> {
+    struct dual_base_base<Crtp, 2> : simd_base<Crtp> {
+    protected:
+        using T = typename simd_base<Crtp>::vector_t::l_t;
+        using simd_base<Crtp>::mm;
+
+    public:
+        using scalar_t = typename simd_base<Crtp>::scalar_t;
+        SIMDEE_TRIVIAL_TYPE(dual_base_base);
+        SIMDEE_INL dual_base_base(scalar_t v0, scalar_t v1) {
+            mm.l = T(v0);
+            mm.r = T(v1);
+        }
+    };
+
+    template <typename Crtp>
+    struct dual_base_base<Crtp, 4> : simd_base<Crtp> {
+    protected:
+        using T = typename simd_base<Crtp>::vector_t::l_t;
+        using simd_base<Crtp>::mm;
+
+    public:
+        using scalar_t = typename simd_base<Crtp>::scalar_t;
+        SIMDEE_TRIVIAL_TYPE(dual_base_base);
+        SIMDEE_INL dual_base_base(scalar_t v0, scalar_t v1, scalar_t v2, scalar_t v3) {
+            mm.l = T(v0, v1);
+            mm.r = T(v2, v3);
+        }
+    };
+
+    template <typename Crtp>
+    struct dual_base_base<Crtp, 8> : simd_base<Crtp> {
+    protected:
+        using T = typename simd_base<Crtp>::vector_t::l_t;
+        using simd_base<Crtp>::mm;
+
+    public:
+        using scalar_t = typename simd_base<Crtp>::scalar_t;
+        SIMDEE_TRIVIAL_TYPE(dual_base_base);
+        SIMDEE_INL dual_base_base(scalar_t v0, scalar_t v1, scalar_t v2, scalar_t v3, scalar_t v4,
+                                  scalar_t v5, scalar_t v6, scalar_t v7) {
+            mm.l = T(v0, v1, v2, v3);
+            mm.r = T(v4, v5, v6, v7);
+        }
+    };
+
+    template <typename Crtp>
+    struct dual_base : dual_base_base<Crtp, simd_base<Crtp>::width> {
     protected:
         using T = typename simd_base<Crtp>::vector_t::l_t;
         using simd_base<Crtp>::mm;
@@ -52,6 +101,7 @@ namespace sd {
         using storage_t = typename simd_base<Crtp>::storage_t;
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
+        using dual_base_base<Crtp, width>::dual_base_base;
 
         SIMDEE_TRIVIAL_TYPE(dual_base);
 

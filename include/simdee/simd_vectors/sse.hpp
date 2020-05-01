@@ -140,6 +140,10 @@ namespace sd {
         SIMDEE_TRIVIAL_TYPE(sseb);
 
         using sse_base::sse_base;
+        SIMDEE_INL sseb(bool32_t v0, bool32_t v1, bool32_t v2, bool32_t v3) {
+            mm = _mm_castsi128_ps(
+                _mm_setr_epi32(int32_t(v0), int32_t(v1), int32_t(v2), int32_t(v3)));
+        }
         SIMDEE_CTOR(sseb, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseb, not_sseb, mm = _mm_xor_ps(r.neg.mm, sseb(all_bits()).mm));
 
@@ -158,6 +162,9 @@ namespace sd {
 
         using sse_base::sse_base;
         SIMDEE_INL explicit ssef(const sses&);
+        SIMDEE_INL ssef(float v0, float v1, float v2, float v3) {
+            mm = _mm_setr_ps(v0, v1, v2, v3);
+        }
 
         SIMDEE_UNOP(ssef, scalar_t, first_scalar, _mm_cvtss_f32(l.mm));
 
@@ -188,6 +195,10 @@ namespace sd {
         using sse_base::sse_base;
         SIMDEE_INL explicit sseu(const sseb&);
         SIMDEE_INL explicit sseu(const sses&);
+        SIMDEE_INL sseu(uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3) {
+            mm = _mm_castsi128_ps(
+                _mm_setr_epi32(int32_t(v0), int32_t(v1), int32_t(v2), int32_t(v3)));
+        }
         SIMDEE_CTOR(sseu, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sseu, not_sseu, mm = _mm_xor_ps(r.neg.mm, sseu(all_bits()).mm));
 
@@ -245,6 +256,9 @@ namespace sd {
         using sse_base::sse_base;
         SIMDEE_INL explicit sses(const ssef&);
         SIMDEE_INL explicit sses(const sseu&);
+        SIMDEE_INL sses(int32_t v0, int32_t v1, int32_t v2, int32_t v3) {
+            mm = _mm_castsi128_ps(_mm_setr_epi32(v0, v1, v2, v3));
+        }
         SIMDEE_CTOR(sses, __m128i, mm = _mm_castsi128_ps(r));
         SIMDEE_CTOR(sses, not_sses, mm = _mm_xor_ps(r.neg.mm, sses(all_bits()).mm));
 

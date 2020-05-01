@@ -128,6 +128,12 @@ namespace sd {
 
     struct avxb : avx_base<avxb> {
         SIMDEE_TRIVIAL_TYPE(avxb);
+        SIMDEE_INL avxb(bool32_t v0, bool32_t v1, bool32_t v2, bool32_t v3, bool32_t v4,
+                        bool32_t v5, bool32_t v6, bool32_t v7) {
+            mm = _mm256_castsi256_ps(_mm256_setr_epi32(int32_t(v0), int32_t(v1), int32_t(v2),
+                                                       int32_t(v3), int32_t(v4), int32_t(v5),
+                                                       int32_t(v6), int32_t(v7)));
+        }
 
         using avx_base::avx_base;
         SIMDEE_CTOR(avxb, __m256i, mm = _mm256_castsi256_ps(r));
@@ -154,6 +160,10 @@ namespace sd {
 
         using avx_base::avx_base;
         SIMDEE_INL explicit avxf(const avxs&);
+        SIMDEE_INL avxf(float v0, float v1, float v2, float v3, float v4, float v5, float v6,
+                        float v7) {
+            mm = _mm256_setr_ps(v0, v1, v2, v3, v4, v5, v6, v7);
+        }
 
         SIMDEE_UNOP(avxf, scalar_t, first_scalar, _mm_cvtss_f32(_mm256_castps256_ps128(l.mm)));
 
@@ -184,6 +194,12 @@ namespace sd {
         using avx_base::avx_base;
         SIMDEE_INL explicit avxu(const avxb&);
         SIMDEE_INL explicit avxu(const avxs&);
+        SIMDEE_INL avxu(uint32_t v0, uint32_t v1, uint32_t v2, uint32_t v3, uint32_t v4,
+                        uint32_t v5, uint32_t v6, uint32_t v7) {
+            mm = _mm256_castsi256_ps(_mm256_setr_epi32(int32_t(v0), int32_t(v1), int32_t(v2),
+                                                       int32_t(v3), int32_t(v4), int32_t(v5),
+                                                       int32_t(v6), int32_t(v7)));
+        }
         SIMDEE_CTOR(avxu, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxu, not_avxu, mm = _mm256_xor_ps(r.neg.mm, avxu(all_bits()).mm));
 
@@ -216,6 +232,10 @@ namespace sd {
         using avx_base::avx_base;
         SIMDEE_INL explicit avxs(const avxf&);
         SIMDEE_INL explicit avxs(const avxu&);
+        SIMDEE_INL avxs(int32_t v0, int32_t v1, int32_t v2, int32_t v3, int32_t v4, int32_t v5,
+                        int32_t v6, int32_t v7) {
+            mm = _mm256_castsi256_ps(_mm256_setr_epi32(v0, v1, v2, v3, v4, v5, v6, v7));
+        }
         SIMDEE_CTOR(avxs, __m256i, mm = _mm256_castsi256_ps(r));
         SIMDEE_CTOR(avxs, not_avxs, mm = _mm256_xor_ps(r.neg.mm, avxs(all_bits()).mm));
 

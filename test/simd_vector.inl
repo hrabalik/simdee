@@ -131,6 +131,28 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         for (auto val : ru) REQUIRE(val == 123456789U);
         for (auto val : rs) REQUIRE(val == -123456789);
     }
+    SECTION("from Width x scalar_t (parentheses)") {
+        B tb(SIMDEE_DATA_BUFAB);
+        F tf(SIMDEE_DATA_BUFAF);
+        U tu(SIMDEE_DATA_BUFAU);
+        S ts(SIMDEE_DATA_BUFAS);
+        tor(tb, tf, tu, ts);
+        REQUIRE(rb == bufAB);
+        REQUIRE(rf == bufAF);
+        REQUIRE(ru == bufAU);
+        REQUIRE(rs == bufAS);
+    }
+    SECTION("from Width x scalar_t (braces)") {
+        B tb{SIMDEE_DATA_BUFBB};
+        F tf{SIMDEE_DATA_BUFBF};
+        U tu{SIMDEE_DATA_BUFBU};
+        S ts{SIMDEE_DATA_BUFBS};
+        tor(tb, tf, tu, ts);
+        REQUIRE(rb == bufBB);
+        REQUIRE(rf == bufBF);
+        REQUIRE(ru == bufBU);
+        REQUIRE(rs == bufBS);
+    }
     SECTION("from vector_t") {
         B tb(B::vector_t{});
         F tf(F::vector_t{});

@@ -27,7 +27,7 @@ namespace sd {
         SIMDEE_INL void neon_store(const float32x4_t& vec, float* ptr) { vst1q_f32(ptr, vec); }
         SIMDEE_INL void neon_store(const uint32x4_t& vec, uint32_t* ptr) { vst1q_u32(ptr, vec); }
         SIMDEE_INL void neon_store(const int32x4_t& vec, int32_t* ptr) { vst1q_s32(ptr, vec); }
-    }
+    } // namespace impl
 
     struct neonb;
     struct neonf;
@@ -306,6 +306,6 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
     SIMDEE_INL const neons cond(const neonb& pred, const neons& if_true, const neons& if_false) {
         return vbslq_s32(pred.data(), if_true.data(), if_false.data());
     }
-}
+} // namespace sd
 
 #endif // SIMDEE_SIMD_TYPES_NEON_HPP

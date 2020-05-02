@@ -119,6 +119,11 @@ SIMDEE_CTOR( CLASS , scalar_t, mm = vmovq_n_ ## SUFFIX ( SCALAR_TYPE (r)));     
 SIMDEE_CTOR_TPL( CLASS, expr::init<T>, mm = vmovq_n_ ## SUFFIX (r.template to< SCALAR_TYPE >()));        \
 SIMDEE_UNOP( CLASS, scalar_t, first_scalar, scalar_t(vgetq_lane_ ## SUFFIX (l.mm, 0)));                  \
                                                                                                          \
+SIMDEE_INL CLASS (scalar_t v0, scalar_t v1, scalar_t v2, scalar_t v3) {                                  \
+    vector_t v = { v0, v1, v2, v3 };                                                                     \
+    mm = v;                                                                                              \
+}                                                                                                        \
+                                                                                                         \
 template <typename Op_t>                                                                                 \
 friend const CLASS reduce(const CLASS & l, Op_t f) {                                                     \
     CLASS tmp = f(l, vextq_ ## SUFFIX (l.mm, l.mm, 2));                                                  \

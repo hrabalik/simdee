@@ -34,7 +34,7 @@ namespace sd {
 
         template <typename T, std::size_t Align>
         struct alloc<T, Align, false> {
-            static T* malloc(std::size_t bytes) { return (T*)std::malloc(bytes); }
+            static T* malloc(std::size_t bytes) { return static_cast<T*>(std::malloc(bytes)); }
             static void free(T* ptr) { std::free(ptr); }
             using allocator = std::allocator<T>;
             using deleter = std::default_delete<T>;
@@ -47,19 +47,19 @@ namespace sd {
             static_assert(Align > alignof(double), "alignment is too small -- use malloc");
 
             static T* malloc(std::size_t bytes) {
-                auto orig = (uintptr_t)std::malloc(bytes + Align);
+                auto orig = uintptr_t(std::malloc(bytes + Align));
                 if (orig == 0) return nullptr;
                 auto aligned = (orig + Align) & ~(Align - 1);
-                auto offset = int8_t(orig - aligned);
-                ((int8_t*)aligned)[-1] = offset;
-                return (T*)aligned;
+                auto offset = uint8_t(aligned - orig);
+                (reinterpret_cast<uint8_t*>(aligned))[-1] = offset;
+                return reinterpret_cast<T*>(aligned);
             }
 
             static void free(T* aligned) {
                 if (aligned == nullptr) return;
-                auto offset = ((int8_t*)aligned)[-1];
-                auto orig = uintptr_t(aligned) + offset;
-                std::free((void*)orig);
+                auto offset = (reinterpret_cast<uint8_t*>(aligned))[-1];
+                auto orig = uintptr_t(aligned) - offset;
+                std::free(reinterpret_cast<void*>(orig));
             }
 
             using allocator = aligned_allocator<T, Align>;

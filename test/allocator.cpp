@@ -5,13 +5,10 @@
 #include <vector>
 
 struct alignas(64) T {
-    T(int64_t val) {
-        v1 = val;
-        v2 = val;
-    }
+    T(unsigned int val) : v1(val), v2(val) {}
     T(const T&) = default;
     T& operator=(const T&) = default;
-    int64_t v1, v2;
+    uint64_t v1, v2;
     char pad[48];
 };
 
@@ -19,8 +16,8 @@ TEST_CASE("sd::detail::alloc::malloc/free", "[allocator]") {
     SECTION("alloc T") {
         auto ptr = sd::detail::alloc<T>::malloc(sizeof(T));
         REQUIRE(uintptr_t(ptr) % alignof(T) == 0);
-        ptr->v1 = -1;
-        ptr->v2 = -1;
+        ptr->v1 = uint64_t(-1);
+        ptr->v2 = uint64_t(-1);
         sd::detail::alloc<T>::free(ptr);
     }
     SECTION("alloc double") {
@@ -34,13 +31,13 @@ TEST_CASE("sd::detail::alloc::malloc/free", "[allocator]") {
 TEST_CASE("allocator", "[allocator]") {
     SECTION("vector<T>") {
         std::vector<T, sd::allocator<T>> vec;
-        for (int i = 0; i < 123; i++) { vec.push_back(T{i}); }
-        for (int i : {0, 1, 10, 100, 122}) { REQUIRE(vec[i].v1 == i); }
+        for (unsigned int i = 0; i < 123; i++) { vec.push_back(T{i}); }
+        for (unsigned int i : {0u, 1u, 10u, 100u, 122u}) { REQUIRE(vec[i].v1 == i); }
     }
     SECTION("vector<double>") {
         std::vector<double, sd::allocator<double>> vec;
-        for (int i = 0; i < 123; i++) { vec.push_back(i); }
-        for (int i : {0, 1, 10, 100, 122}) { REQUIRE(vec[i] == i); }
+        for (unsigned int i = 0; i < 123; i++) { vec.push_back(i); }
+        for (unsigned int i : {0u, 1u, 10u, 100u, 122u}) { REQUIRE(vec[i] == i); }
     }
 }
 

@@ -69,7 +69,7 @@ TEST_CASE("mask", "[mask]") {
         };
         auto expected = [](uint32_t u) {
             std::vector<uint32_t> res;
-            for (int i = 0; i < 32; ++i) {
+            for (uint32_t i = 0; i < 32; ++i) {
                 if ((u & (1U << i)) != 0) { res.push_back(i); }
             }
             return res;

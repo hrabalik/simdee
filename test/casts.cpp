@@ -2,6 +2,11 @@
 
 #include <simdee/common/casts.hpp>
 
+template <typename T>
+int32_t int32_t_(T val) {
+    return int32_t(val);
+}
+
 TEST_CASE("cast_b", "[casts]") {
     auto b8 = sd::bool8_t(true);
     auto u8 = uint8_t(-1);
@@ -11,7 +16,7 @@ TEST_CASE("cast_b", "[casts]") {
     auto s16 = int16_t(-1);
     auto b32 = sd::bool32_t(true);
     auto u32 = uint32_t(-1);
-    auto s32 = int32_t(-1);
+    auto s32 = int32_t_(-1);
     auto b64 = sd::bool64_t(true);
     auto u64 = uint64_t(-1);
     auto s64 = int64_t(-1);
@@ -47,7 +52,7 @@ TEST_CASE("cast_f", "[casts]") {
     auto b32 = sd::bool32_t(false);
     auto f32 = float(123);
     auto u32 = uint32_t(123);
-    auto s32 = int32_t(123);
+    auto s32 = int32_t_(123);
     auto b64 = sd::bool64_t(false);
     auto f64 = double(123);
     auto u64 = uint64_t(123);
@@ -82,7 +87,7 @@ TEST_CASE("cast_u", "[casts]") {
     auto b32 = sd::bool32_t(true);
     auto f32 = float(123);
     auto u32 = uint32_t(-1);
-    auto s32 = int32_t(-1);
+    auto s32 = int32_t_(-1);
     auto b64 = sd::bool64_t(true);
     auto f64 = double(123);
     auto u64 = uint64_t(-1);
@@ -129,7 +134,7 @@ TEST_CASE("cast_s", "[casts]") {
     auto b32 = sd::bool32_t(true);
     auto f32 = float(-1);
     auto u32 = uint32_t(-1);
-    auto s32 = int32_t(-1);
+    auto s32 = int32_t_(-1);
     auto b64 = sd::bool64_t(true);
     auto f64 = double(-1);
     auto u64 = uint64_t(-1);
@@ -171,7 +176,7 @@ TEST_CASE("dirty::as_b", "[casts]") {
         REQUIRE(sd::dirty::as_b(uint16_t(-1)) == sd::bool16_t(true));
         REQUIRE(sd::dirty::as_b(uint32_t(-1)) == sd::bool32_t(true));
         REQUIRE(sd::dirty::as_b(int16_t(-1)) == sd::bool16_t(true));
-        REQUIRE(sd::dirty::as_b(int32_t(-1)) == sd::bool32_t(true));
+        REQUIRE(sd::dirty::as_b(int32_t_(-1)) == sd::bool32_t(true));
         REQUIRE(sd::dirty::as_b(0.f) == sd::bool32_t(false));
         REQUIRE(sd::dirty::as_b(0.) == sd::bool64_t(false));
     }
@@ -179,7 +184,7 @@ TEST_CASE("dirty::as_b", "[casts]") {
         auto a1 = uint16_t(-1);
         auto a2 = uint32_t(-1);
         auto a3 = int16_t(-1);
-        auto a4 = int32_t(-1);
+        auto a4 = int32_t_(-1);
         auto a5 = 0.f;
         auto a6 = 0.;
         REQUIRE(sd::dirty::as_b(a1) == sd::bool16_t(true));

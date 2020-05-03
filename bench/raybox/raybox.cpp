@@ -22,8 +22,9 @@ auto now = []() { return std::chrono::high_resolution_clock::now(); };
 
 template <typename Duration>
 double to_ms(Duration dur) {
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count() / 1.e6;
-};
+    using nanoseconds = std::chrono::nanoseconds;
+    return static_cast<double>(std::chrono::duration_cast<nanoseconds>(dur).count()) / 1.e6;
+}
 
 double benchmark_ms(std::function<void()> func) {
     double best = std::numeric_limits<double>::infinity();
@@ -70,7 +71,7 @@ int main() {
         for (size_t i = 0; i < num; ++i) { *(data++) = dist(re); }
     };
     const std::size_t numFloats = (sizeof(RayBoxData1) / sizeof(float)) * dataSize1;
-    fill((float*)(data8.data()), numFloats);
+    fill(reinterpret_cast<float*>(data8.data()), numFloats);
 
     {
         RayBoxData1* ptr = data1.data();
@@ -90,8 +91,8 @@ int main() {
 
     // common pre-calculations
     auto gamma = [](int n) {
-        float eps2 = static_cast<float>(std::numeric_limits<float>::epsilon() * 0.5);
-        return (n * eps2) / (1 - n * eps2);
+        double eps2 = 0.5 * static_cast<double>(std::numeric_limits<float>::epsilon());
+        return static_cast<float>((n * eps2) / (1 - n * eps2));
     };
     struct Vec3f {
         float x, y, z;

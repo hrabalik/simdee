@@ -41,7 +41,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit deferred_bitnot(const T& r) : neg(r) {}
 
             template <typename Rhs>
-            void operator=(const Rhs& r) {
+            void operator=(const Rhs&) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
@@ -56,7 +56,7 @@ namespace sd {
             }
 
             template <typename Rhs>
-            void aligned_load(const Rhs& r) {
+            void aligned_load(const Rhs&) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
@@ -66,7 +66,7 @@ namespace sd {
             }
 
             template <typename Rhs>
-            void unaligned_load(const Rhs& r) {
+            void unaligned_load(const Rhs&) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
@@ -76,7 +76,7 @@ namespace sd {
             }
 
             template <typename Rhs>
-            void interleaved_load(const Rhs& r, int step) {
+            void interleaved_load(const Rhs&, int) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
@@ -136,15 +136,15 @@ namespace sd {
             return l.neg ^ r.neg;
         }
         template <typename T, typename Rhs>
-        SIMDEE_INL void operator&=(const deferred_bitnot<T>& l, const Rhs& r) {
+        SIMDEE_INL void operator&=(const deferred_bitnot<T>&, const Rhs&) {
             dont_change_deferred_not<Rhs> fail;
         }
         template <typename T, typename Rhs>
-        SIMDEE_INL void operator|=(const deferred_bitnot<T>& l, const Rhs& r) {
+        SIMDEE_INL void operator|=(const deferred_bitnot<T>&, const Rhs&) {
             dont_change_deferred_not<Rhs> fail;
         }
         template <typename T, typename Rhs>
-        SIMDEE_INL void operator^=(const deferred_bitnot<T>& l, const Rhs& r) {
+        SIMDEE_INL void operator^=(const deferred_bitnot<T>&, const Rhs&) {
             dont_change_deferred_not<Rhs> fail;
         }
 
@@ -159,7 +159,7 @@ namespace sd {
             SIMDEE_INL constexpr explicit deferred_lognot(const T& r) : neg(r) {}
 
             template <typename Rhs>
-            void operator=(const Rhs& r) {
+            void operator=(const Rhs&) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
@@ -174,7 +174,7 @@ namespace sd {
             }
 
             template <typename Rhs>
-            void aligned_load(const Rhs& r) {
+            void aligned_load(const Rhs&) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
@@ -184,7 +184,7 @@ namespace sd {
             }
 
             template <typename Rhs>
-            void unaligned_load(const Rhs& r) {
+            void unaligned_load(const Rhs&) {
                 dont_change_deferred_not<Rhs> fail;
             }
 
@@ -194,7 +194,7 @@ namespace sd {
             }
 
             template <typename Rhs>
-            void interleaved_load(const Rhs& r, int step) {
+            void interleaved_load(const Rhs&, int) {
                 dont_change_deferred_not<Rhs> fail;
             }
 

@@ -19,10 +19,10 @@ namespace sd {
 
             SIMDEE_INL constexpr bool_t(bool value) : data(value ? U(-1) : U(0)) {}
             SIMDEE_INL constexpr explicit bool_t(U value) : data(value) {}
-            SIMDEE_INL constexpr explicit bool_t(S value) : data(value) {}
+            SIMDEE_INL constexpr explicit bool_t(S value) : data(U(value)) {}
             SIMDEE_INL constexpr operator bool() const { return data != 0; }
             SIMDEE_INL constexpr explicit operator U() const { return data; }
-            SIMDEE_INL constexpr explicit operator S() const { return data; }
+            SIMDEE_INL constexpr explicit operator S() const { return S(data); }
 
             SIMDEE_INL constexpr bool_t operator!() const { return bool_t(~data); }
             SIMDEE_INL constexpr bool_t operator&&(const bool_t& r) const {

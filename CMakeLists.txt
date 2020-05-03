@@ -44,6 +44,11 @@ else()
     message(FATAL_ERROR "SIMDEE_INSTRUCTION_SET has an unexpected value")
 endif()
 
+# Add a target that supplies warning flags to depending targets
+include(cmake/CompilerWarnings.cmake)
+add_library(simdee-warnings INTERFACE)
+target_set_strict_warnings(simdee-warnings)
+
 # Build executables
 if(SIMDEE_BUILD_TESTS)
     add_subdirectory(test)

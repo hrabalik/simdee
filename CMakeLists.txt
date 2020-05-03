@@ -51,6 +51,7 @@ target_set_strict_warnings(simdee-warnings)
 
 # Build executables
 if(SIMDEE_BUILD_TESTS)
+    enable_testing()
     add_subdirectory(test)
 endif()
 if(SIMDEE_BUILD_BENCHMARKS)

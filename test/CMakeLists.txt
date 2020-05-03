@@ -58,6 +58,9 @@ target_link_libraries(simdee-test PRIVATE simdee simdee-warnings)
 # Enable fast Catch compilation
 target_compile_definitions(simdee-test PRIVATE "CATCH_CONFIG_FAST_COMPILE")
 
+# Add the executable to CTest
+add_test(NAME simdee-test COMMAND simdee-test)
+
 # Organize files in the IDE
 source_group("tests" FILES ${TEST_FILES})
 source_group("library" FILES ${LIB_FILES_TOPLEVEL})

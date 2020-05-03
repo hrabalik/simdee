@@ -87,12 +87,12 @@ namespace sd {
         using simd_base<Crtp>::width;
         using simd_base<Crtp>::self;
 
-        SIMDEE_TRIVIAL_TYPE(neon_base);
-        SIMDEE_BASE_CTOR(neon_base, vector_t, mm = r);
-        SIMDEE_BASE_CTOR_TPL(neon_base, expr::aligned<T>, aligned_load(r.ptr));
-        SIMDEE_BASE_CTOR_TPL(neon_base, expr::unaligned<T>, unaligned_load(r.ptr));
-        SIMDEE_BASE_CTOR_TPL(neon_base, expr::interleaved<T>, interleaved_load(r.ptr, r.step));
-        SIMDEE_BASE_CTOR(neon_base, storage_t, aligned_load(r.data()));
+        SIMDEE_TRIVIAL_TYPE(neon_base)
+        SIMDEE_BASE_CTOR(neon_base, vector_t, mm = r)
+        SIMDEE_BASE_CTOR_TPL(neon_base, expr::aligned<T>, aligned_load(r.ptr))
+        SIMDEE_BASE_CTOR_TPL(neon_base, expr::unaligned<T>, unaligned_load(r.ptr))
+        SIMDEE_BASE_CTOR_TPL(neon_base, expr::interleaved<T>, interleaved_load(r.ptr, r.step))
+        SIMDEE_BASE_CTOR(neon_base, storage_t, aligned_load(r.data()))
 
         SIMDEE_INL void aligned_load(const scalar_t* r) { mm = impl::neon_load(r); }
         SIMDEE_INL void aligned_store(scalar_t* r) const { impl::neon_store(mm, r); }
@@ -115,9 +115,11 @@ namespace sd {
 // clang-format off
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 #define SIMDEE_NEON_COMMON( CLASS, SUFFIX, SCALAR_TYPE )                                                 \
-SIMDEE_CTOR( CLASS , scalar_t, mm = vmovq_n_ ## SUFFIX ( SCALAR_TYPE (r)));                              \
-SIMDEE_CTOR_TPL( CLASS, expr::init<T>, mm = vmovq_n_ ## SUFFIX (r.template to< SCALAR_TYPE >()));        \
-SIMDEE_UNOP( CLASS, scalar_t, first_scalar, scalar_t(vgetq_lane_ ## SUFFIX (l.mm, 0)));                  \
+using neon_base::neon_base;                                                                              \
+SIMDEE_TRIVIAL_TYPE( CLASS )                                                                             \
+SIMDEE_CTOR( CLASS , scalar_t, mm = vmovq_n_ ## SUFFIX ( SCALAR_TYPE (r)))                               \
+SIMDEE_CTOR_TPL( CLASS, expr::init<T>, mm = vmovq_n_ ## SUFFIX (r.template to< SCALAR_TYPE >()))         \
+SIMDEE_UNOP( CLASS, scalar_t, first_scalar, vgetq_lane_ ## SUFFIX (l.mm, 0))                             \
                                                                                                          \
 SIMDEE_INL CLASS (scalar_t v0, scalar_t v1, scalar_t v2, scalar_t v3) {                                  \
     vector_t v = { v0, v1, v2, v3 };                                                                     \
@@ -130,7 +132,7 @@ friend const CLASS reduce(const CLASS & l, Op_t f) {                            
     return f(tmp, vrev64q_ ## SUFFIX (tmp.mm));                                                          \
 }                                                                                                        \
                                                                                                          \
-SIMDEE_NEON_OPTIMIZED_REDUCE(CLASS, SUFFIX);                                                             \
+SIMDEE_NEON_OPTIMIZED_REDUCE(CLASS, SUFFIX)                                                              \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #if SIMDEE_ARM64
@@ -152,19 +154,17 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
 }                                                                                                        \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 #else
-#define SIMDEE_NEON_OPTIMIZED_REDUCE( CLASS, SUFFIX ) ;
+#define SIMDEE_NEON_OPTIMIZED_REDUCE( CLASS, SUFFIX )
 #endif // clang-format on
 
     struct neonb final : neon_base<neonb> {
-        using neon_base::neon_base;
-        SIMDEE_TRIVIAL_TYPE(neonb);
-        SIMDEE_NEON_COMMON(neonb, u32, uint32_t);
+        SIMDEE_NEON_COMMON(neonb, u32, uint32_t)
 
-        SIMDEE_BINOP(neonb, neonb, operator==, vceqq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonb, neonb, operator!=, vmvnq_u32(vceqq_u32(l.mm, r.mm)));
-        SIMDEE_BINOP(neonb, neonb, operator&&, vandq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonb, neonb, operator||, vorrq_u32(l.mm, r.mm));
-        SIMDEE_UNOP(neonb, neonb, operator!, vmvnq_u32(l.mm));
+        SIMDEE_BINOP(neonb, neonb, operator==, vceqq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonb, neonb, operator!=, vmvnq_u32(vceqq_u32(l.mm, r.mm)))
+        SIMDEE_BINOP(neonb, neonb, operator&&, vandq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonb, neonb, operator||, vorrq_u32(l.mm, r.mm))
+        SIMDEE_UNOP(neonb, neonb, operator!, vmvnq_u32(l.mm))
 
 #if SIMDEE_ARM64
         friend const mask_t mask(const neonb& l) {
@@ -186,22 +186,20 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
     };
 
     struct neonf final : neon_base<neonf> {
-        using neon_base::neon_base;
-        SIMDEE_TRIVIAL_TYPE(neonf);
-        SIMDEE_NEON_COMMON(neonf, f32, float);
+        SIMDEE_NEON_COMMON(neonf, f32, float)
         SIMDEE_INL explicit neonf(const neons&);
 
-        SIMDEE_BINOP(neonf, neonb, operator<, vcltq_f32(l.mm, r.mm));
-        SIMDEE_BINOP(neonf, neonb, operator>, vcgtq_f32(l.mm, r.mm));
-        SIMDEE_BINOP(neonf, neonb, operator<=, vcleq_f32(l.mm, r.mm));
-        SIMDEE_BINOP(neonf, neonb, operator>=, vcgeq_f32(l.mm, r.mm));
-        SIMDEE_BINOP(neonf, neonb, operator==, vceqq_f32(l.mm, r.mm));
-        SIMDEE_BINOP(neonf, neonb, operator!=, vmvnq_u32(vceqq_f32(l.mm, r.mm)));
+        SIMDEE_BINOP(neonf, neonb, operator<, vcltq_f32(l.mm, r.mm))
+        SIMDEE_BINOP(neonf, neonb, operator>, vcgtq_f32(l.mm, r.mm))
+        SIMDEE_BINOP(neonf, neonb, operator<=, vcleq_f32(l.mm, r.mm))
+        SIMDEE_BINOP(neonf, neonb, operator>=, vcgeq_f32(l.mm, r.mm))
+        SIMDEE_BINOP(neonf, neonb, operator==, vceqq_f32(l.mm, r.mm))
+        SIMDEE_BINOP(neonf, neonb, operator!=, vmvnq_u32(vceqq_f32(l.mm, r.mm)))
 
-        SIMDEE_UNOP(neonf, neonf, operator-, vnegq_f32(l.mm));
-        SIMDEE_BINOP(neonf, neonf, operator+, vaddq_f32(l.mm, r.mm));
-        SIMDEE_BINOP(neonf, neonf, operator-, vsubq_f32(l.mm, r.mm));
-        SIMDEE_BINOP(neonf, neonf, operator*, vmulq_f32(l.mm, r.mm));
+        SIMDEE_UNOP(neonf, neonf, operator-, vnegq_f32(l.mm))
+        SIMDEE_BINOP(neonf, neonf, operator+, vaddq_f32(l.mm, r.mm))
+        SIMDEE_BINOP(neonf, neonf, operator-, vsubq_f32(l.mm, r.mm))
+        SIMDEE_BINOP(neonf, neonf, operator*, vmulq_f32(l.mm, r.mm))
 
         inline friend const neonf operator/(const neonf& l, const neonf& r) {
             neonf res = vmovq_n_f32(0);
@@ -212,8 +210,8 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
             return res;
         }
 
-        SIMDEE_BINOP(neonf, neonf, min, vminq_f32(l.mm, r.mm));
-        SIMDEE_BINOP(neonf, neonf, max, vmaxq_f32(l.mm, r.mm));
+        SIMDEE_BINOP(neonf, neonf, min, vminq_f32(l.mm, r.mm))
+        SIMDEE_BINOP(neonf, neonf, max, vmaxq_f32(l.mm, r.mm))
 
         inline friend const neonf sqrt(const neonf& l) {
             neonf res = vmovq_n_f32(0);
@@ -224,64 +222,60 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
             return res;
         }
 
-        SIMDEE_UNOP(neonf, neonf, rsqrt, vrsqrteq_f32(l.mm));
-        SIMDEE_UNOP(neonf, neonf, rcp, vrecpeq_f32(l.mm));
-        SIMDEE_UNOP(neonf, neonf, abs, vabsq_f32(l.mm));
+        SIMDEE_UNOP(neonf, neonf, rsqrt, vrsqrteq_f32(l.mm))
+        SIMDEE_UNOP(neonf, neonf, rcp, vrecpeq_f32(l.mm))
+        SIMDEE_UNOP(neonf, neonf, abs, vabsq_f32(l.mm))
     };
 
     struct neonu final : neon_base<neonu> {
-        using neon_base::neon_base;
-        SIMDEE_TRIVIAL_TYPE(neonu);
-        SIMDEE_NEON_COMMON(neonu, u32, uint32_t);
+        SIMDEE_NEON_COMMON(neonu, u32, uint32_t)
         SIMDEE_INL explicit neonu(const neonb&);
         SIMDEE_INL explicit neonu(const neons&);
 
 #if SIMDEE_NEED_INT
-        SIMDEE_BINOP(neonu, neonb, operator<, vcltq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonb, operator>, vcgtq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonb, operator<=, vcleq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonb, operator>=, vcgeq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonb, operator==, vceqq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonb, operator!=, vmvnq_u32(vceqq_u32(l.mm, r.mm)));
-        SIMDEE_BINOP(neonu, neonu, operator&, vandq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonu, operator|, vorrq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonu, operator^, veorq_u32(l.mm, r.mm));
+        SIMDEE_BINOP(neonu, neonb, operator<, vcltq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonb, operator>, vcgtq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonb, operator<=, vcleq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonb, operator>=, vcgeq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonb, operator==, vceqq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonb, operator!=, vmvnq_u32(vceqq_u32(l.mm, r.mm)))
+        SIMDEE_BINOP(neonu, neonu, operator&, vandq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonu, operator|, vorrq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonu, operator^, veorq_u32(l.mm, r.mm))
         SIMDEE_UNOP(neonu, neonu, operator~, vmvnq_u32(l.mm));
         SIMDEE_UNOP(neonu, neonu, operator-,
-                    vreinterpretq_u32_s32(vnegq_s32(vreinterpretq_s32_u32(l.mm))));
-        SIMDEE_BINOP(neonu, neonu, operator+, vaddq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonu, operator-, vsubq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonu, operator*, vmulq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonu, min, vminq_u32(l.mm, r.mm));
-        SIMDEE_BINOP(neonu, neonu, max, vmaxq_u32(l.mm, r.mm));
+                    vreinterpretq_u32_s32(vnegq_s32(vreinterpretq_s32_u32(l.mm))))
+        SIMDEE_BINOP(neonu, neonu, operator+, vaddq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonu, operator-, vsubq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonu, operator*, vmulq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonu, min, vminq_u32(l.mm, r.mm))
+        SIMDEE_BINOP(neonu, neonu, max, vmaxq_u32(l.mm, r.mm))
 #endif
     };
 
     struct neons final : neon_base<neons> {
-        using neon_base::neon_base;
-        SIMDEE_TRIVIAL_TYPE(neons);
-        SIMDEE_NEON_COMMON(neons, s32, int32_t);
+        SIMDEE_NEON_COMMON(neons, s32, int32_t)
         SIMDEE_INL explicit neons(const neonf&);
         SIMDEE_INL explicit neons(const neonu&);
 
 #if SIMDEE_NEED_INT
-        SIMDEE_BINOP(neons, neonb, operator<, vcltq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neonb, operator>, vcgtq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neonb, operator<=, vcleq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neonb, operator>=, vcgeq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neonb, operator==, vceqq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neonb, operator!=, vmvnq_u32(vceqq_s32(l.mm, r.mm)));
-        SIMDEE_BINOP(neons, neons, operator&, vandq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neons, operator|, vorrq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neons, operator^, veorq_s32(l.mm, r.mm));
-        SIMDEE_UNOP(neons, neons, operator~, vmvnq_s32(l.mm));
-        SIMDEE_UNOP(neons, neons, operator-, vnegq_s32(l.mm));
-        SIMDEE_BINOP(neons, neons, operator+, vaddq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neons, operator-, vsubq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neons, operator*, vmulq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neons, min, vminq_s32(l.mm, r.mm));
-        SIMDEE_BINOP(neons, neons, max, vmaxq_s32(l.mm, r.mm));
-        SIMDEE_UNOP(neons, neons, abs, vabsq_s32(l.mm));
+        SIMDEE_BINOP(neons, neonb, operator<, vcltq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neonb, operator>, vcgtq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neonb, operator<=, vcleq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neonb, operator>=, vcgeq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neonb, operator==, vceqq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neonb, operator!=, vmvnq_u32(vceqq_s32(l.mm, r.mm)))
+        SIMDEE_BINOP(neons, neons, operator&, vandq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neons, operator|, vorrq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neons, operator^, veorq_s32(l.mm, r.mm))
+        SIMDEE_UNOP(neons, neons, operator~, vmvnq_s32(l.mm))
+        SIMDEE_UNOP(neons, neons, operator-, vnegq_s32(l.mm))
+        SIMDEE_BINOP(neons, neons, operator+, vaddq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neons, operator-, vsubq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neons, operator*, vmulq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neons, min, vminq_s32(l.mm, r.mm))
+        SIMDEE_BINOP(neons, neons, max, vmaxq_s32(l.mm, r.mm))
+        SIMDEE_UNOP(neons, neons, abs, vabsq_s32(l.mm))
 #endif
     };
 

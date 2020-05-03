@@ -1,5 +1,4 @@
-#include "catch.hpp"
-
+#include <catch2/catch.hpp>
 #include <simdee/common/casts.hpp>
 
 template <typename T>

@@ -1,4 +1,4 @@
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 #include <simdee/simd_vectors/dum.hpp>
 #include <simdee/simdee.hpp>
 

@@ -1,4 +1,4 @@
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 #include <simdee/simdee.hpp>
 
 using B = sd::vec8b;

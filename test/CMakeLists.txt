@@ -53,7 +53,7 @@ add_executable(simdee-test
     ${LIB_FILES_SIMD_VECTORS}
     ${LIB_FILES_UTIL}
 )
-target_link_libraries(simdee-test PRIVATE simdee simdee-warnings)
+target_link_libraries(simdee-test PRIVATE simdee simdee-warnings Catch2::Catch2)
 
 # Enable fast Catch compilation
 target_compile_definitions(simdee-test PRIVATE "CATCH_CONFIG_FAST_COMPILE")

@@ -52,6 +52,8 @@ target_set_strict_warnings(simdee-warnings)
 # Build executables
 if(SIMDEE_BUILD_TESTS)
     enable_testing()
+    set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH})
+    find_package(Catch2 REQUIRED)
     add_subdirectory(test)
 endif()
 if(SIMDEE_BUILD_BENCHMARKS)

@@ -1,4 +1,4 @@
-#include "catch.hpp"
+#include <catch2/catch.hpp>
 #include <simdee/common/expr.hpp>
 
 TEST_CASE("expr::zero", "[expr]") {

@@ -342,7 +342,9 @@ namespace sd {
     namespace impl {
         template <typename T>
         struct sse_special_traits {
-            SIMDEE_INL static T andnot(T l, T r) { return _mm_andnot_ps(r.data(), l.data()); }
+            SIMDEE_INL static T andnot(const T& l, const T& r) {
+                return _mm_andnot_ps(r.data(), l.data());
+            }
         };
 
         template <typename T>

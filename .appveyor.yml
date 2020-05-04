@@ -1,0 +1,27 @@
+version: '{branch}/{build}'
+image:
+  - Visual Studio 2019
+build_script:
+  - ps: |
+      if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2015") {
+        $compilerVersion = "14"
+        $cmakeGenerator = "Visual Studio 14 2015"
+      }
+      if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2017") {
+        $compilerVersion = "15"
+        $cmakeGenerator = "Visual Studio 15 2017"
+      }
+      if ($env:APPVEYOR_BUILD_WORKER_IMAGE -eq "Visual Studio 2019") {
+        $compilerVersion = "16"
+        $cmakeGenerator = "Visual Studio 16 2019"
+      }
+      $env:PATH += ";C:\Users\appveyor\AppData\Roaming\Python\Scripts"
+      mkdir build
+      cd build
+      pip install --user conan
+      conan remote add catchorg https://api.bintray.com/conan/catchorg/Catch2
+      conan install -s compiler="Visual Studio" -s compiler.version=$compilerVersion -s build_type=Debug ..
+      cmake -G "$cmakeGenerator" -DSIMDEE_BUILD_TESTS:BOOL=ON ..
+      cmake --build . --config "Debug"
+test_script:
+  - cmd: ctest -C Debug

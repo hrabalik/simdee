@@ -49,6 +49,9 @@ include(cmake/CompilerWarnings.cmake)
 add_library(simdee-warnings INTERFACE)
 target_set_strict_warnings(simdee-warnings)
 
+# Add a coverage option for simdee target
+include(cmake/Coverage.cmake)
+
 # Build executables
 if(SIMDEE_BUILD_TESTS)
     enable_testing()

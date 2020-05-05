@@ -7,6 +7,7 @@ jobs:
       env:
         - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
         - LIBCXX=libstdc++11
+        - BLDTYPE=Release
         - PATH="${HOME}/Library/Python/2.7/bin:${PATH}"
     - os: osx
       osx_image: xcode11.2
@@ -14,6 +15,7 @@ jobs:
       env:
         - MATRIX_EVAL=""
         - LIBCXX=libc++
+        - BLDTYPE=Release
         - PATH="${HOME}/Library/Python/2.7/bin:${PATH}"
     - os: linux
       dist: bionic
@@ -21,19 +23,32 @@ jobs:
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
         - LIBCXX=libstdc++11
+        - BLDTYPE=Release
     - os: linux
       dist: bionic
       compiler: clang
       env:
         - MATRIX_EVAL="CC=clang && CXX=clang++"
         - LIBCXX=libstdc++11
+        - BLDTYPE=Release
     - os: linux
       arch: arm64
       dist: bionic
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
         - LIBCXX=libstdc++11
-        - EXTRA_CMAKE="-DSIMDEE_AARCH64:BOOL=ON"
+        - BLDTYPE=Release
+    - os: linux
+      dist: bionic
+      compiler: gcc
+      env:
+        - MATRIX_EVAL="CC=gcc && CXX=g++"
+        - LIBCXX=libstdc++11
+        - BLDTYPE=Debug
+        - EXTRA_CMAKE="-DSIMDEE_ENABLE_COVERAGE:BOOL=ON"
+      after_script:
+        - cd ..
+        - bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov
 
 before_install:
   - eval "${MATRIX_EVAL}"
@@ -43,7 +58,7 @@ script:
   - cd build
   - pip install --user conan
   - conan remote add catchorg https://api.bintray.com/conan/catchorg/Catch2
-  - conan install -s build_type=Release -s compiler.libcxx=${LIBCXX} ..
-  - cmake -DCMAKE_BUILD_TYPE=Release -DSIMDEE_BUILD_TESTS:BOOL=ON ${EXTRA_CMAKE} ..
+  - conan install -s build_type=${BLDTYPE} -s compiler.libcxx=${LIBCXX} ..
+  - cmake -DCMAKE_BUILD_TYPE=${BLDTYPE} -DSIMDEE_BUILD_TESTS:BOOL=ON ${EXTRA_CMAKE} ..
   - cmake --build .
   - ctest

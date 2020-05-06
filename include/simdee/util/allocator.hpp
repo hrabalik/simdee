@@ -4,6 +4,7 @@
 #ifndef SIMDEE_UTIL_MALLOC_HPP
 #define SIMDEE_UTIL_MALLOC_HPP
 
+#include "inline.hpp"
 #include "noexcept.hpp"
 #include <cstdint>
 #include <cstdlib>
@@ -14,6 +15,7 @@
 namespace sd {
 
     namespace detail {
+
 #if defined(__GLIBCXX__) && (__GLIBCXX__ < 20150422 || __GLIBCXX__ == 20150623 ||                  \
                              __GLIBCXX__ == 20150626 || __GLIBCXX__ == 20160803)
         // type_traits is buggered in libstdc++ up until GCC 5
@@ -26,8 +28,6 @@ namespace sd {
 
         inline constexpr bool is_pow2(std::size_t x) { return x && (x & (x - 1)) == 0; }
 
-        template <typename T, std::size_t Align>
-        struct aligned_allocator;
         template <typename T, std::size_t Align = alignof(T),
                   bool Switch = (Align > alignof(double))>
         struct alloc;
@@ -36,8 +36,6 @@ namespace sd {
         struct alloc<T, Align, false> {
             static T* malloc(std::size_t bytes) { return static_cast<T*>(std::malloc(bytes)); }
             static void free(T* ptr) { std::free(ptr); }
-            using allocator = std::allocator<T>;
-            using deleter = std::default_delete<T>;
         };
 
         template <typename T, std::size_t Align>
@@ -46,7 +44,7 @@ namespace sd {
             static_assert(Align <= 128, "alignment is too large");
             static_assert(Align > alignof(double), "alignment is too small -- use malloc");
 
-            static T* malloc(std::size_t bytes) {
+            SIMDEE_INL static T* malloc(std::size_t bytes) {
                 auto orig = uintptr_t(std::malloc(bytes + Align));
                 if (orig == 0) return nullptr;
                 auto aligned = (orig + Align) & ~(Align - 1);
@@ -55,80 +53,67 @@ namespace sd {
                 return reinterpret_cast<T*>(aligned);
             }
 
-            static void free(T* aligned) {
+            SIMDEE_INL static void free(T* aligned) {
                 if (aligned == nullptr) return;
                 auto offset = (reinterpret_cast<uint8_t*>(aligned))[-1];
                 auto orig = uintptr_t(aligned) - offset;
                 std::free(reinterpret_cast<void*>(orig));
             }
-
-            using allocator = aligned_allocator<T, Align>;
-
-            struct deleter {
-                template <typename S>
-                void operator()(S* ptr) {
-                    free(ptr);
-                }
-            };
         };
 
-        template <typename T, std::size_t Align>
-        struct aligned_allocator {
-            using value_type = T;
-            using alloc_t = alloc<T, Align>;
+    } // namespace detail
 
-            aligned_allocator() = default;
+    template <typename T>
+    struct allocator {
+        static_assert(detail::is_trivially_default_constructible<T>::value,
+                      "sd::allocator is for trivially constructible types only");
+        static_assert(std::is_trivially_destructible<T>::value,
+                      "sd::allocator is for trivially destructible types only");
 
-            template <typename S>
-            aligned_allocator(const aligned_allocator<S, Align>&) {}
+        using value_type = T;
+        using alloc_t = detail::alloc<T>;
 
-            T* allocate(std::size_t count) const SIMDEE_NOEXCEPT {
-                return alloc_t::malloc(sizeof(T) * count);
-            }
+        allocator() = default;
 
-            void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT { alloc_t::free(ptr); }
+        template <typename S>
+        allocator(const allocator<S>&) {}
 
-            void destroy(T* ptr) const SIMDEE_NOEXCEPT_IF(std::is_nothrow_destructible<T>::value) {
-                if (!std::is_trivially_destructible<T>::value) {
-                    ptr->~T();
-                } else {
-                    no_op(ptr); // just to suppress MSVC warning "ptr not referenced"
-                }
-            }
+        SIMDEE_INL T* allocate(std::size_t count) const SIMDEE_NOEXCEPT {
+            return alloc_t::malloc(sizeof(T) * count);
+        }
 
-            static void no_op(T*) {}
+        SIMDEE_INL void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
+            alloc_t::free(ptr);
+        }
 
-            void construct(T* ptr) const
-                SIMDEE_NOEXCEPT_IF(std::is_nothrow_constructible<T>::value) {
-                if (!is_trivially_default_constructible<T>::value) { new (ptr) T; }
-            }
+        SIMDEE_INL void destroy(T*) const SIMDEE_NOEXCEPT {}
 
-            template <typename A1, typename... A>
-            void construct(T* ptr, A1&& a1, A&&... a2) const {
-                new (ptr) T(std::forward<A1>(a1), std::forward<A...>(a2)...);
-            }
+        SIMDEE_INL void construct(T*) const SIMDEE_NOEXCEPT {}
 
-            // default rebind should do just this, doesn't seem to work in MSVC though
-            template <typename S>
-            struct rebind {
-                using other = aligned_allocator<S, Align>;
-            };
+        // default rebind should do just this, doesn't seem to work in MSVC though
+        template <typename S>
+        struct rebind {
+            using other = allocator<S>;
         };
+    };
 
-        template <typename T, typename U, std::size_t TS, std::size_t US>
-        inline bool operator==(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) {
-            return true;
-        }
-        template <typename T, typename U, std::size_t TS, std::size_t US>
-        inline bool operator!=(const aligned_allocator<T, TS>&, const aligned_allocator<U, US>&) {
-            return false;
-        }
+    template <typename T, typename U>
+    inline bool operator==(const allocator<T>&, const allocator<U>&) {
+        return true;
+    }
+    template <typename T, typename U>
+    inline bool operator!=(const allocator<T>&, const allocator<U>&) {
+        return false;
     }
 
-    template <typename T, std::size_t Align = alignof(T)>
-    using allocator = typename detail::alloc<T, Align>::allocator;
-    template <typename T, std::size_t Align = alignof(T)>
-    using deleter = typename detail::alloc<T, Align>::deleter;
-}
+    template <typename T>
+    struct deleter {
+        template <typename S>
+        SIMDEE_INL void operator()(S* ptr) {
+            detail::alloc<T>::free(ptr);
+        }
+    };
+
+} // namespace sd
 
 #endif // SIMDEE_UTIL_MALLOC_HPP

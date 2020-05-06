@@ -4,6 +4,7 @@
 #include <vector>
 
 struct alignas(64) T {
+    T() = default;
     T(unsigned int val) : v1(val), v2(val) {}
     T(const T&) = default;
     T& operator=(const T&) = default;

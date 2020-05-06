@@ -45,17 +45,17 @@ int main() {
     struct RayBoxData1 {
         float minx, miny, minz, maxx, maxy, maxz;
     };
-    struct RayBoxData8 {
+    struct alignas(__m256) RayBoxData8 {
         float minx[8], miny[8], minz[8], maxx[8], maxy[8], maxz[8];
     };
-    struct RayBoxData8S {
+    struct alignas(__m256) RayBoxData8S {
         sd::avxf::storage_t minx, miny, minz, maxx, maxy, maxz;
     };
     const std::size_t dataSize8 = 1024 * 1024;
     const std::size_t dataSize1 = 8 * dataSize8;
-    using vec8 = std::vector<RayBoxData8, sd::allocator<RayBoxData8, sizeof(__m256)>>;
+    using vec8 = std::vector<RayBoxData8, sd::allocator<RayBoxData8>>;
     using vec1 = std::vector<RayBoxData1>;
-    using vec8S = std::vector<RayBoxData8S, sd::allocator<RayBoxData8, sizeof(__m256)>>;
+    using vec8S = std::vector<RayBoxData8S, sd::allocator<RayBoxData8S>>;
     vec8 data8(dataSize8);
     vec1 data1(dataSize1);
     const vec8S& data8S = reinterpret_cast<const vec8S&>(data8);

@@ -52,6 +52,9 @@ target_set_strict_warnings(simdee-warnings)
 # Add a coverage option for simdee target
 include(cmake/Coverage.cmake)
 
+# Add sanitizer options for simdee target
+include(cmake/Sanitizers.cmake)
+
 # Build executables
 if(SIMDEE_BUILD_TESTS)
     enable_testing()

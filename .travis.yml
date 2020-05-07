@@ -45,7 +45,7 @@ jobs:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
         - LIBCXX=libstdc++11
         - BLDTYPE=Debug
-        - EXTRA_CMAKE="-DSIMDEE_ENABLE_COVERAGE:BOOL=ON"
+        - EXTRA_CMAKE="-DSIMDEE_ENABLE_COVERAGE:BOOL=ON -DSIMDEE_INSTRUCTION_SET=AVX2"
       before_script:
         - pip install --user cpp-coveralls
       after_success:

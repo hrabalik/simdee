@@ -46,9 +46,12 @@ jobs:
         - LIBCXX=libstdc++11
         - BLDTYPE=Debug
         - EXTRA_CMAKE="-DSIMDEE_ENABLE_COVERAGE:BOOL=ON"
-      after_script:
+      before_script:
+        - pip install --user cpp-coveralls
+      after_success:
         - cd ..
         - bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov
+        - coveralls --exclude bench --exclude test --gcov-options '\-lp'
 
 before_install:
   - eval "${MATRIX_EVAL}"

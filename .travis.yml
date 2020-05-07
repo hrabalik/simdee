@@ -23,7 +23,8 @@ jobs:
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
         - LIBCXX=libstdc++11
-        - BLDTYPE=Release
+        - BLDTYPE=Debug
+        - EXTRA_CMAKE="-DSIMDEE_ENABLE_SANITIZER_UNDEFINED:BOOL=ON"
     - os: linux
       dist: bionic
       compiler: clang
@@ -37,7 +38,8 @@ jobs:
       env:
         - MATRIX_EVAL="CC=gcc && CXX=g++"
         - LIBCXX=libstdc++11
-        - BLDTYPE=Release
+        - BLDTYPE=Debug
+        - EXTRA_CMAKE="-DSIMDEE_ENABLE_SANITIZER_ADDRESS:BOOL=ON"
     - os: linux
       dist: bionic
       compiler: gcc
@@ -64,4 +66,4 @@ script:
   - conan install -s build_type=${BLDTYPE} -s compiler.libcxx=${LIBCXX} ..
   - cmake -DCMAKE_BUILD_TYPE=${BLDTYPE} -DSIMDEE_BUILD_TESTS:BOOL=ON ${EXTRA_CMAKE} ..
   - cmake --build .
-  - ctest
+  - test/simdee-test # running the test executable directly provides sanitizer output

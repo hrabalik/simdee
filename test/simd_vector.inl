@@ -1118,99 +1118,102 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
     SECTION("on bools") {
         using scalar_t = B::scalar_t;
         B a = bufAB;
-        scalar_t vr, e;
+        scalar_t e;
+        B::storage_t v;
 
         SECTION("log and") {
             auto and_ = [](scalar_t l, scalar_t r) { return l && r; };
             e = std::accumulate(begin(bufAB), end(bufAB), true, and_);
-            vr = first_scalar(reduce(a, sd::op_logand{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_logand{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
         SECTION("log or") {
             auto or_ = [](scalar_t l, scalar_t r) { return l || r; };
             e = std::accumulate(begin(bufAB), end(bufAB), false, or_);
-            vr = first_scalar(reduce(a, sd::op_logor{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_logor{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
     }
     SECTION("on floats") {
         using scalar_t = F::scalar_t;
         F a = bufAF;
-        scalar_t vr, e;
+        scalar_t e;
+        F::storage_t v;
 
         SECTION("max") {
             constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
             auto max_ = [](scalar_t l, scalar_t r) { return std::max(l, r); };
             e = std::accumulate(begin(bufAF), end(bufAF), -inf, max_);
-            vr = first_scalar(reduce(a, sd::op_max{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_max{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
         SECTION("min") {
             constexpr scalar_t inf = std::numeric_limits<scalar_t>::infinity();
             auto min_ = [](scalar_t l, scalar_t r) { return std::min(l, r); };
             e = std::accumulate(begin(bufAF), end(bufAF), inf, min_);
-            vr = first_scalar(reduce(a, sd::op_min{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_min{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
         SECTION("sum") {
             e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(0));
-            vr = first_scalar(reduce(a, sd::op_add{}));
-            REQUIRE(vr == Approx(e));
+            v = reduce(a, sd::op_add{});
+            for (scalar_t vr : v) { REQUIRE(vr == Approx(e)); }
         }
         SECTION("product") {
             auto prod = std::multiplies<scalar_t>();
             e = std::accumulate(begin(bufAF), end(bufAF), scalar_t(1), prod);
-            vr = first_scalar(reduce(a, sd::op_mul{}));
-            REQUIRE(vr == Approx(e));
+            v = reduce(a, sd::op_mul{});
+            for (scalar_t vr : v) { REQUIRE(vr == Approx(e)); }
         }
     }
     SECTION("on uints") {
         using scalar_t = U::scalar_t;
         U a = bufAU;
-        scalar_t vr, e;
+        scalar_t e;
+        U::storage_t v;
 
         SECTION("bit and") {
             auto and_ = [](scalar_t l, scalar_t r) { return l & r; };
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(-1), and_);
-            vr = first_scalar(reduce(a, sd::op_bitand{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_bitand{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
         SECTION("bit or") {
             auto or_ = [](scalar_t l, scalar_t r) { return l | r; };
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(0), or_);
-            vr = first_scalar(reduce(a, sd::op_bitor{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_bitor{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
         SECTION("bit xor") {
             auto or_ = [](scalar_t l, scalar_t r) { return l ^ r; };
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(0), or_);
-            vr = first_scalar(reduce(a, sd::op_bitxor{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_bitxor{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
         SECTION("sum") {
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(0));
-            vr = first_scalar(reduce(a, sd::op_add{}));
-            REQUIRE(vr == Approx(e));
+            v = reduce(a, sd::op_add{});
+            for (scalar_t vr : v) { REQUIRE(vr == Approx(e)); }
         }
         SECTION("product") {
             auto prod = std::multiplies<scalar_t>();
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(1), prod);
-            vr = first_scalar(reduce(a, sd::op_mul{}));
-            REQUIRE(vr == Approx(e));
+            v = reduce(a, sd::op_mul{});
+            for (scalar_t vr : v) { REQUIRE(vr == Approx(e)); }
         }
         SECTION("min") {
             constexpr scalar_t seed = std::numeric_limits<scalar_t>::max();
             auto min_ = [](scalar_t l, scalar_t r) { return std::min(l, r); };
             e = std::accumulate(begin(bufAU), end(bufAU), seed, min_);
-            vr = first_scalar(reduce(a, sd::op_min{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_min{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
         SECTION("max") {
             constexpr scalar_t seed = std::numeric_limits<scalar_t>::min();
             auto max_ = [](scalar_t l, scalar_t r) { return std::max(l, r); };
             e = std::accumulate(begin(bufAU), end(bufAU), seed, max_);
-            vr = first_scalar(reduce(a, sd::op_max{}));
-            REQUIRE(vr == e);
+            v = reduce(a, sd::op_max{});
+            for (scalar_t vr : v) { REQUIRE(vr == e); }
         }
     }
 }

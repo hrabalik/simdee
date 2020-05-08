@@ -9,6 +9,7 @@ set(TEST_FILES
     simd_vector.inl
     simd_vector_dual.cpp
     simd_vector_dum.cpp
+    simd_vector_dum4.cpp
     simd_vector_vec4.cpp
     simd_vector_vec8.cpp
     storage.cpp

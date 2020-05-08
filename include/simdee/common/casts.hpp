@@ -5,12 +5,19 @@
 #define SIMDEE_COMMON_CASTS_HPP
 
 #include "../util/inline.hpp"
-#include "../util/integral.hpp"
+#include "../util/select.hpp"
 #include <cstring>
 #include <type_traits>
 
 namespace sd {
+
     namespace impl {
+
+        template <typename T>
+        struct is_extended_arithmetic_type
+            : std::integral_constant<bool, false || std::is_arithmetic<T>::value ||
+                                               is_bool_type<T>::value> {};
+
         template <typename T>
         struct util_b {
             using source_t = typename std::decay<T>::type;
@@ -42,7 +49,8 @@ namespace sd {
             static_assert(is_extended_arithmetic_type<source_t>::value,
                           "as_s(): source isn't arithmetic");
         };
-    }
+
+    } // namespace impl
 
     template <typename T>
     SIMDEE_INL constexpr typename impl::util_b<T>::target_t cast_b(T r) {
@@ -96,7 +104,9 @@ namespace sd {
             return dirty::cast<typename impl::util_s<T>::source_t,
                                typename impl::util_s<T>::target_t>(r);
         }
-    }
-}
+
+    } // namespace dirty
+
+} // namespace sd
 
 #endif // SIMDEE_COMMON_CASTS_HPP

@@ -39,9 +39,10 @@ set(LIB_FILES_SIMD_VECTORS
 set(LIB_FILES_UTIL
     "../include/simdee/util/allocator.hpp"
     "../include/simdee/util/bitfiddle.hpp"
+    "../include/simdee/util/bool_t.hpp"
     "../include/simdee/util/inline.hpp"
-    "../include/simdee/util/integral.hpp"
     "../include/simdee/util/macros.hpp"
+    "../include/simdee/util/select.hpp"
 )
 
 # Create test runner, add library files to it

@@ -57,7 +57,7 @@ namespace sd {
 
             template <typename Target>
             SIMDEE_INL constexpr Target to() const {
-                static_assert(is_extended_arithmetic_type<Target>::value,
+                static_assert(impl::is_extended_arithmetic_type<Target>::value,
                               "init::to<Target>():: Target must be an arithmetic type");
                 return self().template to<Target>();
             }

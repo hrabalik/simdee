@@ -5,7 +5,6 @@
 #define SIMDEE_UTIL_MALLOC_HPP
 
 #include "inline.hpp"
-#include "noexcept.hpp"
 #include <cstddef>
 #include <cstdint>
 #include <cstdlib>
@@ -25,10 +24,10 @@ namespace sd {
 
         template <typename T, std::size_t Align>
         struct alloc<T, Align, false> {
-            SIMDEE_INL static T* malloc(std::size_t bytes) SIMDEE_NOEXCEPT {
+            SIMDEE_INL static T* malloc(std::size_t bytes) noexcept {
                 return static_cast<T*>(std::malloc(bytes));
             }
-            SIMDEE_INL static void free(T* ptr) SIMDEE_NOEXCEPT { std::free(ptr); }
+            SIMDEE_INL static void free(T* ptr) noexcept { std::free(ptr); }
         };
 
         template <typename T, std::size_t Align>
@@ -38,7 +37,7 @@ namespace sd {
             static_assert(Align > alignof(std::max_align_t),
                           "alignment is too small -- use malloc");
 
-            SIMDEE_INL static T* malloc(std::size_t bytes) SIMDEE_NOEXCEPT {
+            SIMDEE_INL static T* malloc(std::size_t bytes) noexcept {
                 auto orig = uintptr_t(std::malloc(bytes + Align));
                 if (orig == 0) return nullptr;
                 auto aligned = (orig + Align) & ~(Align - 1);
@@ -47,7 +46,7 @@ namespace sd {
                 return reinterpret_cast<T*>(aligned);
             }
 
-            SIMDEE_INL static void free(T* aligned) SIMDEE_NOEXCEPT {
+            SIMDEE_INL static void free(T* aligned) noexcept {
                 if (aligned == nullptr) return;
                 auto offset = (reinterpret_cast<uint8_t*>(aligned))[-1];
                 auto orig = uintptr_t(aligned) - offset;
@@ -73,7 +72,7 @@ namespace sd {
             return res;
         }
 
-        SIMDEE_INL void deallocate(T* ptr, std::size_t) const SIMDEE_NOEXCEPT {
+        SIMDEE_INL void deallocate(T* ptr, std::size_t) const noexcept {
             detail::alloc<T>::free(ptr);
         }
     };

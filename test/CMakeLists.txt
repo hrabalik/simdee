@@ -42,7 +42,6 @@ set(LIB_FILES_UTIL
     "../include/simdee/util/inline.hpp"
     "../include/simdee/util/integral.hpp"
     "../include/simdee/util/macros.hpp"
-    "../include/simdee/util/noexcept.hpp"
 )
 
 # Create test runner, add library files to it

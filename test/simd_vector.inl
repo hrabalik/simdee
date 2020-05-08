@@ -1169,16 +1169,22 @@ TEST_CASE(SIMD_TYPE " horizontal operations", SIMD_TEST_TAG) {
         U a = bufAU;
         scalar_t vr, e;
 
-        SECTION("log and") {
+        SECTION("bit and") {
             auto and_ = [](scalar_t l, scalar_t r) { return l & r; };
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(-1), and_);
             vr = first_scalar(reduce(a, sd::op_bitand{}));
             REQUIRE(vr == e);
         }
-        SECTION("log or") {
+        SECTION("bit or") {
             auto or_ = [](scalar_t l, scalar_t r) { return l | r; };
             e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(0), or_);
             vr = first_scalar(reduce(a, sd::op_bitor{}));
+            REQUIRE(vr == e);
+        }
+        SECTION("bit xor") {
+            auto or_ = [](scalar_t l, scalar_t r) { return l ^ r; };
+            e = std::accumulate(begin(bufAU), end(bufAU), scalar_t(0), or_);
+            vr = first_scalar(reduce(a, sd::op_bitxor{}));
             REQUIRE(vr == e);
         }
         SECTION("sum") {

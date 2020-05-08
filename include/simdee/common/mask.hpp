@@ -4,7 +4,7 @@
 #ifndef SIMDEE_COMMON_MASK_HPP
 #define SIMDEE_COMMON_MASK_HPP
 
-#include "../util/bitfiddle.hpp"
+#include "../util/bit_iterator.hpp"
 #include "../util/inline.hpp"
 #include <cstdint>
 

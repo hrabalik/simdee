@@ -1,6 +1,7 @@
 # List test files
 set(TEST_FILES
     allocator.cpp
+    bit_iterator.cpp
     casts.cpp
     deferred_not.cpp
     expr.cpp
@@ -39,7 +40,7 @@ set(LIB_FILES_SIMD_VECTORS
 )
 set(LIB_FILES_UTIL
     "../include/simdee/util/allocator.hpp"
-    "../include/simdee/util/bitfiddle.hpp"
+    "../include/simdee/util/bit_iterator.hpp"
     "../include/simdee/util/bool_t.hpp"
     "../include/simdee/util/inline.hpp"
     "../include/simdee/util/macros.hpp"

@@ -10,7 +10,6 @@
 #include "../common/init.hpp"
 #include "../common/mask.hpp"
 #include "../common/storage.hpp"
-#include "../util/bitfiddle.hpp"
 #include "../util/inline.hpp"
 #include "../util/macros.hpp"
 #include <array>

@@ -2,13 +2,11 @@
 #include <simdee/simdee.hpp>
 #include <type_traits>
 
-#if SIMDEE_SSE2
-
-using B = sd::sseb;
+using B = sd::vec4b;
 const B::storage_t dataAB{true, false, true, true};
 const B::storage_t dataBB{false, true, false, true};
 
-using U = sd::sseu;
+using U = sd::vec4u;
 const U::storage_t dataAU{1753029375U, 1117080442U, 3817141237U, 3761735248U};
 const U::storage_t dataBU{1679702461U, 2102346647U, 480083363U, 3761735248U};
 
@@ -234,5 +232,3 @@ TEST_CASE("deferred_bitnot methods", "[deferred_not]") {
         REQUIRE(res_ua == res_nua);
     }
 }
-
-#endif

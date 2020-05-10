@@ -14,6 +14,7 @@
 #include <cmath>
 
 namespace sd {
+
     namespace impl {
         SIMDEE_INL uint32x4_t neon_load(const bool32_t* ptr) {
             return vld1q_u32(reinterpret_cast<const uint32_t*>(ptr));
@@ -33,6 +34,9 @@ namespace sd {
     struct neonf;
     struct neonu;
     struct neons;
+    using not_neonb = expr::deferred_lognot<neonb>;
+    using not_neonu = expr::deferred_bitnot<neonu>;
+    using not_neons = expr::deferred_bitnot<neons>;
 
     template <>
     struct is_simd_vector<neonb> : std::integral_constant<bool, true> {};
@@ -159,12 +163,13 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
 
     struct neonb final : neon_base<neonb> {
         SIMDEE_NEON_COMMON(neonb, u32, uint32_t)
+        SIMDEE_CTOR(neonb, not_neonb, mm = vmvnq_u32(r.neg.mm))
 
         SIMDEE_BINOP(neonb, neonb, operator==, vceqq_u32(l.mm, r.mm))
         SIMDEE_BINOP(neonb, neonb, operator!=, vmvnq_u32(vceqq_u32(l.mm, r.mm)))
         SIMDEE_BINOP(neonb, neonb, operator&&, vandq_u32(l.mm, r.mm))
         SIMDEE_BINOP(neonb, neonb, operator||, vorrq_u32(l.mm, r.mm))
-        SIMDEE_UNOP(neonb, neonb, operator!, vmvnq_u32(l.mm))
+        SIMDEE_UNOP(neonb, not_neonb, operator!, not_neonb(l))
 
 #if SIMDEE_ARM64
         friend const mask_t mask(const neonb& l) {
@@ -231,6 +236,7 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
         SIMDEE_NEON_COMMON(neonu, u32, uint32_t)
         SIMDEE_INL explicit neonu(const neonb&);
         SIMDEE_INL explicit neonu(const neons&);
+        SIMDEE_CTOR(neonu, not_neonu, mm = vmvnq_u32(r.neg.mm))
 
 #if SIMDEE_NEED_INT
         SIMDEE_BINOP(neonu, neonb, operator<, vcltq_u32(l.mm, r.mm))
@@ -242,7 +248,7 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
         SIMDEE_BINOP(neonu, neonu, operator&, vandq_u32(l.mm, r.mm))
         SIMDEE_BINOP(neonu, neonu, operator|, vorrq_u32(l.mm, r.mm))
         SIMDEE_BINOP(neonu, neonu, operator^, veorq_u32(l.mm, r.mm))
-        SIMDEE_UNOP(neonu, neonu, operator~, vmvnq_u32(l.mm));
+        SIMDEE_UNOP(neonu, not_neonu, operator~, not_neonu(l));
         SIMDEE_UNOP(neonu, neonu, operator-,
                     vreinterpretq_u32_s32(vnegq_s32(vreinterpretq_s32_u32(l.mm))))
         SIMDEE_BINOP(neonu, neonu, operator+, vaddq_u32(l.mm, r.mm))
@@ -257,6 +263,7 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
         SIMDEE_NEON_COMMON(neons, s32, int32_t)
         SIMDEE_INL explicit neons(const neonf&);
         SIMDEE_INL explicit neons(const neonu&);
+        SIMDEE_CTOR(neons, not_neons, mm = vmvnq_s32(r.neg.mm))
 
 #if SIMDEE_NEED_INT
         SIMDEE_BINOP(neons, neonb, operator<, vcltq_s32(l.mm, r.mm))
@@ -268,7 +275,7 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
         SIMDEE_BINOP(neons, neons, operator&, vandq_s32(l.mm, r.mm))
         SIMDEE_BINOP(neons, neons, operator|, vorrq_s32(l.mm, r.mm))
         SIMDEE_BINOP(neons, neons, operator^, veorq_s32(l.mm, r.mm))
-        SIMDEE_UNOP(neons, neons, operator~, vmvnq_s32(l.mm))
+        SIMDEE_UNOP(neons, not_neons, operator~, not_neons(l))
         SIMDEE_UNOP(neons, neons, operator-, vnegq_s32(l.mm))
         SIMDEE_BINOP(neons, neons, operator+, vaddq_s32(l.mm, r.mm))
         SIMDEE_BINOP(neons, neons, operator-, vsubq_s32(l.mm, r.mm))
@@ -300,6 +307,40 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
     SIMDEE_INL const neons cond(const neonb& pred, const neons& if_true, const neons& if_false) {
         return vbslq_s32(pred.data(), if_true.data(), if_false.data());
     }
+
+    namespace impl {
+
+        template <typename T>
+        struct special_ops;
+
+        template <typename T>
+        struct neonbu_special_ops {
+            SIMDEE_INL static T andnot(const T& l, const T& r) {
+                return vbicq_u32(l.data(), r.data());
+            }
+            SIMDEE_INL static T ornot(const T& l, const T& r) {
+                return vornq_u32(l.data(), r.data());
+            }
+        };
+
+        template <>
+        struct special_ops<neonb> : neonbu_special_ops<neonb> {};
+
+        template <>
+        struct special_ops<neonu> : neonbu_special_ops<neonu> {};
+
+        template <>
+        struct special_ops<neons> {
+            SIMDEE_INL static neons andnot(const neons& l, const neons& r) {
+                return vbicq_s32(l.data(), r.data());
+            }
+            SIMDEE_INL static neons ornot(const neons& l, const neons& r) {
+                return vornq_s32(l.data(), r.data());
+            }
+        };
+
+    } // namespace impl
+
 } // namespace sd
 
 #endif // SIMDEE_SIMD_TYPES_NEON_HPP

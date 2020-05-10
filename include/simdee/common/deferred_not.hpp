@@ -8,12 +8,14 @@
 #include <type_traits>
 
 namespace sd {
+
     namespace impl {
         template <typename T>
-        struct special_traits;
+        struct special_ops;
     }
 
     namespace expr {
+
         template <typename T>
         struct dont_change_deferred_not {
             template <typename T2>
@@ -98,12 +100,14 @@ namespace sd {
             return l.neg;
         }
         template <typename T>
-        SIMDEE_INL const T operator&(const deferred_bitnot<T>& l, const T& r) {
-            return impl::special_traits<T>::andnot(r, l.neg);
+        SIMDEE_INL auto operator&(const deferred_bitnot<T>& l, const T& r)
+            -> decltype(impl::special_ops<T>::andnot(r, l.neg)) {
+            return impl::special_ops<T>::andnot(r, l.neg);
         }
         template <typename T>
-        SIMDEE_INL const T operator&(const T& l, const deferred_bitnot<T>& r) {
-            return impl::special_traits<T>::andnot(l, r.neg);
+        SIMDEE_INL auto operator&(const T& l, const deferred_bitnot<T>& r)
+            -> decltype(impl::special_ops<T>::andnot(l, r.neg)) {
+            return impl::special_ops<T>::andnot(l, r.neg);
         }
         template <typename T>
         SIMDEE_INL const deferred_bitnot<T> operator&(const deferred_bitnot<T>& l,
@@ -111,12 +115,14 @@ namespace sd {
             return deferred_bitnot<T>(l.neg | r.neg);
         }
         template <typename T>
-        SIMDEE_INL const deferred_bitnot<T> operator|(const deferred_bitnot<T>& l, const T& r) {
-            return deferred_bitnot<T>(impl::special_traits<T>::andnot(l.neg, r));
+        SIMDEE_INL auto operator|(const deferred_bitnot<T>& l, const T& r)
+            -> decltype(impl::special_ops<T>::ornot(r, l.neg)) {
+            return impl::special_ops<T>::ornot(r, l.neg);
         }
         template <typename T>
-        SIMDEE_INL const deferred_bitnot<T> operator|(const T& l, const deferred_bitnot<T>& r) {
-            return deferred_bitnot<T>(impl::special_traits<T>::andnot(r.neg, l));
+        SIMDEE_INL auto operator|(const T& l, const deferred_bitnot<T>& r)
+            -> decltype(impl::special_ops<T>::ornot(l, r.neg)) {
+            return impl::special_ops<T>::ornot(l, r.neg);
         }
         template <typename T>
         SIMDEE_INL const deferred_bitnot<T> operator|(const deferred_bitnot<T>& l,
@@ -228,12 +234,14 @@ namespace sd {
             return l.neg;
         }
         template <typename T>
-        SIMDEE_INL const T operator&&(const deferred_lognot<T>& l, const T& r) {
-            return impl::special_traits<T>::andnot(r, l.neg);
+        SIMDEE_INL auto operator&&(const deferred_lognot<T>& l, const T& r)
+            -> decltype(impl::special_ops<T>::andnot(r, l.neg)) {
+            return impl::special_ops<T>::andnot(r, l.neg);
         }
         template <typename T>
-        SIMDEE_INL const T operator&&(const T& l, const deferred_lognot<T>& r) {
-            return impl::special_traits<T>::andnot(l, r.neg);
+        SIMDEE_INL auto operator&&(const T& l, const deferred_lognot<T>& r)
+            -> decltype(impl::special_ops<T>::andnot(l, r.neg)) {
+            return impl::special_ops<T>::andnot(l, r.neg);
         }
         template <typename T>
         SIMDEE_INL const deferred_lognot<T> operator&&(const deferred_lognot<T>& l,
@@ -241,12 +249,14 @@ namespace sd {
             return deferred_lognot<T>(l.neg || r.neg);
         }
         template <typename T>
-        SIMDEE_INL const deferred_lognot<T> operator||(const deferred_lognot<T>& l, const T& r) {
-            return deferred_lognot<T>(impl::special_traits<T>::andnot(l.neg, r));
+        SIMDEE_INL auto operator||(const deferred_lognot<T>& l, const T& r)
+            -> decltype(impl::special_ops<T>::ornot(r, l.neg)) {
+            return impl::special_ops<T>::ornot(r, l.neg);
         }
         template <typename T>
-        SIMDEE_INL const deferred_lognot<T> operator||(const T& l, const deferred_lognot<T>& r) {
-            return deferred_lognot<T>(impl::special_traits<T>::andnot(r.neg, l));
+        SIMDEE_INL auto operator||(const T& l, const deferred_lognot<T>& r)
+            -> decltype(impl::special_ops<T>::ornot(l, r.neg)) {
+            return impl::special_ops<T>::ornot(l, r.neg);
         }
         template <typename T>
         SIMDEE_INL const deferred_lognot<T> operator||(const deferred_lognot<T>& l,
@@ -258,7 +268,9 @@ namespace sd {
             -> decltype(cond(l.neg, f, t)) {
             return cond(l.neg, f, t);
         }
-    }
-}
+
+    } // namespace expr
+
+} // namespace sd
 
 #endif // SIMDEE_COMMON_DEFERRED_NOT_HPP

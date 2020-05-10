@@ -298,22 +298,27 @@ namespace sd {
     }
 
     namespace impl {
-        template <typename T>
-        struct avx_special_traits {
-            SIMDEE_INL static T andnot(T l, T r) { return _mm256_andnot_ps(r.data(), l.data()); }
+
+        template <typename T, typename NotT>
+        struct avx_special_ops {
+            SIMDEE_INL static T andnot(const T& l, const T& r) {
+                return _mm256_andnot_ps(r.data(), l.data());
+            }
+            SIMDEE_INL static NotT ornot(const T& l, const T& r) { return NotT(andnot(r, l)); }
         };
 
         template <typename T>
-        struct special_traits;
+        struct special_ops;
 
         template <>
-        struct special_traits<avxb> : avx_special_traits<avxb> {};
+        struct special_ops<avxb> : avx_special_ops<avxb, not_avxb> {};
 
         template <>
-        struct special_traits<avxu> : avx_special_traits<avxu> {};
+        struct special_ops<avxu> : avx_special_ops<avxu, not_avxu> {};
 
         template <>
-        struct special_traits<avxs> : avx_special_traits<avxs> {};
+        struct special_ops<avxs> : avx_special_ops<avxs, not_avxs> {};
+
     } // namespace impl
 
 } // namespace sd

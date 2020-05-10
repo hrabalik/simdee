@@ -331,24 +331,27 @@ namespace sd {
     }
 
     namespace impl {
-        template <typename T>
-        struct sse_special_traits {
+
+        template <typename T, typename NotT>
+        struct sse_special_ops {
             SIMDEE_INL static T andnot(const T& l, const T& r) {
                 return _mm_andnot_ps(r.data(), l.data());
             }
+            SIMDEE_INL static NotT ornot(const T& l, const T& r) { return NotT(andnot(r, l)); }
         };
 
         template <typename T>
-        struct special_traits;
+        struct special_ops;
 
         template <>
-        struct special_traits<sseb> : sse_special_traits<sseb> {};
+        struct special_ops<sseb> : sse_special_ops<sseb, not_sseb> {};
 
         template <>
-        struct special_traits<sseu> : sse_special_traits<sseu> {};
+        struct special_ops<sseu> : sse_special_ops<sseu, not_sseu> {};
 
         template <>
-        struct special_traits<sses> : sse_special_traits<sses> {};
+        struct special_ops<sses> : sse_special_ops<sses, not_sses> {};
+
     } // namespace impl
 
 } // namespace sd

@@ -2,7 +2,7 @@
 #include <simdee/simdee.hpp>
 #include <type_traits>
 
-#if SIMDEE_SSE
+#if SIMDEE_SSE2
 
 using B = sd::sseb;
 const B::storage_t dataAB{true, false, true, true};

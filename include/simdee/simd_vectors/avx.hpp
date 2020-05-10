@@ -139,7 +139,15 @@ namespace sd {
 
         using avx_base::avx_base;
         SIMDEE_CTOR(avxb, __m256i, mm = _mm256_castsi256_ps(r))
-        SIMDEE_CTOR(avxb, not_avxb, mm = _mm256_xor_ps(r.neg.mm, avxb(all_bits()).mm))
+
+#if SIMDEE_AVX2
+        SIMDEE_CTOR(avxb, not_avxb,
+                    mm = _mm256_xor_ps(r.neg.mm, _mm256_castsi256_ps(_mm256_cmpeq_epi32(
+                                                     _mm256_castps_si256(r.neg.mm),
+                                                     _mm256_castps_si256(r.neg.mm)))))
+#else
+        SIMDEE_CTOR(avxb, not_avxb, mm = _mm256_cmp_ps(r.neg.mm, r.neg.mm, _CMP_ORD_Q))
+#endif
 
         SIMDEE_UNOP(avxb, mask_t, mask, mask_t(cast_u(_mm256_movemask_ps(l.mm))))
         SIMDEE_UNOP(avxb, scalar_t, first_scalar,
@@ -306,7 +314,8 @@ namespace sd {
 
         template <>
         struct special_traits<avxs> : avx_special_traits<avxs> {};
-    }
-}
+    } // namespace impl
+
+} // namespace sd
 
 #endif // SIMDEE_SIMD_TYPES_AVX_HPP

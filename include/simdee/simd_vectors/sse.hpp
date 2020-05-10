@@ -39,7 +39,7 @@ namespace sd {
             return _mm_or_si128(prod_a, prod_b);
         }
 #endif
-    }
+    } // namespace impl
 
     struct sseb;
     struct ssef;
@@ -153,7 +153,10 @@ namespace sd {
                 _mm_setr_epi32(int32_t(v0), int32_t(v1), int32_t(v2), int32_t(v3)));
         }
         SIMDEE_CTOR(sseb, __m128i, mm = _mm_castsi128_ps(r))
-        SIMDEE_CTOR(sseb, not_sseb, mm = _mm_xor_ps(r.neg.mm, sseb(all_bits()).mm))
+        SIMDEE_CTOR(sseb, not_sseb,
+                    mm = _mm_xor_ps(r.neg.mm,
+                                    _mm_castsi128_ps(_mm_cmpeq_epi32(_mm_castps_si128(r.neg.mm),
+                                                                     _mm_castps_si128(r.neg.mm)))))
 
         SIMDEE_UNOP(sseb, mask_t, mask, mask_t(cast_u(_mm_movemask_ps(l.mm))))
         SIMDEE_UNOP(sseb, scalar_t, first_scalar, dirty::as_b(_mm_cvtss_f32(l.mm)))
@@ -358,7 +361,8 @@ namespace sd {
 
         template <>
         struct special_traits<sses> : sse_special_traits<sses> {};
-    }
-}
+    } // namespace impl
+
+} // namespace sd
 
 #endif // SIMDEE_SIMD_TYPES_SSE_HPP

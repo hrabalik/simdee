@@ -40,7 +40,7 @@ TEST_CASE("deferred_not types", "[deferred_not]") {
 #endif
 }
 
-TEST_CASE("deferred_not cond", "[deferred_not]") {
+TEST_CASE("deferred_lognot cond", "[deferred_not]") {
     const B ba = !dataAB;
     const B bb = !dataBB;
     const not_B nba(dataAB);
@@ -62,7 +62,7 @@ TEST_CASE("deferred_not cond", "[deferred_not]") {
     REQUIRE(all(expU == cond(nba, ua, ub)));
 }
 
-TEST_CASE("deferred_not bool arithmetic", "[deferred_not]") {
+TEST_CASE("deferred_lognot bool arithmetic", "[deferred_not]") {
     const B ba = !dataAB;
     const not_B nba(dataAB);
     SECTION("unary") {
@@ -105,7 +105,7 @@ TEST_CASE("deferred_not bool arithmetic", "[deferred_not]") {
     }
 }
 
-TEST_CASE("deferred_not uint arithmetic", "[deferred_not]") {
+TEST_CASE("deferred_bitnot uint arithmetic", "[deferred_not]") {
     const U ua = ~dataAU;
     const not_U nua(dataAU);
     SECTION("unary") {
@@ -142,36 +142,36 @@ TEST_CASE("deferred_not uint arithmetic", "[deferred_not]") {
     }
 }
 
-TEST_CASE("deferred_not methods", "[deferred_not]") {
+TEST_CASE("deferred_lognot methods", "[deferred_not]") {
     const B ba = !dataAB;
     const not_B nba(dataAB);
     SECTION("eval") {
-        auto res_ua = ba.eval();
-        auto res_nua = nba.eval();
-        REQUIRE((std::is_same<decltype(res_ua), decltype(res_nua)>::value));
-        REQUIRE(all(res_ua == res_nua));
+        auto res_ba = ba.eval();
+        auto res_nba = nba.eval();
+        REQUIRE((std::is_same<decltype(res_ba), decltype(res_nba)>::value));
+        REQUIRE(all(res_ba == res_nba));
     }
     SECTION("data") { REQUIRE(all(B(ba.data()) == B(nba.data()))); }
     SECTION("store") {
         SECTION("aligned") {
-            B::storage_t res_ua{}, res_nua{};
-            ba.aligned_store(res_ua.data());
-            nba.aligned_store(res_nua.data());
-            REQUIRE((res_ua == res_nua));
+            B::storage_t res_ba{}, res_nba{};
+            ba.aligned_store(res_ba.data());
+            nba.aligned_store(res_nba.data());
+            REQUIRE((res_ba == res_nba));
         }
         SECTION("unaligned") {
-            B::storage_t res_ua{}, res_nua{};
-            ba.unaligned_store(res_ua.data());
-            nba.unaligned_store(res_nua.data());
-            REQUIRE((res_ua == res_nua));
+            B::storage_t res_ba{}, res_nba{};
+            ba.unaligned_store(res_ba.data());
+            nba.unaligned_store(res_nba.data());
+            REQUIRE((res_ba == res_nba));
         }
         SECTION("interleaved") {
-            B::storage_t res_ua[3]{}, res_nua[3]{};
-            ba.interleaved_store(res_ua[0].data(), 3);
-            nba.interleaved_store(res_nua[0].data(), 3);
-            REQUIRE((res_ua[0] == res_nua[0]));
-            REQUIRE((res_ua[1] == res_nua[1]));
-            REQUIRE((res_ua[2] == res_nua[2]));
+            B::storage_t res_ba[3]{}, res_nba[3]{};
+            ba.interleaved_store(res_ba[0].data(), 3);
+            nba.interleaved_store(res_nba[0].data(), 3);
+            REQUIRE((res_ba[0] == res_nba[0]));
+            REQUIRE((res_ba[1] == res_nba[1]));
+            REQUIRE((res_ba[2] == res_nba[2]));
         }
     }
     SECTION("reduce") {
@@ -188,6 +188,50 @@ TEST_CASE("deferred_not methods", "[deferred_not]") {
         auto res_ba = first_scalar(ba);
         auto res_nba = first_scalar(nba);
         REQUIRE(res_ba == res_nba);
+    }
+}
+
+TEST_CASE("deferred_bitnot methods", "[deferred_not]") {
+    const U ua = ~dataAU;
+    const not_U nua(dataAU);
+    SECTION("eval") {
+        auto res_ua = ua.eval();
+        auto res_nua = nua.eval();
+        REQUIRE((std::is_same<decltype(res_ua), decltype(res_nua)>::value));
+        REQUIRE(all(res_ua == res_nua));
+    }
+    SECTION("data") { REQUIRE(all(U(ua.data()) == U(nua.data()))); }
+    SECTION("store") {
+        SECTION("aligned") {
+            U::storage_t res_ua{}, res_nua{};
+            ua.aligned_store(res_ua.data());
+            nua.aligned_store(res_nua.data());
+            REQUIRE((res_ua == res_nua));
+        }
+        SECTION("unaligned") {
+            U::storage_t res_ua{}, res_nua{};
+            ua.unaligned_store(res_ua.data());
+            nua.unaligned_store(res_nua.data());
+            REQUIRE((res_ua == res_nua));
+        }
+        SECTION("interleaved") {
+            U::storage_t res_ua[3]{}, res_nua[3]{};
+            ua.interleaved_store(res_ua[0].data(), 3);
+            nua.interleaved_store(res_nua[0].data(), 3);
+            REQUIRE((res_ua[0] == res_nua[0]));
+            REQUIRE((res_ua[1] == res_nua[1]));
+            REQUIRE((res_ua[2] == res_nua[2]));
+        }
+    }
+    SECTION("reduce") {
+        auto res_ua = first_scalar(reduce(ua, [](U a, U b) { return a ^ b; }));
+        auto res_nua = first_scalar(reduce(nua, [](U a, U b) { return a ^ b; }));
+        REQUIRE(res_ua == res_nua);
+    }
+    SECTION("first_scalar") {
+        auto res_ua = first_scalar(ua);
+        auto res_nua = first_scalar(nua);
+        REQUIRE(res_ua == res_nua);
     }
 }
 

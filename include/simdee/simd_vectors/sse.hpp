@@ -234,17 +234,11 @@ namespace sd {
         SIMDEE_BINOP(sseu, not_sseb, operator<=, !(l > r))
         SIMDEE_BINOP(sseu, not_sseb, operator>=, !(r > l))
         SIMDEE_INL friend const sseu min(const sseu& l, const sseu& r) {
-            sseb pred{r > l};
-            __m128 t = _mm_and_ps(pred.data(), l.data());
-            __m128 f = _mm_andnot_ps(pred.data(), r.data());
-            return _mm_or_ps(t, f);
+            return impl::sse_cond((r > l).data(), l.mm, r.mm);
         }
 
         SIMDEE_INL friend const sseu max(const sseu& l, const sseu& r) {
-            sseb pred{l > r};
-            __m128 t = _mm_and_ps(pred.data(), l.data());
-            __m128 f = _mm_andnot_ps(pred.data(), r.data());
-            return _mm_or_ps(t, f);
+            return impl::sse_cond((l > r).data(), l.mm, r.mm);
         }
 #endif
 
@@ -298,16 +292,10 @@ namespace sd {
         SIMDEE_BINOP(sses, sses, max, _mm_max_epi32(l.mmi(), r.mmi()))
 #else
         SIMDEE_INL friend sses min(const sses& l, const sses& r) {
-            sseb pred{r > l};
-            __m128 t = _mm_and_ps(pred.data(), l.data());
-            __m128 f = _mm_andnot_ps(pred.data(), r.data());
-            return _mm_or_ps(t, f);
+            return impl::sse_cond((r > l).data(), l.mm, r.mm);
         }
         SIMDEE_INL friend sses max(const sses& l, const sses& r) {
-            sseb pred{l > r};
-            __m128 t = _mm_and_ps(pred.data(), l.data());
-            __m128 f = _mm_andnot_ps(pred.data(), r.data());
-            return _mm_or_ps(t, f);
+            return impl::sse_cond((l > r).data(), l.mm, r.mm);
         }
 #endif
 

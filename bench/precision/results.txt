@@ -1,0 +1,20 @@
+NEON approximate raw
+  total          4278190082
+  correct        2863456301
+  completely off 16777214
+  3 ULPs below   0
+  2 ULPs below   10663936
+  1 ULP below    1231811103
+  1 ULP above    155481528
+  2 ULPs above   0
+  3 ULPs above   0
+NEON approximate +1
+  total          4278190082
+  correct        3202267158
+  completely off 16777214
+  3 ULPs below   0
+  2 ULPs below   0
+  1 ULP below    10663936
+  1 ULP above    1048481774
+  2 ULPs above   0
+  3 ULPs above   0

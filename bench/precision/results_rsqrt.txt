@@ -1,0 +1,4 @@
+SSE2
+  total          2139095040
+  correct        585217
+  max rel error  0.667870 * 2^-11

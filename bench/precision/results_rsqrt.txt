@@ -2,3 +2,11 @@ SSE2
   total          2139095040
   correct        585217
   max rel error  0.667870 * 2^-11
+NEON iteration 0
+  total          2139095040
+  correct        58654
+  max rel error  0.838875 * 2^-8
+NEON iteration 1
+  total          2139095040
+  correct        186707192
+  max rel error  0.531313 * 2^-15

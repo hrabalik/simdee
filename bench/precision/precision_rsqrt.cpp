@@ -50,11 +50,24 @@ int main() {
     // prec_test("long double",
     //           [](float x) { return float(1 / std::sqrt(static_cast<long double>(x))); });
 
-#ifdef SIMDEE_SSE2
+#if SIMDEE_SSE2
     prec_test("SSE2", [](float x) {
         __m128 vx = _mm_set_ps1(x);
         __m128 r = _mm_rsqrt_ps(vx);
         return _mm_cvtss_f32(r);
+    });
+#endif
+#if SIMDEE_NEON
+    prec_test("NEON iteration 0", [](float x) {
+        float32x4_t vx = vmovq_n_f32(x);
+        float32x4_t r = vrsqrteq_f32(vx);
+        return vgetq_lane_f32(r, 0);
+    });
+    prec_test("NEON iteration 1", [](float x) {
+        float32x4_t vx = vmovq_n_f32(x);
+        float32x4_t r = vrsqrteq_f32(vx);
+        r = vmulq_f32(r, vrsqrtsq_f32(vmulq_f32(vx, r), r));
+        return vgetq_lane_f32(r, 0);
     });
 #endif
 }

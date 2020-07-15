@@ -1,0 +1,28 @@
+recp NEON iteration 0
+  total          4278190080
+  correct        4307758 (0.1%)
+  max rel error  0.730483 * 2^-8
+recp NEON iteration 1
+  total          4278190080
+  correct        459388316 (10.7%)
+  max rel error  0.553177 * 2^-16
+rsqrt SSE2
+  total          2139095040
+  correct        585217
+  max rel error  0.667870 * 2^-11
+rsqrt NEON iteration 0
+  total          2139095040
+  correct        58654 (0.0%)
+  max rel error  0.838875 * 2^-8
+rsqrt NEON iteration 1
+  total          2139095040
+  correct        186707192 (8.7%)
+  max rel error  0.531313 * 2^-15
+sqrt NEON approx
+  total          2139095040
+  correct        1503319789 (70.3%)
+  max rel error  0.613542 * 2^-22
+sqrt NEON approx +1
+  total          2139095040
+  correct        1558719536 (72.9%)
+  max rel error  0.612441 * 2^-22

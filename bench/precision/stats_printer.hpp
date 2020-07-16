@@ -31,7 +31,7 @@ public:
     void update(double value, double gt) {
         m_retry_count++;
         if (value == gt) { m_correct_count++; }
-        if ((gt != 0) && !std::isinf(value)) {
+        if ((gt != 0) && (value != 0) && !std::isinf(value)) {
             double rel_err = std::abs((value - gt) / gt);
             m_max_rel_err = std::max(m_max_rel_err, rel_err);
         }

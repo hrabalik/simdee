@@ -1,6 +1,10 @@
 #include "run.hpp"
 #include <simdee/simdee.hpp>
 
+float gt_recp(float x) { return 1 / x; }
+float gt_rsqrt(float x) { return float(1 / std::sqrt(double(x))); }
+float gt_sqrt(float x) { return std::sqrt(x); }
+
 int main(int argc, char** argv) {
     run_opts opts = {};
     struct {
@@ -41,11 +45,14 @@ int main(int argc, char** argv) {
         return -1;
     }
 
-    auto gt_recp = [](float x) { return 1 / x; };
-    auto gt_rsqrt = [](float x) { return float(1 / std::sqrt(double(x))); };
-    auto gt_sqrt = [](float x) { return std::sqrt(x); };
-
 #if SIMDEE_SSE2
+    if (algos.recp) {
+        run(opts, "recp SSE2", false, gt_recp, [](float x) {
+            __m128 vx = _mm_set_ps1(x);
+            __m128 r = _mm_rcp_ps(vx);
+            return _mm_cvtss_f32(r);
+        });
+    }
     if (algos.rsqrt) {
         run(opts, "rsqrt SSE2", true, gt_rsqrt, [](float x) {
             __m128 vx = _mm_set_ps1(x);

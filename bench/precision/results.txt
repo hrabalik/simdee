@@ -1,3 +1,7 @@
+recp SSE2
+  total          4278190080
+  correct        5671026 (0.1%)
+  max rel error  0.645675 * 2^-11
 recp NEON iteration 0
   total          4278190080
   correct        4307758 (0.1%)
@@ -8,8 +12,8 @@ recp NEON iteration 1
   max rel error  0.553177 * 2^-16
 rsqrt SSE2
   total          2139095040
-  correct        585217
-  max rel error  0.667870 * 2^-11
+  correct        889890 (0.0%)
+  max rel error  0.529818 * 2^-11
 rsqrt NEON iteration 0
   total          2139095040
   correct        58654 (0.0%)

@@ -237,8 +237,18 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
 #endif
         }
 
-        SIMDEE_UNOP(neonf, neonf, rsqrt, vrsqrteq_f32(l.mm))
-        SIMDEE_UNOP(neonf, neonf, rcp, vrecpeq_f32(l.mm))
+        SIMDEE_INL friend const neonf rsqrt(const neonf& l) {
+            float32x4_t res = vrsqrteq_f32(l.mm);
+            res = vmulq_f32(res, vrsqrtsq_f32(vmulq_f32(l.mm, res), res));
+            return res;
+        }
+
+        SIMDEE_INL friend const neonf rcp(const neonf& l) {
+            float32x4_t res = vrecpeq_f32(l.mm);
+            res = vmulq_f32(res, vrecpsq_f32(l.mm, res));
+            return res;
+        }
+
         SIMDEE_UNOP(neonf, neonf, abs, vabsq_f32(l.mm))
     };
 

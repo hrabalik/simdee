@@ -207,24 +207,34 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
         SIMDEE_BINOP(neonf, neonf, operator*, vmulq_f32(l.mm, r.mm))
 
         inline friend const neonf operator/(const neonf& l, const neonf& r) {
-            neonf res = vmovq_n_f32(0);
-            res.mm = vsetq_lane_f32(vgetq_lane_f32(l.mm, 0) / vgetq_lane_f32(r.mm, 0), res.mm, 0);
-            res.mm = vsetq_lane_f32(vgetq_lane_f32(l.mm, 1) / vgetq_lane_f32(r.mm, 1), res.mm, 1);
-            res.mm = vsetq_lane_f32(vgetq_lane_f32(l.mm, 2) / vgetq_lane_f32(r.mm, 2), res.mm, 2);
-            res.mm = vsetq_lane_f32(vgetq_lane_f32(l.mm, 3) / vgetq_lane_f32(r.mm, 3), res.mm, 3);
-            return res;
+#if SIMDEE_ARM64
+            return vdivq_f32(l.mm, r.mm);
+#else
+            float res0 = vgetq_lane_f32(l.mm, 0) / vgetq_lane_f32(r.mm, 0);
+            float res1 = vgetq_lane_f32(l.mm, 1) / vgetq_lane_f32(r.mm, 1);
+            float32x2_t res01 = {res0, res1};
+            float res2 = vgetq_lane_f32(l.mm, 2) / vgetq_lane_f32(r.mm, 2);
+            float res3 = vgetq_lane_f32(l.mm, 3) / vgetq_lane_f32(r.mm, 3);
+            float32x2_t res23 = {res2, res3};
+            return vcombine_f32(res01, res23);
+#endif
         }
 
         SIMDEE_BINOP(neonf, neonf, min, vminq_f32(l.mm, r.mm))
         SIMDEE_BINOP(neonf, neonf, max, vmaxq_f32(l.mm, r.mm))
 
         inline friend const neonf sqrt(const neonf& l) {
-            neonf res = vmovq_n_f32(0);
-            res.mm = vsetq_lane_f32(std::sqrt(vgetq_lane_f32(l.mm, 0)), res.mm, 0);
-            res.mm = vsetq_lane_f32(std::sqrt(vgetq_lane_f32(l.mm, 1)), res.mm, 1);
-            res.mm = vsetq_lane_f32(std::sqrt(vgetq_lane_f32(l.mm, 2)), res.mm, 2);
-            res.mm = vsetq_lane_f32(std::sqrt(vgetq_lane_f32(l.mm, 3)), res.mm, 3);
-            return res;
+#if SIMDEE_ARM64
+            return vsqrtq_f32(l.mm);
+#else
+            float res0 = std::sqrt(vgetq_lane_f32(l.mm, 0));
+            float res1 = std::sqrt(vgetq_lane_f32(l.mm, 1));
+            float32x2_t res01 = {res0, res1};
+            float res2 = std::sqrt(vgetq_lane_f32(l.mm, 2));
+            float res3 = std::sqrt(vgetq_lane_f32(l.mm, 3));
+            float32x2_t res23 = {res2, res3};
+            return vcombine_f32(res01, res23);
+#endif
         }
 
         SIMDEE_UNOP(neonf, neonf, rsqrt, vrsqrteq_f32(l.mm))

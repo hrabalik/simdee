@@ -15,11 +15,11 @@ build_script:
         $compilerVersion = "16"
         $cmakeGenerator = "Visual Studio 16 2019"
       }
-      $env:PATH += ";C:\Users\appveyor\AppData\Roaming\Python\Scripts"
+      $env:PATH += ";C:\Users\appveyor\AppData\Roaming\Python\Python38\Scripts"
       mkdir build
       cd build
-      pip install --user conan
-      conan remote add catchorg https://api.bintray.com/conan/catchorg/Catch2
+      C:\Python38-x64\python.exe -m pip install --user conan
+      conan remote add conancenter https://center.conan.io
       conan install -s compiler="Visual Studio" -s compiler.version=$compilerVersion -s build_type=Debug ..
       cmake -G "$cmakeGenerator" -DSIMDEE_BUILD_TESTS:BOOL=ON ..
       cmake --build . --config "Debug"

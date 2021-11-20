@@ -56,6 +56,7 @@ syntax                           | description
 ---------------------------------|-----------------------------------------------------------------------------
 `x.eval()`                       | no-op, used to enforce evaluation of expression templates
 `x.data()`                       | provides access to the underlying low-level register value
+`x.broadcast<N>()`               | produces a vector with all scalars set to `N`-th scalar of `x`
 `x.aligned_load(ptr)`            | load vector from a memory location aligned to `alignof(T)` bytes
 `x.aligned_store(ptr)`           | store vector to a memory location aligned to `alignof(T)` bytes
 `x.unaligned_load(ptr)`          | load vector from an arbitrary memory location
@@ -68,6 +69,7 @@ syntax                           | description
 
 where:
 * `x`, `y` are values of type `T`
+* `N` is a compile-time constant of type `unsigned int`
 * `ptr` is a value of type `scalar_t*`
 * `step` is a value of type `int`
 * `b` is a value of type `vec_b`

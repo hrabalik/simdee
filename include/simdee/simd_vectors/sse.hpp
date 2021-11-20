@@ -135,6 +135,12 @@ namespace sd {
             for (std::size_t i = 0; i < width; ++i, r += step) { *r = temp[i]; }
         }
 
+        template <unsigned int Lane>
+        SIMDEE_INL const Crtp broadcast() {
+            static_assert(Lane < 4, "");
+            return _mm_shuffle_ps(mm, mm, _MM_SHUFFLE(Lane, Lane, Lane, Lane));
+        }
+
         template <typename Op_t>
         friend const Crtp reduce(const Crtp& l, Op_t f) {
             Crtp tmp = f(l, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(l.mm),

@@ -143,6 +143,17 @@ namespace sd {
             mm.r.interleaved_store(r + (T::width * (127 & step)), step);
         }
 
+        template <unsigned int Lane>
+        const Crtp broadcast() {
+            static_assert(Lane < width, "");
+            constexpr bool lower = Lane < (width / 2);
+            constexpr int next_lane = lower ? Lane : (Lane - (width / 2));
+            typename dual<T>::vector_t res;
+            res.l = (lower ? mm.l : mm.r).template broadcast<next_lane>();
+            res.r = res.l;
+            return res;
+        }
+
         template <typename Op_t>
         friend const Crtp reduce(const Crtp& l, Op_t f) {
             vector_t res;

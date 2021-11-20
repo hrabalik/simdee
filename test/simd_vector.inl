@@ -1278,3 +1278,56 @@ TEST_CASE(SIMD_TYPE " first_scalar", SIMD_TEST_TAG) {
     REQUIRE(bufAU[0] == first_scalar(u));
     REQUIRE(bufAS[0] == first_scalar(s));
 }
+
+TEST_CASE(SIMD_TYPE " broadcast", SIMD_TEST_TAG) {
+    B b = bufAB;
+    F f = bufAF;
+    U u = bufAU;
+    S s = bufAS;
+
+#if SIMD_WIDTH >= 1
+    REQUIRE(all(b.broadcast<0>() == B(bufAB[0])));
+    REQUIRE(all(f.broadcast<0>() == F(bufAF[0])));
+    REQUIRE(all(u.broadcast<0>() == U(bufAU[0])));
+    REQUIRE(all(s.broadcast<0>() == S(bufAS[0])));
+#endif
+
+#if SIMD_WIDTH >= 4
+    REQUIRE(all(b.broadcast<1>() == B(bufAB[1])));
+    REQUIRE(all(f.broadcast<1>() == F(bufAF[1])));
+    REQUIRE(all(u.broadcast<1>() == U(bufAU[1])));
+    REQUIRE(all(s.broadcast<1>() == S(bufAS[1])));
+
+    REQUIRE(all(b.broadcast<2>() == B(bufAB[2])));
+    REQUIRE(all(f.broadcast<2>() == F(bufAF[2])));
+    REQUIRE(all(u.broadcast<2>() == U(bufAU[2])));
+    REQUIRE(all(s.broadcast<2>() == S(bufAS[2])));
+
+    REQUIRE(all(b.broadcast<3>() == B(bufAB[3])));
+    REQUIRE(all(f.broadcast<3>() == F(bufAF[3])));
+    REQUIRE(all(u.broadcast<3>() == U(bufAU[3])));
+    REQUIRE(all(s.broadcast<3>() == S(bufAS[3])));
+#endif
+
+#if SIMD_WIDTH >= 8
+    REQUIRE(all(b.broadcast<4>() == B(bufAB[4])));
+    REQUIRE(all(f.broadcast<4>() == F(bufAF[4])));
+    REQUIRE(all(u.broadcast<4>() == U(bufAU[4])));
+    REQUIRE(all(s.broadcast<4>() == S(bufAS[4])));
+
+    REQUIRE(all(b.broadcast<5>() == B(bufAB[5])));
+    REQUIRE(all(f.broadcast<5>() == F(bufAF[5])));
+    REQUIRE(all(u.broadcast<5>() == U(bufAU[5])));
+    REQUIRE(all(s.broadcast<5>() == S(bufAS[5])));
+
+    REQUIRE(all(b.broadcast<6>() == B(bufAB[6])));
+    REQUIRE(all(f.broadcast<6>() == F(bufAF[6])));
+    REQUIRE(all(u.broadcast<6>() == U(bufAU[6])));
+    REQUIRE(all(s.broadcast<6>() == S(bufAS[6])));
+
+    REQUIRE(all(b.broadcast<7>() == B(bufAB[7])));
+    REQUIRE(all(f.broadcast<7>() == F(bufAF[7])));
+    REQUIRE(all(u.broadcast<7>() == U(bufAU[7])));
+    REQUIRE(all(s.broadcast<7>() == S(bufAS[7])));
+#endif
+}

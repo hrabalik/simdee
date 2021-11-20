@@ -72,6 +72,12 @@ namespace sd {
         SIMDEE_INL void interleaved_load(const scalar_t* r, int) { mm = *r; }
         SIMDEE_INL void interleaved_store(scalar_t* r, int) const { *r = mm; }
 
+        template <unsigned int Lane>
+        SIMDEE_INL const Crtp broadcast() {
+            static_assert(Lane == 0, "");
+            return mm;
+        }
+
         template <typename Op_t>
         friend SIMDEE_INL const Crtp reduce(const Crtp& l, Op_t) {
             return l;

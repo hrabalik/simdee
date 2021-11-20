@@ -105,6 +105,15 @@ namespace sd {
             for (std::size_t i = 0; i < width; ++i, r += step) { *r = temp[i]; }
         }
 
+        template <unsigned int Lane>
+        const Crtp broadcast() {
+            static_assert(Lane < 8, "");
+            constexpr int lane0 = Lane & 3;
+            constexpr int lane1 = Lane >> 2;
+            auto tmp = _mm256_shuffle_ps(mm, mm, _MM_SHUFFLE(lane0, lane0, lane0, lane0));
+            return _mm256_permute2f128_ps(tmp, tmp, _MM_SHUFFLE(lane1, lane1, lane1, lane1));
+        }
+
         template <typename Op_t>
         friend const Crtp reduce(const Crtp& l, Op_t f) {
             Crtp tmp = f(l, _mm256_permute_ps(l.mm, _MM_SHUFFLE(2, 3, 0, 1)));

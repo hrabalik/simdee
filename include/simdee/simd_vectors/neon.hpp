@@ -136,6 +136,29 @@ friend const CLASS reduce(const CLASS & l, Op_t f) {                            
     return f(tmp, vrev64q_ ## SUFFIX (tmp.mm));                                                          \
 }                                                                                                        \
                                                                                                          \
+template <unsigned int Lane>                                                                             \
+const CLASS broadcast();                                                                                 \
+                                                                                                         \
+template <>                                                                                              \
+SIMDEE_INL const CLASS broadcast<0>() {                                                                  \
+    return vdupq_lane_ ## SUFFIX (vget_low_ ## SUFFIX (l.mm), 0);                                        \
+}                                                                                                        \
+                                                                                                         \
+template <>                                                                                              \
+SIMDEE_INL const CLASS broadcast<1>() {                                                                  \
+    return vdupq_lane_ ## SUFFIX (vget_low_ ## SUFFIX (l.mm), 1);                                        \
+}                                                                                                        \
+                                                                                                         \
+template <>                                                                                              \
+SIMDEE_INL const CLASS broadcast<2>() {                                                                  \
+    return vdupq_lane_ ## SUFFIX (vget_high_ ## SUFFIX (l.mm), 0);                                       \
+}                                                                                                        \
+                                                                                                         \
+template <>                                                                                              \
+SIMDEE_INL const CLASS broadcast<3>() {                                                                  \
+    return vdupq_lane_ ## SUFFIX (vget_high_ ## SUFFIX (l.mm), 1);                                       \
+}                                                                                                        \
+                                                                                                         \
 SIMDEE_NEON_OPTIMIZED_REDUCE(CLASS, SUFFIX)                                                              \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 

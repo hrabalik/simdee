@@ -1,5 +1,6 @@
 version: '{branch}/{build}'
 image:
+  - macos
   - Ubuntu2004
   - Visual Studio 2019
 stack: python 3.8
@@ -25,7 +26,11 @@ build_script:
           pip install conan
           $env:PATH += ":/home/appveyor/.local/bin"
           conan profile new default --detect
-          conan profile update settings.compiler.libcxx=libstdc++11 default
+          if ($isLinux) {
+              conan profile update settings.compiler.libcxx=libstdc++11 default
+          } else {
+              conan profile update settings.compiler.libcxx=libc++ default
+          }
       }
       mkdir build
       cd build

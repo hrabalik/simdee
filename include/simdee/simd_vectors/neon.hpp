@@ -139,26 +139,6 @@ friend const CLASS reduce(const CLASS & l, Op_t f) {                            
 template <unsigned int Lane>                                                                             \
 const CLASS broadcast();                                                                                 \
                                                                                                          \
-template <>                                                                                              \
-SIMDEE_INL const CLASS broadcast<0>() {                                                                  \
-    return vdupq_lane_ ## SUFFIX (vget_low_ ## SUFFIX (l.mm), 0);                                        \
-}                                                                                                        \
-                                                                                                         \
-template <>                                                                                              \
-SIMDEE_INL const CLASS broadcast<1>() {                                                                  \
-    return vdupq_lane_ ## SUFFIX (vget_low_ ## SUFFIX (l.mm), 1);                                        \
-}                                                                                                        \
-                                                                                                         \
-template <>                                                                                              \
-SIMDEE_INL const CLASS broadcast<2>() {                                                                  \
-    return vdupq_lane_ ## SUFFIX (vget_high_ ## SUFFIX (l.mm), 0);                                       \
-}                                                                                                        \
-                                                                                                         \
-template <>                                                                                              \
-SIMDEE_INL const CLASS broadcast<3>() {                                                                  \
-    return vdupq_lane_ ## SUFFIX (vget_high_ ## SUFFIX (l.mm), 1);                                       \
-}                                                                                                        \
-                                                                                                         \
 SIMDEE_NEON_OPTIMIZED_REDUCE(CLASS, SUFFIX)                                                              \
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -182,7 +162,33 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 #else
 #define SIMDEE_NEON_OPTIMIZED_REDUCE( CLASS, SUFFIX )
-#endif // clang-format on
+#endif
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+#define SIMDEE_NEON_COMMON_FREESTANDING( CLASS, SUFFIX )                                                 \
+                                                                                                         \
+template <>                                                                                              \
+SIMDEE_INL const CLASS CLASS::broadcast<0>() {                                                           \
+    return vdupq_lane_ ## SUFFIX (vget_low_ ## SUFFIX (mm), 0);                                          \
+}                                                                                                        \
+                                                                                                         \
+template <>                                                                                              \
+SIMDEE_INL const CLASS CLASS::broadcast<1>() {                                                           \
+    return vdupq_lane_ ## SUFFIX (vget_low_ ## SUFFIX (mm), 1);                                          \
+}                                                                                                        \
+                                                                                                         \
+template <>                                                                                              \
+SIMDEE_INL const CLASS CLASS::broadcast<2>() {                                                           \
+    return vdupq_lane_ ## SUFFIX (vget_high_ ## SUFFIX (mm), 0);                                         \
+}                                                                                                        \
+                                                                                                         \
+template <>                                                                                              \
+SIMDEE_INL const CLASS CLASS::broadcast<3>() {                                                           \
+    return vdupq_lane_ ## SUFFIX (vget_high_ ## SUFFIX (mm), 1);                                         \
+}                                                                                                        \
+                                                                                                         \
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // clang-format on
 
     struct neonb final : neon_base<neonb> {
         SIMDEE_NEON_COMMON(neonb, u32, uint32_t)
@@ -350,6 +356,11 @@ SIMDEE_INL friend const CLASS reduce(const CLASS & l, op_max) {                 
     SIMDEE_INL const neons cond(const neonb& pred, const neons& if_true, const neons& if_false) {
         return vbslq_s32(pred.data(), if_true.data(), if_false.data());
     }
+
+    SIMDEE_NEON_COMMON_FREESTANDING(neonb, u32)
+    SIMDEE_NEON_COMMON_FREESTANDING(neonf, f32)
+    SIMDEE_NEON_COMMON_FREESTANDING(neonu, u32)
+    SIMDEE_NEON_COMMON_FREESTANDING(neons, s32)
 
     namespace impl {
 

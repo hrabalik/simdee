@@ -28,15 +28,17 @@ A type that satisfies `SIMDVectorB` must be explicitly convertible to [`vec_u`](
 
 Additional operations must be provided for a type `T` that satisfies `SIMDVectorB`:
 
-syntax         | result type | description
----------------|-------------|---------------------------------------------------------------
-`!x`           | `T`         | scalar-wise logical not
-`x && y`       | `T`         | scalar-wise logical and, short-circuit evaluation is disabled
-`x \|\| y`     | `T`         | scalar-wise logical or, short-circuit evaluation is disabled
-`x == y`       | `T`         | scalar-wise equal
-`x != y`       | `T`         | scalar-wise not equal
-`mask(x)`      | `mask_t`    | provide a bit-mask of truth values
-`any(x)`       | `bool`      | returns `true` if any of the scalars is true
-`all(x)`       | `bool`      | returns `true` if all of the scalars are true
+syntax         | result type | description                                                   | notes
+---------------|-------------|---------------------------------------------------------------|-------
+`!x`           | `T`         | scalar-wise logical not                                       |
+`x && y`       | `T`         | scalar-wise logical and, short-circuit evaluation is disabled |
+`x \|\| y`     | `T`         | scalar-wise logical or, short-circuit evaluation is disabled  |
+`x == y`       | `T`         | scalar-wise equal                                             |
+`x != y`       | `T`         | scalar-wise not equal                                         |
+`mask(x)`      | `mask_t`    | provide a bit-mask of truth values                            | [1]
+`any(x)`       | `bool`      | returns `true` if any of the scalars is true                  |
+`all(x)`       | `bool`      | returns `true` if all of the scalars are true                 |
 
 where `x`, `y` are values of type `T`.
+
+[1] `mask` operation is inefficient on NEON.

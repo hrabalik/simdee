@@ -42,11 +42,11 @@ Type `T` that satisfies `SIMDVector` must be implicitly constructible and assign
 * `T`
 * `vector_t`, `scalar_t`, `storage_t`
 * result of `sd::zero()`, `sd::all_bits()`, `sd::sign_bit()`, `sd::abs_mask()`
-* result of `sd::aligned()`, `sd::unaligned()`, `sd::interleaved()`
+* result of `sd::aligned()`, `sd::unaligned()`
 
 Additionally, `T` must be assignable to:
 * `storage_t`
-* result of `sd::aligned()`, `sd::unaligned()`, `sd::interleaved()`
+* result of `sd::aligned()`, `sd::unaligned()`
 
 ### Operations
 
@@ -61,8 +61,6 @@ syntax                           | description
 `x.aligned_store(ptr)`           | store vector to a memory location aligned to `alignof(T)` bytes
 `x.unaligned_load(ptr)`          | load vector from an arbitrary memory location
 `x.unaligned_store(ptr)`         | store vector to an arbitrary memory location
-`x.interleaved_load(ptr, step)`  | load vector, `i`-th scalar is loaded from `ptr + i*step`
-`x.interleaved_store(ptr, step)` | store vector, `i`-th scalar is stored `ptr + i*step`
 `cond(b, x, y)`                  | based on values in `b`, select scalars from `x` (if true) or `y` (if false)
 `first_scalar(x)`                | retrieve the value of the first scalar in vector
 `reduce(x, f)`                   | apply reduction `f` to `x`, storing the result in each scalar

@@ -81,14 +81,6 @@ ASSERT(HAS_METHOD(const B, unaligned_store(VAL(B::scalar_t*)), void));
 ASSERT(HAS_METHOD(const F, unaligned_store(VAL(F::scalar_t*)), void));
 ASSERT(HAS_METHOD(const U, unaligned_store(VAL(U::scalar_t*)), void));
 ASSERT(HAS_METHOD(const S, unaligned_store(VAL(S::scalar_t*)), void));
-ASSERT(HAS_METHOD(B, interleaved_load(VAL(B::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(F, interleaved_load(VAL(F::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(U, interleaved_load(VAL(U::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(S, interleaved_load(VAL(S::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(const B, interleaved_store(VAL(B::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(const F, interleaved_store(VAL(F::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(const U, interleaved_store(VAL(U::scalar_t*), VAL(int)), void));
-ASSERT(HAS_METHOD(const S, interleaved_store(VAL(S::scalar_t*), VAL(int)), void));
 
 #if !defined(__clang__) && defined(__GNUC__) && __GNUC__ >= 6
 #pragma GCC diagnostic pop
@@ -179,17 +171,6 @@ TEST_CASE(SIMD_TYPE " explicit construction", SIMD_TEST_TAG) {
         F tf(sd::unaligned(bufAF.data()));
         U tu(sd::unaligned(bufAU.data()));
         S ts(sd::unaligned(bufAS.data()));
-        tor(tb, tf, tu, ts);
-        REQUIRE(rb == bufAB);
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
-    SECTION("from interleaved pointer") {
-        B tb(sd::interleaved(bufAB.data(), 1));
-        F tf(sd::interleaved(bufAF.data(), 1));
-        U tu(sd::interleaved(bufAU.data(), 1));
-        S ts(sd::interleaved(bufAS.data(), 1));
         tor(tb, tf, tu, ts);
         REQUIRE(rb == bufAB);
         REQUIRE(rf == bufAF);
@@ -297,14 +278,6 @@ TEST_CASE(SIMD_TYPE " implicit construction", SIMD_TEST_TAG) {
         REQUIRE(ru == bufAU);
         REQUIRE(rs == bufAS);
     }
-    SECTION("from interleaved pointer") {
-        implicit_test(sd::interleaved(bufAB.data(), 1), sd::interleaved(bufAF.data(), 1),
-                      sd::interleaved(bufAU.data(), 1), sd::interleaved(bufAS.data(), 1));
-        REQUIRE(rb == bufAB);
-        REQUIRE(rf == bufAF);
-        REQUIRE(ru == bufAU);
-        REQUIRE(rs == bufAS);
-    }
     SECTION("from storage_t") {
         implicit_test(bufAB, bufAF, bufAU, bufAS);
         REQUIRE(rb == bufAB);
@@ -397,17 +370,6 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
             REQUIRE(ru == bufAU);
             REQUIRE(rs == bufAS);
         }
-        SECTION("from interleaved pointer") {
-            tb = sd::interleaved(bufAB.data(), 1);
-            tf = sd::interleaved(bufAF.data(), 1);
-            tu = sd::interleaved(bufAU.data(), 1);
-            ts = sd::interleaved(bufAS.data(), 1);
-            tor();
-            REQUIRE(rb == bufAB);
-            REQUIRE(rf == bufAF);
-            REQUIRE(ru == bufAU);
-            REQUIRE(rs == bufAS);
-        }
         SECTION("from storage_t") {
             tb = bufAB;
             tf = bufAF;
@@ -479,16 +441,6 @@ TEST_CASE(SIMD_TYPE " assignment", SIMD_TEST_TAG) {
             sd::unaligned(rf.data()) = tf;
             sd::unaligned(ru.data()) = tu;
             sd::unaligned(rs.data()) = ts;
-            REQUIRE(rb == bufAB);
-            REQUIRE(rf == bufAF);
-            REQUIRE(ru == bufAU);
-            REQUIRE(rs == bufAS);
-        }
-        SECTION("to interleaved pointer") {
-            sd::interleaved(rb.data(), 1) = tb;
-            sd::interleaved(rf.data(), 1) = tf;
-            sd::interleaved(ru.data(), 1) = tu;
-            sd::interleaved(rs.data(), 1) = ts;
             REQUIRE(rb == bufAB);
             REQUIRE(rf == bufAF);
             REQUIRE(ru == bufAU);

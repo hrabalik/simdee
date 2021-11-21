@@ -95,25 +95,12 @@ namespace sd {
         SIMDEE_BASE_CTOR(neon_base, vector_t, mm = r)
         SIMDEE_BASE_CTOR_TPL(neon_base, expr::aligned<T>, aligned_load(r.ptr))
         SIMDEE_BASE_CTOR_TPL(neon_base, expr::unaligned<T>, unaligned_load(r.ptr))
-        SIMDEE_BASE_CTOR_TPL(neon_base, expr::interleaved<T>, interleaved_load(r.ptr, r.step))
         SIMDEE_BASE_CTOR(neon_base, storage_t, aligned_load(r.data()))
 
         SIMDEE_INL void aligned_load(const scalar_t* r) { mm = impl::neon_load(r); }
         SIMDEE_INL void aligned_store(scalar_t* r) const { impl::neon_store(mm, r); }
         SIMDEE_INL void unaligned_load(const scalar_t* r) { mm = impl::neon_load(r); }
         SIMDEE_INL void unaligned_store(scalar_t* r) const { impl::neon_store(mm, r); }
-
-        void interleaved_load(const scalar_t* r, int step) {
-            storage_t temp;
-            for (size_t i = 0; i < width; i++, r += step) { temp[i] = *r; }
-            mm = impl::neon_load(temp.data());
-        }
-
-        void interleaved_store(scalar_t* r, int step) const {
-            storage_t temp;
-            impl::neon_store(mm, temp.data());
-            for (size_t i = 0; i < width; i++, r += step) { *r = temp[i]; }
-        }
     };
 
 // clang-format off

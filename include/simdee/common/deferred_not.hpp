@@ -77,16 +77,6 @@ namespace sd {
                 pos.unaligned_store(r);
             }
 
-            template <typename Rhs>
-            void interleaved_load(const Rhs&, int) {
-                dont_change_deferred_not<Rhs> fail;
-            }
-
-            SIMDEE_INL void interleaved_store(scalar_t* r, int step) const {
-                T pos(~neg);
-                pos.interleaved_store(r, step);
-            }
-
             SIMDEE_INL friend typename T::scalar_t first_scalar(const deferred_bitnot& l) {
                 return ~first_scalar(l.neg);
             }
@@ -197,16 +187,6 @@ namespace sd {
             SIMDEE_INL void unaligned_store(scalar_t* r) const {
                 T pos(!neg);
                 pos.unaligned_store(r);
-            }
-
-            template <typename Rhs>
-            void interleaved_load(const Rhs&, int) {
-                dont_change_deferred_not<Rhs> fail;
-            }
-
-            SIMDEE_INL void interleaved_store(scalar_t* r, int step) const {
-                T pos(!neg);
-                pos.interleaved_store(r, step);
             }
 
             SIMDEE_INL friend typename T::mask_t mask(const deferred_lognot& l) {

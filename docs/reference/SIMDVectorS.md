@@ -29,31 +29,33 @@ A type that satisfies `SIMDVectorS` must be:
 
 Additional operations must be provided for a type `T` that satisfies `SIMDVectorS`, unless the macro `SIMDEE_NEED_INT` is set to `0`:
 
-syntax         | result type               | description
----------------|---------------------------|-------------------------------------------------------
-`x == y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise equal
-`x != y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise not equal
-`x > y`        | [`vec_b`](SIMDVectorB.md) | scalar-wise greater than
-`x < y`        | [`vec_b`](SIMDVectorB.md) | scalar-wise less than
-`x >= y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise greater than or equal
-`x <= y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise less than or equal
-`~x`           | `T`                       | bit-wise not
-`x & y`        | `T`                       | bit-wise and
-`x \| y`       | `T`                       | bit-wise or
-`x ^ y`        | `T`                       | bit-wise xor
-`x &= y`       | `T`                       | same as `x = x & y`
-`x \|= y`      | `T`                       | same as `x = x \| y`
-`x ^= y`       | `T`                       | same as `x = x ^ y`
-`+x`           | `T`                       | scalar-wise unary plus
-`-x`           | `T`                       | scalar-wise unary minus
-`x + y`        | `T`                       | scalar-wise addition
-`x - y`        | `T`                       | scalar-wise subtraction
-`x * y`        | `T`                       | scalar-wise multiplication
-`x += y`       | `T`                       | same as `x = x + y`
-`x -= y`       | `T`                       | same as `x = x - y`
-`x *= y`       | `T`                       | same as `x = x * y`
-`min(x)`       | `T`                       | scalar-wise minimum
-`max(x)`       | `T`                       | scalar-wise maximum
-`abs(x)`       | `T`                       | scalar-wise absolute value
+syntax         | result type               | description                                           | notes
+---------------|---------------------------|-------------------------------------------------------|-------
+`x == y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise equal                                     |
+`x != y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise not equal                                 |
+`x > y`        | [`vec_b`](SIMDVectorB.md) | scalar-wise greater than                              |
+`x < y`        | [`vec_b`](SIMDVectorB.md) | scalar-wise less than                                 |
+`x >= y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise greater than or equal                     |
+`x <= y`       | [`vec_b`](SIMDVectorB.md) | scalar-wise less than or equal                        |
+`~x`           | `T`                       | bit-wise not                                          |
+`x & y`        | `T`                       | bit-wise and                                          |
+`x \| y`       | `T`                       | bit-wise or                                           |
+`x ^ y`        | `T`                       | bit-wise xor                                          |
+`x &= y`       | `T`                       | same as `x = x & y`                                   |
+`x \|= y`      | `T`                       | same as `x = x \| y`                                  |
+`x ^= y`       | `T`                       | same as `x = x ^ y`                                   |
+`+x`           | `T`                       | scalar-wise unary plus                                |
+`-x`           | `T`                       | scalar-wise unary minus                               |
+`x + y`        | `T`                       | scalar-wise addition                                  |
+`x - y`        | `T`                       | scalar-wise subtraction                               |
+`x * y`        | `T`                       | scalar-wise multiplication                            | [1]
+`x += y`       | `T`                       | same as `x = x + y`                                   |
+`x -= y`       | `T`                       | same as `x = x - y`                                   |
+`x *= y`       | `T`                       | same as `x = x * y`                                   | [1]
+`min(x)`       | `T`                       | scalar-wise minimum                                   |
+`max(x)`       | `T`                       | scalar-wise maximum                                   |
+`abs(x)`       | `T`                       | scalar-wise absolute value                            |
 
 where `x`, `y` are values of type `T`.
+
+[1] Multiplication operations are inefficient on SSE2. Requiring SSE4.1 or AVX ensures efficient implementation.

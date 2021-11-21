@@ -76,7 +76,6 @@ namespace sd {
         SIMDEE_BASE_CTOR_FLAG(avx_base, expr::zero, mm = _mm256_setzero_ps())
         SIMDEE_BASE_CTOR_TPL(avx_base, expr::aligned<T>, aligned_load(r.ptr))
         SIMDEE_BASE_CTOR_TPL(avx_base, expr::unaligned<T>, unaligned_load(r.ptr))
-        SIMDEE_BASE_CTOR_TPL(avx_base, expr::interleaved<T>, interleaved_load(r.ptr, r.step))
         SIMDEE_BASE_CTOR_TPL(avx_base, expr::init<T>, *this = r.template to<scalar_t>())
         SIMDEE_BASE_CTOR(avx_base, storage_t, aligned_load(r.data()))
 
@@ -91,18 +90,6 @@ namespace sd {
         }
         SIMDEE_INL void unaligned_store(scalar_t* r) const {
             _mm256_storeu_ps(reinterpret_cast<float*>(r), mm);
-        }
-
-        void interleaved_load(const scalar_t* r, int step) {
-            alignas(avx_base) scalar_t temp[width];
-            for (std::size_t i = 0; i < width; ++i, r += step) { temp[i] = *r; }
-            aligned_load(temp);
-        }
-
-        void interleaved_store(scalar_t* r, int step) const {
-            alignas(avx_base) scalar_t temp[width];
-            aligned_store(temp);
-            for (std::size_t i = 0; i < width; ++i, r += step) { *r = temp[i]; }
         }
 
         template <unsigned int Lane>

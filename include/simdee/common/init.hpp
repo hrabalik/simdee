@@ -5,8 +5,8 @@
 #define SIMDEE_COMMON_INIT_HPP
 
 #define SIMDEE
-#define SIMDEE_MAJOR 0
-#define SIMDEE_MINOR 4
+#define SIMDEE_MAJOR 1
+#define SIMDEE_MINOR 0
 #define SIMDEE_PATCHLEVEL 0
 
 //
